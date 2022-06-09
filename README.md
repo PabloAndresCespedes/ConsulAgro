@@ -1,2 +1,2 @@
 # ConsulAgro
-Repositorio para analítica y estandarización en el desarrollo de software
+Repositorio para analítica y estabilización de software Grupo Hilagro
