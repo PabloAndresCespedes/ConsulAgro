@@ -401,8 +401,16 @@ create or replace package body TRAI215 is
       l_docu_cod_oper := co_tran_salida;
     else
       l_docu_cod_oper := co_tran_entrada;
-      l_dep           := l_dep_prov_recap;
-      l_dep_dest      := l_dep_recapado;
+      
+      <<envio_deposito_hijo>>
+      case 
+        when in_tipo = co_recapado then
+          l_dep      := l_dep_prov_recap;
+          l_dep_dest := l_dep_recapado;
+        when in_tipo = co_desecho then
+          l_dep      := l_dep_baja;
+          l_dep_dest := l_dep_recapado; 
+      end case envio_deposito_hijo;
     end if;
       
     insert into stk_documento
@@ -436,7 +444,7 @@ create or replace package body TRAI215 is
      in_suc,     --suc destino deposito
      l_dep_dest, --dep deposito destino
      trunc(co_hoy),
-     'Transferencia recapado a '||l_obs_docu||' en fecha'||trunc(co_hoy)||' Usuario: '||in_user,
+     'Transferencia a '||l_obs_docu||' en fecha'||trunc(co_hoy)||' Usuario: '||in_user,
      in_user,
      co_hoy,
      1, -- gs

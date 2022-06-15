@@ -74,6 +74,10 @@ create or replace package TRAI215 is
     in_user      varchar2
   )return tal_env_recapado.ter_clave%type;
 
+  function get_send_report(
+    in_send varchar2
+  )return varchar2;
+   
 end TRAI215;
 /
 create or replace package body TRAI215 is
@@ -496,6 +500,35 @@ create or replace package body TRAI215 is
     return l_clave;
                             
   end add_tal_env_recapado;
+  
+  
+  function get_send_report(
+    in_send varchar2
+  )return varchar2 is
+  l_result apex_application_global.vc_arr2;
+  l_serie   varchar2(4000);
+  l_art_str varchar2(4000);
+  begin
+    for x in (select column_value serieArt
+              from table(apex_string.split(p_str   => in_send,
+                                           p_sep   => ',')
+                        )
+             )
+    loop
+      l_result := apex_string.string_to_table(x.serieArt,':');
+      
+      l_serie := l_result(2);
+       
+      select l_art_str||':'|| a.art_codigo||'-'||a.art_desc||'-'||l_serie
+      into l_art_str
+      from stk_articulo a
+      where a.art_codigo = l_result(1);
+      
+    end loop;
+     
+    return l_art_str;
+     
+  end get_send_report;
   
 end TRAI215;
 /

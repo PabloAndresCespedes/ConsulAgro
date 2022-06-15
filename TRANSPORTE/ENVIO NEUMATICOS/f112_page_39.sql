@@ -28,7 +28,7 @@ prompt APPLICATION 112 - TRANSPORTE
 -- Application Export:
 --   Application:     112
 --   Name:            TRANSPORTE
---   Date and Time:   16:52 Tuesday June 14, 2022
+--   Date and Time:   15:34 Wednesday June 15, 2022
 --   Exported By:     PABLOC
 --   Flashback:       0
 --   Export Type:     Page Export
@@ -63,7 +63,7 @@ wwv_flow_api.create_page(
 '.cursor{cursor:pointer;}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'PABLOC'
-,p_last_upd_yyyymmddhh24miss=>'20220614161452'
+,p_last_upd_yyyymmddhh24miss=>'20220615153033'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(672573123976362039)
@@ -85,7 +85,7 @@ wwv_flow_api.create_page_plug(
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(674585629539649103)
-,p_plug_name=>unistr('TRAI215 - Env\00EDo de Neum\00E1tico')
+,p_plug_name=>unistr('TRAI215 - Env\00EDo de Neum\00E1tico a Recapado o Baja')
 ,p_region_template_options=>'#DEFAULT#:t-Region--accent4:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_api.id(272750052041805549)
 ,p_plug_display_sequence=>20
@@ -331,6 +331,80 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'
 );
+wwv_flow_api.create_report_region(
+ p_id=>wwv_flow_api.id(674699772597523743)
+,p_name=>'Enviados a Proveedor'
+,p_region_name=>'sendSelect'
+,p_parent_plug_id=>wwv_flow_api.id(674696025813523706)
+,p_template=>wwv_flow_api.id(272749554854805549)
+,p_display_sequence=>10
+,p_region_template_options=>'#DEFAULT#'
+,p_component_template_options=>'#DEFAULT#:t-Report--stretch:t-Report--altRowsDefault:t-Report--rowHighlight'
+,p_display_point=>'BODY'
+,p_source_type=>'NATIVE_SQL_REPORT'
+,p_query_type=>'SQL'
+,p_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'SELECT REGEXP_SUBSTR( trai215.get_send_report(in_send => :P39_SEND), ''[^:]+'', 1, LEVEL) enviados',
+'FROM DUAL',
+'CONNECT BY REGEXP_SUBSTR( trai215.get_send_report(in_send => :P39_SEND), ''[^:]+'', 1, LEVEL) IS NOT NULL;'))
+,p_ajax_enabled=>'Y'
+,p_ajax_items_to_submit=>'P39_SEND'
+,p_query_row_template=>wwv_flow_api.id(272760068505805559)
+,p_query_num_rows=>15
+,p_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_query_no_data_found=>'Sin Registros seleccionados'
+,p_query_num_rows_type=>'NEXT_PREVIOUS_LINKS'
+,p_pagination_display_position=>'BOTTOM_RIGHT'
+,p_csv_output=>'N'
+,p_prn_output=>'Y'
+,p_prn_format=>'PDF'
+,p_prn_output_link_text=>'Imprimir'
+,p_prn_output_file_name=>'Enviados a Proveedor'
+,p_prn_content_disposition=>'ATTACHMENT'
+,p_prn_document_header=>'APEX'
+,p_prn_units=>'MILLIMETERS'
+,p_prn_paper_size=>'A4'
+,p_prn_width_units=>'PERCENTAGE'
+,p_prn_width=>297
+,p_prn_height=>210
+,p_prn_orientation=>'HORIZONTAL'
+,p_prn_page_header=>'Enviados a Proveedor. Usuario &APP_USER.'
+,p_prn_page_header_font_color=>'#000000'
+,p_prn_page_header_font_family=>'Helvetica'
+,p_prn_page_header_font_weight=>'normal'
+,p_prn_page_header_font_size=>'12'
+,p_prn_page_footer_font_color=>'#000000'
+,p_prn_page_footer_font_family=>'Helvetica'
+,p_prn_page_footer_font_weight=>'normal'
+,p_prn_page_footer_font_size=>'12'
+,p_prn_header_bg_color=>'#EEEEEE'
+,p_prn_header_font_color=>'#000000'
+,p_prn_header_font_family=>'Helvetica'
+,p_prn_header_font_weight=>'bold'
+,p_prn_header_font_size=>'10'
+,p_prn_body_bg_color=>'#FFFFFF'
+,p_prn_body_font_color=>'#000000'
+,p_prn_body_font_family=>'Helvetica'
+,p_prn_body_font_weight=>'normal'
+,p_prn_body_font_size=>'10'
+,p_prn_border_width=>.5
+,p_prn_page_header_alignment=>'CENTER'
+,p_prn_page_footer_alignment=>'CENTER'
+,p_prn_border_color=>'#666666'
+,p_sort_null=>'L'
+,p_plug_query_strip_html=>'N'
+);
+wwv_flow_api.create_report_columns(
+ p_id=>wwv_flow_api.id(674700441685523750)
+,p_query_column_id=>1
+,p_column_alias=>'ENVIADOS'
+,p_column_display_sequence=>1
+,p_column_heading=>'Enviados'
+,p_use_as_row_header=>'N'
+,p_display_as=>'WITHOUT_MODIFICATION'
+,p_derived_column=>'N'
+,p_include_in_export=>'Y'
+);
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(672573550990362043)
 ,p_button_sequence=>10
@@ -525,14 +599,15 @@ wwv_flow_api.create_page_item(
 ,p_item_default=>'current_date'
 ,p_item_default_type=>'PLSQL_EXPRESSION'
 ,p_prompt=>'Fecha Documento'
-,p_display_as=>'NATIVE_DATE_PICKER'
-,p_cSize=>30
+,p_display_as=>'NATIVE_DISPLAY_ONLY'
+,p_tag_css_classes=>'u-textCenter u-bold'
+,p_tag_attributes=>'style="border-style: double;"'
 ,p_begin_on_new_line=>'N'
 ,p_field_template=>wwv_flow_api.id(256749739875571849)
 ,p_item_template_options=>'#DEFAULT#'
-,p_attribute_04=>'button'
-,p_attribute_05=>'N'
-,p_attribute_07=>'NONE'
+,p_attribute_01=>'Y'
+,p_attribute_02=>'VALUE'
+,p_attribute_04=>'Y'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(674696371825523709)
@@ -617,6 +692,45 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_REFRESH'
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_api.id(674586068498649105)
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(676768145157314001)
+,p_event_id=>wwv_flow_api.id(672572514727362033)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'BEGIN',
+'    APEX_IR.ADD_FILTER(',
+'        p_page_id       => 39,',
+'        p_region_id     => 674586068498649105,',
+'        p_report_column => ''SERIE'',',
+'        p_filter_value  => :P39_SERIE, ',
+'        p_operator_abbr => ''EQ'', ',
+'        p_report_id     => NULL',
+'    );',
+'    ',
+'    APEX_IR.ADD_FILTER(',
+'        p_page_id       => 39,',
+'        p_region_id     => 674586068498649105,',
+'        p_report_column => ''FECHA'',',
+'        p_filter_value  => :P39_DESDE, ',
+'        p_operator_abbr => ''GTE'', ',
+'        p_report_id     => NULL',
+'    );',
+'    ',
+'    APEX_IR.ADD_FILTER(',
+'        p_page_id       => 39,',
+'        p_region_id     => 674586068498649105,',
+'        p_report_column => ''FECHA'',',
+'        p_filter_value  => :P39_HASTA, ',
+'        p_operator_abbr => ''LTE'', ',
+'        p_report_id     => NULL',
+'    );',
+'END;'))
+,p_attribute_02=>'P39_SERIE,P39_DESDE,P39_HASTA'
+,p_wait_for_result=>'Y'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(672573313287362041)
@@ -765,7 +879,9 @@ wwv_flow_api.create_page_da_action(
 'apex.theme.openRegion(''contentEnvioSrv'');',
 'apex.item(''P39_ES_NRO_DOC'').setValue('''');',
 'apex.item(''P39_ES_PROVEEDOR'').setValue('''');',
-unistr('apex.item(''P39_ES_OBS'').setValue(''Env\00EDo a Recapado'');')))
+unistr('apex.item(''P39_ES_OBS'').setValue(''Env\00EDo a Recapado'');'),
+'apex.region(''sendSelect'').refresh();',
+''))
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(674698030033523726)
