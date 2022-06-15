@@ -28,7 +28,7 @@ prompt APPLICATION 112 - TRANSPORTE
 -- Application Export:
 --   Application:     112
 --   Name:            TRANSPORTE
---   Date and Time:   15:34 Wednesday June 15, 2022
+--   Date and Time:   16:18 Wednesday June 15, 2022
 --   Exported By:     PABLOC
 --   Flashback:       0
 --   Export Type:     Page Export
@@ -63,7 +63,7 @@ wwv_flow_api.create_page(
 '.cursor{cursor:pointer;}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'PABLOC'
-,p_last_upd_yyyymmddhh24miss=>'20220615153033'
+,p_last_upd_yyyymmddhh24miss=>'20220615161745'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(672573123976362039)
@@ -141,7 +141,7 @@ wwv_flow_api.create_page_plug(
 ,p_prn_width=>297
 ,p_prn_height=>210
 ,p_prn_orientation=>'HORIZONTAL'
-,p_prn_page_header=>'Resultados'
+,p_prn_page_header=>'Lista para Desechos o Recapados - Usuario &APP_USER.'
 ,p_prn_page_header_font_color=>'#000000'
 ,p_prn_page_header_font_family=>'Helvetica'
 ,p_prn_page_header_font_weight=>'normal'
@@ -692,45 +692,6 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_REFRESH'
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_api.id(674586068498649105)
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(676768145157314001)
-,p_event_id=>wwv_flow_api.id(672572514727362033)
-,p_event_result=>'TRUE'
-,p_action_sequence=>20
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'BEGIN',
-'    APEX_IR.ADD_FILTER(',
-'        p_page_id       => 39,',
-'        p_region_id     => 674586068498649105,',
-'        p_report_column => ''SERIE'',',
-'        p_filter_value  => :P39_SERIE, ',
-'        p_operator_abbr => ''EQ'', ',
-'        p_report_id     => NULL',
-'    );',
-'    ',
-'    APEX_IR.ADD_FILTER(',
-'        p_page_id       => 39,',
-'        p_region_id     => 674586068498649105,',
-'        p_report_column => ''FECHA'',',
-'        p_filter_value  => :P39_DESDE, ',
-'        p_operator_abbr => ''GTE'', ',
-'        p_report_id     => NULL',
-'    );',
-'    ',
-'    APEX_IR.ADD_FILTER(',
-'        p_page_id       => 39,',
-'        p_region_id     => 674586068498649105,',
-'        p_report_column => ''FECHA'',',
-'        p_filter_value  => :P39_HASTA, ',
-'        p_operator_abbr => ''LTE'', ',
-'        p_report_id     => NULL',
-'    );',
-'END;'))
-,p_attribute_02=>'P39_SERIE,P39_DESDE,P39_HASTA'
-,p_wait_for_result=>'Y'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(672573313287362041)
