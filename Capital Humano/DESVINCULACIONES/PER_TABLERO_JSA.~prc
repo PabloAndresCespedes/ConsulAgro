@@ -6,7 +6,11 @@ create or replace procedure PER_TABLERO_JSA is
    Se comentaron las variables sin uso
    y se agregaron los parametros de semana y meses
    que se calculan a partir de la fecha de ejecucion del proceso
-
+   - Se agrega comodin de l_ejecutado 
+     Inicializa en falso ya que si entra en la primera ejecucion ya no inserta el siguiente,
+     para los casos que sean fin de mes y a la vez domingos
+ */  
+ /*
  P_QUERY1 VARCHAR2(21000);
 
  P_QUERY2 VARCHAR2(21000);
@@ -15,12 +19,15 @@ create or replace procedure PER_TABLERO_JSA is
  V_CONTADOR NUMBER;
  V_MES_ANHO VARCHAR2(10);
  */
+ l_ejecutado boolean := false;
 BEGIN
 ------------------PRIMERAMENTE ESTARIA GUARDANDO TODO LO QUE ES MENSUAL
-  -- 08/06/2022 14:08:48 @PabloACespedes \(^-^)/
-  -- EJECUCION SI ES FIN DE MES                             
-  IF TRUNC(SYSDATE) = LAST_DAY (TRUNC(SYSDATE)) THEN
 
+  -- 08/06/2022 14:08:48 @PabloACespedes \(^-^)/
+  -- EJECUCION SI ES FIN DE MES, too marca como ejecutado                      
+  IF TRUNC(SYSDATE) = LAST_DAY (TRUNC(SYSDATE)) THEN
+    l_ejecutado := true;
+    
     --V_FECHA :=TRUNC(SYSDATE);
     --V_MES_ANHO := TO_CHAR(TRUNC(SYSDATE), 'MM/YYYY');
 
@@ -186,7 +193,9 @@ select solper_clave, solper_empr, solper_fecha_sol, solper_operador_sol, solper_
 
   -- 08/06/2022 14:08:26 @PabloACespedes \(^-^)/
   -- EJECUCION SOLO LOS DOMINGOS
-  IF TO_CHAR(SYSDATE, 'DAY', 'NLS_DATE_LANGUAGE=SPANISH') LIKE 'D%' THEN
+  IF TO_CHAR(SYSDATE, 'DAY', 'NLS_DATE_LANGUAGE=SPANISH') LIKE 'D%'
+  and not l_ejecutado
+  THEN
 
 ------------------------------------------HISTORICO DE EMPLEADO
   insert into per_empleado_hist

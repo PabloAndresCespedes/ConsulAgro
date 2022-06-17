@@ -1,16 +1,6 @@
 create or replace procedure PER_TABLERO_JSA is
 
- /*
-   Author  : @PabloACespedes \(^-^)/
-   Modified : 08/06/2022 14:01:00
-   Se comentaron las variables sin uso
-   y se agregaron los parametros de semana y meses
-   que se calculan a partir de la fecha de ejecucion del proceso
-   - Se agrega comodin de l_ejecutado 
-     Inicializa en falso ya que si entra en la primera ejecucion ya no inserta el siguiente,
-     para los casos que sean fin de mes y a la vez domingos
- */  
- /*
+
  P_QUERY1 VARCHAR2(21000);
 
  P_QUERY2 VARCHAR2(21000);
@@ -18,19 +8,15 @@ create or replace procedure PER_TABLERO_JSA is
  V_FECHA DATE;
  V_CONTADOR NUMBER;
  V_MES_ANHO VARCHAR2(10);
- */
- l_ejecutado boolean := false;
+ l_ejecutado boolean;
 BEGIN
+  l_ejecutado := false;
 ------------------PRIMERAMENTE ESTARIA GUARDANDO TODO LO QUE ES MENSUAL
-
-  -- 08/06/2022 14:08:48 @PabloACespedes \(^-^)/
-  -- EJECUCION SI ES FIN DE MES, too marca como ejecutado                      
   IF TRUNC(SYSDATE) = LAST_DAY (TRUNC(SYSDATE)) THEN
-    l_ejecutado := true;
     
-    --V_FECHA :=TRUNC(SYSDATE);
-    --V_MES_ANHO := TO_CHAR(TRUNC(SYSDATE), 'MM/YYYY');
-
+    V_FECHA :=TRUNC(SYSDATE);
+    V_MES_ANHO := TO_CHAR(TRUNC(SYSDATE), 'MM/YYYY');
+     l_ejecutado := true;
 ------------------------------------------HISTORICO DE EMPLEADO
   insert into per_empleado_hist
         (empl_legajo, empl_nombre, empl_dir, empl_localidad, empl_tel, empl_est_civil, empl_sexo, empl_grup_sang, empl_fec_nac, empl_nacionalidad,
@@ -73,19 +59,19 @@ BEGIN
            empl_tipo_trabajador, empl_marc_sist, empl_incluye_tvc, empl_marc_sabado,
            TO_CHAR(TRUNC(SYSDATE), 'MM'),
            CASE
-              WHEN EMPL_SUCURSAL = 2 THEN
-                               'CDA'
-              WHEN EMPL_DEPARTAMENTO = 1 and (EMPL_AREA_ORGANI not in (8,9) and empl_cargo <> 1)  THEN
-                               'ADM'
-              WHEN  EMPL_AREA_ORGANI = 8  or  empl_cargo = 1 THEN
-                               'CAPITAL HUMANO'        
-              WHEN  EMPL_AREA_ORGANI = 9  then
-                               'GERENCIA DE TI'         
-              WHEN (EMPL_DEPARTAMENTO IN(14,22,2,38) OR EMPL_SUCURSAL NOT IN (1,2)) THEN
-                              'COMERCIAL'
-             ELSE
-                'INDUSTRIAL'
-             END,
+                WHEN EMPL_SUCURSAL = 2 THEN
+                                 'CDA'
+                 WHEN EMPL_DEPARTAMENTO = 1 and (EMPL_AREA_ORGANI not in (8,9) and empl_cargo <> 1)  THEN
+                                 'ADM'
+                WHEN  EMPL_AREA_ORGANI =8  or  empl_cargo = 1 THEN
+                                 'CAPITAL HUMANO'        
+                 WHEN  EMPL_AREA_ORGANI =9  then
+                                 'GERENCIA DE TI'         
+                WHEN (EMPL_DEPARTAMENTO IN(14,22,2,38) OR EMPL_SUCURSAL NOT IN (1,2)) THEN
+                                'COMERCIAL'
+               ELSE
+                               'INDUSTRIAL'
+                END,
            TO_CHAR(TRUNC(SYSDATE), 'IW'),
            TO_CHAR(TRUNC(SYSDATE), 'YYYY')
            from per_empleado
@@ -170,7 +156,7 @@ select solper_clave, solper_empr, solper_fecha_sol, solper_operador_sol, solper_
              entper_ees_estado, entper_ees_fecha, entper_estado_gral, entper_fecha_estado_gral, entper_etapa_decis_gral,
              entper_requis_consid, entper_ear_operador_enc, entper_ees_operador_enc, entper_ear_salar_pro, entper_ees_salar_acord,
              TO_CHAR(TRUNC(SYSDATE), 'MM'),
-             NULL,
+             TO_CHAR(TRUNC(SYSDATE), 'IW'),
              TO_CHAR(TRUNC(SYSDATE), 'YYYY')
        from per_entrevista_personal
       WHERE entper_empr IN (1,2);
@@ -184,16 +170,15 @@ select solper_clave, solper_empr, solper_fecha_sol, solper_operador_sol, solper_
           anho)
       select per_ent_codigo, per_ent_postulante, per_ent_empr, per_ent_cargo_ral, per_ent_fecha,
           TO_CHAR(TRUNC(SYSDATE), 'MM'),
-          NULL,
+          TO_CHAR(TRUNC(SYSDATE), 'IW'),
           TO_CHAR(TRUNC(SYSDATE), 'YYYY')
        from per_entrevista_post
        WHERE per_ent_empr IN (1,2);
 
   END IF ;
 
-  -- 08/06/2022 14:08:26 @PabloACespedes \(^-^)/
-  -- EJECUCION SOLO LOS DOMINGOS
-  IF TO_CHAR(SYSDATE, 'DAY', 'NLS_DATE_LANGUAGE=SPANISH') LIKE 'D%'
+
+  IF TO_CHAR(SYSDATE, 'DAY', 'NLS_DATE_LANGUAGE=SPANISH') LIKE 'D%' 
   and not l_ejecutado
   THEN
 
@@ -282,7 +267,7 @@ select solper_clave, solper_empr, solper_fecha_sol, solper_operador_sol, solper_
          seleper_ees_obs, seleper_ees_oper, seleper_ees_estado, seleper_ees_fecha, seleper_estado_gral, seleper_fecha_estado_gral,
          seleper_etapa_decis_gral, seleper_requis_consid, seleper_ear_operador_enc, seleper_ees_operador_enc, seleper_ear_salar_pro,
          seleper_ees_salar_acord,
-         NULL,
+         TO_CHAR(TRUNC(SYSDATE), 'MM'),
          TO_CHAR(TRUNC(SYSDATE), 'IW'),
          TO_CHAR(TRUNC(SYSDATE), 'YYYY')
   from per_seleccion_personal
@@ -305,7 +290,7 @@ select solper_clave, solper_empr, solper_fecha_sol, solper_operador_sol, solper_
        solper_cant, solper_estado_aprob, solper_operador_aprob, solper_fecha_aprob, solper_estado_final, solper_obser_aprob,
        solper_obser_sol, solper_tipo_cont, solper_tipo_selec, solper_tipo_contratacion, solper_tipo_dotac, solper_zafra,
        solper_zafra_empl, solper_cont_empl, NULL,
-       NULL,
+       TO_CHAR(TRUNC(SYSDATE), 'MM'),
        TO_CHAR(TRUNC(SYSDATE), 'YYYY'),
        TO_CHAR(TRUNC(SYSDATE), 'IW'),
        SOLPER_VAC_CUBIERTA,
