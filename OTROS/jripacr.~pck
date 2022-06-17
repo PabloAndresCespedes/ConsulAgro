@@ -5,7 +5,6 @@ create or replace package jripacr as
   -- Purpose : generador de url para jasper integration
  
   procedure get_report_url (
-      p_base_url            in   varchar2 default 'http://192.168.2.38:8080/JasperReportsIntegration/report',
       p_rep_name            in   varchar2 default 'test',
       p_rep_format          in   varchar2 default 'pdf',
       p_data_source         in   varchar2 default 'default',
@@ -23,6 +22,7 @@ create or replace package jripacr as
       p_save_is_enabled     in   boolean default false,
       p_save_filename       in   varchar2 default null,
       p_rep_time_zone       in   varchar2 default null,
+      in_empresa            in   number,
       p_url                 out  varchar2
    );
   
@@ -41,7 +41,6 @@ create or replace package body jripacr as
   end bool2string;
   
   procedure get_report_url (
-      p_base_url            in   varchar2 default 'http://192.168.2.38:8080/JasperReportsIntegration/report',
       p_rep_name            in   varchar2 default 'test',
       p_rep_format          in   varchar2 default 'pdf',
       p_data_source         in   varchar2 default 'default',
@@ -59,11 +58,24 @@ create or replace package body jripacr as
       p_save_is_enabled     in   boolean default false,
       p_save_filename       in   varchar2 default null,
       p_rep_time_zone       in   varchar2 default null,
+      in_empresa            in   number,
       p_url                 out  varchar2
    )as
-      l_url varchar2(32767);
+      l_url  varchar2(32767);
+      l_base gen_empresa.empr_url_reports%type;
    BEGIN
-      l_url := p_base_url;
+      <<get_base_url>>
+      begin
+        select g.empr_url_reports
+        into l_base
+        from gen_empresa g
+        where empr_codigo = in_empresa;
+      exception
+        when no_data_found then
+          Raise_application_error(-20000, 'Base URL no encontrada. Comun'||chr(237)||'quese con TI');
+      end get_base_url;
+      
+      l_url := l_base;
       l_url := l_url || '?_repName=' || p_rep_name;
       l_url := l_url || '&_repFormat=' || p_rep_format;
       l_url := l_url || '&_dataSource=' || p_data_source;

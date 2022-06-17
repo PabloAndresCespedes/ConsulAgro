@@ -26,6 +26,14 @@ create or replace package jripacr as
       p_url                 out  varchar2
    );
   
+  function decode_jwt(
+    in_encode varchar2
+  )return number;
+  
+  function generate_jwt(
+    in_clave    number,
+    in_seconds  number := 60  
+  )return varchar2;
   
 end jripacr;
 /
@@ -105,5 +113,39 @@ create or replace package body jripacr as
       p_url := l_url;
    end get_report_url;
    
+  function decode_jwt(
+    in_encode varchar2
+  )return number is
+    l_token apex_jwt.t_token;
+    l_keys  apex_t_varchar2;
+  begin
+    l_token := apex_jwt.decode (p_value => in_encode);
+    
+    -- valida los segundos del token
+    apex_jwt.validate ( p_token => l_token);
+    
+    apex_json.parse(l_token.payload);
+      
+    l_keys := apex_json.get_members('.');
+      
+    return apex_json.get_number(l_keys(1));
+    
+  exception
+    when others then
+      return -1;   
+  end decode_jwt;
+  
+  function generate_jwt(
+    in_clave    number,
+    in_seconds  number   
+  )return varchar2 is
+    l_jwt_value varchar2(32767);
+  begin
+    l_jwt_value := apex_jwt.encode (p_iss => in_clave, p_exp_sec => in_seconds );
+    
+    return l_jwt_value;
+    
+  end generate_jwt;
+  
 end jripacr;
 /

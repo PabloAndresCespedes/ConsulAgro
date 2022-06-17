@@ -18,11 +18,12 @@ create or replace package body IMPL208 is
       in_empresa           number
   )return varchar2 as
     l_additional_parameters varchar2(32767);
-    l_url                   varchar2(4000);
+    l_url                   varchar2(32767);
     
     co_reporte  constant varchar2(8 char) := 'impl208';
   begin
-      l_additional_parameters := 'nroImportacion=' ||APEX_UTIL.URL_ENCODE(in_clave_importacion);
+    
+      l_additional_parameters := 'nroImportacion=' ||apex_util.url_encode(in_clave_importacion);
           
       jripacr.get_report_url(
           p_rep_name          => co_reporte,
