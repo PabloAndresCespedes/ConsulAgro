@@ -3,8 +3,7 @@ CREATE OR REPLACE PACKAGE FACM070 IS
   -- AUTHOR  : PROGRAMACION4
   -- CREATED : 29/06/2021 11:10:10
   -- PURPOSE : LISTA DE PRECIO
-  co_col_lista constant varchar2(13 char) := 'FACM070-LISTA';
-  
+
   PROCEDURE PP_CARGAR_CONSULTA(I_EMPRESA    IN NUMBER,
                                I_SUC_COD    varchar2,
                                I_CANAL_COD  IN varchar2,
@@ -40,13 +39,6 @@ CREATE OR REPLACE PACKAGE FACM070 IS
                                 I_NRO_LISTA  IN VARCHAR2
                                 );
 
-  
-  procedure revert_from_history(
-    in_nro_lista in number,
-    in_fecha     in varchar2,
-    in_empresa   in number
-  );
-  
   /*
     Author  : @PabloACespedes \(^-^)/
     Created : 20/06/2022 13:14:50
@@ -622,59 +614,6 @@ CREATE OR REPLACE PACKAGE BODY FACM070 IS
       (V_PARAMETROS, GEN_DEVUELVE_USER, I_REPORT, 'pdf');
   
   END PP_IMPRIMIR_LPRECIO;
-  
-  procedure revert_from_history(
-    in_nro_lista in number,
-    in_fecha     in varchar2,
-    in_empresa   in number
-  )as
-  begin
-    apex_collection.create_or_truncate_collection(p_collection_name => co_col_lista);
-    
-    for c in (
-      select de.lipr_art              art_cod,
-             de.lipr_art_alfanumerico art_alfa,
-             h.liprh_precio_anterior  precio_unitario,
-             h.liprh_precio_anterior  precio_actual,
-             de.lipr_precio_unitario  precio_anterior,
-             h.liprh_fecha_cambio     fecha_cambio,
-             h.liprh_empr             empresa,
-             de.lipr_linea            linea,
-             de.lipr_grupo            grupo,
-             h.liprh_nro_lista_precio nro_lista,
-             a.art_cod_barra          cod_barra,
-             a.art_desc               art_desc,
-             de.lipr_suc              sucursal,
-             f.lipe_desc              lista_precio_desc
-      from fac_lista_precio_det_hist h
-      inner join fac_lista_precio f on (f.lipe_nro_lista_precio = h.liprh_nro_lista_precio)
-      inner join fac_lista_precio_det de on (de.lipr_nro_lista_precio = h.liprh_nro_lista_precio and de.lipr_art = h.liprh_art)
-      inner join stk_articulo a on (a.art_codigo = de.lipr_art)
-      where h.liprh_nro_lista_precio = in_nro_lista
-      and   h.liprh_empr             = in_empresa
-      and   to_char(h.liprh_fecha_cambio, 'dd/mm/yyyy hh24:mi') = in_fecha --> atender formato de mascara
-    )
-    loop
-      apex_collection.add_member(p_collection_name => co_col_lista,
-                                 p_c001            => c.art_cod,
-                                 p_c002            => c.art_alfa,
-                                 p_c003            => c.precio_unitario,
-                                 p_c004            => nvl(c.precio_anterior, 0),
-                                 p_c005            => nvl(c.precio_unitario, 0),
-                                 p_c006            => in_nro_lista,
-                                 p_c007            => c.empresa,
-                                 p_c008            => c.linea,
-                                 p_c009            => c.grupo,
-                                 p_c010            => c.nro_lista,
-                                 p_c011            => c.cod_barra,
-                                 p_c012            => c.lista_precio_desc,
-                                 p_c013            => c.sucursal
-                                 );
-                                 
-                                 
-    end loop;
-    
-  end revert_from_history;
   
   function is_automated_list(
     in_lista_origen in number,
