@@ -1,0 +1,113 @@
+-- Create sequence 
+create sequence FAC_CONF_LIST_PRECIO
+minvalue 1
+maxvalue 9999999999999999999999999999
+start with 21
+increment by 1
+cache 20
+order;
+/
+-- Create table
+create table FAC_CONF_COPIA_LISTA_PRECIO
+(
+  id                NUMBER not null,
+  lista_origen_nro  NUMBER,
+  lista_destino_nro NUMBER,
+  linea_cod         NUMBER,
+  grupo_destino_cod NUMBER,
+  empresa_cod       NUMBER,
+  user_login        VARCHAR2(8)
+)
+tablespace DATOS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+-- Add comments to the table 
+comment on table FAC_CONF_COPIA_LISTA_PRECIO
+  is 'Tabla que registra proceso automatizacion de precios entre listas. Se utiliza en el programa 3-1-195 para pasar al 3-1-95';
+-- Add comments to the columns 
+comment on column FAC_CONF_COPIA_LISTA_PRECIO.lista_origen_nro
+  is 'FAC_LISTA_PRECIO >> lipe_empr,lipe_nro_lista_precio';
+comment on column FAC_CONF_COPIA_LISTA_PRECIO.lista_destino_nro
+  is 'FAC_LISTA_PRECIO >> lipe_empr,lipe_nro_lista_precio';
+comment on column FAC_CONF_COPIA_LISTA_PRECIO.linea_cod
+  is 'STK_LINEA >> lin_codigo';
+comment on column FAC_CONF_COPIA_LISTA_PRECIO.grupo_destino_cod
+  is 'STK_GRUPO_PRESUP >> opres_codigo,opres_linea,opres_empr';
+comment on column FAC_CONF_COPIA_LISTA_PRECIO.empresa_cod
+  is 'GEN_EMPRESA >> empr_codigo';
+comment on column FAC_CONF_COPIA_LISTA_PRECIO.user_login
+  is 'Usuario APEX o DB, definido por trigger';
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table FAC_CONF_COPIA_LISTA_PRECIO
+  add constraint FAC_CONF_COP_LIST_PRE_PK primary key (ID)
+  using index 
+  tablespace DATOS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+alter table FAC_CONF_COPIA_LISTA_PRECIO
+  add constraint FAC_CONF_COP_UK unique (LISTA_ORIGEN_NRO, LISTA_DESTINO_NRO, LINEA_COD, GRUPO_DESTINO_COD, EMPRESA_COD)
+  using index 
+  tablespace DATOS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+alter table FAC_CONF_COPIA_LISTA_PRECIO
+  add constraint FAC_CONF_COP_EMP_FK foreign key (EMPRESA_COD)
+  references GEN_EMPRESA (EMPR_CODIGO) on delete cascade;
+alter table FAC_CONF_COPIA_LISTA_PRECIO
+  add constraint FAC_CONF_COP_GRUPO_FK foreign key (GRUPO_DESTINO_COD, LINEA_COD, EMPRESA_COD)
+  references STK_GRUPO_PRESUP (OPRES_CODIGO, OPRES_LINEA, OPRES_EMPR) on delete cascade;
+alter table FAC_CONF_COPIA_LISTA_PRECIO
+  add constraint FAC_CONF_COP_LINEA_FK foreign key (LINEA_COD, EMPRESA_COD)
+  references STK_LINEA (LIN_CODIGO, LIN_EMPR) on delete cascade;
+alter table FAC_CONF_COPIA_LISTA_PRECIO
+  add constraint FAC_CONF_COP_LIST_DES_FK foreign key (EMPRESA_COD, LISTA_DESTINO_NRO)
+  references FAC_LISTA_PRECIO (LIPE_EMPR, LIPE_NRO_LISTA_PRECIO) on delete cascade;
+alter table FAC_CONF_COPIA_LISTA_PRECIO
+  add constraint FAC_CONF_COP_LIST_OR_FK foreign key (EMPRESA_COD, LISTA_ORIGEN_NRO)
+  references FAC_LISTA_PRECIO (LIPE_EMPR, LIPE_NRO_LISTA_PRECIO) on delete cascade;
+/
+
+create or replace trigger FAC_CONF_COPIA_BI
+  before insert or update
+  on FAC_CONF_COPIA_LISTA_PRECIO 
+  for each row
+begin  
+  -- asigna PK
+  if inserting then
+    :new.id := nvl(:new.id, fac_conf_list_precio.nextval);    
+  end if;
+  
+  -- valida que no se copie en el mismo lugar
+  if :new.lista_origen_nro = :new.lista_destino_nro then
+     Raise_application_error(-20000, 'La lista de Origen no puede ser igual a la lista de Destino');
+  end if;
+  
+  -- obtiene el usuario APEX o el de la BD
+  :new.user_login := nvl(sys_context('APEX$SESSION','APP_USER'),user);
+  
+end FAC_CONF_COPIA_BI;
+/
