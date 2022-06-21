@@ -40,7 +40,12 @@ CREATE OR REPLACE PACKAGE FACM070 IS
                                 I_NRO_LISTA  IN VARCHAR2
                                 );
 
-  
+  /*
+    Author  : @PabloACespedes \(^-^)/
+    Created : 21/06/2022 8:39:58
+    genera datos en la coleccion y luego actualiza en 
+    APEX, reutiliza el proceso PP_GUARDAR_CAMBIOS
+  */
   procedure revert_from_history(
     in_nro_lista in number,
     in_fecha     in varchar2,
@@ -652,7 +657,7 @@ CREATE OR REPLACE PACKAGE BODY FACM070 IS
       inner join stk_articulo a on (a.art_codigo = de.lipr_art)
       where h.liprh_nro_lista_precio = in_nro_lista
       and   h.liprh_empr             = in_empresa
-      and   to_char(h.liprh_fecha_cambio, 'dd/mm/yyyy hh24:mi') = in_fecha --> atender formato de mascara
+      and   to_char(h.liprh_fecha_cambio, 'dd/mm/yyyy hh24:mi:ss') = in_fecha --> atender formato de mascara
     )
     loop
       apex_collection.add_member(p_collection_name => co_col_lista,
@@ -674,6 +679,14 @@ CREATE OR REPLACE PACKAGE BODY FACM070 IS
                                  
     end loop;
     
+    -- todo null, no se utiliza, se basa en los datos cargados en la coleccion
+    pp_guardar_cambios(i_empresa    => null,
+                       i_suc_codigo => null,
+                       i_canal_beta => null,
+                       i_mon_codigo => null,
+                       i_repositor  => null
+                       );
+                       
   end revert_from_history;
   
   function is_automated_list(
