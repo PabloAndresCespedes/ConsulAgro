@@ -1,0 +1,184 @@
+create or replace package FINI053 is
+
+  -- Author  : PROGRAMACION7
+  -- Created : 22/06/2022 10:07:31
+  -- Purpose : Cancelacion de documentos
+  
+  /*
+    Author  : @PabloACespedes \(^-^)/
+    Created : 22/06/2022 10:24:35
+    retorna tipos movimientos de cancelacion de recibo, se basa
+    en FIN_CONFIGURACION
+  */
+  procedure get_tipo_mov_cancel(
+    in_empresa           in  number,
+    out_nc_emitido       out number,
+    out_nc_recibido      out number,
+    out_adel_cli_emitido out number,
+    out_adel_prov_rec    out number
+  );
+  
+  procedure is_valid_fecha_operacion(
+    in_fecha_op  varchar2,
+    in_user      varchar2,
+    in_empresa   number 
+  );
+  
+  -- 22/06/2022 11:08:25 @PabloACespedes \(^-^)/
+  -- retorna si el tipo mov. es EMISION o RECEPCION (E or R)
+  function get_tipo_mov_er(
+    in_tipo_mov in number,
+    in_empresa  in number
+  )return varchar2;
+
+  -- 22/06/2022 11:54:12 @PabloACespedes \(^-^)/
+  -- Comprueba si el operador tiene la marca de SI en GENM017 Operacion HABILITAR MES FINANZAS
+  function operador_hab_mes_finanzas(
+    in_user varchar2,
+    in_emp  number
+  )return boolean;
+  
+end FINI053;
+/
+create or replace package body FINI053 is
+
+  procedure get_tipo_mov_cancel(
+    in_empresa           in  number,
+    out_nc_emitido       out number,
+    out_nc_recibido      out number,
+    out_adel_cli_emitido out number,
+    out_adel_prov_rec    out number
+  )as
+  begin
+    select
+      conf_recibo_cncr_emit , 
+      conf_recibo_cncr_rec ,  
+      conf_recibo_cadcli_emit , 
+      conf_recibo_cadpro_rec 
+    into 
+      out_nc_emitido,
+      out_nc_recibido,
+      out_adel_cli_emitido,
+      out_adel_prov_rec
+    from fin_configuracion
+    where conf_empr = in_empresa;
+  
+  end get_tipo_mov_cancel;
+  
+  procedure is_valid_fecha_operacion(
+    in_fecha_op  varchar2,
+    in_user      varchar2,
+    in_empresa   number 
+  )as
+  l_date    date;
+  l_cod_operador number;
+  l_per_act_inicio date;
+  l_per_act_fin date;
+  l_per_sig_inicio date;
+  l_per_sig_fin date;
+  l_periodo_exception date;
+
+  co_format constant varchar2(10 char) := 'dd/mm/yyyy';
+  
+  e_no_valid exception;
+  begin
+    if l_date is null then
+      Raise_application_error(-20000, 'La fecha debe contener un valor'); 
+    end if;
+  
+    <<v_date>>
+    begin
+      l_date := to_date(in_fecha_op, co_format);
+    exception
+      when others then
+        raise e_no_valid;
+    end v_date;
+    
+    <<fecha_config>>
+    begin
+      select 
+       c.conf_per_act_ini,
+       c.conf_per_act_fin,
+       c.conf_per_sgte_ini,
+       c.conf_per_sgte_fin
+       into
+       l_per_act_inicio,
+       l_per_act_fin,
+       l_per_sig_inicio,
+       l_per_sig_fin
+       from fin_configuracion c
+       where c.conf_empr = in_empresa;
+    exception
+      when no_data_found then
+        Raise_application_error(-20000, 'Sin configuraci'||chr(243)||'n de fechas de periodos');
+      when too_many_rows then
+        Raise_application_error(-20000, 'Existe m'||chr(225)||'s de 1 configuraci'||chr(243)||'n de fechas de periodos para la empresa');
+    end fecha_config;
+    
+    if operador_hab_mes_finanzas(in_user => in_user, in_emp => in_empresa) then
+      if not in_fecha_op between l_per_act_inicio and l_per_act_fin 
+      and not in_fecha_op between l_per_sig_inicio and l_per_sig_fin  
+      then
+        Raise_application_error(-20000, 'La fecha de operación debe estar comprendida del'||l_per_act_inicio||' al '||l_per_act_fin||
+        ' o del '||l_per_sig_inicio||' al '||l_per_sig_fin
+        );
+      end if;
+    else
+      if not in_fecha_op between l_per_sig_inicio and l_per_sig_fin then
+        Raise_application_error(-20000, 'La fecha de operación debe estar comprendida del'||l_per_sig_inicio||' al '||l_per_sig_fin);
+      end if;
+    end if;
+    
+  exception
+    when e_no_valid then
+      Raise_application_error(-20000, 'Fecha no v'||chr(225)||'lida');
+  end is_valid_fecha_operacion;
+  
+  function operador_hab_mes_finanzas(
+    in_user varchar2,
+    in_emp  number
+  )return boolean is
+  l_tipo gen_operador_empresa.opem_ind_hab_mes_act%type;
+  l_cod_oper number;
+  begin
+    select o.oper_codigo
+    into l_cod_oper
+    from gen_operador o
+    where o.oper_login = in_user
+    and   o.oper_empr  = in_emp;
+    
+    select nvl(e.opem_ind_hab_mes_act, 'N')
+    into l_tipo 
+    from gen_operador_empresa e
+    where e.opem_oper = l_cod_oper
+    and   e.opem_empr = in_emp;
+    
+    if l_tipo = 'S' then
+      return true;
+    elsif l_tipo = 'N' then
+      return false;
+    end if;
+  exception
+    when no_data_found then
+      return false;
+  end operador_hab_mes_finanzas;
+  function get_tipo_mov_er(
+    in_tipo_mov in number,
+    in_empresa  in number
+  )return varchar2 is
+  l_r varchar2(1 char);
+  begin
+    select t.tmov_ind_er
+    into l_r
+    from gen_tipo_mov t
+    where t.tmov_codigo = in_tipo_mov
+    and   t.tmov_empr   = in_empresa;
+    
+    return l_r;
+  exception
+    when no_data_found then
+      NULL;
+  end ;
+  
+end FINI053;
+/

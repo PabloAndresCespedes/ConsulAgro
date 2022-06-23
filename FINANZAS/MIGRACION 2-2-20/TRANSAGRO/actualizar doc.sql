@@ -1,0 +1,147 @@
+PROCEDURE PP_ACTUAL_DOC IS
+
+
+
+V_CLAVE_PADRE NUMBER := NULL; --siempre se graban dos documentos y cuando se anula se tiene que anular tambien el relacionado
+V_MON NUMBER := NULL;
+
+
+
+BEGIN
+--buscar el primer registro marcado porque FIN_DOCUMENTO
+--hereda varios campos de este registro
+GO_BLOCK('BCNCR');
+FIRST_RECORD;
+LOOP
+IF :BCNCR.S_MARCA IS NOT NULL
+AND :BCNCR.S_MARCA <> '.' THEN
+EXIT;
+END IF;
+IF :SYSTEM.LAST_RECORD = 'TRUE' THEN
+PL_EXHIBIR_ERROR('Se debe cancelar una NC/Adelanto !');
+END IF;
+NEXT_RECORD;
+END LOOP;
+
+
+
+--grabar el primer registro en FIN_DOCUMENTO referente al pago
+--de la NC/Adelanto
+GO_BLOCK('BFINDOC');
+FIRST_RECORD;
+-----------------------------------------------------------------------------------------
+IF :BFINDOC.DOC_CLAVE IS NULL THEN
+PP_SEQ_NRO_DOCU;
+END IF;
+:BFINDOC.DOC_EMPR := :PARAMETER.P_EMPRESA;
+:BFINDOC.DOC_SUC := :PARAMETER.P_SUCURSAL;
+
+:BFINDOC.DOC_TIPO_MOV := :BDOC.DOC_TIPO_MOV;
+
+:BFINDOC.DOC_TIPO_SALDO := :BDOC.DOC_TIPO_SALDO;
+:BFINDOC.DOC_MON := :BCNCR.W_MON;
+:BFINDOC.DOC_PROV := :BDOC.DOC_PROV;
+:BFINDOC.DOC_CLI := :BDOC.DOC_CLI;
+:BFINDOC.DOC_NRO_DOC := :BCNCR.DOC_NRO_DOC;
+:BFINDOC.DOC_FEC_OPER := :BDOC.DOC_FEC_OPER;
+:BFINDOC.DOC_FEC_DOC := :BDOC.DOC_FEC_OPER;
+:BFINDOC.DOC_NETO_EXEN_MON := :BCNCR.S_IMP_PAGO_MON;
+:BFINDOC.DOC_NETO_EXEN_LOC := :BCNCR.S_IMP_PAGO_LOC;
+:BFINDOC.DOC_NETO_GRAV_MON := 0;
+:BFINDOC.DOC_NETO_GRAV_LOC := 0;
+:BFINDOC.DOC_IVA_MON := 0;
+:BFINDOC.DOC_IVA_LOC := 0;
+:BFINDOC.DOC_BRUTO_EXEN_MON := :BCNCR.S_IMP_PAGO_MON;
+:BFINDOC.DOC_BRUTO_EXEN_LOC := :BCNCR.S_IMP_PAGO_LOC;
+:BFINDOC.DOC_BRUTO_GRAV_MON := 0;
+:BFINDOC.DOC_BRUTO_GRAV_LOC := 0;
+:BFINDOC.DOC_OPERADOR := :BDOC.DOC_OPERADOR;
+:BFINDOC.DOC_LOGIN := USER;
+:BFINDOC.DOC_FEC_GRAB := SYSDATE;
+:BFINDOC.DOC_SIST := SUBSTR(:PARAMETER.P_PROGRAMA, 1,3);
+:BFINDOC.DOC_CLAVE_SCLI := :PARAMETER.P_SUB_CLI;
+
+V_CLAVE_PADRE := :BFINDOC.DOC_CLAVE; --para mas abajo mover al segundo registro de fin_documento
+
+--grabar el segundo registro en FIN_DOCUMENTO referente al pago
+--de la Factura/ND
+NEXT_RECORD;
+:BFINDOC.DOC_NETO_EXEN_MON := 0;
+:BFINDOC.DOC_NETO_EXEN_LOC := 0;
+
+
+
+--buscar la moneda y hallar los totales del bloque BCFACT
+GO_BLOCK('BCFACT');
+FIRST_RECORD;
+LOOP
+IF :BCFACT.S_MARCA IS NOT NULL
+AND :BCFACT.S_MARCA <> '.' THEN
+IF V_MON IS NULL THEN
+V_MON := :BCFACT.W_MON;
+ELSE
+IF :BCFACT.W_MON <> V_MON THEN
+PL_EXHIBIR_ERROR('Todas las Facturas/NotasDB seleccionadas deben ser de la misma moneda!');
+END IF;
+END IF;
+:BFINDOC.DOC_NETO_EXEN_MON := :BFINDOC.DOC_NETO_EXEN_MON + :BCFACT.S_IMP_PAGO_MON;
+:BFINDOC.DOC_NETO_EXEN_LOC := :BFINDOC.DOC_NETO_EXEN_LOC + :BCFACT.S_IMP_PAGO_LOC;
+END IF;
+IF :SYSTEM.LAST_RECORD = 'TRUE' THEN
+IF V_MON IS NULL THEN
+PL_EXHIBIR_ERROR('Se debe cancelar por lo menos una Factura o NotaDebito !');
+END IF;
+EXIT;
+END IF;
+NEXT_RECORD;
+END LOOP;
+-----------------------------------------------------------------------------------------
+IF :BFINDOC.DOC_CLAVE IS NULL THEN
+PP_SEQ_NRO_DOCU;
+END IF;
+-----------------------------------------------------------------------------------------
+:BFINDOC.DOC_EMPR := :PARAMETER.P_EMPRESA;
+:BFINDOC.DOC_SUC := :PARAMETER.P_SUCURSAL;
+-----------------------------------------------------------------------------------------
+IF :BDOC.DOC_TIPO_MOV IN (:BCONF.CONF_RECIBO_CNCR_EMIT,
+:BCONF.CONF_RECIBO_CADCLI_EMIT)
+THEN
+:BFINDOC.DOC_TIPO_MOV := :BCONF.CONF_RECIBO_CAN_FAC_EMIT;
+
+ELSIF :BDOC.DOC_TIPO_MOV = :BCONF.CONF_RECIBO_CNCR_REC_H THEN
+:BFINDOC.DOC_TIPO_MOV := :BCONF.CONF_RECIBO_CAN_FAC_REC_H;
+
+ELSE
+:BFINDOC.DOC_TIPO_MOV := :BCONF.CONF_RECIBO_CAN_FAC_REC;
+
+END IF;
+-----------------------------------------------------------------------------------------
+:BFINDOC.DOC_TIPO_SALDO:= :BDOC.DOC_TIPO_SALDO;
+:BFINDOC.DOC_MON := V_MON;
+:BFINDOC.DOC_PROV := :BDOC.DOC_PROV;
+:BFINDOC.DOC_CLI := :BDOC.DOC_CLI;
+:BFINDOC.DOC_NRO_DOC := :BCNCR.DOC_NRO_DOC;
+:BFINDOC.DOC_FEC_OPER := :BDOC.DOC_FEC_OPER;
+:BFINDOC.DOC_FEC_DOC := :BDOC.DOC_FEC_OPER;
+:BFINDOC.DOC_NETO_GRAV_MON := 0;
+:BFINDOC.DOC_NETO_GRAV_LOC := 0;
+:BFINDOC.DOC_IVA_MON := 0;
+:BFINDOC.DOC_IVA_LOC := 0;
+:BFINDOC.DOC_BRUTO_EXEN_MON := :BFINDOC.DOC_NETO_EXEN_MON;
+:BFINDOC.DOC_BRUTO_EXEN_LOC := :BFINDOC.DOC_NETO_EXEN_LOC;
+:BFINDOC.DOC_BRUTO_GRAV_MON := 0;
+:BFINDOC.DOC_BRUTO_GRAV_LOC := 0;
+:BFINDOC.DOC_OPERADOR := :BDOC.DOC_OPERADOR;
+:BFINDOC.DOC_LOGIN := USER;
+:BFINDOC.DOC_FEC_GRAB := SYSDATE;
+:BFINDOC.DOC_SIST := SUBSTR(:PARAMETER.P_PROGRAMA, 1,3);
+:BFINDOC.DOC_CLAVE_SCLI := :PARAMETER.P_SUB_CLI;
+
+--siempre se graban dos documentos y eso es transparante para el
+--operador. De tal forma, si se anula el uno,
+--también debe anularse el docum. relacionado. Por ello se guarda
+--la clave del documento relacionado en doc_clave_padre del primer
+--documento.
+:BFINDOC.DOC_CLAVE_PADRE := V_CLAVE_PADRE;
+-----------------------------------------------------------------------------------------
+END;
