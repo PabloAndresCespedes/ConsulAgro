@@ -39,6 +39,42 @@ create or replace package FINI053 is
     in_empresa   number 
   );
   
+  -- 23/06/2022 11:44:42 @PabloACespedes \(^-^)/
+  -- generar consulta a partir de los filtros brindados
+  -- trunca todo lo que se encuentra en la sesion del usuario
+  -- genera de nuevo
+  procedure generate_query(
+    in_fecha_op  date,
+    in_cliente   number,
+    in_proveedor number,
+    in_tipo_mov  number,
+    in_mnd       number,
+    in_empresa   number,
+    in_suc       number,
+    in_user      varchar2,
+    in_ind_er    varchar2, -- E || R Emitidos o Recibidos
+    out_error    out varchar2  -- retorna NO si no hubo inconvenientes, sino el texto
+  );
+  
+  -- 24/06/2022 10:57:53 @PabloACespedes \(^-^)/
+  -- Genera los registros de cancelacion en fin_documento
+  procedure confirm(
+    in_user varchar2
+  );
+ 
+  -- 24/06/2022 14:54:49 @PabloACespedes \(^-^)/
+  -- agrega pagos
+  procedure add_pago(
+    in_clave_fc_nc  number,
+    in_clave_recibo number,
+    in_vencimiento  date,
+    in_fecha_op     date,
+    in_importe_mon  number,
+    in_importe_loc  number,
+    in_empresa      number,
+    in_user         varchar2
+  );
+  
   -- 22/06/2022 11:08:25 @PabloACespedes \(^-^)/
   -- retorna si el tipo mov. es EMISION o RECEPCION (E or R)
   function get_tipo_mov_er(
@@ -53,25 +89,37 @@ create or replace package FINI053 is
     in_emp  number
   )return boolean;
   
-  -- 23/06/2022 11:44:42 @PabloACespedes \(^-^)/
-  -- generar consulta a partir de los filtros brindados
-  -- trunca todo lo que se encuentra en la sesion del usuario
-  -- genera de nuevo
-  procedure generate_query(
-    in_fecha_op  date,
-    in_cliente   number,
-    in_proveedor number,
-    in_tipo_mov  number,
-    in_mnd       number,
-    in_empresa   number,
-    in_user      varchar2,
-    in_ind_er    varchar2, -- E || R Emitidos o Recibidos
-    out_error    out varchar2  -- retorna NO si no hubo inconvenientes, sino el texto
-  );
+  -- 24/06/2022 10:25:48 @PabloACespedes \(^-^)/
+  -- agrega el registro de recibo, solo importe, ya que es exenta el registro
+  function add_fin_documento(
+    in_empresa     number,
+    in_user        varchar2,
+    in_fecha       date,
+    in_suc         number,
+    in_tipo_mov    number,
+    in_moneda      number,
+    in_cliente     number,
+    in_proveedor   number,
+    in_nro_doc     number,
+    in_importe_mon number,
+    in_importe_loc number,
+    in_clave_padre number,
+    in_clave_scli  number
+  )return fin_documento.doc_clave%type;
+  
 end FINI053;
 /
 create or replace package body FINI053 is
-
+  co_col_nc_emision constant varchar2(10 char) := 'NC_EMISION';
+  co_col_fc_emision constant varchar2(10 char) := 'FC_EMISION';
+  co_col_nc_rec     constant varchar2(11 char) := 'NC_RECIBIDO';
+  co_col_fc_rec     constant varchar2(11 char) := 'FC_RECIBIDO';
+  co_col_filtros    constant varchar2(7  char) := 'FILTROS';
+  
+  
+  co_emision  constant varchar2(1 char) := 'E';
+  co_recibido constant varchar2(1 char) := 'R';
+  
   procedure get_tipo_mov_cancel(
     in_empresa                  in  number,
     out_recibo_nc_emitido       out number,
@@ -164,6 +212,11 @@ create or replace package body FINI053 is
     <<v_date>>
     begin
       l_date := to_date(in_fecha_op, co_format);
+      
+      if l_date is not null then
+        null;
+      end if;
+      
     exception
       when others then
         raise e_no_valid;
@@ -216,18 +269,11 @@ create or replace package body FINI053 is
     in_tipo_mov  number,
     in_mnd       number,
     in_empresa   number,
+    in_suc       number,
     in_user      varchar2,
     in_ind_er    varchar2, -- E || R Emitidos o Recibidos
     out_error    out varchar2  -- retorna NO si no hubo inconvenientes, sino el texto
-  )as
-  co_col_nc_emision constant varchar2(10 char) := 'NC_EMISION';
-  co_col_fc_emision constant varchar2(10 char) := 'FC_EMISION';
-  co_col_nc_rec     constant varchar2(11 char) := 'NC_RECIBIDO';
-  co_col_fc_rec     constant varchar2(11 char) := 'FC_RECIBIDO';
-  
-  co_emision  constant varchar2(1 char) := 'E';
-  co_recibido constant varchar2(1 char) := 'R';
-  
+  )as  
   l_recibo_nc_emitido number;
   l_recibo_nc_recibido number;
   l_recibo_adel_cli_emitido number;
@@ -334,7 +380,8 @@ create or replace package body FINI053 is
                    onclick="$s(''P158_NC_DOC_SELECT'', '||doc_nro_doc||'); 
                             $s(''P158_NC_MONTO_SELECT'', '||case when doc_mon <> 1 then cuo_saldo_loc else cuo_saldo_mon end||')
                    "'
-                  ) seleccionar 
+                  ) seleccionar,
+                  doc_tipo_mov
           from gen_moneda,
                fin_documento,
                fin_cuota
@@ -378,7 +425,10 @@ create or replace package body FINI053 is
             p_c012            => i.mon_simbolo,
             p_c013            => i.mon_tasa_vta,
             p_c014            => i.doc_clave_scli,
-            p_c015            => i.seleccionar
+            p_c015            => i.seleccionar,
+            p_c016            => in_fecha_op,
+            p_c017            => i.doc_tipo_mov,
+            p_c018            => in_mnd
          );
         end loop f_nc_emit;
         
@@ -405,7 +455,8 @@ create or replace package body FINI053 is
                            onclick="$s(''P158_FC_DOC_SELECT'', '||doc_nro_doc||'); 
                                     $s(''P158_FC_MONTO_SELECT'', '||case when doc_mon <> 1 then cuo_saldo_loc else cuo_saldo_mon end||')
                            "'
-                          ) seleccionar 
+                          ) seleccionar,
+                         doc_tipo_mov
                   from gen_moneda,
                        fin_documento,
                        fin_cuota
@@ -448,7 +499,10 @@ create or replace package body FINI053 is
             p_c012 => f.mon_simbolo,
             p_c013 => f.mon_tasa_vta,
             p_c014 => f.doc_clave_scli,
-            p_c015 => f.seleccionar
+            p_c015 => f.seleccionar,
+            p_c016 => in_fecha_op,
+            p_c017 => f.doc_tipo_mov,
+            p_c018 => in_mnd
           );
         end loop f_fc_emit;
         
@@ -469,7 +523,8 @@ create or replace package body FINI053 is
                         mon_dec_imp ,
                         mon_dec_tasa ,
                         mon_simbolo ,
-                        mon_tasa_vta
+                        mon_tasa_vta,
+                        doc_tipo_mov
           from  gen_moneda tm ,
                 fin_documento fa ,
                 fin_cuota cu
@@ -516,7 +571,11 @@ create or replace package body FINI053 is
             p_c010            => i.mon_dec_imp,
             p_c011            => i.mon_dec_tasa,
             p_c012            => i.mon_simbolo,
-            p_c013            => i.mon_tasa_vta
+            p_c013            => i.mon_tasa_vta,
+            -- hace un salto para estandarizar todas las colecciones
+            p_c016            => in_fecha_op,
+            p_c017            => i.doc_tipo_mov,
+            p_c018            => in_mnd
          );
         end loop f_nc_recibido;
       
@@ -535,8 +594,8 @@ create or replace package body FINI053 is
                           mon_dec_imp,
                           mon_dec_tasa,
                           mon_simbolo,
-                          mon_tasa_vta
-
+                          mon_tasa_vta,
+                          doc_tipo_mov
                   from  gen_moneda,
                         fin_documento,
                         fin_cuota
@@ -580,7 +639,11 @@ create or replace package body FINI053 is
               p_c010            => j.mon_dec_imp,
               p_c011            => j.mon_dec_tasa,
               p_c012            => j.mon_simbolo,
-              p_c013            => j.mon_tasa_vta
+              p_c013            => j.mon_tasa_vta,
+              -- hace un salto para estandarizar todas las colecciones
+              p_c016            => in_fecha_op,
+              p_c017            => j.doc_tipo_mov,
+              p_c018            => in_mnd
            );
          end loop f_fc_recibida;
       
@@ -588,12 +651,331 @@ create or replace package body FINI053 is
         Raise_application_error(-20000, 'Es necesario seleccionar el Tipo de movimiento ');
     end case option_ind;
     
+    -- registra el filtro aplicado
+    apex_collection.create_or_truncate_collection( p_collection_name => co_col_filtros );
+        
+    apex_collection.add_member(
+        p_collection_name => co_col_filtros,
+        p_c001            => in_empresa,
+        p_c002            => in_fecha_op,
+        p_c003            => in_tipo_mov,
+        p_c004            => in_mnd,
+        p_c005            => nvl(in_cliente, in_proveedor),
+        p_c006            => in_ind_er,
+        p_c007            => in_suc
+     );
+         
     out_error := 'NO';
+    
   exception
     when others then
       out_error := replace(sqlerrm, 'ORA-20000:', '');
   end generate_query;
   
+  procedure confirm(
+    in_user varchar2
+  ) as
+    l_ind_er             varchar2(1 char);
+
+    l_nc_doc_select number;
+    l_fc_cre_doc_select number;
+    
+    l_tmv_fc_cr_emit number;
+    l_tmv_canc_fc_cr_emit number;
+    
+    l_tmv_nc_cr_emit number;
+    l_tmv_nc_cr_cancel_emit number;
+    
+    l_fin_doc_father number;
+    l_fin_doc_child  number;
+    
+    l_fecha_op_insert date;
+    l_emp_insert      number;
+    l_suc_insert      number;
+    l_cli_or_prov_insert number;
+    l_mnd_insert         number;
+    
+    l_nc_nro_doc     number;
+    l_nc_importe_mon number;
+    l_nc_importe_loc number;
+    l_nc_clave_scli  number;
+    l_nc_tipo_mov    number;
+    l_nc_doc_clave   number;
+    l_nc_venc        date;
+    
+    l_fc_nro_doc     number;
+    l_fc_importe_mon number;
+    l_fc_importe_loc number;
+    l_fc_clave_scli  number;
+    l_fc_tipo_mov    number;
+    l_fc_doc_clave   number;
+    l_fc_venc        date;
+
+    l_tipo_mov_filter number;
+    l_error_comodin   varchar2(4000);
+    
+  begin
+    <<get_data_col_filters>>
+    begin
+      select 
+        to_number(c.c001)             empresa,
+        to_date(c.c002, 'dd/mm/yyyy') fecha_operacion,
+        to_number(c.c005)             cliente_o_proveedor,
+        c.c006                        indicador_er, -- Emitido o Recibido
+        c.c007                        sucursal,
+        c.c004                        moneda,
+        c.c003                        tipo_movimiento
+      into
+        l_emp_insert,
+        l_fecha_op_insert,
+        l_cli_or_prov_insert,
+        l_ind_er,
+        l_suc_insert,
+        l_mnd_insert,
+        l_tipo_mov_filter
+      from apex_collections c
+      where c.collection_name = co_col_filtros;
+    exception
+      when no_data_found then
+        Raise_application_error(-20000, 'Consulte antes de confirmar');
+      when too_many_rows then
+        Raise_application_error(-20000, 'Muchos filtros guardados, cierre sesi'||chr(243)||'n e intente nuevamente');
+    end get_data_col_filters;
+ 
+    <<c_options>>
+    case
+      when l_ind_er = co_emision then
+        <<conf_comprobantes_emitidos>>
+        begin
+          select
+            f.conf_fact_cr_emit        tmv_fc_cr_emit,
+            f.conf_recibo_can_fac_emit tmv_canc_fc_cr_emit,
+           
+            f.conf_nota_cr_emit        tmv_nc_cr_emit,
+            f.conf_recibo_cncr_emit    tmv_nc_cr_cancel_emit
+          into
+            l_tmv_fc_cr_emit,
+            l_tmv_canc_fc_cr_emit,
+            
+            l_tmv_nc_cr_emit,
+            l_tmv_nc_cr_cancel_emit
+            
+          from fin_configuracion f
+          where f.conf_empr = l_emp_insert;
+        exception
+          when no_data_found then
+            Raise_application_error(-20000, 'Configuraci'||chr(243)||'n de documentos de emisi'||chr(243)||'n no encontrada');
+          when too_many_rows then
+            Raise_application_error(-20000, 'La empresa contiene muchas configuraciones de cancelaci'||chr(243)||'n de comprobantes de emisi'||chr(243)||'n');
+        end conf_comprobantes_emitidos;
+        
+        /* 
+        Se agregan 2 documentos, con sus pagos correspondientes. Toma el monto de la NC:
+        La NC debe tener monto menor o igual al del al Factura Credito
+         1. el recibo de cancelacion de la factura credito
+         2. el recibo de la cancelacion de la nota de credito con la clave padre
+        */ 
+         
+        -- items ocultos en APEX
+        l_nc_doc_select     := ap.v(p_item => 'P158_NC_DOC_SELECT');
+        l_fc_cre_doc_select := ap.v(p_item => 'P158_FC_DOC_SELECT');
+        
+        if l_nc_doc_select is null or l_fc_cre_doc_select is null then
+          Raise_application_error(-20000, 'Seleccione una Nota de cr'||chr(233)||'dito y luego relacione eso a una Factura');
+        end if;
+        
+        <<v_coins>>
+        declare
+         l_c number;
+        begin
+          select to_number(c.c009)
+          into l_c
+          from apex_collections c
+          where c.collection_name = co_col_nc_emision
+          and   to_number(c.c001) in ( l_nc_doc_select, l_fc_cre_doc_select)
+          group by to_number(c.c009);
+        exception
+          when too_many_rows then
+            Raise_application_error(-20000, 'Solo puede cancelar documentos entre monedas del mismo tipo');
+        end v_coins;
+           
+        <<nc_doc>>
+        begin
+          select 
+            c.c001                        doc_nro_doc,
+            ut.getnc(i_numero => c.c006)  cuo_saldo_mon,
+            ut.getnc(i_numero => c.c007)  cuo_saldo_loc,
+            c.c014                        doc_clave_scli,
+            to_number(c.c017)             doc_tipo_mov,
+            to_date(c.c004, 'dd/mm/yyyy') vencimiento,
+            c.c008                        doc_clave
+          into
+            l_nc_nro_doc,
+            l_nc_importe_mon,
+            l_nc_importe_loc,
+            l_nc_clave_scli,
+            l_nc_tipo_mov,
+            l_nc_venc,
+            l_nc_doc_clave
+          from apex_collections c
+          where c.collection_name = co_col_nc_emision
+          and   to_number(c.c001) = l_nc_doc_select;
+        end nc_doc;
+         
+        if l_nc_tipo_mov <> l_tmv_nc_cr_emit then
+          Raise_application_error(-20000, 'No se puede cancelar este documento, tipo de movimiento no configurado');
+        end if;
+        
+        l_fin_doc_father :=
+        add_fin_documento(in_empresa     => l_emp_insert,
+                          in_user        => in_user,
+                          in_fecha       => l_fecha_op_insert,
+                          in_suc         => l_suc_insert,
+                          in_tipo_mov    => l_tmv_nc_cr_cancel_emit,
+                          in_moneda      => l_mnd_insert,
+                          in_cliente     => l_cli_or_prov_insert,
+                          in_proveedor   => null,
+                          in_nro_doc     => l_nc_nro_doc,
+                          in_importe_mon => l_nc_importe_mon,
+                          in_importe_loc => l_nc_importe_loc,
+                          in_clave_padre => null,
+                          in_clave_scli  => l_nc_clave_scli
+                          );
+
+        <<fc_doc>>
+        begin
+          select 
+            c.c001                       doc_nro_doc,
+            ut.getnc(i_numero => c.c006) cuo_saldo_mon,
+            ut.getnc(i_numero => c.c007) cuo_saldo_loc,
+            c.c014                       doc_clave_scli,
+            to_number(c.c017)            doc_tipo_mov,
+            to_date(c.c004, 'dd/mm/yyyy') vencimiento,
+            c.c008                        doc_clave
+          into
+            l_fc_nro_doc     ,
+            l_fc_importe_mon ,
+            l_fc_importe_loc ,
+            l_fc_clave_scli  ,
+            l_fc_tipo_mov    ,
+            l_fc_venc        ,
+            l_fc_doc_clave
+          from apex_collections c
+          where c.collection_name = co_col_fc_emision
+          and   to_number(c.c001) = l_fc_cre_doc_select;
+        end fc_doc;
+         
+        if l_fc_tipo_mov <> l_tmv_fc_cr_emit then
+          Raise_application_error(-20000, 'No se puede cancelar este documento, tipo de movimiento no configurado');
+        end if;
+        
+        if l_mnd_insert = 1 then -- GS
+          if l_nc_importe_loc > l_fc_importe_loc then
+            Raise_application_error(-20000, 'Importe de la NC no puede ser mayor al de la factura');
+          end if;
+        else
+          if l_nc_importe_mon > l_fc_importe_mon then
+            Raise_application_error(-20000, 'Importe de la NC no puede ser mayor al de la factura');
+          end if;
+        end if;
+        
+        l_fin_doc_child :=
+        add_fin_documento(in_empresa     => l_emp_insert,
+                          in_user        => in_user,
+                          in_fecha       => l_fecha_op_insert,
+                          in_suc         => l_suc_insert,
+                          in_tipo_mov    => l_tmv_canc_fc_cr_emit,
+                          in_moneda      => l_mnd_insert,
+                          in_cliente     => l_cli_or_prov_insert,
+                          in_proveedor   => null,
+                          in_nro_doc     => l_fc_nro_doc,
+                          in_importe_mon => l_nc_importe_mon, --> monto de la NC
+                          in_importe_loc => l_nc_importe_loc, --> monto de la NC
+                          in_clave_padre => l_fin_doc_father,
+                          in_clave_scli  => l_fc_clave_scli
+                          );
+        
+        -- add pago NC
+        add_pago(in_clave_fc_nc  => l_nc_doc_clave,
+                 in_clave_recibo => l_fin_doc_father,
+                 in_vencimiento  => l_nc_venc,
+                 in_fecha_op     => l_fecha_op_insert,
+                 in_importe_mon  => l_nc_importe_mon,
+                 in_importe_loc  => l_nc_importe_loc,
+                 in_empresa      => l_emp_insert,
+                 in_user         => in_user
+         );
+        
+        -- add pago FC, el importe es igual para el recibo de factura
+        -- por la regla de negocio, solo se puede aplicar a 1 factura la NC
+        add_pago(in_clave_fc_nc  => l_fc_doc_clave,
+                 in_clave_recibo => l_fin_doc_child,
+                 in_vencimiento  => l_fc_venc,
+                 in_fecha_op     => l_fecha_op_insert,
+                 in_importe_mon  => l_nc_importe_mon, --> monto de la NC
+                 in_importe_loc  => l_nc_importe_loc, --> monto de la NC
+                 in_empresa      => l_emp_insert,
+                 in_user         => in_user
+         );
+         
+        if l_fin_doc_child is not null then         
+          generate_query(
+           in_fecha_op  => l_fecha_op_insert,
+           in_cliente   => l_cli_or_prov_insert,
+           in_proveedor => null,
+           in_tipo_mov  => l_tipo_mov_filter,
+           in_mnd       => l_mnd_insert,
+           in_empresa   => l_emp_insert,
+           in_suc       => l_suc_insert,
+           in_user      => in_user,
+           in_ind_er    => l_ind_er,
+           out_error    => l_error_comodin
+          );
+        end if;
+                       
+      when l_ind_er = co_recibido then
+        null;
+      else
+        Raise_application_error(-20000, 'Opci'||chr(243)||'n no v'||chr(225)||'lida. Tipo de Movimiento no es ni Emisi'||chr(243)||'n y Recibido');
+    end case c_options;
+    
+    
+  end confirm;
+  
+  procedure add_pago(
+    in_clave_fc_nc  number,
+    in_clave_recibo number,
+    in_vencimiento  date,
+    in_fecha_op     date,
+    in_importe_mon  number,
+    in_importe_loc  number,
+    in_empresa      number,
+    in_user         varchar2
+  )as
+  begin
+    insert into fin_pago(pag_clave_doc,
+                         pag_fec_vto,
+                         pag_clave_pago,
+                         pag_fec_pago,
+                         pag_imp_loc,
+                         pag_imp_mon,
+                         pag_login,
+                         pag_fec_grab,
+                         pag_sist,
+                         pag_empr
+                        )
+                values(in_clave_fc_nc,
+                       in_vencimiento,
+                       in_clave_recibo,
+                       in_fecha_op,
+                       in_importe_loc,
+                       in_importe_mon,
+                       in_user,
+                       current_date,
+                       'FIN',
+                       in_empresa
+                       );
+  end add_pago;
   
   function operador_hab_mes_finanzas(
     in_user varchar2,
@@ -641,5 +1023,99 @@ create or replace package body FINI053 is
       return 'I'; --> indefinido, para comodin no+
   end get_tipo_mov_er;
  
+  function add_fin_documento(
+    in_empresa     number,
+    in_user        varchar2,
+    in_fecha       date,
+    in_suc         number,
+    in_tipo_mov    number,
+    in_moneda      number,
+    in_cliente     number,
+    in_proveedor   number,
+    in_nro_doc     number,
+    in_importe_mon number,
+    in_importe_loc number,
+    in_clave_padre number,
+    in_clave_scli  number
+  )return fin_documento.doc_clave%type is
+  
+  l_new_fin_doc_clave fin_documento.doc_clave%type;
+  l_tipo_saldo        gen_tipo_mov.tmov_tipo%type;
+  begin
+    <<get_tipo_saldo>>
+    begin
+      select t.tmov_tipo
+      into l_tipo_saldo
+      from gen_tipo_mov t
+      where t.tmov_codigo = in_tipo_mov
+      and   t.tmov_empr   = in_empresa;
+    exception
+      when no_Data_found then
+       Raise_application_error(-20000, 'No se encuentra el tipo saldo del movimiento');   
+    end get_tipo_saldo;
+    
+    l_new_fin_doc_clave := FIN_SEQ_DOC_NEXTVAL;
+    
+    insert into fin_documento(doc_clave,
+                              doc_empr,
+                              doc_suc,
+                              doc_tipo_mov,
+                              doc_tipo_saldo,
+                              doc_mon,
+                              doc_prov,
+                              doc_cli,
+                              doc_nro_doc,
+                              doc_fec_oper,
+                              doc_fec_doc,
+                              doc_neto_exen_mon,
+                              doc_neto_exen_loc,
+                              doc_neto_grav_mon,
+                              doc_neto_grav_loc,
+                              doc_iva_mon,
+                              doc_iva_loc,
+                              doc_bruto_exen_mon,
+                              doc_bruto_exen_loc,
+                              doc_bruto_grav_mon,
+                              doc_bruto_grav_loc,
+                              doc_operador,
+                              doc_login,
+                              doc_fec_grab,
+                              doc_sist,
+                              doc_clave_scli,
+                              doc_clave_padre
+                              )
+                       values(l_new_fin_doc_clave,
+                              in_empresa,
+                              in_suc,
+                              in_tipo_mov,
+                              l_tipo_saldo,
+                              in_moneda,
+                              in_proveedor,
+                              in_cliente,
+                              in_nro_doc,
+                              in_fecha,
+                              in_fecha,
+                              in_importe_mon,
+                              in_importe_loc,
+                              0,
+                              0,
+                              0,
+                              0,
+                              in_importe_mon,
+                              in_importe_loc,
+                              0,
+                              0,
+                              2,
+                              in_user,
+                              current_date,
+                              'FIN',
+                              in_clave_scli,
+                              in_clave_padre
+                              );
+                              
+     return l_new_fin_doc_clave;
+     
+  end add_fin_documento;
+  
 end FINI053;
 /
