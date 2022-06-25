@@ -5,6 +5,25 @@ create or replace package FINI053 is
   -- Purpose : Cancelacion de documentos
   
   /*
+    CASOS DE USO:
+     - Se tiene una Factura Emitida a un cliente, a la vez una Nota de Credito.
+     Con el programa 2-2-20 permite seleccionar un comprobante con otro
+     luego esto saldara cada documento.
+     - Sucede lo mismo con facturas y notas de credito recibidas del proveedor.
+     
+     Preparado para estos tipos de documentos:
+      - FACTURA EMITIDA
+      - NOTAS DEBITOS EMITIDOS
+      - NOTA DE CREDITO EMITIDA
+      - ADELANTOS EMITIDOS
+      
+      - FACTURAS RECIBIDAS
+      - NOTAS DEBITOS RECIBIDAS
+      - NOTA DE CREDITO RECIBIDAS
+      - ADELANTOS RECIBIDAS
+  */
+  
+  /*
     Author  : @PabloACespedes \(^-^)/
     Created : 22/06/2022 10:24:35
     retorna tipos movimientos de cancelacion de recibo, se basa
@@ -787,7 +806,7 @@ create or replace package body FINI053 is
         <<conf_comprobantes_emitidos>>
         begin
           select
-            -- EMITIDOS:
+            -- EMITIDOS AL CLIENTE
             -- FC
             fx.conf_fact_cr_emit        tmv_fc_cr_emit,
             fx.conf_recibo_can_fac_emit tmv_canc_fc_cr_emit,
@@ -804,8 +823,8 @@ create or replace package body FINI053 is
             fx.conf_adelanto_cli        tmv_adel_cliente_emit,
             fx.conf_recibo_cadcli_emit  tmv_adel_cliente_canc_emit,
             
-            -- RECIBIDOS
-            -- NC PROV 
+            -- RECIBIDOS DEL PROVEEDOR
+            -- NC REC 
             fx.conf_nota_cr_rec         tmv_nc_cr_rec,
             fx.conf_recibo_cncr_rec     tmv_cancel_nc_cr_rec,
             

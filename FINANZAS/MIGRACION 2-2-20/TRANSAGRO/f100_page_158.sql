@@ -28,7 +28,7 @@ prompt APPLICATION 100 - FINANZAS
 -- Application Export:
 --   Application:     100
 --   Name:            FINANZAS
---   Date and Time:   17:04 Thursday June 23, 2022
+--   Date and Time:   10:49 Saturday June 25, 2022
 --   Exported By:     PABLOC
 --   Flashback:       0
 --   Export Type:     Page Export
@@ -64,7 +64,7 @@ wwv_flow_api.create_page(
 '.cursor{cursor:pointer;}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'PABLOC'
-,p_last_upd_yyyymmddhh24miss=>'20220623170312'
+,p_last_upd_yyyymmddhh24miss=>'20220625103948'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(680406194289347453)
@@ -82,12 +82,11 @@ wwv_flow_api.create_page_plug(
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(680406523903347456)
-,p_plug_name=>'Reporte NCR_REC_CUR'
+,p_plug_name=>unistr('Notas de Cr\00E9dito/ Adelantos Recibidas')
 ,p_region_name=>'NCR_REC'
 ,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_api.id(119469003339420663)
-,p_plug_display_sequence=>70
-,p_plug_new_grid_row=>false
+,p_plug_display_sequence=>90
 ,p_plug_display_point=>'BODY'
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -96,19 +95,25 @@ wwv_flow_api.create_page_plug(
 '    c.c002 doc_fec_doc,',
 '    c.c003 doc_suc,',
 '    c.c004 cuo_fec_vto,',
-'    c.c005 cuo_imp_mon,',
-'    c.c006 cuo_saldo_mon,',
-'    c.c007 cuo_saldo_loc,',
+'    to_number(c.c005) cuo_imp_mon,',
+'    to_number(c.c006) cuo_saldo_mon,',
+'    to_number(c.c007) cuo_saldo_loc,',
 '    c.c008 cuo_clave_doc,',
 '    c.c009 doc_mon,',
 '    c.c010 mon_dec_imp,',
 '    c.c011 mon_dec_tasa,',
 '    c.c012 mon_simbolo,',
-'    c.c013 mon_tasa_vta',
+'    c.c013 mon_tasa_vta,',
+unistr('    -- solo edita el tag HTML agregando un atributo de CHECKED, para que indique al usuario que est\00E1 seleccionado'),
+'    case when c.c001 = :P158_NCR_DOC_SELECT then ',
+'       replace(c.c015, ''cursor"'', ''cursor" CHECKED'')',
+'    else',
+'    c.c015',
+'    end seleccionar',
 'from apex_collections c',
 'where c.collection_name = ''NC_RECIBIDO'''))
 ,p_plug_source_type=>'NATIVE_IR'
-,p_ajax_items_to_submit=>'P_EMPRESA,P158_F_PROVEEDOR,P158_F_FECHA_OPERACION,P158_F_TIPO_MOV,P158_IND_ER,P158_F_MONEDA'
+,p_ajax_items_to_submit=>'P158_NCR_DOC_SELECT'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_prn_content_disposition=>'ATTACHMENT'
 ,p_prn_document_header=>'APEX'
@@ -117,7 +122,7 @@ wwv_flow_api.create_page_plug(
 ,p_prn_width=>297
 ,p_prn_height=>210
 ,p_prn_orientation=>'HORIZONTAL'
-,p_prn_page_header=>'Reporte NCR_REC_CUR'
+,p_prn_page_header=>unistr('Notas de Cr\00E9dito/ Adelantos Recibidas')
 ,p_prn_page_header_font_color=>'#000000'
 ,p_prn_page_header_font_family=>'Helvetica'
 ,p_prn_page_header_font_weight=>'normal'
@@ -155,108 +160,140 @@ wwv_flow_api.create_worksheet(
 ,p_internal_uid=>681433451486168903
 );
 wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(681434649839168915)
-,p_db_column_name=>'MON_SIMBOLO'
-,p_display_order=>120
-,p_column_identifier=>'L'
-,p_column_label=>'Mon Simbolo'
+ p_id=>wwv_flow_api.id(681643249635043933)
+,p_db_column_name=>'CUO_CLAVE_DOC'
+,p_display_order=>10
+,p_column_identifier=>'U'
+,p_column_label=>'Cuota'
 ,p_column_type=>'STRING'
+,p_column_alignment=>'RIGHT'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(681642562786043926)
 ,p_db_column_name=>'DOC_NRO_DOC'
-,p_display_order=>130
+,p_display_order=>20
 ,p_column_identifier=>'N'
-,p_column_label=>'Doc Nro Doc'
+,p_column_label=>'Documento'
 ,p_column_type=>'STRING'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(681642656697043927)
 ,p_db_column_name=>'DOC_FEC_DOC'
-,p_display_order=>140
+,p_display_order=>30
 ,p_column_identifier=>'O'
-,p_column_label=>'Doc Fec Doc'
-,p_column_type=>'STRING'
-);
-wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(681642798882043928)
-,p_db_column_name=>'DOC_SUC'
-,p_display_order=>150
-,p_column_identifier=>'P'
-,p_column_label=>'Doc Suc'
+,p_column_label=>unistr('Emisi\00F3n')
 ,p_column_type=>'STRING'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(681642857206043929)
 ,p_db_column_name=>'CUO_FEC_VTO'
-,p_display_order=>160
+,p_display_order=>40
 ,p_column_identifier=>'Q'
-,p_column_label=>'Cuo Fec Vto'
+,p_column_label=>'Venc'
 ,p_column_type=>'STRING'
 );
 wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(681642984355043930)
-,p_db_column_name=>'CUO_IMP_MON'
-,p_display_order=>170
-,p_column_identifier=>'R'
-,p_column_label=>'Cuo Imp Mon'
+ p_id=>wwv_flow_api.id(681642798882043928)
+,p_db_column_name=>'DOC_SUC'
+,p_display_order=>50
+,p_column_identifier=>'P'
+,p_column_label=>'Suc'
 ,p_column_type=>'STRING'
 );
 wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(681643045389043931)
-,p_db_column_name=>'CUO_SALDO_MON'
-,p_display_order=>180
-,p_column_identifier=>'S'
-,p_column_label=>'Cuo Saldo Mon'
+ p_id=>wwv_flow_api.id(681434649839168915)
+,p_db_column_name=>'MON_SIMBOLO'
+,p_display_order=>60
+,p_column_identifier=>'L'
+,p_column_label=>'Mon'
 ,p_column_type=>'STRING'
-);
-wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(681643180763043932)
-,p_db_column_name=>'CUO_SALDO_LOC'
-,p_display_order=>190
-,p_column_identifier=>'T'
-,p_column_label=>'Cuo Saldo Loc'
-,p_column_type=>'STRING'
-);
-wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(681643249635043933)
-,p_db_column_name=>'CUO_CLAVE_DOC'
-,p_display_order=>200
-,p_column_identifier=>'U'
-,p_column_label=>'Cuo Clave Doc'
-,p_column_type=>'STRING'
+,p_column_alignment=>'CENTER'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(681643363134043934)
 ,p_db_column_name=>'DOC_MON'
-,p_display_order=>210
+,p_display_order=>100
 ,p_column_identifier=>'V'
 ,p_column_label=>'Doc Mon'
 ,p_column_type=>'STRING'
+,p_display_text_as=>'HIDDEN'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(681643400724043935)
 ,p_db_column_name=>'MON_DEC_IMP'
-,p_display_order=>220
+,p_display_order=>110
 ,p_column_identifier=>'W'
 ,p_column_label=>'Mon Dec Imp'
 ,p_column_type=>'STRING'
+,p_display_text_as=>'HIDDEN'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(681643527728043936)
 ,p_db_column_name=>'MON_DEC_TASA'
-,p_display_order=>230
+,p_display_order=>120
 ,p_column_identifier=>'X'
 ,p_column_label=>'Mon Dec Tasa'
 ,p_column_type=>'STRING'
+,p_display_text_as=>'HIDDEN'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(681643682481043937)
 ,p_db_column_name=>'MON_TASA_VTA'
-,p_display_order=>240
+,p_display_order=>130
 ,p_column_identifier=>'Y'
 ,p_column_label=>'Mon Tasa Vta'
 ,p_column_type=>'STRING'
+,p_display_text_as=>'HIDDEN'
+);
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(682111854409099710)
+,p_db_column_name=>'CUO_IMP_MON'
+,p_display_order=>140
+,p_column_identifier=>'Z'
+,p_column_label=>'Importe'
+,p_column_type=>'NUMBER'
+,p_column_alignment=>'RIGHT'
+,p_format_mask=>'999G999G999G999G999G999G990'
+);
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(682111935805099711)
+,p_db_column_name=>'CUO_SALDO_MON'
+,p_display_order=>150
+,p_column_identifier=>'AA'
+,p_column_label=>'Saldo Mon'
+,p_column_type=>'NUMBER'
+,p_column_alignment=>'RIGHT'
+,p_format_mask=>'999G999G999G999G999G999G990'
+);
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(682112016609099712)
+,p_db_column_name=>'CUO_SALDO_LOC'
+,p_display_order=>160
+,p_column_identifier=>'AB'
+,p_column_label=>'Saldo Loc'
+,p_column_type=>'NUMBER'
+,p_column_alignment=>'RIGHT'
+,p_format_mask=>'999G999G999G999G999G999G990'
+);
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(682112747482099719)
+,p_db_column_name=>'SELECCIONAR'
+,p_display_order=>170
+,p_column_identifier=>'AC'
+,p_column_label=>'Seleccionar'
+,p_allow_sorting=>'N'
+,p_allow_filtering=>'N'
+,p_allow_highlighting=>'N'
+,p_allow_ctrl_breaks=>'N'
+,p_allow_aggregations=>'N'
+,p_allow_computations=>'N'
+,p_allow_charting=>'N'
+,p_allow_group_by=>'N'
+,p_allow_pivot=>'N'
+,p_allow_hide=>'N'
+,p_column_type=>'STRING'
+,p_display_text_as=>'WITHOUT_MODIFICATION'
+,p_column_alignment=>'CENTER'
 );
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(681449012195252101)
@@ -265,17 +302,15 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'6814491'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'MON_SIMBOLO:CUO_CLAVE_DOC:CUO_FEC_VTO:CUO_IMP_MON:CUO_SALDO_LOC:CUO_SALDO_MON:DOC_FEC_DOC:DOC_MON:DOC_NRO_DOC:DOC_SUC:MON_DEC_IMP:MON_DEC_TASA:MON_TASA_VTA:'
+,p_report_columns=>'CUO_CLAVE_DOC:DOC_NRO_DOC:DOC_FEC_DOC:CUO_FEC_VTO:DOC_SUC:MON_SIMBOLO:CUO_IMP_MON:CUO_SALDO_LOC:CUO_SALDO_MON::SELECCIONAR'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(680406946128347456)
-,p_plug_name=>unistr('Notas de Cr\00E9ditos Emitidas')
+,p_plug_name=>unistr('Notas de Cr\00E9ditos Emitidas / Adelanto Cliente')
 ,p_region_name=>'NCR_EMI'
 ,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_api.id(119469003339420663)
-,p_plug_display_sequence=>60
-,p_plug_new_grid_row=>false
-,p_plug_new_grid_column=>false
+,p_plug_display_sequence=>110
 ,p_plug_display_point=>'BODY'
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -294,6 +329,7 @@ wwv_flow_api.create_page_plug(
 '    c.c012 mon_simbolo,',
 '    c.c013 mon_tasa_vta,',
 '    c.c014 doc_clave_scli,',
+unistr('    -- solo edita el tag HTML agregando un atributo de CHECKED, para que indique al usuario que est\00E1 seleccionado'),
 '    case when c.c001 = :P158_NC_DOC_SELECT then ',
 '       replace(c.c015, ''cursor"'', ''cursor" CHECKED'')',
 '    else',
@@ -302,7 +338,7 @@ wwv_flow_api.create_page_plug(
 'from apex_collections c',
 'where c.collection_name = ''NC_EMISION'''))
 ,p_plug_source_type=>'NATIVE_IR'
-,p_ajax_items_to_submit=>'P_EMPRESA,P158_F_FECHA_OPERACION,P158_F_CLIENTE,P158_F_TIPO_MOV,P158_F_MONEDA,P158_IND_ER,P158_NC_DOC_SELECT'
+,p_ajax_items_to_submit=>'P158_NC_DOC_SELECT'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_prn_content_disposition=>'ATTACHMENT'
 ,p_prn_document_header=>'APEX'
@@ -311,7 +347,7 @@ wwv_flow_api.create_page_plug(
 ,p_prn_width=>297
 ,p_prn_height=>210
 ,p_prn_orientation=>'HORIZONTAL'
-,p_prn_page_header=>unistr('Notas de Cr\00E9ditos Emitidas')
+,p_prn_page_header=>unistr('Notas de Cr\00E9ditos Emitidas / Adelanto Cliente')
 ,p_prn_page_header_font_color=>'#000000'
 ,p_prn_page_header_font_family=>'Helvetica'
 ,p_prn_page_header_font_weight=>'normal'
@@ -456,7 +492,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'CUO_SALDO_MON'
 ,p_display_order=>170
 ,p_column_identifier=>'AC'
-,p_column_label=>'Saldo'
+,p_column_label=>'Saldo Mon'
 ,p_column_type=>'NUMBER'
 ,p_column_alignment=>'RIGHT'
 ,p_format_mask=>'999G999G999G999G999G999G990'
@@ -492,12 +528,14 @@ wwv_flow_api.create_worksheet_rpt(
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(681437364305168942)
-,p_plug_name=>'Reporte FACT_REC_CUR'
+,p_plug_name=>'Facturas/Not. Deb. Recibidas'
 ,p_region_name=>'FACT_REC'
 ,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
 ,p_component_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_api.id(119469003339420663)
-,p_plug_display_sequence=>50
+,p_plug_display_sequence=>100
+,p_plug_new_grid_row=>false
+,p_plug_new_grid_column=>false
 ,p_plug_display_point=>'BODY'
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -506,18 +544,25 @@ wwv_flow_api.create_page_plug(
 '    c.c002 doc_fec_doc,',
 '    c.c003 doc_suc,',
 '    c.c004 cuo_fec_vto,',
-'    c.c005 cuo_imp_mon,',
-'    c.c006 cuo_saldo_mon,',
-'    c.c007 cuo_saldo_loc,',
+'    to_number(c.c005) cuo_imp_mon,',
+'    to_number(c.c006) cuo_saldo_mon,',
+'    to_number(c.c007) cuo_saldo_loc,',
 '    c.c008 cuo_clave_doc,',
 '    c.c009 doc_mon,',
 '    c.c010 mon_dec_imp,',
 '    c.c011 mon_dec_tasa,',
 '    c.c012 mon_simbolo,',
-'    c.c013 mon_tasa_vta',
+'    c.c013 mon_tasa_vta,',
+unistr('    -- solo edita el tag HTML agregando un atributo de CHECKED, para que indique al usuario que est\00E1 seleccionado'),
+'    case when c.c001 = :P158_FCR_DOC_SELECT then ',
+'       replace(c.c015, ''cursor"'', ''cursor" CHECKED'')',
+'    else',
+'     c.c015',
+'    end seleccionar',
 'from apex_collections c',
 'where c.collection_name = ''FC_RECIBIDO'''))
 ,p_plug_source_type=>'NATIVE_IR'
+,p_ajax_items_to_submit=>'P158_FCR_DOC_SELECT'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_prn_content_disposition=>'ATTACHMENT'
 ,p_prn_document_header=>'APEX'
@@ -526,7 +571,7 @@ wwv_flow_api.create_page_plug(
 ,p_prn_width=>297
 ,p_prn_height=>210
 ,p_prn_orientation=>'HORIZONTAL'
-,p_prn_page_header=>'Reporte FACT_REC_CUR'
+,p_prn_page_header=>'Facturas/Not. Deb. Recibidas'
 ,p_prn_page_header_font_color=>'#000000'
 ,p_prn_page_header_font_family=>'Helvetica'
 ,p_prn_page_header_font_weight=>'normal'
@@ -564,109 +609,139 @@ wwv_flow_api.create_worksheet(
 ,p_internal_uid=>681437460011168943
 );
 wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(681474856489657205)
-,p_db_column_name=>'MON_SIMBOLO'
-,p_display_order=>130
-,p_column_identifier=>'L'
-,p_column_label=>'Mon Simbolo'
+ p_id=>wwv_flow_api.id(681644530317043946)
+,p_db_column_name=>'DOC_MON'
+,p_display_order=>10
+,p_column_identifier=>'V'
+,p_column_label=>'Mon'
 ,p_column_type=>'STRING'
 ,p_display_text_as=>'HIDDEN'
 );
 wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(681644630613043947)
+,p_db_column_name=>'MON_DEC_IMP'
+,p_display_order=>20
+,p_column_identifier=>'W'
+,p_column_label=>'Mon Dec Imp'
+,p_column_type=>'STRING'
+,p_display_text_as=>'HIDDEN'
+);
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(681644728901043948)
+,p_db_column_name=>'MON_DEC_TASA'
+,p_display_order=>30
+,p_column_identifier=>'X'
+,p_column_label=>'Mon Dec Tasa'
+,p_column_type=>'STRING'
+,p_display_text_as=>'HIDDEN'
+);
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(681644842903043949)
+,p_db_column_name=>'MON_TASA_VTA'
+,p_display_order=>40
+,p_column_identifier=>'Y'
+,p_column_label=>'Mon Tasa Vta'
+,p_column_type=>'STRING'
+,p_display_text_as=>'HIDDEN'
+);
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(681644420068043945)
+,p_db_column_name=>'CUO_CLAVE_DOC'
+,p_display_order=>50
+,p_column_identifier=>'U'
+,p_column_label=>'Cuota'
+,p_column_type=>'STRING'
+);
+wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(681643796326043938)
 ,p_db_column_name=>'DOC_NRO_DOC'
-,p_display_order=>140
+,p_display_order=>60
 ,p_column_identifier=>'N'
-,p_column_label=>'Doc Nro Doc'
+,p_column_label=>'Documento'
 ,p_column_type=>'STRING'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(681643823340043939)
 ,p_db_column_name=>'DOC_FEC_DOC'
-,p_display_order=>150
+,p_display_order=>70
 ,p_column_identifier=>'O'
-,p_column_label=>'Doc Fec Doc'
-,p_column_type=>'STRING'
-);
-wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(681643945793043940)
-,p_db_column_name=>'DOC_SUC'
-,p_display_order=>160
-,p_column_identifier=>'P'
-,p_column_label=>'Doc Suc'
+,p_column_label=>unistr('Emisi\00F3n')
 ,p_column_type=>'STRING'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(681644017914043941)
 ,p_db_column_name=>'CUO_FEC_VTO'
-,p_display_order=>170
+,p_display_order=>80
 ,p_column_identifier=>'Q'
-,p_column_label=>'Cuo Fec Vto'
+,p_column_label=>'Venc'
 ,p_column_type=>'STRING'
 );
 wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(681644103748043942)
+ p_id=>wwv_flow_api.id(681643945793043940)
+,p_db_column_name=>'DOC_SUC'
+,p_display_order=>90
+,p_column_identifier=>'P'
+,p_column_label=>'Suc'
+,p_column_type=>'STRING'
+);
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(681474856489657205)
+,p_db_column_name=>'MON_SIMBOLO'
+,p_display_order=>100
+,p_column_identifier=>'L'
+,p_column_label=>'Mon'
+,p_column_type=>'STRING'
+,p_column_alignment=>'CENTER'
+);
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(682112143710099713)
 ,p_db_column_name=>'CUO_IMP_MON'
-,p_display_order=>180
-,p_column_identifier=>'R'
-,p_column_label=>'Cuo Imp Mon'
-,p_column_type=>'STRING'
+,p_display_order=>110
+,p_column_identifier=>'Z'
+,p_column_label=>'Importe'
+,p_column_type=>'NUMBER'
+,p_column_alignment=>'RIGHT'
+,p_format_mask=>'999G999G999G999G999G999G990'
 );
 wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(681644262791043943)
+ p_id=>wwv_flow_api.id(682112268121099714)
 ,p_db_column_name=>'CUO_SALDO_MON'
-,p_display_order=>190
-,p_column_identifier=>'S'
-,p_column_label=>'Cuo Saldo Mon'
-,p_column_type=>'STRING'
+,p_display_order=>120
+,p_column_identifier=>'AA'
+,p_column_label=>'Saldo Mon'
+,p_column_type=>'NUMBER'
+,p_column_alignment=>'RIGHT'
+,p_format_mask=>'999G999G999G999G999G999G990'
 );
 wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(681644373742043944)
+ p_id=>wwv_flow_api.id(682112325466099715)
 ,p_db_column_name=>'CUO_SALDO_LOC'
-,p_display_order=>200
-,p_column_identifier=>'T'
-,p_column_label=>'Cuo Saldo Loc'
-,p_column_type=>'STRING'
+,p_display_order=>130
+,p_column_identifier=>'AB'
+,p_column_label=>'Saldo Loc'
+,p_column_type=>'NUMBER'
+,p_column_alignment=>'RIGHT'
+,p_format_mask=>'999G999G999G999G999G999G990'
 );
 wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(681644420068043945)
-,p_db_column_name=>'CUO_CLAVE_DOC'
-,p_display_order=>210
-,p_column_identifier=>'U'
-,p_column_label=>'Cuo Clave Doc'
+ p_id=>wwv_flow_api.id(682114055819099732)
+,p_db_column_name=>'SELECCIONAR'
+,p_display_order=>140
+,p_column_identifier=>'AC'
+,p_column_label=>'Seleccionar'
+,p_allow_sorting=>'N'
+,p_allow_filtering=>'N'
+,p_allow_highlighting=>'N'
+,p_allow_ctrl_breaks=>'N'
+,p_allow_aggregations=>'N'
+,p_allow_computations=>'N'
+,p_allow_charting=>'N'
+,p_allow_group_by=>'N'
+,p_allow_pivot=>'N'
+,p_allow_hide=>'N'
 ,p_column_type=>'STRING'
-);
-wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(681644530317043946)
-,p_db_column_name=>'DOC_MON'
-,p_display_order=>220
-,p_column_identifier=>'V'
-,p_column_label=>'Doc Mon'
-,p_column_type=>'STRING'
-);
-wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(681644630613043947)
-,p_db_column_name=>'MON_DEC_IMP'
-,p_display_order=>230
-,p_column_identifier=>'W'
-,p_column_label=>'Mon Dec Imp'
-,p_column_type=>'STRING'
-);
-wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(681644728901043948)
-,p_db_column_name=>'MON_DEC_TASA'
-,p_display_order=>240
-,p_column_identifier=>'X'
-,p_column_label=>'Mon Dec Tasa'
-,p_column_type=>'STRING'
-);
-wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(681644842903043949)
-,p_db_column_name=>'MON_TASA_VTA'
-,p_display_order=>250
-,p_column_identifier=>'Y'
-,p_column_label=>'Mon Tasa Vta'
-,p_column_type=>'STRING'
+,p_display_text_as=>'WITHOUT_MODIFICATION'
+,p_column_alignment=>'CENTER'
 );
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(681505004045747717)
@@ -675,16 +750,16 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'6815051'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'CUO_CLAVE_DOC:CUO_FEC_VTO:CUO_IMP_MON:CUO_SALDO_LOC:CUO_SALDO_MON:DOC_FEC_DOC:DOC_MON:DOC_NRO_DOC:DOC_SUC:MON_DEC_IMP:MON_DEC_TASA:MON_TASA_VTA:'
+,p_report_columns=>'CUO_CLAVE_DOC:DOC_NRO_DOC:DOC_FEC_DOC:CUO_FEC_VTO:DOC_SUC:MON_SIMBOLO:CUO_IMP_MON:CUO_SALDO_LOC:CUO_SALDO_MON::SELECCIONAR'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(681475604596657213)
-,p_plug_name=>'Facturas Emitidas'
+,p_plug_name=>unistr('Facturas Emitidas / Notas D\00E9bito')
 ,p_region_name=>'FACT_EMI'
 ,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
 ,p_component_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_api.id(119469003339420663)
-,p_plug_display_sequence=>80
+,p_plug_display_sequence=>120
 ,p_plug_new_grid_row=>false
 ,p_plug_new_grid_column=>false
 ,p_plug_display_point=>'BODY'
@@ -705,6 +780,7 @@ wwv_flow_api.create_page_plug(
 '    c.c012 mon_simbolo,',
 '    c.c013 mon_tasa_vta,',
 '    c.c014 doc_clave_scli,',
+unistr('    -- solo edita el tag HTML agregando un atributo de CHECKED, para que indique al usuario que est\00E1 seleccionado'),
 '    case when c.c001 = :P158_FC_DOC_SELECT then ',
 '       replace(c.c015, ''cursor"'', ''cursor" CHECKED'')',
 '    else',
@@ -722,7 +798,7 @@ wwv_flow_api.create_page_plug(
 ,p_prn_width=>297
 ,p_prn_height=>210
 ,p_prn_orientation=>'HORIZONTAL'
-,p_prn_page_header=>'Facturas Emitidas'
+,p_prn_page_header=>unistr('Facturas Emitidas / Notas D\00E9bito')
 ,p_prn_page_header_font_color=>'#000000'
 ,p_prn_page_header_font_family=>'Helvetica'
 ,p_prn_page_header_font_weight=>'normal'
@@ -928,6 +1004,19 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_02=>'HTML'
 );
 wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(681735244538287250)
+,p_button_sequence=>60
+,p_button_plug_id=>wwv_flow_api.id(681478285173657239)
+,p_button_name=>'CONFIRM'
+,p_button_action=>'DEFINED_BY_DA'
+,p_button_template_options=>'#DEFAULT#:t-Button--large:t-Button--success:t-Button--stretch:t-Button--padTop'
+,p_button_template_id=>wwv_flow_api.id(119514454130420685)
+,p_button_image_alt=>'Confirmar'
+,p_button_position=>'BODY'
+,p_warn_on_unsaved_changes=>null
+,p_grid_new_row=>'Y'
+);
+wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(679345725988094246)
 ,p_button_sequence=>70
 ,p_button_plug_id=>wwv_flow_api.id(680406194289347453)
@@ -948,7 +1037,7 @@ wwv_flow_api.create_page_button(
 ,p_button_plug_id=>wwv_flow_api.id(680406946128347456)
 ,p_button_name=>'RESET_NC_EMIT'
 ,p_button_action=>'DEFINED_BY_DA'
-,p_button_template_options=>'#DEFAULT#'
+,p_button_template_options=>'#DEFAULT#:t-Button--warning'
 ,p_button_template_id=>wwv_flow_api.id(119514454130420685)
 ,p_button_image_alt=>'Borrar'
 ,p_button_position=>'RIGHT_OF_IR_SEARCH_BAR'
@@ -960,12 +1049,39 @@ wwv_flow_api.create_page_button(
 ,p_button_plug_id=>wwv_flow_api.id(681475604596657213)
 ,p_button_name=>'RESET_FC_EMIT'
 ,p_button_action=>'DEFINED_BY_DA'
-,p_button_template_options=>'#DEFAULT#'
+,p_button_template_options=>'#DEFAULT#:t-Button--warning'
 ,p_button_template_id=>wwv_flow_api.id(119514454130420685)
 ,p_button_image_alt=>'Borrar'
 ,p_button_position=>'RIGHT_OF_IR_SEARCH_BAR'
 ,p_warn_on_unsaved_changes=>null
 );
+wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(682114146258099733)
+,p_button_sequence=>10
+,p_button_plug_id=>wwv_flow_api.id(680406523903347456)
+,p_button_name=>'RESET_NCR'
+,p_button_action=>'DEFINED_BY_DA'
+,p_button_template_options=>'#DEFAULT#:t-Button--warning'
+,p_button_template_id=>wwv_flow_api.id(119514454130420685)
+,p_button_image_alt=>'Borrar'
+,p_button_position=>'RIGHT_OF_IR_SEARCH_BAR'
+,p_warn_on_unsaved_changes=>null
+);
+wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(682114522373099737)
+,p_button_sequence=>10
+,p_button_plug_id=>wwv_flow_api.id(681437364305168942)
+,p_button_name=>'RESET_FCR'
+,p_button_action=>'DEFINED_BY_DA'
+,p_button_template_options=>'#DEFAULT#:t-Button--warning'
+,p_button_template_id=>wwv_flow_api.id(119514454130420685)
+,p_button_image_alt=>'Borrar'
+,p_button_position=>'RIGHT_OF_IR_SEARCH_BAR'
+,p_warn_on_unsaved_changes=>null
+);
+end;
+/
+begin
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(679343404536094223)
 ,p_name=>'P158_F_FECHA_OPERACION'
@@ -1026,7 +1142,6 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P158_F_PROVEEDOR'
 ,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_api.id(680406194289347453)
-,p_use_cache_before_default=>'NO'
 ,p_prompt=>'Proveedor'
 ,p_display_as=>'NATIVE_POPUP_LOV'
 ,p_named_lov=>'LOV_PROVEEDORES'
@@ -1044,7 +1159,6 @@ wwv_flow_api.create_page_item(
 ,p_begin_on_new_line=>'N'
 ,p_field_template=>wwv_flow_api.id(119514024289420685)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--large'
-,p_is_persistent=>'N'
 ,p_lov_display_extra=>'YES'
 ,p_attribute_01=>'DIALOG'
 ,p_attribute_02=>'FIRST_ROWSET'
@@ -1081,7 +1195,6 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P158_F_CLIENTE'
 ,p_item_sequence=>30
 ,p_item_plug_id=>wwv_flow_api.id(680406194289347453)
-,p_use_cache_before_default=>'NO'
 ,p_prompt=>'Cliente'
 ,p_display_as=>'NATIVE_POPUP_LOV'
 ,p_named_lov=>'LOV_CLIENTES_FINI'
@@ -1100,7 +1213,6 @@ wwv_flow_api.create_page_item(
 ,p_begin_on_new_field=>'N'
 ,p_field_template=>wwv_flow_api.id(119514024289420685)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--large'
-,p_is_persistent=>'N'
 ,p_lov_display_extra=>'YES'
 ,p_attribute_01=>'DIALOG'
 ,p_attribute_02=>'FIRST_ROWSET'
@@ -1110,9 +1222,6 @@ wwv_flow_api.create_page_item(
 ,p_attribute_08=>'650'
 ,p_attribute_09=>'650'
 );
-end;
-/
-begin
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(679344622794094235)
 ,p_name=>'P158_IND_ER'
@@ -1126,7 +1235,8 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P158_DT_TOTAL_NC'
 ,p_item_sequence=>30
 ,p_item_plug_id=>wwv_flow_api.id(681478285173657239)
-,p_prompt=>unistr('Total Nota Cr\00E9dito')
+,p_use_cache_before_default=>'NO'
+,p_prompt=>unistr('Total Nota Cr\00E9dito/Adel.')
 ,p_source=>'0'
 ,p_source_type=>'STATIC'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
@@ -1142,7 +1252,8 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P158_DT_DOCUMENTO_NC'
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_api.id(681478285173657239)
-,p_prompt=>'Documento NC'
+,p_use_cache_before_default=>'NO'
+,p_prompt=>'Documento NC/Adelanto'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
 ,p_field_template=>wwv_flow_api.id(119514036831420685)
 ,p_item_template_options=>'#DEFAULT#'
@@ -1156,7 +1267,8 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P158_DT_DOCUMENTO_FC'
 ,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_api.id(681478285173657239)
-,p_prompt=>'Documento FC'
+,p_use_cache_before_default=>'NO'
+,p_prompt=>'Documento Factura/Not. Deb.'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
 ,p_begin_on_new_line=>'N'
 ,p_field_template=>wwv_flow_api.id(119514036831420685)
@@ -1171,7 +1283,8 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P158_DT_TOTAL_FC'
 ,p_item_sequence=>40
 ,p_item_plug_id=>wwv_flow_api.id(681478285173657239)
-,p_prompt=>'Total Factura'
+,p_use_cache_before_default=>'NO'
+,p_prompt=>'Total Factura/Not. Deb.'
 ,p_source=>'0'
 ,p_source_type=>'STATIC'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
@@ -1198,9 +1311,7 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P158_NC_DOC_SELECT'
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_api.id(680406946128347456)
-,p_use_cache_before_default=>'NO'
 ,p_display_as=>'NATIVE_HIDDEN'
-,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
 );
 wwv_flow_api.create_page_item(
@@ -1208,9 +1319,7 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P158_NC_MONTO_SELECT'
 ,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_api.id(680406946128347456)
-,p_use_cache_before_default=>'NO'
 ,p_display_as=>'NATIVE_HIDDEN'
-,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
 );
 wwv_flow_api.create_page_item(
@@ -1218,9 +1327,7 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P158_FC_DOC_SELECT'
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_api.id(681475604596657213)
-,p_use_cache_before_default=>'NO'
 ,p_display_as=>'NATIVE_HIDDEN'
-,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
 );
 wwv_flow_api.create_page_item(
@@ -1228,9 +1335,49 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P158_FC_MONTO_SELECT'
 ,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_api.id(681475604596657213)
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'N'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(682110926261099701)
+,p_name=>'P158_ERROR_CONFIRM'
+,p_item_sequence=>50
+,p_item_plug_id=>wwv_flow_api.id(681478285173657239)
 ,p_use_cache_before_default=>'NO'
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_is_persistent=>'N'
+,p_attribute_01=>'N'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(682112584187099717)
+,p_name=>'P158_NCR_DOC_SELECT'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_api.id(680406523903347456)
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(682112649755099718)
+,p_name=>'P158_NCR_MONTO_SELECT'
+,p_item_sequence=>20
+,p_item_plug_id=>wwv_flow_api.id(680406523903347456)
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(682113392241099725)
+,p_name=>'P158_FCR_DOC_SELECT'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_api.id(681437364305168942)
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'N'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(682113442063099726)
+,p_name=>'P158_FCR_MONTO_SELECT'
+,p_item_sequence=>20
+,p_item_plug_id=>wwv_flow_api.id(681437364305168942)
+,p_display_as=>'NATIVE_HIDDEN'
 ,p_attribute_01=>'N'
 );
 wwv_flow_api.create_page_da_event(
@@ -1282,19 +1429,20 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'begin',
-'fini053.generate_query(',
-'  in_fecha_op  => :P158_F_FECHA_OPERACION,',
-'  in_cliente   => :P158_F_CLIENTE,',
-'  in_proveedor => :P158_F_PROVEEDOR,',
-'  in_tipo_mov  => :P158_F_TIPO_MOV,',
-'  in_mnd       => :P158_F_MONEDA,',
-'  in_empresa   => :P_EMPRESA,',
-'  in_ind_er    => :P158_IND_ER,',
-'  in_user      => :app_user,',
-'  out_error => :P158_ERROR_TEXT',
-'  );',
+'    fini053.generate_query(',
+'      in_fecha_op  => :P158_F_FECHA_OPERACION,',
+'      in_cliente   => :P158_F_CLIENTE,',
+'      in_proveedor => :P158_F_PROVEEDOR,',
+'      in_tipo_mov  => :P158_F_TIPO_MOV,',
+'      in_mnd       => :P158_F_MONEDA,',
+'      in_empresa   => :P_EMPRESA,',
+'      in_suc       => :P_SUCURSAL,',
+'      in_ind_er    => :P158_IND_ER,',
+'      in_user      => :app_user,',
+'      out_error    => :P158_ERROR_TEXT',
+'    );',
 'end;'))
-,p_attribute_02=>'P158_F_FECHA_OPERACION,P158_F_CLIENTE,P158_F_PROVEEDOR,P158_F_TIPO_MOV,P158_F_MONEDA,P_EMPRESA,P158_IND_ER'
+,p_attribute_02=>'P158_F_FECHA_OPERACION,P158_F_CLIENTE,P158_F_PROVEEDOR,P158_F_TIPO_MOV,P158_F_MONEDA,P_EMPRESA,P158_IND_ER,P_SUCURSAL'
 ,p_attribute_03=>'P158_ERROR_TEXT'
 ,p_attribute_04=>'N'
 ,p_wait_for_result=>'Y'
@@ -1307,7 +1455,7 @@ wwv_flow_api.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_CLEAR'
 ,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P158_NC_DOC_SELECT,P158_FC_DOC_SELECT,P158_NC_MONTO_SELECT,P158_FC_MONTO_SELECT'
+,p_affected_elements=>'P158_NC_DOC_SELECT,P158_FC_DOC_SELECT,P158_NC_MONTO_SELECT,P158_FC_MONTO_SELECT,P158_NCR_DOC_SELECT,P158_NCR_MONTO_SELECT,P158_FCR_DOC_SELECT,P158_FCR_MONTO_SELECT'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(679345240730094241)
@@ -1394,9 +1542,37 @@ wwv_flow_api.create_page_da_action(
 ,p_attribute_01=>'apex.item(''P158_DT_DOCUMENTO_NC'').setValue($v(''P158_NC_DOC_SELECT''))'
 );
 wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(682112888922099720)
+,p_name=>'refresh region CHECKED NCR'
+,p_event_sequence=>60
+,p_triggering_element_type=>'ITEM'
+,p_triggering_element=>'P158_NCR_DOC_SELECT'
+,p_bind_type=>'bind'
+,p_bind_event_type=>'change'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(682112943323099721)
+,p_event_id=>wwv_flow_api.id(682112888922099720)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_REFRESH'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_api.id(680406523903347456)
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(682113089560099722)
+,p_event_id=>wwv_flow_api.id(682112888922099720)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'apex.item(''P158_DT_DOCUMENTO_NC'').setValue($v(''P158_NCR_DOC_SELECT''))'
+);
+wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(681731520889287213)
 ,p_name=>'Refresh region FC'
-,p_event_sequence=>60
+,p_event_sequence=>70
 ,p_triggering_element_type=>'ITEM'
 ,p_triggering_element=>'P158_FC_DOC_SELECT'
 ,p_bind_type=>'bind'
@@ -1422,9 +1598,37 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_region_id=>wwv_flow_api.id(681475604596657213)
 );
 wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(682113542084099727)
+,p_name=>'Refresh region FCR'
+,p_event_sequence=>80
+,p_triggering_element_type=>'ITEM'
+,p_triggering_element=>'P158_FCR_DOC_SELECT'
+,p_bind_type=>'bind'
+,p_bind_event_type=>'change'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(682113699748099728)
+,p_event_id=>wwv_flow_api.id(682113542084099727)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_REFRESH'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_api.id(681437364305168942)
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(682113763488099729)
+,p_event_id=>wwv_flow_api.id(682113542084099727)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'apex.item(''P158_DT_DOCUMENTO_FC'').setValue($v(''P158_FCR_DOC_SELECT''))'
+);
+wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(681731895261287216)
 ,p_name=>'show or view error Refresh'
-,p_event_sequence=>70
+,p_event_sequence=>90
 ,p_triggering_element_type=>'ITEM'
 ,p_triggering_element=>'P158_ERROR_TEXT'
 ,p_condition_element=>'P158_ERROR_TEXT'
@@ -1461,7 +1665,7 @@ wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(681732763266287225)
 ,p_event_id=>wwv_flow_api.id(681731895261287216)
 ,p_event_result=>'FALSE'
-,p_action_sequence=>10
+,p_action_sequence=>20
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>'lSpinner$.remove();'
@@ -1470,7 +1674,7 @@ wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(681732571229287223)
 ,p_event_id=>wwv_flow_api.id(681731895261287216)
 ,p_event_result=>'FALSE'
-,p_action_sequence=>20
+,p_action_sequence=>40
 ,p_execute_on_page_init=>'N'
 ,p_action=>'PLUGIN_PRETIUS_COM_NOTIFICATIONS'
 ,p_attribute_01=>'DANGER'
@@ -1488,7 +1692,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(681732977388287227)
 ,p_name=>'reset NC EMIT'
-,p_event_sequence=>80
+,p_event_sequence=>100
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_api.id(681732885802287226)
 ,p_bind_type=>'bind'
@@ -1517,7 +1721,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(681733325242287231)
 ,p_name=>'reset FC EMIT'
-,p_event_sequence=>90
+,p_event_sequence=>110
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_api.id(681733292843287230)
 ,p_bind_type=>'bind'
@@ -1531,7 +1735,7 @@ wwv_flow_api.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_CLEAR'
 ,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P158_FC_DOC_SELECT'
+,p_affected_elements=>'P158_FC_DOC_SELECT,P158_DT_TOTAL_FC'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(681733543197287233)
@@ -1546,7 +1750,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(681734503988287243)
 ,p_name=>'set value Total Region NC'
-,p_event_sequence=>100
+,p_event_sequence=>120
 ,p_triggering_element_type=>'ITEM'
 ,p_triggering_element=>'P158_NC_MONTO_SELECT'
 ,p_bind_type=>'bind'
@@ -1567,9 +1771,32 @@ wwv_flow_api.create_page_da_action(
 '$(''#''+iTotal).autoNumeric(''update'',{mDec:2});'))
 );
 wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(682113162359099723)
+,p_name=>'set value Total Region NCR'
+,p_event_sequence=>130
+,p_triggering_element_type=>'ITEM'
+,p_triggering_element=>'P158_NCR_MONTO_SELECT'
+,p_bind_type=>'bind'
+,p_bind_event_type=>'change'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(682113240734099724)
+,p_event_id=>wwv_flow_api.id(682113162359099723)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'let iTotal = ''P158_DT_TOTAL_NC'';',
+'',
+'apex.item(iTotal).setValue($v(''P158_NCR_MONTO_SELECT''));',
+'',
+'$(''#''+iTotal).autoNumeric(''update'',{mDec:2});'))
+);
+wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(681734798643287245)
 ,p_name=>'set value Total Region FC'
-,p_event_sequence=>110
+,p_event_sequence=>140
 ,p_triggering_element_type=>'ITEM'
 ,p_triggering_element=>'P158_FC_MONTO_SELECT'
 ,p_bind_type=>'bind'
@@ -1589,6 +1816,188 @@ wwv_flow_api.create_page_da_action(
 '',
 '$(''#''+iTotal).autoNumeric(''update'',{mDec:2});'))
 );
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(682113800801099730)
+,p_name=>'set value Total Region FCR'
+,p_event_sequence=>150
+,p_triggering_element_type=>'ITEM'
+,p_triggering_element=>'P158_FCR_MONTO_SELECT'
+,p_bind_type=>'bind'
+,p_bind_event_type=>'change'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(682113920734099731)
+,p_event_id=>wwv_flow_api.id(682113800801099730)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'let iTotal = ''P158_DT_TOTAL_FC'';',
+'',
+'apex.item(iTotal).setValue($v(''P158_FCR_MONTO_SELECT''));',
+'',
+'$(''#''+iTotal).autoNumeric(''update'',{mDec:2});'))
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(682111081800099702)
+,p_name=>'Confirm cancelation'
+,p_event_sequence=>160
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_api.id(681735244538287250)
+,p_bind_type=>'bind'
+,p_bind_event_type=>'click'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(682111789346099709)
+,p_event_id=>wwv_flow_api.id(682111081800099702)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'lSpinner$ = apex.util.showSpinner( $( "body" ) )'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(682111121902099703)
+,p_event_id=>wwv_flow_api.id(682111081800099702)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'begin',
+'    fini053.confirm(in_user => :app_user);',
+'    ',
+'    :P158_ERROR_CONFIRM := null;',
+'exception',
+'    when others then',
+'        :P158_ERROR_CONFIRM := replace(sqlerrm, ''ORA-20000:'', '''');',
+'end;'))
+,p_attribute_03=>'P158_ERROR_CONFIRM'
+,p_attribute_04=>'N'
+,p_wait_for_result=>'Y'
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(682111216873099704)
+,p_name=>'refresh region Detail'
+,p_event_sequence=>170
+,p_triggering_element_type=>'ITEM'
+,p_triggering_element=>'P158_ERROR_CONFIRM'
+,p_condition_element=>'P158_ERROR_CONFIRM'
+,p_triggering_condition_type=>'NULL'
+,p_bind_type=>'bind'
+,p_bind_event_type=>'change'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(682111388875099705)
+,p_event_id=>wwv_flow_api.id(682111216873099704)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'apex.message.clearErrors();',
+'lSpinner$.remove();',
+'',
+'let error = apex.item(''P158_ERROR_TEXT'');',
+'let indER = apex.item(''P158_IND_ER'').getValue();',
+'',
+'if(error.isEmpty() || error.getValue()){ ',
+'    if(indER == ''E''){',
+'        apex.region(''FACT_EMI'').refresh();',
+'        apex.region(''NCR_EMI'').refresh();',
+'    }else if(indER == ''R''){',
+'        apex.region(''FACT_REC'').refresh();',
+'        apex.region(''NCR_REC'').refresh();',
+'    }',
+'}'))
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(682111520392099707)
+,p_event_id=>wwv_flow_api.id(682111216873099704)
+,p_event_result=>'FALSE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'lSpinner$.remove();'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(682111633241099708)
+,p_event_id=>wwv_flow_api.id(682111216873099704)
+,p_event_result=>'FALSE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'PLUGIN_PRETIUS_COM_NOTIFICATIONS'
+,p_attribute_01=>'DANGER'
+,p_attribute_02=>'NOTIFICATION'
+,p_attribute_03=>'.t-Body-main'
+,p_attribute_04=>'5000'
+,p_attribute_05=>'TOP'
+,p_attribute_06=>'JSSTRING'
+,p_attribute_08=>'slideUp'
+,p_attribute_09=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'var msg = apex.item(''P158_ERROR_CONFIRM'').getValue();',
+'return msg;'))
+,p_attribute_10=>'TOPRIGHT'
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(682114286109099734)
+,p_name=>'reset NCR'
+,p_event_sequence=>180
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_api.id(682114146258099733)
+,p_bind_type=>'bind'
+,p_bind_event_type=>'click'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(682114373737099735)
+,p_event_id=>wwv_flow_api.id(682114286109099734)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_CLEAR'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P158_NCR_DOC_SELECT,P158_NCR_MONTO_SELECT'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(682114421475099736)
+,p_event_id=>wwv_flow_api.id(682114286109099734)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_REFRESH'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_api.id(680406523903347456)
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(682114692417099738)
+,p_name=>'reset FCR'
+,p_event_sequence=>190
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_api.id(682114522373099737)
+,p_bind_type=>'bind'
+,p_bind_event_type=>'click'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(682114731663099739)
+,p_event_id=>wwv_flow_api.id(682114692417099738)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_CLEAR'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P158_FCR_DOC_SELECT,P158_FCR_MONTO_SELECT'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(682114859093099740)
+,p_event_id=>wwv_flow_api.id(682114692417099738)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_REFRESH'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_api.id(681437364305168942)
+);
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(681730466321287202)
 ,p_process_sequence=>10
@@ -1597,6 +2006,8 @@ wwv_flow_api.create_page_process(
 ,p_process_name=>'clear data collections'
 ,p_process_sql_clob=>'APEX_COLLECTION.DELETE_ALL_COLLECTIONS_SESSION;'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_when=>'CONFIRM'
+,p_process_when_type=>'REQUEST_NOT_EQUAL_CONDITION'
 );
 end;
 /
