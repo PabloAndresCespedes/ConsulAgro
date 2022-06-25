@@ -68,6 +68,7 @@ create or replace package FINI053 is
     in_clave_fc_nc  number,
     in_clave_recibo number,
     in_vencimiento  date,
+    in_fecha_op     date,
     in_importe_mon  number,
     in_importe_loc  number,
     in_empresa      number,
@@ -699,12 +700,16 @@ create or replace package body FINI053 is
     l_nc_importe_loc number;
     l_nc_clave_scli  number;
     l_nc_tipo_mov    number;
+    l_nc_doc_clave   number;
+    l_nc_venc        date;
     
     l_fc_nro_doc     number;
     l_fc_importe_mon number;
     l_fc_importe_loc number;
     l_fc_clave_scli  number;
     l_fc_tipo_mov    number;
+    l_fc_doc_clave   number;
+    l_fc_venc        date;
 
     l_tipo_mov_filter number;
     l_error_comodin   varchar2(4000);
@@ -797,17 +802,21 @@ create or replace package body FINI053 is
         <<nc_doc>>
         begin
           select 
-            c.c001                       doc_nro_doc,
-            ut.getnc(i_numero => c.c006) cuo_saldo_mon,
-            ut.getnc(i_numero => c.c007) cuo_saldo_loc,
-            c.c014                       doc_clave_scli,
-            to_number(c.c017)            doc_tipo_mov
+            c.c001                        doc_nro_doc,
+            ut.getnc(i_numero => c.c006)  cuo_saldo_mon,
+            ut.getnc(i_numero => c.c007)  cuo_saldo_loc,
+            c.c014                        doc_clave_scli,
+            to_number(c.c017)             doc_tipo_mov,
+            to_date(c.c004, 'dd/mm/yyyy') vencimiento,
+            c.c008                        doc_clave
           into
             l_nc_nro_doc,
             l_nc_importe_mon,
             l_nc_importe_loc,
             l_nc_clave_scli,
-            l_nc_tipo_mov
+            l_nc_tipo_mov,
+            l_nc_venc,
+            l_nc_doc_clave
           from apex_collections c
           where c.collection_name = co_col_nc_emision
           and   to_number(c.c001) = l_nc_doc_select;
@@ -840,13 +849,17 @@ create or replace package body FINI053 is
             ut.getnc(i_numero => c.c006) cuo_saldo_mon,
             ut.getnc(i_numero => c.c007) cuo_saldo_loc,
             c.c014                       doc_clave_scli,
-            to_number(c.c017)            doc_tipo_mov
+            to_number(c.c017)            doc_tipo_mov,
+            to_date(c.c004, 'dd/mm/yyyy') vencimiento,
+            c.c008                        doc_clave
           into
             l_fc_nro_doc     ,
             l_fc_importe_mon ,
             l_fc_importe_loc ,
             l_fc_clave_scli  ,
-            l_fc_tipo_mov    
+            l_fc_tipo_mov    ,
+            l_fc_venc        ,
+            l_fc_doc_clave
           from apex_collections c
           where c.collection_name = co_col_fc_emision
           and   to_number(c.c001) = l_fc_cre_doc_select;
@@ -881,7 +894,30 @@ create or replace package body FINI053 is
                           in_clave_padre => l_fin_doc_father,
                           in_clave_scli  => l_fc_clave_scli
                           );
-          
+        
+        -- add pago NC
+        add_pago(in_clave_fc_nc  => l_nc_doc_clave,
+                 in_clave_recibo => l_fin_doc_father,
+                 in_vencimiento  => l_nc_venc,
+                 in_fecha_op     => l_fecha_op_insert,
+                 in_importe_mon  => l_nc_importe_mon,
+                 in_importe_loc  => l_nc_importe_loc,
+                 in_empresa      => l_emp_insert,
+                 in_user         => in_user
+         );
+        
+        -- add pago FC, el importe es igual para el recibo de factura
+        -- por la regla de negocio, solo se puede aplicar a 1 factura la NC
+        add_pago(in_clave_fc_nc  => l_fc_doc_clave,
+                 in_clave_recibo => l_fin_doc_child,
+                 in_vencimiento  => l_fc_venc,
+                 in_fecha_op     => l_fecha_op_insert,
+                 in_importe_mon  => l_nc_importe_mon, --> monto de la NC
+                 in_importe_loc  => l_nc_importe_loc, --> monto de la NC
+                 in_empresa      => l_emp_insert,
+                 in_user         => in_user
+         );
+         
         if l_fin_doc_child is not null then         
           generate_query(
            in_fecha_op  => l_fecha_op_insert,
@@ -910,13 +946,35 @@ create or replace package body FINI053 is
     in_clave_fc_nc  number,
     in_clave_recibo number,
     in_vencimiento  date,
+    in_fecha_op     date,
     in_importe_mon  number,
     in_importe_loc  number,
     in_empresa      number,
     in_user         varchar2
   )as
   begin
-    null;
+    insert into fin_pago(pag_clave_doc,
+                         pag_fec_vto,
+                         pag_clave_pago,
+                         pag_fec_pago,
+                         pag_imp_loc,
+                         pag_imp_mon,
+                         pag_login,
+                         pag_fec_grab,
+                         pag_sist,
+                         pag_empr
+                        )
+                values(in_clave_fc_nc,
+                       in_vencimiento,
+                       in_clave_recibo,
+                       in_fecha_op,
+                       in_importe_loc,
+                       in_importe_mon,
+                       in_user,
+                       current_date,
+                       'FIN',
+                       in_empresa
+                       );
   end add_pago;
   
   function operador_hab_mes_finanzas(

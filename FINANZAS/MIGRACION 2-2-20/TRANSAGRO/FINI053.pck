@@ -524,7 +524,14 @@ create or replace package body FINI053 is
                         mon_dec_tasa ,
                         mon_simbolo ,
                         mon_tasa_vta,
-                        doc_tipo_mov
+                        doc_tipo_mov,
+                        apex_item.checkbox2(p_idx => 1, 
+                         p_value => 0,
+                         p_attributes => 'class="my_value selectorItem cursor"  
+                         onclick="$s(''P158_NCR_DOC_SELECT'', '||doc_nro_doc||'); 
+                                  $s(''P158_NCR_MONTO_SELECT'', '||case when doc_mon <> 1 then cuo_saldo_loc else cuo_saldo_mon end||')
+                         "'
+                         ) seleccionar
           from  gen_moneda tm ,
                 fin_documento fa ,
                 fin_cuota cu
@@ -573,6 +580,7 @@ create or replace package body FINI053 is
             p_c012            => i.mon_simbolo,
             p_c013            => i.mon_tasa_vta,
             -- hace un salto para estandarizar todas las colecciones
+            p_c015            => i.seleccionar,
             p_c016            => in_fecha_op,
             p_c017            => i.doc_tipo_mov,
             p_c018            => in_mnd
@@ -595,7 +603,14 @@ create or replace package body FINI053 is
                           mon_dec_tasa,
                           mon_simbolo,
                           mon_tasa_vta,
-                          doc_tipo_mov
+                          doc_tipo_mov,
+                          apex_item.checkbox2(p_idx => 2, 
+                           p_value => 0,
+                           p_attributes => 'class="my_value selectorItem cursor"  
+                           onclick="$s(''P158_FCR_DOC_SELECT'', '||doc_nro_doc||'); 
+                                    $s(''P158_FCR_MONTO_SELECT'', '||case when doc_mon <> 1 then cuo_saldo_loc else cuo_saldo_mon end||')
+                           "'
+                           ) seleccionar
                   from  gen_moneda,
                         fin_documento,
                         fin_cuota
@@ -641,6 +656,7 @@ create or replace package body FINI053 is
               p_c012            => j.mon_simbolo,
               p_c013            => j.mon_tasa_vta,
               -- hace un salto para estandarizar todas las colecciones
+              p_c015            => j.seleccionar,
               p_c016            => in_fecha_op,
               p_c017            => j.doc_tipo_mov,
               p_c018            => in_mnd
@@ -677,21 +693,39 @@ create or replace package body FINI053 is
   ) as
     l_ind_er             varchar2(1 char);
 
-    l_nc_doc_select number;
+    l_nc_doc_select     number;
     l_fc_cre_doc_select number;
     
-    l_tmv_fc_cr_emit number;
+    l_tmv_fc_cr_emit      number;
     l_tmv_canc_fc_cr_emit number;
     
-    l_tmv_nc_cr_emit number;
+    l_tmv_nc_cr_emit        number;
     l_tmv_nc_cr_cancel_emit number;
     
+    l_tmv_ndb_emit        number;
+    l_tmv_cancel_ndb_emit number;
+     
+    l_tmv_adel_cliente_emit      number;
+    l_tmv_adel_cliente_canc_emit number;
+    
+    l_tmv_nc_cr_rec number;
+    l_tmv_cancel_nc_cr_rec number;
+    
+    l_tmv_adel_rec number;
+    l_tmv_cancel_adel_rec number;
+    
+    l_tmv_fc_cr_rec number;
+    l_tmv_cancel_fc_cr_rec number;
+    
+    l_tmv_nota_deb_rec number;
+    l_tmv_cancel_nota_deb_rec number;
+
     l_fin_doc_father number;
     l_fin_doc_child  number;
     
-    l_fecha_op_insert date;
-    l_emp_insert      number;
-    l_suc_insert      number;
+    l_fecha_op_insert    date;
+    l_emp_insert         number;
+    l_suc_insert         number;
     l_cli_or_prov_insert number;
     l_mnd_insert         number;
     
@@ -714,6 +748,11 @@ create or replace package body FINI053 is
     l_tipo_mov_filter number;
     l_error_comodin   varchar2(4000);
     
+    l_tmv_cancela     number;
+    l_tmv_cancela_two number;
+    
+    e_tmv_no_configurado exception;
+    e_importe_mayor      exception;
   begin
     <<get_data_col_filters>>
     begin
@@ -744,24 +783,73 @@ create or replace package body FINI053 is
  
     <<c_options>>
     case
-      when l_ind_er = co_emision then
+      when l_ind_er in( co_emision, co_recibido ) then
         <<conf_comprobantes_emitidos>>
         begin
           select
-            f.conf_fact_cr_emit        tmv_fc_cr_emit,
-            f.conf_recibo_can_fac_emit tmv_canc_fc_cr_emit,
-           
-            f.conf_nota_cr_emit        tmv_nc_cr_emit,
-            f.conf_recibo_cncr_emit    tmv_nc_cr_cancel_emit
+            -- EMITIDOS:
+            -- FC
+            fx.conf_fact_cr_emit        tmv_fc_cr_emit,
+            fx.conf_recibo_can_fac_emit tmv_canc_fc_cr_emit,
+            
+            -- NDB
+            fx.conf_nota_db_emit        tmv_ndb_emit,
+            fx.conf_recibo_pago_rec     tmv_cancel_ndb_emit,
+            
+            -- NC
+            fx.conf_nota_cr_emit        tmv_nc_cr_emit,
+            fx.conf_recibo_cncr_emit    tmv_nc_cr_cancel_emit,
+            
+            -- ADELANTO
+            fx.conf_adelanto_cli        tmv_adel_cliente_emit,
+            fx.conf_recibo_cadcli_emit  tmv_adel_cliente_canc_emit,
+            
+            -- RECIBIDOS
+            -- NC PROV 
+            fx.conf_nota_cr_rec         tmv_nc_cr_rec,
+            fx.conf_recibo_cncr_rec     tmv_cancel_nc_cr_rec,
+            
+            -- ADELANTO REC
+            fx.conf_adelanto_pro        tmv_adel_rec,
+            fx.conf_recibo_cadpro_rec   tmv_cancel_adel_rec,
+            
+            -- FC REC
+            fx.conf_fact_cr_rec         tmv_fc_cr_rec,
+            fx.conf_recibo_can_fac_rec  tmv_cancel_fc_cr_rec,
+            
+            -- NOT.DEB. REC
+            fx.conf_nota_db_rec         tmv_nota_deb_rec,
+            fx.conf_recibo_pago_rec     tmv_cancel_nota_deb_rec
+            
           into
+            -- emitidas
             l_tmv_fc_cr_emit,
             l_tmv_canc_fc_cr_emit,
             
-            l_tmv_nc_cr_emit,
-            l_tmv_nc_cr_cancel_emit
+            l_tmv_ndb_emit,
+            l_tmv_cancel_ndb_emit,
             
-          from fin_configuracion f
-          where f.conf_empr = l_emp_insert;
+            l_tmv_nc_cr_emit,
+            l_tmv_nc_cr_cancel_emit,
+            
+            l_tmv_adel_cliente_emit,
+            l_tmv_adel_cliente_canc_emit,
+            
+            -- recibidas
+            l_tmv_nc_cr_rec,
+            l_tmv_cancel_nc_cr_rec,
+            
+            l_tmv_adel_rec,
+            l_tmv_cancel_adel_rec,
+            
+            l_tmv_fc_cr_rec,
+            l_tmv_cancel_fc_cr_rec,
+            
+            l_tmv_nota_deb_rec,
+            l_tmv_cancel_nota_deb_rec
+            
+          from fin_configuracion fx
+          where fx.conf_empr = l_emp_insert;
         exception
           when no_data_found then
             Raise_application_error(-20000, 'Configuraci'||chr(243)||'n de documentos de emisi'||chr(243)||'n no encontrada');
@@ -777,11 +865,17 @@ create or replace package body FINI053 is
         */ 
          
         -- items ocultos en APEX
-        l_nc_doc_select     := ap.v(p_item => 'P158_NC_DOC_SELECT');
-        l_fc_cre_doc_select := ap.v(p_item => 'P158_FC_DOC_SELECT');
+        -- se utiliza para 
+        if l_ind_er = co_emision then
+          l_nc_doc_select     := ap.v(p_item => 'P158_NC_DOC_SELECT');
+          l_fc_cre_doc_select := ap.v(p_item => 'P158_FC_DOC_SELECT');
+        elsif l_ind_er = co_recibido then
+          l_nc_doc_select     := ap.v(p_item => 'P158_NCR_DOC_SELECT');
+          l_fc_cre_doc_select := ap.v(p_item => 'P158_FCR_DOC_SELECT');          
+        end if;
         
         if l_nc_doc_select is null or l_fc_cre_doc_select is null then
-          Raise_application_error(-20000, 'Seleccione una Nota de cr'||chr(233)||'dito y luego relacione eso a una Factura');
+          Raise_application_error(-20000, 'Seleccione una Nota de cr'||chr(233)||'dito/Adelanto y luego relacione eso a una Factura/Not. Deb.');
         end if;
         
         <<v_coins>>
@@ -822,19 +916,36 @@ create or replace package body FINI053 is
           and   to_number(c.c001) = l_nc_doc_select;
         end nc_doc;
          
-        if l_nc_tipo_mov <> l_tmv_nc_cr_emit then
-          Raise_application_error(-20000, 'No se puede cancelar este documento, tipo de movimiento no configurado');
+        if l_nc_tipo_mov not in( l_tmv_nc_cr_emit , l_tmv_adel_cliente_emit, l_tmv_nc_cr_rec, l_tmv_adel_rec)
+        then
+          raise e_tmv_no_configurado;
         end if;
+        
+        <<t_cancell>>
+        case
+          -- emitidas
+          when l_nc_tipo_mov = l_tmv_nc_cr_emit then
+            l_tmv_cancela := l_tmv_nc_cr_cancel_emit;
+          when l_nc_tipo_mov = l_tmv_adel_cliente_emit then
+            l_tmv_cancela := l_tmv_adel_cliente_canc_emit;
+          -- recibidas 
+          when l_nc_tipo_mov = l_tmv_nc_cr_rec then
+            l_tmv_cancela := l_tmv_cancel_nc_cr_rec;  
+          when l_nc_tipo_mov = l_tmv_adel_rec then
+            l_tmv_cancela := l_tmv_cancel_adel_rec;  
+          else
+            raise e_tmv_no_configurado;
+        end case t_cancell;
         
         l_fin_doc_father :=
         add_fin_documento(in_empresa     => l_emp_insert,
                           in_user        => in_user,
                           in_fecha       => l_fecha_op_insert,
                           in_suc         => l_suc_insert,
-                          in_tipo_mov    => l_tmv_nc_cr_cancel_emit,
+                          in_tipo_mov    => l_tmv_cancela,
                           in_moneda      => l_mnd_insert,
-                          in_cliente     => l_cli_or_prov_insert,
-                          in_proveedor   => null,
+                          in_cliente     => case when l_ind_er = co_emision  then l_cli_or_prov_insert else null end,
+                          in_proveedor   => case when l_ind_er = co_recibido then l_cli_or_prov_insert else null end,
                           in_nro_doc     => l_nc_nro_doc,
                           in_importe_mon => l_nc_importe_mon,
                           in_importe_loc => l_nc_importe_loc,
@@ -865,17 +976,34 @@ create or replace package body FINI053 is
           and   to_number(c.c001) = l_fc_cre_doc_select;
         end fc_doc;
          
-        if l_fc_tipo_mov <> l_tmv_fc_cr_emit then
-          Raise_application_error(-20000, 'No se puede cancelar este documento, tipo de movimiento no configurado');
+        if l_fc_tipo_mov not in( l_tmv_fc_cr_emit , l_tmv_ndb_emit, l_tmv_fc_cr_rec, l_tmv_nota_deb_rec )
+        then
+            raise e_tmv_no_configurado;
         end if;
+        
+        <<t_cancell_two>>
+        case
+          -- emitidas
+          when l_fc_tipo_mov = l_tmv_fc_cr_emit then
+            l_tmv_cancela_two := l_tmv_canc_fc_cr_emit;
+          when l_fc_tipo_mov = l_tmv_ndb_emit then
+            l_tmv_cancela_two := l_tmv_cancel_ndb_emit; 
+          -- recibidas
+          when l_fc_tipo_mov = l_tmv_fc_cr_rec then
+            l_tmv_cancela_two := l_tmv_cancel_fc_cr_rec;
+          when l_fc_tipo_mov = l_tmv_nota_deb_rec then
+            l_tmv_cancela_two := l_tmv_cancel_nota_deb_rec;   
+          else
+            raise e_tmv_no_configurado;
+        end case t_cancell_two;
         
         if l_mnd_insert = 1 then -- GS
           if l_nc_importe_loc > l_fc_importe_loc then
-            Raise_application_error(-20000, 'Importe de la NC no puede ser mayor al de la factura');
+            raise e_importe_mayor;
           end if;
-        else
+        else -- otras monedas
           if l_nc_importe_mon > l_fc_importe_mon then
-            Raise_application_error(-20000, 'Importe de la NC no puede ser mayor al de la factura');
+            raise e_importe_mayor;
           end if;
         end if;
         
@@ -884,18 +1012,18 @@ create or replace package body FINI053 is
                           in_user        => in_user,
                           in_fecha       => l_fecha_op_insert,
                           in_suc         => l_suc_insert,
-                          in_tipo_mov    => l_tmv_canc_fc_cr_emit,
+                          in_tipo_mov    => l_tmv_cancela_two,
                           in_moneda      => l_mnd_insert,
-                          in_cliente     => l_cli_or_prov_insert,
-                          in_proveedor   => null,
+                          in_cliente     => case when l_ind_er = co_emision  then l_cli_or_prov_insert else null end,
+                          in_proveedor   => case when l_ind_er = co_recibido then l_cli_or_prov_insert else null end,
                           in_nro_doc     => l_fc_nro_doc,
-                          in_importe_mon => l_nc_importe_mon, --> monto de la NC
-                          in_importe_loc => l_nc_importe_loc, --> monto de la NC
+                          in_importe_mon => l_nc_importe_mon, --> monto de la NC || ADELANTO
+                          in_importe_loc => l_nc_importe_loc, --> monto de la NC || ADELANTO
                           in_clave_padre => l_fin_doc_father,
                           in_clave_scli  => l_fc_clave_scli
                           );
         
-        -- add pago NC
+        -- add pago NC || ADELANTO
         add_pago(in_clave_fc_nc  => l_nc_doc_clave,
                  in_clave_recibo => l_fin_doc_father,
                  in_vencimiento  => l_nc_venc,
@@ -912,17 +1040,19 @@ create or replace package body FINI053 is
                  in_clave_recibo => l_fin_doc_child,
                  in_vencimiento  => l_fc_venc,
                  in_fecha_op     => l_fecha_op_insert,
-                 in_importe_mon  => l_nc_importe_mon, --> monto de la NC
-                 in_importe_loc  => l_nc_importe_loc, --> monto de la NC
+                 in_importe_mon  => l_nc_importe_mon, --> monto de la NC || ADELANTO
+                 in_importe_loc  => l_nc_importe_loc, --> monto de la NC || ADELANTO
                  in_empresa      => l_emp_insert,
                  in_user         => in_user
          );
          
+        -- una vez que se cancela el segundo documento, vuelve a consultar todo
+        -- y se hace un refresh desde APEX para las listas
         if l_fin_doc_child is not null then         
           generate_query(
            in_fecha_op  => l_fecha_op_insert,
-           in_cliente   => l_cli_or_prov_insert,
-           in_proveedor => null,
+           in_cliente   => case when l_ind_er = co_emision  then l_cli_or_prov_insert else null end, --> cliente
+           in_proveedor => case when l_ind_er = co_recibido then l_cli_or_prov_insert else null end, --> proveedor
            in_tipo_mov  => l_tipo_mov_filter,
            in_mnd       => l_mnd_insert,
            in_empresa   => l_emp_insert,
@@ -933,13 +1063,14 @@ create or replace package body FINI053 is
           );
         end if;
                        
-      when l_ind_er = co_recibido then
-        null;
       else
         Raise_application_error(-20000, 'Opci'||chr(243)||'n no v'||chr(225)||'lida. Tipo de Movimiento no es ni Emisi'||chr(243)||'n y Recibido');
     end case c_options;
-    
-    
+  exception
+    when e_tmv_no_configurado then
+      raise_application_Error(-20000, 'No se puede cancelar el documento, no se encuentra configurado');
+    when e_importe_mayor then
+      Raise_application_error(-20000, 'Importe de la NC/Adelanto no puede ser mayor al de la factura/Not. Deb.');
   end confirm;
   
   procedure add_pago(
