@@ -772,6 +772,7 @@ create or replace package body FINI053 is
     
     e_tmv_no_configurado exception;
     e_importe_mayor      exception;
+    e_indicador          exception;
   begin
     <<get_data_col_filters>>
     begin
@@ -884,14 +885,17 @@ create or replace package body FINI053 is
         */ 
          
         -- items ocultos en APEX
-        -- se utiliza para 
-        if l_ind_er = co_emision then
-          l_nc_doc_select     := ap.v(p_item => 'P158_NC_DOC_SELECT');
-          l_fc_cre_doc_select := ap.v(p_item => 'P158_FC_DOC_SELECT');
-        elsif l_ind_er = co_recibido then
-          l_nc_doc_select     := ap.v(p_item => 'P158_NCR_DOC_SELECT');
-          l_fc_cre_doc_select := ap.v(p_item => 'P158_FCR_DOC_SELECT');          
-        end if;
+        <<get_data_selected>>
+        case
+          when l_ind_er = co_emision then
+            l_nc_doc_select     := ap.v(p_item => 'P158_NC_DOC_SELECT');
+            l_fc_cre_doc_select := ap.v(p_item => 'P158_FC_DOC_SELECT');
+          when l_ind_er = co_recibido then            
+            l_nc_doc_select     := ap.v(p_item => 'P158_NCR_DOC_SELECT');
+            l_fc_cre_doc_select := ap.v(p_item => 'P158_FCR_DOC_SELECT');  
+          else
+            raise e_indicador;        
+        end case get_data_selected;
         
         if l_nc_doc_select is null or l_fc_cre_doc_select is null then
           Raise_application_error(-20000, 'Seleccione una Nota de cr'||chr(233)||'dito/Adelanto y luego relacione eso a una Factura/Not. Deb.');
@@ -904,7 +908,20 @@ create or replace package body FINI053 is
           select to_number(c.c009)
           into l_c
           from apex_collections c
-          where c.collection_name = co_col_nc_emision
+          where 
+          (    -- emitidos
+              (l_ind_er = co_emision
+               and
+               c.collection_name in (co_col_nc_emision, co_col_fc_emision)
+              )
+              or
+              -- recibidos
+              (l_ind_er = co_recibido
+               and
+               c.collection_name in (co_col_nc_rec, co_col_fc_rec)
+              )
+          
+          )      
           and   to_number(c.c001) in ( l_nc_doc_select, l_fc_cre_doc_select)
           group by to_number(c.c009);
         exception
@@ -931,7 +948,20 @@ create or replace package body FINI053 is
             l_nc_venc,
             l_nc_doc_clave
           from apex_collections c
-          where c.collection_name = co_col_nc_emision
+          where 
+          (    -- emitidos
+              (l_ind_er = co_emision
+               and
+               c.collection_name = co_col_nc_emision
+              )
+              or
+              -- recibidos
+              (l_ind_er = co_recibido
+               and
+               c.collection_name = co_col_nc_rec
+              )
+          
+          )
           and   to_number(c.c001) = l_nc_doc_select;
         end nc_doc;
          
@@ -991,7 +1021,22 @@ create or replace package body FINI053 is
             l_fc_venc        ,
             l_fc_doc_clave
           from apex_collections c
-          where c.collection_name = co_col_fc_emision
+          where 
+          (    -- emitidos
+              (
+               l_ind_er = co_emision
+               and
+               c.collection_name = co_col_fc_emision
+              )
+              or
+              -- recibidos
+              (
+               l_ind_er = co_recibido
+               and
+               c.collection_name = co_col_fc_rec
+              )
+          
+          )  
           and   to_number(c.c001) = l_fc_cre_doc_select;
         end fc_doc;
          
@@ -1090,6 +1135,8 @@ create or replace package body FINI053 is
       raise_application_Error(-20000, 'No se puede cancelar el documento, no se encuentra configurado');
     when e_importe_mayor then
       Raise_application_error(-20000, 'Importe de la NC/Adelanto no puede ser mayor al de la factura/Not. Deb.');
+    when e_indicador then
+      raise_application_Error(-20000, 'Documento no pertenece a Emitidos o Recibidos. Verificar su tipo de movimiento');
   end confirm;
   
   procedure add_pago(
