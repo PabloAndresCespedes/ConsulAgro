@@ -1302,7 +1302,7 @@ create or replace package body FINI053 is
                               in_importe_loc,
                               0,
                               0,
-                              2,
+                              2, --> doc operador generico, ya esta en depecado
                               in_user,
                               current_date,
                               'FIN',
