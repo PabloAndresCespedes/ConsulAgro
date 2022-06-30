@@ -64,6 +64,7 @@ create or replace package FINI053 is
   -- genera de nuevo
   procedure generate_query(
     in_fecha_op  date,
+    in_desde     date,
     in_cliente   number,
     in_proveedor number,
     in_holding   number := null,
@@ -293,6 +294,7 @@ create or replace package body FINI053 is
   
   procedure generate_query(
     in_fecha_op  date,
+    in_desde     date,
     in_cliente   number,
     in_proveedor number,
     in_holding   number := null,
@@ -325,6 +327,11 @@ create or replace package body FINI053 is
   l_tmv_orden_compra number;
   
   begin
+    
+    if in_desde is null then
+      Raise_application_error(-20000, 'Seleccione la fecha Desde');
+    end if;
+    
     if in_fecha_op is null then
       Raise_application_error(-20000, 'Seleccione la fecha de operaci'||chr(243)||'n');
     end if;
@@ -409,11 +416,8 @@ create or replace package body FINI053 is
                    mon_simbolo,
                    mon_tasa_vta,
                    doc_clave_scli,
-                   '<input type="checkbox" class="my_value selectorItem cursor"  
-                     onclick="$s(''P158_NC_DOC_SELECT'', '||doc_nro_doc||'); 
-                              $s(''P158_NC_MONTO_SELECT'', '||cuo_saldo_loc||')
-                     "/>' seleccionar,
-                    doc_tipo_mov
+                   '' seleccionar,
+                   doc_tipo_mov
             from fin_documento,
                  fin_cuota,
                  gen_moneda
@@ -422,7 +426,7 @@ create or replace package body FINI053 is
             and doc_empr=mon_empr
             and doc_empr=cuo_empr
             and doc_empr = in_empresa
-            and doc_fec_doc <= in_fecha_op
+            and (trunc(doc_fec_doc) between in_desde and in_fecha_op)
             and doc_cli = in_cliente
             and cuo_saldo_mon > 0
             and doc_mon = in_mnd
@@ -459,7 +463,6 @@ create or replace package body FINI053 is
               p_c012            => i.mon_simbolo,
               p_c013            => i.mon_tasa_vta,
               p_c014            => i.doc_clave_scli,
-              p_c015            => i.seleccionar,
               p_c016            => in_fecha_op,
               p_c017            => i.doc_tipo_mov,
               p_c018            => in_mnd
@@ -481,10 +484,7 @@ create or replace package body FINI053 is
                            mon_simbolo,
                            mon_tasa_vta,
                            doc_clave_scli,
-                           '<input type="checkbox" class="my_value selectorItem cursor"  
-                             onclick="$s(''P158_FC_DOC_SELECT'','||doc_nro_doc||'); 
-                                      $s(''P158_FC_MONTO_SELECT'','||cuo_saldo_loc||')
-                             "/>' seleccionar,
+                           '' seleccionar,
                            doc_tipo_mov
                     from fin_documento,
                          fin_cuota,
@@ -495,8 +495,8 @@ create or replace package body FINI053 is
                     and doc_empr=mon_empr
                     and doc_empr=cuo_empr
                     and doc_empr = in_empresa
-                    and doc_fec_doc <= in_fecha_op
                     and doc_cli = in_cliente
+                    and (trunc(doc_fec_doc) between in_desde and in_fecha_op)
                     and cuo_saldo_mon > 0
                     and doc_tipo_mov in (l_ndb_emit,
                                          l_tmv_orden_compra,
@@ -522,7 +522,6 @@ create or replace package body FINI053 is
               p_c012 => f.mon_simbolo,
               p_c013 => f.mon_tasa_vta,
               p_c014 => f.doc_clave_scli,
-              p_c015 => f.seleccionar,
               p_c016 => in_fecha_op,
               p_c017 => f.doc_tipo_mov,
               p_c018 => in_mnd
@@ -530,37 +529,35 @@ create or replace package body FINI053 is
           end loop f_fc_emit;
             
         else
+        /*
+          if 1 = 2 then --> BLOQUEE PARA PRUEBAS DE PERFORMANCE
+          
           <<f_nch_emit>>
           for i in (
-            select doc_nro_doc,
-                   doc_fec_doc,
-                   doc_suc,
-                   cuo_fec_vto,
-                   cuo_imp_mon,
-                   cuo_saldo_mon,
-                   cuo_saldo_loc,
-                   cuo_clave_doc,
-                   doc_mon,
-                   mon_dec_imp,
-                   mon_dec_tasa,
-                   mon_simbolo,
-                   mon_tasa_vta,
-                   doc_clave_scli,
-                   doc_tipo_mov
-            from fin_documento,
-                 table(get_client_holding(in_holding => in_holding, in_empresa => in_empresa)) cl,
-                 fin_cuota,
-                 gen_moneda
+            select fd.doc_nro_doc,
+                   fd.doc_fec_doc,
+                   fd.doc_suc,
+                   fc.cuo_fec_vto,
+                   fc.cuo_imp_mon,
+                   fc.cuo_saldo_mon,
+                   fc.cuo_saldo_loc,
+                   fc.cuo_clave_doc,
+                   fd.doc_mon,
+                   gm.mon_dec_imp,
+                   gm.mon_dec_tasa,
+                   gm.mon_simbolo,
+                   gm.mon_tasa_vta,
+                   fd.doc_clave_scli,
+                   fd.doc_tipo_mov
+            from fin_documento fd
+            inner join fin_cuota fc on (fc.cuo_clave_doc = fd.doc_clave and fc.cuo_empr = fd.doc_empr)
+            inner join table(get_client_holding(in_holding => in_holding, in_empresa => in_empresa)) cl on (cl.id = fd.doc_cli)
+            inner join gen_moneda gm on (gm.mon_codigo = fd.doc_mon and gm.mon_empr = fd.doc_empr)
             where cl.id is not null
-            and doc_empr=mon_empr
-            and doc_empr=cuo_empr
-            and cuo_clave_doc = doc_clave
-            and mon_codigo = doc_mon
-            and mon_codigo = in_mnd
-            and doc_empr = in_empresa
-            and (trunc(doc_fec_doc) between to_date('01/01/2018', 'dd/mm/yyyy') and in_fecha_op)
-            and cuo_saldo_mon > 0
-            and doc_cli = cl.id
+            and fd.doc_mon = in_mnd
+            and fd.doc_empr = in_empresa
+            and (trunc(fd.doc_fec_doc) between in_desde and in_fecha_op)
+            and fc.cuo_saldo_mon > 0
             and
             (
                 (
@@ -602,35 +599,30 @@ create or replace package body FINI053 is
         
             
           <<f_fch_emit>>
-          for f in (select doc_nro_doc,
-                           doc_fec_doc,
-                           doc_suc,
-                           cuo_fec_vto,
-                           cuo_imp_mon,
-                           cuo_saldo_mon,
-                           cuo_saldo_loc,
-                           cuo_clave_doc,
-                           doc_mon,
-                           mon_dec_imp,
-                           mon_dec_tasa,
-                           mon_simbolo,
-                           mon_tasa_vta,
-                           doc_clave_scli,
-                           doc_tipo_mov
-                    from fin_documento,
-                         table(get_client_holding(in_holding => in_holding, in_empresa => in_empresa)) cl,
-                         fin_cuota,
-                         gen_moneda
-                    where cl.id is not null 
-                    and mon_codigo = in_mnd 
-                    and mon_codigo = doc_mon
-                    and cuo_clave_doc = doc_clave
-                    and doc_empr=mon_empr
-                    and doc_empr=cuo_empr
-                    and doc_empr = in_empresa
-                    and (trunc(doc_fec_doc) between to_date('01/01/2018', 'dd/mm/yyyy') and in_fecha_op)
-                    and cuo_saldo_mon > 0
-                    and doc_cli = cl.id
+          for f in (select fd.doc_nro_doc,
+                           fd.doc_fec_doc,
+                           fd.doc_suc,
+                           fc.cuo_fec_vto,
+                           fc.cuo_imp_mon,
+                           fc.cuo_saldo_mon,
+                           fc.cuo_saldo_loc,
+                           fc.cuo_clave_doc,
+                           fd.doc_mon,
+                           gm.mon_dec_imp,
+                           gm.mon_dec_tasa,
+                           gm.mon_simbolo,
+                           gm.mon_tasa_vta,
+                           fd.doc_clave_scli,
+                           fd.doc_tipo_mov
+                    from fin_documento fd
+                    inner join fin_cuota fc on (fc.cuo_clave_doc = fd.doc_clave and fc.cuo_empr = fd.doc_empr)
+                    inner join table(get_client_holding(in_holding => in_holding, in_empresa => in_empresa)) cl on (fd.doc_cli = cl.id)
+                    inner join gen_moneda gm on (gm.mon_codigo = fd.doc_mon and gm.mon_empr = fd.doc_empr)
+                    where cl.id is not null
+                    and gm.mon_codigo = in_mnd 
+                    and fd.doc_empr   = in_empresa
+                    and (trunc(fd.doc_fec_doc) between in_desde and in_fecha_op)
+                    and fc.cuo_saldo_mon > 0
                     and doc_tipo_mov in (l_ndb_emit,
                                          l_tmv_orden_compra,
                                          l_fc_cr_emit,
@@ -660,8 +652,209 @@ create or replace package body FINI053 is
               p_c018 => in_mnd
             );
           end loop f_fch_emit;
+          
+          end if; --> FIN LO BLOQUEE PARA PRUEBAS DE PERFORMANCE
+          */
+          <<bulk_fc_emision>>
+          declare
+           l_fc_doc_nro         apex_application_global.vc_arr2;
+           l_fc_fecha_doc       apex_application_global.vc_arr2;
+           l_fc_doc_suc         apex_application_global.vc_arr2;
+           l_fc_cuo_fec_vto     apex_application_global.vc_arr2;
+           l_fc_cuo_imp_mon     apex_application_global.vc_arr2;
+           l_fc_cuo_saldo_mon   apex_application_global.vc_arr2;
+           l_fc_cuo_saldo_loc   apex_application_global.vc_arr2;
+           l_fc_cuo_clave_doc   apex_application_global.vc_arr2;
+           l_fc_doc_mon         apex_application_global.vc_arr2;
+           l_fc_mon_dec_imp     apex_application_global.vc_arr2;
+           l_fc_mon_dec_tasa    apex_application_global.vc_arr2;
+           l_fc_mon_simbolo     apex_application_global.vc_arr2;
+           l_fc_mon_tasa_vta    apex_application_global.vc_arr2;
+           l_fc_doc_clave_scli  apex_application_global.vc_arr2;
+           l_fc_doc_tipo_mov    apex_application_global.vc_arr2;
+           l_fc_fecha_operacion apex_application_global.vc_arr2;
+           l_fc_moneda          apex_application_global.vc_arr2;
+          begin
+             select fd.doc_nro_doc,
+                   fd.doc_fec_doc,
+                   fd.doc_suc,
+                   fc.cuo_fec_vto,
+                   fc.cuo_imp_mon,
+                   fc.cuo_saldo_mon,
+                   fc.cuo_saldo_loc,
+                   fc.cuo_clave_doc,
+                   fd.doc_mon,
+                   gm.mon_dec_imp,
+                   gm.mon_dec_tasa,
+                   gm.mon_simbolo,
+                   gm.mon_tasa_vta,
+                   fd.doc_clave_scli,
+                   fd.doc_tipo_mov,
+                   to_char(in_fecha_op, 'dd/mm/yyyy'),
+                   in_mnd
+            bulk collect into l_fc_doc_nro,
+                   l_fc_fecha_doc,
+                   l_fc_doc_suc,
+                   l_fc_cuo_fec_vto,
+                   l_fc_cuo_imp_mon,
+                   l_fc_cuo_saldo_mon,
+                   l_fc_cuo_saldo_loc,
+                   l_fc_cuo_clave_doc,
+                   l_fc_doc_mon,
+                   l_fc_mon_dec_imp,
+                   l_fc_mon_dec_tasa,
+                   l_fc_mon_simbolo,
+                   l_fc_mon_tasa_vta,
+                   l_fc_doc_clave_scli,
+                   l_fc_doc_tipo_mov,
+                   l_fc_fecha_operacion,
+                   l_fc_moneda
+            from fin_documento fd
+            inner join fin_cuota fc on (fc.cuo_clave_doc = fd.doc_clave and fc.cuo_empr = fd.doc_empr)
+            inner join table(get_client_holding(in_holding => in_holding, in_empresa => in_empresa)) cl on (fd.doc_cli = cl.id)
+            inner join gen_moneda gm on (gm.mon_codigo = fd.doc_mon and gm.mon_empr = fd.doc_empr)
+            where cl.id is not null
+            and gm.mon_codigo = in_mnd 
+            and fd.doc_empr   = in_empresa
+            and (trunc(fd.doc_fec_doc) between in_desde and in_fecha_op)
+            and fc.cuo_saldo_mon > 0
+            and doc_tipo_mov in (l_ndb_emit,
+                                 l_tmv_orden_compra,
+                                 l_fc_cr_emit,
+                                 l_fc_cr_emit_ajuste
+                                );
+           
+            apex_collection.add_members(
+              p_collection_name => co_col_fc_emision,
+              p_c001 => l_fc_doc_nro,
+              p_c002 => l_fc_fecha_doc,
+              p_c003 => l_fc_doc_suc,
+              p_c004 => l_fc_cuo_fec_vto,
+              p_c005 => l_fc_cuo_imp_mon,
+              p_c006 => l_fc_cuo_saldo_mon,
+              p_c007 => l_fc_cuo_saldo_loc,
+              p_c008 => l_fc_cuo_clave_doc,
+              p_c009 => l_fc_doc_mon,
+              p_c010 => l_fc_mon_dec_imp,
+              p_c011 => l_fc_mon_dec_tasa,
+              p_c012 => l_fc_mon_simbolo,
+              p_c013 => l_fc_mon_tasa_vta,
+              p_c014 => l_fc_doc_clave_scli,
+              p_c016 => l_fc_fecha_operacion,
+              p_c017 => l_fc_doc_tipo_mov,
+              p_c018 => l_fc_moneda
+            );
         
+          exception
+            when no_data_found then
+              null;     
+          end bulk_fc_emision;
+          
         end case c_client_emision;
+        
+        <<bulk_nc_emision>>
+        declare
+           l_doc_nro         apex_application_global.vc_arr2;
+           l_fecha_doc       apex_application_global.vc_arr2;
+           l_doc_suc         apex_application_global.vc_arr2;
+           l_cuo_fec_vto     apex_application_global.vc_arr2;
+           l_cuo_imp_mon     apex_application_global.vc_arr2;
+           l_cuo_saldo_mon   apex_application_global.vc_arr2;
+           l_cuo_saldo_loc   apex_application_global.vc_arr2;
+           l_cuo_clave_doc   apex_application_global.vc_arr2;
+           l_doc_mon         apex_application_global.vc_arr2;
+           l_mon_dec_imp     apex_application_global.vc_arr2;
+           l_mon_dec_tasa    apex_application_global.vc_arr2;
+           l_mon_simbolo     apex_application_global.vc_arr2;
+           l_mon_tasa_vta    apex_application_global.vc_arr2;
+           l_doc_clave_scli  apex_application_global.vc_arr2;
+           l_doc_tipo_mov    apex_application_global.vc_arr2;
+           l_fecha_operacion apex_application_global.vc_arr2;
+           l_moneda          apex_application_global.vc_arr2;
+        begin
+          select fd.doc_nro_doc,
+                   fd.doc_fec_doc,
+                   fd.doc_suc,
+                   fc.cuo_fec_vto,
+                   fc.cuo_imp_mon,
+                   fc.cuo_saldo_mon,
+                   fc.cuo_saldo_loc,
+                   fc.cuo_clave_doc,
+                   fd.doc_mon,
+                   gm.mon_dec_imp,
+                   gm.mon_dec_tasa,
+                   gm.mon_simbolo,
+                   gm.mon_tasa_vta,
+                   fd.doc_clave_scli,
+                   fd.doc_tipo_mov,
+                   to_char(in_fecha_op, 'dd/mm/yyyy'),
+                   in_mnd
+            bulk collect into l_doc_nro,
+                   l_fecha_doc,
+                   l_doc_suc,
+                   l_cuo_fec_vto,
+                   l_cuo_imp_mon,
+                   l_cuo_saldo_mon,
+                   l_cuo_saldo_loc,
+                   l_cuo_clave_doc,
+                   l_doc_mon,
+                   l_mon_dec_imp,
+                   l_mon_dec_tasa,
+                   l_mon_simbolo,
+                   l_mon_tasa_vta,
+                   l_doc_clave_scli,
+                   l_doc_tipo_mov,
+                   l_fecha_operacion,
+                   l_moneda 
+            from fin_documento fd
+            inner join fin_cuota fc on (fc.cuo_clave_doc = fd.doc_clave and fc.cuo_empr = fd.doc_empr)
+            inner join table(get_client_holding(in_holding => in_holding, in_empresa => in_empresa)) cl on (cl.id = fd.doc_cli)
+            inner join gen_moneda gm on (gm.mon_codigo = fd.doc_mon and gm.mon_empr = fd.doc_empr)
+            where cl.id is not null
+            and fd.doc_mon = in_mnd
+            and fd.doc_empr = in_empresa
+            and (trunc(fd.doc_fec_doc) between in_desde and in_fecha_op)
+            and fc.cuo_saldo_mon > 0
+            and
+            (
+                (
+                 doc_tipo_mov in (l_nc_emitida, l_nc_emi_ajuste)
+                 and 
+                 in_tipo_mov = l_recibo_nc_emitido
+                )
+                or
+                (
+                 in_tipo_mov  = l_recibo_adel_cli_emitido
+                 and 
+                 doc_tipo_mov = l_adelanto_cli
+                )
+            );
+            
+            apex_collection.add_members(
+              p_collection_name => co_col_nc_emision,
+              p_c001 => l_doc_nro,
+              p_c002 => l_fecha_doc,
+              p_c003 => l_doc_suc,
+              p_c004 => l_cuo_fec_vto,
+              p_c005 => l_cuo_imp_mon,
+              p_c006 => l_cuo_saldo_mon,
+              p_c007 => l_cuo_saldo_loc,
+              p_c008 => l_cuo_clave_doc,
+              p_c009 => l_doc_mon,
+              p_c010 => l_mon_dec_imp,
+              p_c011 => l_mon_dec_tasa,
+              p_c012 => l_mon_simbolo,
+              p_c013 => l_mon_tasa_vta,
+              p_c014 => l_doc_clave_scli,
+              p_c016 => l_fecha_operacion,
+              p_c017 => l_doc_tipo_mov,
+              p_c018 => l_moneda
+            );
+            
+        exception
+          when no_data_found then
+              null;       
+        end bulk_nc_emision;
         
       when in_ind_er = co_recibido then --> From Proveedors
         
@@ -681,11 +874,7 @@ create or replace package body FINI053 is
                           mon_dec_tasa ,
                           mon_simbolo ,
                           mon_tasa_vta,
-                          doc_tipo_mov,
-                          '<input type="checkbox" class="my_value selectorItem cursor"  
-                           onclick="$s(''P158_NCR_DOC_SELECT'','||doc_nro_doc||'); 
-                                    $s(''P158_NCR_MONTO_SELECT'','||cuo_saldo_mon||')
-                           "/>' seleccionar
+                          doc_tipo_mov
             from  fin_documento fa ,
                   fin_cuota cu,
                   gen_moneda tm
@@ -695,7 +884,7 @@ create or replace package body FINI053 is
             and doc_clave = cuo_clave_doc
             and doc_empr = in_empresa
             and doc_prov = in_proveedor
-            and doc_fec_doc <= in_fecha_op
+            and (trunc(doc_fec_doc) between in_desde and in_fecha_op)
             and cuo_saldo_mon > 0
             and doc_mon = in_mnd
             and (
@@ -729,7 +918,6 @@ create or replace package body FINI053 is
               p_c012            => i.mon_simbolo,
               p_c013            => i.mon_tasa_vta,
               -- hace un salto para estandarizar todas las colecciones
-              p_c015            => i.seleccionar,
               p_c016            => in_fecha_op,
               p_c017            => i.doc_tipo_mov,
               p_c018            => in_mnd
@@ -752,11 +940,7 @@ create or replace package body FINI053 is
                         mon_dec_tasa,
                         mon_simbolo,
                         mon_tasa_vta,
-                        doc_tipo_mov,
-                        '<input type="checkbox" class="my_value selectorItem cursor"  
-                         onclick="$s(''P158_FCR_DOC_SELECT'','||doc_nro_doc||'); 
-                                  $s(''P158_FCR_MONTO_SELECT'','||cuo_saldo_loc||')
-                         "/>' seleccionar
+                        doc_tipo_mov
                 from  fin_documento,
                       fin_cuota,
                       gen_moneda
@@ -766,7 +950,7 @@ create or replace package body FINI053 is
                 and doc_clave  = cuo_clave_doc
                 and doc_empr   = in_empresa
                 and doc_prov   = in_proveedor
-                and doc_fec_doc <= in_fecha_op
+                and (trunc(doc_fec_doc) between in_desde and in_fecha_op)
                 and cuo_saldo_mon > 0
                 and doc_mon = in_mnd
                 and doc_tipo_mov in (
@@ -795,7 +979,6 @@ create or replace package body FINI053 is
             p_c012            => j.mon_simbolo,
             p_c013            => j.mon_tasa_vta,
             -- hace un salto para estandarizar todas las colecciones
-            p_c015            => j.seleccionar,
             p_c016            => in_fecha_op,
             p_c017            => j.doc_tipo_mov,
             p_c018            => in_mnd
@@ -816,7 +999,8 @@ create or replace package body FINI053 is
         p_c004            => in_mnd,
         p_c005            => nvl(in_cliente, in_proveedor),
         p_c006            => in_ind_er,
-        p_c007            => in_suc
+        p_c007            => in_suc,
+        p_c008            => in_desde
      );
          
     out_error := 'NO';
@@ -884,6 +1068,7 @@ create or replace package body FINI053 is
     l_fc_venc        date;
 
     l_tipo_mov_filter number;
+    l_since_date_filter date;
     l_error_comodin   varchar2(4000);
     
     l_tmv_cancela     number;
@@ -902,7 +1087,8 @@ create or replace package body FINI053 is
         c.c006                        indicador_er, -- Emitido o Recibido
         c.c007                        sucursal,
         c.c004                        moneda,
-        c.c003                        tipo_movimiento
+        c.c003                        tipo_movimiento,
+        to_date(c.c008, 'dd/mm/yyyy') desde
       into
         l_emp_insert,
         l_fecha_op_insert,
@@ -910,7 +1096,8 @@ create or replace package body FINI053 is
         l_ind_er,
         l_suc_insert,
         l_mnd_insert,
-        l_tipo_mov_filter
+        l_tipo_mov_filter,
+        l_since_date_filter
       from apex_collections c
       where c.collection_name = co_col_filtros;
     exception
@@ -1234,6 +1421,7 @@ create or replace package body FINI053 is
         if l_fin_doc_child is not null then         
           generate_query(
            in_fecha_op  => l_fecha_op_insert,
+           in_desde     => l_since_date_filter,
            in_cliente   => case when l_ind_er = co_emision  then l_cli_or_prov_insert else null end, --> cliente
            in_proveedor => case when l_ind_er = co_recibido then l_cli_or_prov_insert else null end, --> proveedor
            in_tipo_mov  => l_tipo_mov_filter,

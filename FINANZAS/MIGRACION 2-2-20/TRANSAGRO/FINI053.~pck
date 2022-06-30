@@ -388,8 +388,11 @@ create or replace package body FINI053 is
       when in_ind_er = co_emision then --> To Client
         
         apex_collection.create_or_truncate_collection( p_collection_name => co_col_nc_emision );
+        apex_collection.create_or_truncate_collection( p_collection_name => co_col_fc_emision );
         
-        if in_cliente is not null then
+        <<c_client_emision>>
+        case
+          when in_cliente is not null then
           <<f_nc_emit>>
           for i in (
             select doc_nro_doc,
@@ -406,14 +409,8 @@ create or replace package body FINI053 is
                    mon_simbolo,
                    mon_tasa_vta,
                    doc_clave_scli,
-                   APEX_ITEM.CHECKBOX2(p_idx => 1, 
-                     p_value => 0,
-                     p_attributes => 'class="my_value selectorItem cursor"  
-                     onclick="$s(''P158_NC_DOC_SELECT'', '||doc_nro_doc||'); 
-                              $s(''P158_NC_MONTO_SELECT'', '||case when doc_mon <> 1 then cuo_saldo_loc else cuo_saldo_mon end||')
-                     "'
-                    ) seleccionar,
-                    doc_tipo_mov
+                   '' seleccionar,
+                   doc_tipo_mov
             from fin_documento,
                  fin_cuota,
                  gen_moneda
@@ -459,12 +456,71 @@ create or replace package body FINI053 is
               p_c012            => i.mon_simbolo,
               p_c013            => i.mon_tasa_vta,
               p_c014            => i.doc_clave_scli,
-              p_c015            => i.seleccionar,
               p_c016            => in_fecha_op,
               p_c017            => i.doc_tipo_mov,
               p_c018            => in_mnd
              );
           end loop f_nc_emit;
+
+          <<f_fc_emit>>
+          for f in (select doc_nro_doc,
+                           doc_fec_doc,
+                           doc_suc,
+                           cuo_fec_vto,
+                           cuo_imp_mon,
+                           cuo_saldo_mon,
+                           cuo_saldo_loc,
+                           cuo_clave_doc,
+                           doc_mon,
+                           mon_dec_imp,
+                           mon_dec_tasa,
+                           mon_simbolo,
+                           mon_tasa_vta,
+                           doc_clave_scli,
+                           '' seleccionar,
+                           doc_tipo_mov
+                    from fin_documento,
+                         fin_cuota,
+                         gen_moneda
+                    where mon_codigo = in_mnd 
+                    and mon_codigo = doc_mon
+                    and cuo_clave_doc = doc_clave
+                    and doc_empr=mon_empr
+                    and doc_empr=cuo_empr
+                    and doc_empr = in_empresa
+                    and doc_fec_doc <= in_fecha_op
+                    and doc_cli = in_cliente
+                    and cuo_saldo_mon > 0
+                    and doc_tipo_mov in (l_ndb_emit,
+                                         l_tmv_orden_compra,
+                                         l_fc_cr_emit,
+                                         l_fc_cr_emit_ajuste
+                                        )
+                    )
+          loop
+            -- add member to collections
+            apex_collection.add_member(
+              p_collection_name => co_col_fc_emision,
+              p_c001 => f.doc_nro_doc,
+              p_c002 => f.doc_fec_doc,
+              p_c003 => f.doc_suc,
+              p_c004 => f.cuo_fec_vto,
+              p_c005 => f.cuo_imp_mon,
+              p_c006 => f.cuo_saldo_mon,
+              p_c007 => f.cuo_saldo_loc,
+              p_c008 => f.cuo_clave_doc,
+              p_c009 => f.doc_mon,
+              p_c010 => f.mon_dec_imp,
+              p_c011 => f.mon_dec_tasa,
+              p_c012 => f.mon_simbolo,
+              p_c013 => f.mon_tasa_vta,
+              p_c014 => f.doc_clave_scli,
+              p_c016 => in_fecha_op,
+              p_c017 => f.doc_tipo_mov,
+              p_c018 => in_mnd
+            );
+          end loop f_fc_emit;
+            
         else
           <<f_nch_emit>>
           for i in (
@@ -482,28 +538,21 @@ create or replace package body FINI053 is
                    mon_simbolo,
                    mon_tasa_vta,
                    doc_clave_scli,
-                   APEX_ITEM.CHECKBOX2(p_idx => 1, 
-                     p_value => 0,
-                     p_attributes => 'class="my_value selectorItem cursor"  
-                     onclick="$s(''P158_NC_DOC_SELECT'', '||doc_nro_doc||'); 
-                              $s(''P158_NC_MONTO_SELECT'', '||case when doc_mon <> 1 then cuo_saldo_loc else cuo_saldo_mon end||')
-                     "'
-                    ) seleccionar,
-                    doc_tipo_mov
+                   doc_tipo_mov
             from fin_documento,
-                 fin_cliente cl,
+                 table(get_client_holding(in_holding => in_holding, in_empresa => in_empresa)) cl,
                  fin_cuota,
                  gen_moneda
-            where doc_cli = cl.cli_codigo
-            and mon_codigo = doc_mon
-            and cuo_clave_doc = doc_clave
+            where mon_codigo = in_mnd
+            and cl.id is not null
             and doc_empr=mon_empr
             and doc_empr=cuo_empr
+            and cuo_clave_doc = doc_clave
+            and mon_codigo = doc_mon
             and doc_empr = in_empresa
-            and doc_fec_doc <= in_fecha_op
-            and doc_cli = cl.cli_codigo
+            and (trunc(doc_fec_doc) between to_date('01/01/2018', 'dd/mm/yyyy') and in_fecha_op)
             and cuo_saldo_mon > 0
-            and doc_mon = in_mnd
+            and doc_cli = cl.id
             and
             (
                 (
@@ -537,81 +586,74 @@ create or replace package body FINI053 is
               p_c012            => i.mon_simbolo,
               p_c013            => i.mon_tasa_vta,
               p_c014            => i.doc_clave_scli,
-              p_c015            => i.seleccionar,
               p_c016            => in_fecha_op,
               p_c017            => i.doc_tipo_mov,
               p_c018            => in_mnd
              );
           end loop f_nch_emit;
-        end if;
-        apex_collection.create_or_truncate_collection( p_collection_name => co_col_fc_emision );
         
-        <<f_fc_emit>>
-        for f in (select doc_nro_doc,
-                         doc_fec_doc,
-                         doc_suc,
-                         cuo_fec_vto,
-                         cuo_imp_mon,
-                         cuo_saldo_mon,
-                         cuo_saldo_loc,
-                         cuo_clave_doc,
-                         doc_mon,
-                         mon_dec_imp,
-                         mon_dec_tasa,
-                         mon_simbolo,
-                         mon_tasa_vta,
-                         doc_clave_scli,
-                         apex_item.checkbox2(p_idx => 2, 
-                           p_value => 0,
-                           p_attributes => 'class="my_value selectorItem cursor"  
-                           onclick="$s(''P158_FC_DOC_SELECT'', '||doc_nro_doc||'); 
-                                    $s(''P158_FC_MONTO_SELECT'', '||case when doc_mon <> 1 then cuo_saldo_loc else cuo_saldo_mon end||')
-                           "'
-                          ) seleccionar,
-                         doc_tipo_mov
-                  from fin_documento,
-                       fin_cuota,
-                       gen_moneda
-                  where mon_codigo = doc_mon
-                  and cuo_clave_doc = doc_clave
-                  and doc_empr=mon_empr
-                  and doc_empr=cuo_empr
-                  and doc_empr = in_empresa
-                  and doc_fec_doc <= in_fecha_op
-                  and doc_cli = in_cliente
-                  and doc_tipo_mov in (l_ndb_emit,
-                                       l_tmv_orden_compra,
-                                       l_fc_cr_emit,
-                                       l_fc_cr_emit_ajuste
-                                      )
-                  and cuo_saldo_mon > 0
-                  and doc_mon = in_mnd
-                 -- order by cuo_fec_vto, doc_fec_doc, doc_nro_doc
-                  )
-        loop
-          -- add member to collections
-          apex_collection.add_member(
-            p_collection_name => co_col_fc_emision,
-            p_c001 => f.doc_nro_doc,
-            p_c002 => f.doc_fec_doc,
-            p_c003 => f.doc_suc,
-            p_c004 => f.cuo_fec_vto,
-            p_c005 => f.cuo_imp_mon,
-            p_c006 => f.cuo_saldo_mon,
-            p_c007 => f.cuo_saldo_loc,
-            p_c008 => f.cuo_clave_doc,
-            p_c009 => f.doc_mon,
-            p_c010 => f.mon_dec_imp,
-            p_c011 => f.mon_dec_tasa,
-            p_c012 => f.mon_simbolo,
-            p_c013 => f.mon_tasa_vta,
-            p_c014 => f.doc_clave_scli,
-            p_c015 => f.seleccionar,
-            p_c016 => in_fecha_op,
-            p_c017 => f.doc_tipo_mov,
-            p_c018 => in_mnd
-          );
-        end loop f_fc_emit;
+            
+          <<f_fch_emit>>
+          for f in (select doc_nro_doc,
+                           doc_fec_doc,
+                           doc_suc,
+                           cuo_fec_vto,
+                           cuo_imp_mon,
+                           cuo_saldo_mon,
+                           cuo_saldo_loc,
+                           cuo_clave_doc,
+                           doc_mon,
+                           mon_dec_imp,
+                           mon_dec_tasa,
+                           mon_simbolo,
+                           mon_tasa_vta,
+                           doc_clave_scli,
+                           doc_tipo_mov
+                    from fin_documento,
+                         table(get_client_holding(in_holding => in_holding, in_empresa => in_empresa)) cl,
+                         fin_cuota,
+                         gen_moneda
+                    where cl.id is not null 
+                    and mon_codigo = in_mnd 
+                    and mon_codigo = doc_mon
+                    and cuo_clave_doc = doc_clave
+                    and doc_empr=mon_empr
+                    and doc_empr=cuo_empr
+                    and doc_empr = in_empresa
+                    and (trunc(doc_fec_doc) between to_date('01/01/2018', 'dd/mm/yyyy') and in_fecha_op)
+                    and cuo_saldo_mon > 0
+                    and doc_cli = cl.id
+                    and doc_tipo_mov in (l_ndb_emit,
+                                         l_tmv_orden_compra,
+                                         l_fc_cr_emit,
+                                         l_fc_cr_emit_ajuste
+                                        )
+                    )
+          loop
+            -- add member to collections
+            apex_collection.add_member(
+              p_collection_name => co_col_fc_emision,
+              p_c001 => f.doc_nro_doc,
+              p_c002 => f.doc_fec_doc,
+              p_c003 => f.doc_suc,
+              p_c004 => f.cuo_fec_vto,
+              p_c005 => f.cuo_imp_mon,
+              p_c006 => f.cuo_saldo_mon,
+              p_c007 => f.cuo_saldo_loc,
+              p_c008 => f.cuo_clave_doc,
+              p_c009 => f.doc_mon,
+              p_c010 => f.mon_dec_imp,
+              p_c011 => f.mon_dec_tasa,
+              p_c012 => f.mon_simbolo,
+              p_c013 => f.mon_tasa_vta,
+              p_c014 => f.doc_clave_scli,
+              p_c016 => in_fecha_op,
+              p_c017 => f.doc_tipo_mov,
+              p_c018 => in_mnd
+            );
+          end loop f_fch_emit;
+        
+        end case c_client_emision;
         
       when in_ind_er = co_recibido then --> From Proveedors
         
@@ -631,14 +673,7 @@ create or replace package body FINI053 is
                           mon_dec_tasa ,
                           mon_simbolo ,
                           mon_tasa_vta,
-                          doc_tipo_mov,
-                          apex_item.checkbox2(p_idx => 1, 
-                           p_value => 0,
-                           p_attributes => 'class="my_value selectorItem cursor"  
-                           onclick="$s(''P158_NCR_DOC_SELECT'', '||doc_nro_doc||'); 
-                                    $s(''P158_NCR_MONTO_SELECT'', '||case when doc_mon <> 1 then cuo_saldo_loc else cuo_saldo_mon end||')
-                           "'
-                           ) seleccionar
+                          doc_tipo_mov
             from  fin_documento fa ,
                   fin_cuota cu,
                   gen_moneda tm
@@ -682,7 +717,6 @@ create or replace package body FINI053 is
               p_c012            => i.mon_simbolo,
               p_c013            => i.mon_tasa_vta,
               -- hace un salto para estandarizar todas las colecciones
-              p_c015            => i.seleccionar,
               p_c016            => in_fecha_op,
               p_c017            => i.doc_tipo_mov,
               p_c018            => in_mnd
@@ -705,14 +739,7 @@ create or replace package body FINI053 is
                         mon_dec_tasa,
                         mon_simbolo,
                         mon_tasa_vta,
-                        doc_tipo_mov,
-                        apex_item.checkbox2(p_idx => 2, 
-                         p_value => 0,
-                         p_attributes => 'class="my_value selectorItem cursor"  
-                         onclick="$s(''P158_FCR_DOC_SELECT'', '||doc_nro_doc||'); 
-                                  $s(''P158_FCR_MONTO_SELECT'', '||case when doc_mon <> 1 then cuo_saldo_loc else cuo_saldo_mon end||')
-                         "'
-                         ) seleccionar
+                        doc_tipo_mov
                 from  fin_documento,
                       fin_cuota,
                       gen_moneda
@@ -751,7 +778,6 @@ create or replace package body FINI053 is
             p_c012            => j.mon_simbolo,
             p_c013            => j.mon_tasa_vta,
             -- hace un salto para estandarizar todas las colecciones
-            p_c015            => j.seleccionar,
             p_c016            => in_fecha_op,
             p_c017            => j.doc_tipo_mov,
             p_c018            => in_mnd
