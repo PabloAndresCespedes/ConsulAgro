@@ -718,40 +718,39 @@ create or replace package body FINI053 is
             and fd.doc_empr   = in_empresa
             and (trunc(fd.doc_fec_doc) between in_desde and in_fecha_op)
             and fc.cuo_saldo_mon > 0
-            and doc_tipo_mov in (l_ndb_emit,
+            and fd.doc_tipo_mov in (l_ndb_emit,
                                  l_tmv_orden_compra,
                                  l_fc_cr_emit,
                                  l_fc_cr_emit_ajuste
                                 );
            
-            apex_collection.add_members(
-              p_collection_name => co_col_fc_emision,
-              p_c001 => l_fc_doc_nro,
-              p_c002 => l_fc_fecha_doc,
-              p_c003 => l_fc_doc_suc,
-              p_c004 => l_fc_cuo_fec_vto,
-              p_c005 => l_fc_cuo_imp_mon,
-              p_c006 => l_fc_cuo_saldo_mon,
-              p_c007 => l_fc_cuo_saldo_loc,
-              p_c008 => l_fc_cuo_clave_doc,
-              p_c009 => l_fc_doc_mon,
-              p_c010 => l_fc_mon_dec_imp,
-              p_c011 => l_fc_mon_dec_tasa,
-              p_c012 => l_fc_mon_simbolo,
-              p_c013 => l_fc_mon_tasa_vta,
-              p_c014 => l_fc_doc_clave_scli,
-              p_c016 => l_fc_fecha_operacion,
-              p_c017 => l_fc_doc_tipo_mov,
-              p_c018 => l_fc_moneda
-            );
-        
+            if l_fc_doc_nro.count > 0 then
+              apex_collection.add_members(
+                p_collection_name => co_col_fc_emision,
+                p_c001 => l_fc_doc_nro,
+                p_c002 => l_fc_fecha_doc,
+                p_c003 => l_fc_doc_suc,
+                p_c004 => l_fc_cuo_fec_vto,
+                p_c005 => l_fc_cuo_imp_mon,
+                p_c006 => l_fc_cuo_saldo_mon,
+                p_c007 => l_fc_cuo_saldo_loc,
+                p_c008 => l_fc_cuo_clave_doc,
+                p_c009 => l_fc_doc_mon,
+                p_c010 => l_fc_mon_dec_imp,
+                p_c011 => l_fc_mon_dec_tasa,
+                p_c012 => l_fc_mon_simbolo,
+                p_c013 => l_fc_mon_tasa_vta,
+                p_c014 => l_fc_doc_clave_scli,
+                p_c016 => l_fc_fecha_operacion,
+                p_c017 => l_fc_doc_tipo_mov,
+                p_c018 => l_fc_moneda
+              );
+            end if;
           exception
             when no_data_found then
               null;     
           end bulk_fc_emision;
           
-        end case c_client_emision;
-        
         <<bulk_nc_emision>>
         declare
            l_doc_nro         apex_application_global.vc_arr2;
@@ -818,7 +817,7 @@ create or replace package body FINI053 is
             and
             (
                 (
-                 doc_tipo_mov in (l_nc_emitida, l_nc_emi_ajuste)
+                 fd.doc_tipo_mov in (l_nc_emitida, l_nc_emi_ajuste)
                  and 
                  in_tipo_mov = l_recibo_nc_emitido
                 )
@@ -826,35 +825,38 @@ create or replace package body FINI053 is
                 (
                  in_tipo_mov  = l_recibo_adel_cli_emitido
                  and 
-                 doc_tipo_mov = l_adelanto_cli
+                 fd.doc_tipo_mov = l_adelanto_cli
                 )
             );
             
-            apex_collection.add_members(
-              p_collection_name => co_col_nc_emision,
-              p_c001 => l_doc_nro,
-              p_c002 => l_fecha_doc,
-              p_c003 => l_doc_suc,
-              p_c004 => l_cuo_fec_vto,
-              p_c005 => l_cuo_imp_mon,
-              p_c006 => l_cuo_saldo_mon,
-              p_c007 => l_cuo_saldo_loc,
-              p_c008 => l_cuo_clave_doc,
-              p_c009 => l_doc_mon,
-              p_c010 => l_mon_dec_imp,
-              p_c011 => l_mon_dec_tasa,
-              p_c012 => l_mon_simbolo,
-              p_c013 => l_mon_tasa_vta,
-              p_c014 => l_doc_clave_scli,
-              p_c016 => l_fecha_operacion,
-              p_c017 => l_doc_tipo_mov,
-              p_c018 => l_moneda
-            );
-            
+            if l_doc_nro.count > 0 then
+              apex_collection.add_members(
+                p_collection_name => co_col_nc_emision,
+                p_c001 => l_doc_nro,
+                p_c002 => l_fecha_doc,
+                p_c003 => l_doc_suc,
+                p_c004 => l_cuo_fec_vto,
+                p_c005 => l_cuo_imp_mon,
+                p_c006 => l_cuo_saldo_mon,
+                p_c007 => l_cuo_saldo_loc,
+                p_c008 => l_cuo_clave_doc,
+                p_c009 => l_doc_mon,
+                p_c010 => l_mon_dec_imp,
+                p_c011 => l_mon_dec_tasa,
+                p_c012 => l_mon_simbolo,
+                p_c013 => l_mon_tasa_vta,
+                p_c014 => l_doc_clave_scli,
+                p_c016 => l_fecha_operacion,
+                p_c017 => l_doc_tipo_mov,
+                p_c018 => l_moneda
+              );
+            end if;
         exception
           when no_data_found then
               null;       
         end bulk_nc_emision;
+        
+      end case c_client_emision;
         
       when in_ind_er = co_recibido then --> From Proveedors
         
@@ -1194,11 +1196,12 @@ create or replace package body FINI053 is
         <<get_data_selected>>
         case
           when l_ind_er = co_emision then
-            l_nc_doc_select     := ap.v(p_item => 'P158_NC_DOC_SELECT');
-            l_fc_cre_doc_select := ap.v(p_item => 'P158_FC_DOC_SELECT');
+            l_nc_doc_select     := ap.v(p_item => 'P158_NC_SEQ');
+            l_fc_cre_doc_select := ap.v(p_item => 'P158_FC_SEQ');
+            
           when l_ind_er = co_recibido then            
-            l_nc_doc_select     := ap.v(p_item => 'P158_NCR_DOC_SELECT');
-            l_fc_cre_doc_select := ap.v(p_item => 'P158_FCR_DOC_SELECT');  
+            l_nc_doc_select     := ap.v(p_item => 'P158_NCR_SEQ');
+            l_fc_cre_doc_select := ap.v(p_item => 'P158_FCR_SEQ');  
           else
             raise e_indicador;        
         end case get_data_selected;
@@ -1228,8 +1231,8 @@ create or replace package body FINI053 is
               )
           
           )      
-          and   to_number(c.c001) in ( l_nc_doc_select, l_fc_cre_doc_select)
-          group by to_number(c.c009);
+          and   to_number(c.seq_id) in ( l_nc_doc_select, l_fc_cre_doc_select)
+          group by to_number(c.c009); --> see guarda el tipo de moneda en C009
         exception
           when too_many_rows then
             Raise_application_error(-20000, 'Solo puede cancelar documentos entre monedas del mismo tipo');
@@ -1268,7 +1271,7 @@ create or replace package body FINI053 is
               )
           
           )
-          and   to_number(c.c001) = l_nc_doc_select;
+          and   to_number(c.seq_id) = l_nc_doc_select;
         end nc_doc;
          
         if l_nc_tipo_mov not in( l_tmv_nc_cr_emit , l_tmv_adel_cliente_emit, l_tmv_nc_cr_rec, l_tmv_adel_rec)
@@ -1343,7 +1346,7 @@ create or replace package body FINI053 is
               )
           
           )  
-          and   to_number(c.c001) = l_fc_cre_doc_select;
+          and   to_number(c.seq_id) = l_fc_cre_doc_select;
         end fc_doc;
          
         if l_fc_tipo_mov not in( l_tmv_fc_cr_emit , l_tmv_ndb_emit, l_tmv_fc_cr_rec, l_tmv_nota_deb_rec )
@@ -1432,6 +1435,19 @@ create or replace package body FINI053 is
            in_ind_er    => l_ind_er,
            out_error    => l_error_comodin
           );
+          
+          -- items ocultos en APEX
+          <<clear_data_selected>>
+          case
+            when l_ind_er = co_emision then
+               ap.sv(p_item => 'P158_NC_SEQ');
+               ap.sv(p_item => 'P158_FC_SEQ');
+            when l_ind_er = co_recibido then            
+               ap.sv(p_item => 'P158_NCR_SEQ');
+               ap.sv(p_item => 'P158_FCR_SEQ');  
+            else
+              raise e_indicador;        
+          end case clear_data_selected;
         end if;
                        
       else
