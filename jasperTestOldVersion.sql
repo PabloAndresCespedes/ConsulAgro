@@ -1,59 +1,63 @@
 set define off
 set verify off
-set serveroutput on size 1000000
 set feedback off
 WHENEVER SQLERROR EXIT SQL.SQLCODE ROLLBACK
-begin wwv_flow.g_import_in_progress := true; end; 
+begin wwv_flow.g_import_in_progress := true; end;
 /
  
  
 --application/set_environment
-prompt  APPLICATION 121 - Jasper Reports Integration Test (v2.3.0.1)
+prompt  APPLICATION 121 - Jasper Reports Integration Test (v2.5.0.2)
 --
 -- Application Export:
 --   Application:     121
---   Name:            Jasper Reports Integration Test (v2.3.0.1)
---   Date and Time:   00:22 Montag Oktober 5, 2015
+--   Name:            Jasper Reports Integration Test (v2.5.0.2)
+--   Date and Time:   19:47 Tuesday October 2, 2018
 --   Exported By:     DIETMAR.AUST
 --   Flashback:       0
 --   Export Type:     Application Export
---   Version: 4.0.2.00.07
- 
+--   Version:         4.2.6.00.03
+--   Instance ID:     61928900037296
+--
 -- Import:
---   Using application builder
+--   Using Application Builder
 --   or
---   Using SQL*Plus as the Oracle user APEX_040000 or as the owner (parsing schema) of the application.
+--   Using SQL*Plus as the Oracle user APEX_040200 or as the owner (parsing schema) of the application
  
 -- Application Statistics:
---   Pages:                    8
---     Items:                 25
---     Computations:           0
---     Validations:            0
---     Processes:              8
---     Regions:               31
---     Buttons:                5
---     Dynamic Actions:        0
---   Shared Components
---     Breadcrumbs:            1
---        Entries              6
---     Items:                  2
---     Computations:           0
---     Processes:              3
---     Parent Tabs:            0
---     Tab Sets:               1
---        Tabs:                5
---     NavBars:                1
---     Lists:                  1
---     Shortcuts:              0
---     Themes:                 2
---     Templates:
---        Page:               24
---        List:               34
---        Report:             17
---        Label:              10
---        Region:             51
---     Messages:               0
---     Build Options:          2
+--   Pages:                      8
+--     Items:                   27
+--     Processes:                8
+--     Regions:                 31
+--     Buttons:                  5
+--   Shared Components:
+--     Logic:
+--       Items:                  2
+--       Processes:              3
+--       Build Options:          2
+--     Navigation:
+--       Tab Sets:               1
+--         Tabs:                 5
+--       Lists:                  1
+--       Breadcrumbs:            1
+--         Entries:              6
+--       NavBar Entries:         1
+--     Security:
+--       Authentication:         3
+--     User Interface:
+--       Themes:                 2
+--       Templates:
+--         Page:                24
+--         Region:              51
+--         Label:               10
+--         List:                34
+--         Popup LOV:            2
+--         Calendar:             6
+--         Breadcrumb:           4
+--         Button:              11
+--         Report:              17
+--     Globalization:
+--     Reports:
  
  
 --       AAAA       PPPPP   EEEEEE  XX      XX
@@ -67,7 +71,7 @@ prompt  Set Credentials...
  
 begin
  
-  -- Assumes you are running the script connected to SQL*Plus as the Oracle user APEX_040000 or as the owner (parsing schema) of the application.
+  -- Assumes you are running the script connected to SQL*Plus as the Oracle user APEX_040200 or as the owner (parsing schema) of the application.
   wwv_flow_api.set_security_group_id(p_security_group_id=>nvl(wwv_flow_application_install.get_workspace_id,11254516534534838));
  
 end;
@@ -87,14 +91,14 @@ begin execute immediate 'alter session set nls_numeric_characters=''.,''';
 end;
 
 /
-begin wwv_flow.g_browser_language := 'de'; end;
+begin wwv_flow.g_browser_language := 'en'; end;
 /
 prompt  Check Compatibility...
  
 begin
  
 -- This date identifies the minimum version required to import this file.
-wwv_flow_api.set_version(p_version_yyyy_mm_dd=>'2010.05.13');
+wwv_flow_api.set_version(p_version_yyyy_mm_dd=>'2012.01.01');
  
 end;
 /
@@ -130,6 +134,16 @@ null;
 end;
 /
 
+prompt  ...ui types
+--
+ 
+begin
+ 
+null;
+ 
+end;
+/
+
 --application/create_application
  
 begin
@@ -138,24 +152,21 @@ wwv_flow_api.create_flow(
   p_id    => nvl(wwv_flow_application_install.get_application_id,121),
   p_display_id=> nvl(wwv_flow_application_install.get_application_id,121),
   p_owner => nvl(wwv_flow_application_install.get_schema,'TEST'),
-  p_name  => nvl(wwv_flow_application_install.get_application_name,'Jasper Reports Integration Test (v2.3.0.1)'),
+  p_name  => nvl(wwv_flow_application_install.get_application_name,'Jasper Reports Integration Test (v2.5.0.2)'),
   p_alias => nvl(wwv_flow_application_install.get_application_alias,'F121101'),
   p_page_view_logging => 'YES',
-  p_default_page_template=> 17323635730409362 + wwv_flow_api.g_id_offset,
-  p_printer_friendly_template=> 17324253802409363 + wwv_flow_api.g_id_offset,
-  p_default_region_template=> 17332845056409410 + wwv_flow_api.g_id_offset,
-  p_error_template=> 17322454697409361 + wwv_flow_api.g_id_offset,
-  p_checksum_salt_last_reset => '20151005002204',
+  p_checksum_salt_last_reset => '20181002194749',
   p_max_session_length_sec=> 28800,
-  p_home_link=> 'f?p=&APP_ID.:1:&SESSION.',
+  p_compatibility_mode=> '4.2',
+  p_html_escaping_mode=> 'B',
   p_flow_language=> 'de',
   p_flow_language_derived_from=> 'FLOW_PRIMARY_LANGUAGE',
   p_allow_feedback_yn=> 'N',
-  p_flow_image_prefix => nvl(wwv_flow_application_install.get_image_prefix,'/i/'),
+  p_flow_image_prefix => nvl(wwv_flow_application_install.get_image_prefix,''),
   p_publish_yn=> 'N',
   p_documentation_banner=> '',
-  p_authentication=> 'CUSTOM2',
-  p_login_url=> '',
+  p_authentication=> 'PLUGIN',
+  p_authentication_id=> 56538027943997553 + wwv_flow_api.g_id_offset,
   p_logout_url=> 'wwv_flow_custom_auth_std.logout?p_this_flow=&APP_ID.&amp;p_next_flow_page_sess=&APP_ID.:1',
   p_application_tab_set=> 1,
   p_logo_image => 'TEXT:JasperReportsIntegration - Test (v#APP_VERSION#)',
@@ -165,28 +176,19 @@ wwv_flow_api.create_flow(
   p_proxy_server=> nvl(wwv_flow_application_install.get_proxy,''),
   p_cust_authentication_process=> '.'||to_char(56538027943997553 + wwv_flow_api.g_id_offset)||'.',
   p_cust_authentication_page=> '',
-  p_custom_auth_login_url=> '',
-  p_flow_version=> '2.3.0.1',
+  p_flow_version=> '2.5.0.2',
   p_flow_status=> 'AVAILABLE_W_EDIT_LINK',
   p_flow_unavailable_text=> 'Diese Anwendung ist aktuell nicht verfügbar.',
   p_build_status=> 'RUN_AND_BUILD',
   p_exact_substitutions_only=> 'Y',
+  p_browser_cache=>'Y',
+  p_browser_frame=>'A',
+  p_deep_linking=>'Y',
   p_vpd=> '',
+  p_vpd_teardown_code=> '',
+  p_authorize_public_pages_yn=>'Y',
+  p_include_legacy_javascript=> 'Y',
   p_default_error_display_loc=> 'INLINE_WITH_FIELD_AND_NOTIFICATION',
-  p_theme_id => 22,
-  p_default_label_template => 17346441206409418 + wwv_flow_api.g_id_offset,
-  p_default_report_template => 17344347028409417 + wwv_flow_api.g_id_offset,
-  p_default_list_template => 17340532544409415 + wwv_flow_api.g_id_offset,
-  p_default_menu_template => 17346735300409418 + wwv_flow_api.g_id_offset,
-  p_default_button_template => 17325751309409385 + wwv_flow_api.g_id_offset,
-  p_default_chart_template => 17329842275409409 + wwv_flow_api.g_id_offset,
-  p_default_form_template => 17330148237409409 + wwv_flow_api.g_id_offset,
-  p_default_wizard_template => 17335553776409411 + wwv_flow_api.g_id_offset,
-  p_default_tabform_template => 17332845056409410 + wwv_flow_api.g_id_offset,
-  p_default_reportr_template   =>17332845056409410 + wwv_flow_api.g_id_offset,
-  p_default_menur_template => 17328333600409399 + wwv_flow_api.g_id_offset,
-  p_default_listr_template => 17329539356409408 + wwv_flow_api.g_id_offset,
-  p_default_irr_template => 17331657839409409 + wwv_flow_api.g_id_offset,
   p_substitution_string_01 => 'G_PROTOCOL',
   p_substitution_value_01  => 'http',
   p_substitution_string_02 => 'G_SERVER',
@@ -196,9 +198,46 @@ wwv_flow_api.create_flow(
   p_substitution_string_04 => 'G_CONTEXT_PATH',
   p_substitution_value_04  => 'JasperReportsIntegration',
   p_last_updated_by => 'DIETMAR.AUST',
-  p_last_upd_yyyymmddhh24miss=> '20151005002204',
+  p_last_upd_yyyymmddhh24miss=> '20181002194749',
+  p_ui_type_name => null,
   p_required_roles=> wwv_flow_utilities.string_to_table2(''));
  
+ 
+end;
+/
+
+----------------
+--package app map
+--
+prompt  ...user interfaces
+--
+ 
+begin
+ 
+--application/user interface/desktop
+wwv_flow_api.create_user_interface (
+  p_id => 64731510056518 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_ui_type_name => 'DESKTOP'
+ ,p_display_name => 'Desktop'
+ ,p_display_seq => 10
+ ,p_use_auto_detect => true
+ ,p_is_default => true
+ ,p_theme_id => 22
+ ,p_home_url => 'f?p=&APP_ID.:1:&SESSION.'
+ ,p_global_page_id => 0
+  );
+null;
+ 
+end;
+/
+
+prompt  ...plug-in settings
+--
+ 
+begin
+ 
+null;
  
 end;
 /
@@ -254,14 +293,13 @@ declare
     l_clob clob;
     l_length number := 1;
 begin
-p:=p||'/*'||chr(10)||
-'  this is just a convenience routine during development, so that I don''t have to switch the URLs all the time. '||chr(10)||
-'*/'||chr(10)||
-''||chr(10)||
-'-- set defaults'||chr(10)||
-':p0_protocol := ''http'';'||chr(10)||
-':p0_server := ''192.168.2.123'';'||chr(10)||
-':p0_port := ''8080'';'||chr(10)||
+p:=p||'/*'||unistr('\000a')||
+'  this is just a convenience routine during development, so that I don''t have to switch the URLs all the time. '||unistr('\000a')||
+'*/'||unistr('\000a')||
+'-- set defaults'||unistr('\000a')||
+':p0_protocol := ''http'';'||unistr('\000a')||
+':p0_server := ''192.168.2.165'';'||unistr('\000a')||
+':p0_port := ''8089'';'||unistr('\000a')||
 ':p0_context_path := ''JasperReportsIntegration-EclipseTest'';';
 
 wwv_flow_api.create_flow_process(
@@ -273,8 +311,11 @@ wwv_flow_api.create_flow_process(
   p_process_name=> 'set development environment URLs',
   p_process_sql_clob=> p,
   p_process_error_message=> 'Error',
-  p_process_when=> 'P0_SERVER',
-  p_process_when_type=> 'ITEM_IS_NOT_NULL',
+  p_error_display_location=> 'ON_ERROR_PAGE',
+  p_process_when=> ':P0_SERVER is null'||unistr('\000a')||
+'and'||unistr('\000a')||
+'owa_util.get_cgi_env(''host'')=''opal-dev-min:8080''',
+  p_process_when_type=> 'PLSQL_EXPRESSION',
   p_process_comment=> '');
 end;
  
@@ -292,26 +333,26 @@ declare
     l_clob clob;
     l_length number := 1;
 begin
-p:=p||'-- set defaults'||chr(10)||
-':p0_protocol := nvl(:p0_protocol,:g_protocol);'||chr(10)||
-':p0_server := nvl(:p0_server,:g_server);'||chr(10)||
-':p0_port := nvl(:p0_port,:g_port);'||chr(10)||
-':p0_context_path := nvl(:p0_context_path,:g_context_path);'||chr(10)||
-''||chr(10)||
-':P0_SERVER_URL := :p0_protocol ||'||chr(10)||
-'         ''://'' ||'||chr(10)||
-'         :p0_server ||'||chr(10)||
-'         '':'' ||'||chr(10)||
-'         :p0_port;'||chr(10)||
-''||chr(10)||
-':P0_INTEGRATION_CONTEXT_URL := :p0_server_url ||'||chr(10)||
-'         ''/'' ||'||chr(10)||
+p:=p||'-- set defaults'||unistr('\000a')||
+':p0_protocol := nvl(:p0_protocol,:g_protocol);'||unistr('\000a')||
+':p0_server := nvl(:p0_server,:g_server);'||unistr('\000a')||
+':p0_port := nvl(:p0_port,:g_port);'||unistr('\000a')||
+':p0_context_path := nvl(:p0_context_path,:g_context_path);'||unistr('\000a')||
+''||unistr('\000a')||
+':P0_SERVER_URL := :p0_protocol ||'||unistr('\000a')||
+'         ''://'' ||'||unistr('\000a')||
+'         :p0_server ||'||unistr('\000a')||
+'         '':'' ||'||unistr('\000a')||
+'         :p0_port;'||unistr('\000a')||
+''||unistr('\000a')||
+':P0_INTEGRATION_CONTEXT_URL := :p0_server_url ||'||unistr('\000a')||
+'         ''/'' ||'||unistr('\000a')||
 '         :p0_context_path';
 
-p:=p||';'||chr(10)||
-''||chr(10)||
-':P0_REPORT_URL := :P0_INTEGRATION_CONTEXT_URL ||'||chr(10)||
-'         ''/'' ||'||chr(10)||
+p:=p||';'||unistr('\000a')||
+''||unistr('\000a')||
+':P0_REPORT_URL := :P0_INTEGRATION_CONTEXT_URL ||'||unistr('\000a')||
+'         ''/'' ||'||unistr('\000a')||
 '         ''report'';';
 
 wwv_flow_api.create_flow_process(
@@ -323,6 +364,7 @@ wwv_flow_api.create_flow_process(
   p_process_name=> 'compute urls',
   p_process_sql_clob=> p,
   p_process_error_message=> '#SQLERRM#',
+  p_error_display_location=> 'ON_ERROR_PAGE',
   p_process_when=> '',
   p_process_when_type=> '',
   p_process_comment=> '');
@@ -342,7 +384,7 @@ declare
     l_clob clob;
     l_length number := 1;
 begin
-p:=p||'xlib_jasperreports.set_report_url(:p0_report_url);'||chr(10)||
+p:=p||'xlib_jasperreports.set_report_url(:p0_report_url);'||unistr('\000a')||
 'xlib_jasperreports.show_image(p_image_name => apex_application.g_x01);';
 
 wwv_flow_api.create_flow_process(
@@ -354,6 +396,7 @@ wwv_flow_api.create_flow_process(
   p_process_name=> 'JRI_SHOW_IMAGE',
   p_process_sql_clob=> p,
   p_process_error_message=> '',
+  p_error_display_location=> 'ON_ERROR_PAGE',
   p_process_when=> '',
   p_process_when_type=> '',
   p_process_comment=> '');
@@ -370,16 +413,14 @@ prompt  ...application items
  
 begin
  
-wwv_flow_api.create_flow_item(
-  p_id=> 13694725372756270 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'FSP_AFTER_LOGIN_URL',
-  p_data_type=> 'VARCHAR',
-  p_is_persistent=> 'Y',
-  p_protection_level=> '',
-  p_item_comment=> '');
- 
-null;
+wwv_flow_api.create_flow_item (
+  p_id => 13694725372756270 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_name => 'FSP_AFTER_LOGIN_URL'
+ ,p_scope => 'APP'
+ ,p_data_type => 'VARCHAR'
+ ,p_is_persistent => 'Y'
+  );
  
 end;
 /
@@ -388,16 +429,15 @@ end;
  
 begin
  
-wwv_flow_api.create_flow_item(
-  p_id=> 56548121896862249 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'F_TMP_1',
-  p_data_type=> 'VARCHAR',
-  p_is_persistent=> 'Y',
-  p_protection_level=> 'N',
-  p_item_comment=> '');
- 
-null;
+wwv_flow_api.create_flow_item (
+  p_id => 56548121896862249 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_name => 'F_TMP_1'
+ ,p_scope => 'APP'
+ ,p_data_type => 'VARCHAR'
+ ,p_is_persistent => 'Y'
+ ,p_protection_level => 'N'
+  );
  
 end;
 /
@@ -525,11 +565,14 @@ begin
 wwv_flow_api.create_page (
   p_flow_id => wwv_flow.g_flow_id
  ,p_id => 0
+ ,p_user_interface_id => 64731510056518 + wwv_flow_api.g_id_offset
  ,p_name => '0'
  ,p_step_title => '0'
  ,p_step_sub_title_type => 'TEXT_WITH_SUBSTITUTIONS'
  ,p_first_item => 'NO_FIRST_ITEM'
  ,p_include_apex_css_js_yn => 'Y'
+ ,p_autocomplete_on_off => 'ON'
+ ,p_page_is_public_y_n => 'N'
  ,p_cache_page_yn => 'N'
  ,p_last_updated_by => 'DIETMAR.AUST'
  ,p_last_upd_yyyymmddhh24miss => '20150412124102'
@@ -544,11 +587,11 @@ declare
   l_clob clob;
   l_length number := 1;
 begin
-s:=s||'These values ar used to communicate with the J2EE server <br>'||chr(10)||
-'using utl_http. You can change them permanently <br>'||chr(10)||
-'by editing the application properties (substitution strings <br>'||chr(10)||
-'<span style="font-family: Courier New,Courier,monospace;">G_PROTOCOL, G_SERVER, G_PORT, G_CONTEXT_PATH</span>)'||chr(10)||
-'or set different values just for this session:'||chr(10)||
+s:=s||'These values ar used to communicate with the J2EE server <br>'||unistr('\000a')||
+'using utl_http. You can change them permanently <br>'||unistr('\000a')||
+'by editing the application properties (substitution strings <br>'||unistr('\000a')||
+'<span style="font-family: Courier New,Courier,monospace;">G_PROTOCOL, G_SERVER, G_PORT, G_CONTEXT_PATH</span>)'||unistr('\000a')||
+'or set different values just for this session:'||unistr('\000a')||
 '<br /><br />';
 
 wwv_flow_api.create_page_plug (
@@ -557,14 +600,18 @@ wwv_flow_api.create_page_plug (
   p_page_id=> 0,
   p_plug_name=> 'J2EE Server URL',
   p_region_name=>'',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 17332845056409410+ wwv_flow_api.g_id_offset,
   p_plug_display_sequence=> 0,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 2,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
   p_plug_source=> s,
   p_plug_source_type=> 'STATIC_TEXT',
   p_translate_title=> 'Y',
-  p_plug_display_error_message=> '#SQLERRM#',
   p_plug_query_row_template=> 1,
   p_plug_query_headings_type=> 'QUERY_COLUMNS',
   p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
@@ -591,14 +638,18 @@ wwv_flow_api.create_page_plug (
   p_plug_name=> 'info',
   p_region_name=>'',
   p_parent_plug_id=>17349058172020115 + wwv_flow_api.g_id_offset,
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 0,
   p_plug_display_sequence=> 10,
-  p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
+  p_plug_display_column=> null,
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
   p_plug_source=> s,
   p_plug_source_type=> 'STATIC_TEXT',
   p_translate_title=> 'Y',
-  p_plug_display_error_message=> '#SQLERRM#',
   p_plug_query_row_template=> 1,
   p_plug_query_headings_type=> 'QUERY_COLUMNS',
   p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
@@ -621,7 +672,9 @@ wwv_flow_api.create_page_button(
   p_button_sequence=> 10,
   p_button_plug_id => 17355262523210578+wwv_flow_api.g_id_offset,
   p_button_name    => 'SET_URL',
+  p_button_action  => 'SUBMIT',
   p_button_image   => 'template:'||to_char(17325751309409385+wwv_flow_api.g_id_offset),
+  p_button_is_hot=>'N',
   p_button_image_alt=> 'Set Url',
   p_button_position=> 'BOTTOM',
   p_button_alignment=> 'LEFT',
@@ -665,10 +718,12 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 2000,
   p_cHeight=> 3,
   p_cAttributes=> 'nowrap',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'LEFT',
   p_field_alignment=> 'LEFT',
   p_field_template=> 17346335252409418+wwv_flow_api.g_id_offset,
@@ -711,10 +766,12 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 4000,
   p_cHeight=> 1,
   p_cAttributes=> 'nowrap="nowrap"',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'RIGHT',
   p_field_alignment=> 'LEFT-CENTER',
   p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
@@ -755,16 +812,19 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 4000,
   p_cHeight=> 1,
   p_cAttributes=> 'nowrap="nowrap"',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'RIGHT',
   p_field_alignment=> 'LEFT-CENTER',
   p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
   p_is_persistent=> 'Y',
   p_attribute_01 => 'N',
   p_attribute_02 => 'N',
+  p_attribute_04 => 'TEXT',
   p_item_comment => '');
  
  
@@ -795,16 +855,19 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 4000,
   p_cHeight=> 1,
   p_cAttributes=> 'nowrap="nowrap"',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'RIGHT',
   p_field_alignment=> 'LEFT-CENTER',
   p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
   p_is_persistent=> 'Y',
   p_attribute_01 => 'N',
   p_attribute_02 => 'N',
+  p_attribute_04 => 'TEXT',
   p_item_comment => '');
  
  
@@ -835,10 +898,12 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 4000,
   p_cHeight=> 1,
   p_cAttributes=> 'nowrap="nowrap"',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'RIGHT',
   p_field_alignment=> 'LEFT-CENTER',
   p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
@@ -848,6 +913,7 @@ wwv_flow_api.create_page_item(
   p_escape_on_http_output => 'Y',
   p_attribute_01 => 'N',
   p_attribute_02 => 'N',
+  p_attribute_04 => 'TEXT',
   p_show_quick_picks=>'N',
   p_item_comment => '');
  
@@ -878,10 +944,12 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 4000,
   p_cHeight=> 1,
   p_cAttributes=> 'nowrap="nowrap"',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'NO',
   p_begin_on_new_field=> 'NO',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'LEFT',
   p_field_alignment=> 'LEFT',
   p_is_persistent=> 'Y',
@@ -920,10 +988,12 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 2000,
   p_cHeight=> 3,
   p_cAttributes=> 'nowrap',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'NO',
   p_begin_on_new_field=> 'NO',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'LEFT',
   p_field_alignment=> 'LEFT',
   p_field_template=> 17346335252409418+wwv_flow_api.g_id_offset,
@@ -965,6 +1035,7 @@ begin
 wwv_flow_api.create_page (
   p_flow_id => wwv_flow.g_flow_id
  ,p_id => 1
+ ,p_user_interface_id => 64731510056518 + wwv_flow_api.g_id_offset
  ,p_tab_set => 'TS1'
  ,p_name => 'Home'
  ,p_step_title => 'Home'
@@ -972,22 +1043,23 @@ wwv_flow_api.create_page (
  ,p_step_sub_title_type => 'TEXT_WITH_SUBSTITUTIONS'
  ,p_first_item => 'AUTO_FIRST_ITEM'
  ,p_include_apex_css_js_yn => 'Y'
- ,p_welcome_text => '<style>'||chr(10)||
-'.t15ReportsRegion{width: 500px;}'||chr(10)||
+ ,p_welcome_text => '<style>'||unistr('\000a')||
+'.t15ReportsRegion{width: 500px;}'||unistr('\000a')||
 '</style>'
+ ,p_autocomplete_on_off => 'ON'
  ,p_html_page_header => 
-'<script>'||chr(10)||
-'function myEscape(pStr){'||chr(10)||
-'alert(escape(pStr));'||chr(10)||
-'return escape(pStr);'||chr(10)||
-'}'||chr(10)||
-''||chr(10)||
-'function showUrl(pUrl){'||chr(10)||
-'var win = window.open( ''http://daust3.opal-consulting.de:7777/pls/apex/f?p=&APP_ID.:0:&APP_SESSION.:APPLICATION_PROCESS=prc_show_url:::F_TMP_1:''  + myEscape(pUrl));'||chr(10)||
-'}'||chr(10)||
-'</script>'||chr(10)||
-''||chr(10)||
-''||chr(10)||
+'<script>'||unistr('\000a')||
+'function myEscape(pStr){'||unistr('\000a')||
+'alert(escape(pStr));'||unistr('\000a')||
+'return escape(pStr);'||unistr('\000a')||
+'}'||unistr('\000a')||
+''||unistr('\000a')||
+'function showUrl(pUrl){'||unistr('\000a')||
+'var win = window.open( ''http://daust3.opal-consulting.de:7777/pls/apex/f?p=&APP_ID.:0:&APP_SESSION.:APPLICATION_PROCESS=prc_show_url:::F_TMP_1:''  + myEscape(pUrl));'||unistr('\000a')||
+'}'||unistr('\000a')||
+'</script>'||unistr('\000a')||
+''||unistr('\000a')||
+''||unistr('\000a')||
 ''
  ,p_page_is_public_y_n => 'N'
  ,p_cache_page_yn => 'N'
@@ -1006,15 +1078,15 @@ declare
   l_clob clob;
   l_length number := 1;
 begin
-s:=s||''||chr(10)||
-'<p>This is the test application for the <a href="http://www.opal-consulting.de/apex/f?p=20090928:4" target="_blank">Jasper Reports Integration</a> kit provided by <a href="http://www.opal-consulting.de/" target="_blank">Opal-Consulting</a>. </p>'||chr(10)||
-'<p>It will help you with the installation, troubleshooting and serves as a report tester.</p>'||chr(10)||
+s:=s||''||unistr('\000a')||
+'<p>This is the test application for the <a href="http://www.opal-consulting.de/apex/f?p=20090928:4" target="_blank">Jasper Reports Integration</a> kit provided by <a href="http://www.opal-consulting.de/" target="_blank">Opal-Consulting</a>. </p>'||unistr('\000a')||
+'<p>It will help you with the installation, troubleshooting and serves as a report tester.</p>'||unistr('\000a')||
 '<p>Using these functionalities you can can integrate your u';
 
-s:=s||'ser defined reports (using iReport Designer to create an JasperReports .jasper file) in an APEX application. </p>'||chr(10)||
-'<p>Regarding the Jasper Reports Integration you can reach me at <a href="mailto:freetools@opal-consulting.de?subject=Jasper Reports Integration">freetools@opal-consulting.de</a></p>'||chr(10)||
-'<p>Have fun, <br />'||chr(10)||
-'~Dietmar. </p>'||chr(10)||
+s:=s||'ser defined reports (using iReport Designer to create an JasperReports .jasper file) in an APEX application. </p>'||unistr('\000a')||
+'<p>Regarding the Jasper Reports Integration you can reach me at <a href="mailto:freetools@opal-consulting.de?subject=Jasper Reports Integration">freetools@opal-consulting.de</a></p>'||unistr('\000a')||
+'<p>Have fun, <br />'||unistr('\000a')||
+'~Dietmar. </p>'||unistr('\000a')||
 '';
 
 wwv_flow_api.create_page_plug (
@@ -1023,14 +1095,18 @@ wwv_flow_api.create_page_plug (
   p_page_id=> 1,
   p_plug_name=> 'Jasper Reports Integration',
   p_region_name=>'',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 17332845056409410+ wwv_flow_api.g_id_offset,
   p_plug_display_sequence=> 21,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
   p_plug_source=> s,
   p_plug_source_type=> 'STATIC_TEXT',
   p_translate_title=> 'Y',
-  p_plug_display_error_message=> '#SQLERRM#',
   p_plug_query_row_template=> 1,
   p_plug_query_headings_type=> 'QUERY_COLUMNS',
   p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
@@ -1056,14 +1132,18 @@ wwv_flow_api.create_page_plug (
   p_page_id=> 1,
   p_plug_name=> 'Navigationspfade',
   p_region_name=>'',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 17328333600409399+ wwv_flow_api.g_id_offset,
   p_plug_display_sequence=> 1,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 1,
   p_plug_display_point=> 'REGION_POSITION_01',
+  p_plug_item_display_point=> 'BELOW',
   p_plug_source=> s,
   p_plug_source_type=> 'M'|| to_char(56539424029997642 + wwv_flow_api.g_id_offset),
   p_menu_template_id=> 17346735300409418+ wwv_flow_api.g_id_offset,
-  p_plug_display_error_message=> 'Anzeigen von Navigationspfad nicht möglich.',
   p_plug_query_row_template=> 1,
   p_plug_query_headings_type=> 'COLON_DELMITED_LIST',
   p_plug_query_row_count_max => 500,
@@ -1114,12 +1194,15 @@ begin
 wwv_flow_api.create_page (
   p_flow_id => wwv_flow.g_flow_id
  ,p_id => 2
+ ,p_user_interface_id => 64731510056518 + wwv_flow_api.g_id_offset
  ,p_tab_set => 'TS1'
  ,p_name => 'Logs'
  ,p_step_title => 'Logs'
  ,p_step_sub_title => 'Logs'
  ,p_step_sub_title_type => 'TEXT_WITH_SUBSTITUTIONS'
  ,p_include_apex_css_js_yn => 'Y'
+ ,p_autocomplete_on_off => 'ON'
+ ,p_page_is_public_y_n => 'N'
  ,p_cache_page_yn => 'N'
  ,p_help_text => 
 'No help is available for this page.'
@@ -1143,14 +1226,18 @@ wwv_flow_api.create_page_plug (
   p_page_id=> 2,
   p_plug_name=> 'Breadcrumb',
   p_region_name=>'',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 17328333600409399+ wwv_flow_api.g_id_offset,
   p_plug_display_sequence=> 1,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 1,
   p_plug_display_point=> 'REGION_POSITION_01',
+  p_plug_item_display_point=> 'BELOW',
   p_plug_source=> s,
   p_plug_source_type=> 'M'|| to_char(56539424029997642 + wwv_flow_api.g_id_offset),
   p_menu_template_id=> 17346735300409418+ wwv_flow_api.g_id_offset,
-  p_plug_display_error_message=> '#SQLERRM#',
   p_plug_query_row_template=> 1,
   p_plug_query_headings_type=> 'COLON_DELMITED_LIST',
   p_plug_query_row_count_max => 500,
@@ -1172,10 +1259,15 @@ wwv_flow_api.create_page_plug (
   p_page_id=> 2,
   p_plug_name=> 'Logs',
   p_region_name=>'',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 17331657839409409+ wwv_flow_api.g_id_offset,
   p_plug_display_sequence=> 10,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
   p_plug_source=> s,
   p_plug_source_type=> 'DYNAMIC_QUERY',
   p_plug_query_row_template=> 1,
@@ -1205,7 +1297,6 @@ wwv_flow_api.create_worksheet(
   p_no_data_found_message=> 'No data found.',
   p_max_rows_per_page=>'',
   p_search_button_label=>'',
-  p_page_items_to_submit=>'',
   p_sort_asc_image=>'',
   p_sort_asc_image_attr=>'',
   p_sort_desc_image=>'',
@@ -1245,8 +1336,10 @@ wwv_flow_api.create_worksheet(
   p_allow_exclude_null_values=>'Y',
   p_allow_hide_extra_columns=>'Y',
   p_icon_view_enabled_yn=>'N',
+  p_icon_view_use_custom=>'N',
   p_detail_view_enabled_yn=>'N',
-  p_owner=>'DIETMAR.AUST');
+  p_owner=>'DIETMAR.AUST',
+  p_internal_uid=> 1);
 end;
 /
 begin
@@ -1257,7 +1350,6 @@ wwv_flow_api.create_worksheet_column(
   p_worksheet_id => 17383150988449351+wwv_flow_api.g_id_offset,
   p_db_column_name         =>'LOG_ID',
   p_display_order          =>1,
-  p_group_id               =>null+wwv_flow_api.g_id_offset,
   p_column_identifier      =>'A',
   p_column_label           =>'Log Id',
   p_report_label           =>'Log Id',
@@ -1295,7 +1387,6 @@ wwv_flow_api.create_worksheet_column(
   p_worksheet_id => 17383150988449351+wwv_flow_api.g_id_offset,
   p_db_column_name         =>'LOG_MODULE',
   p_display_order          =>2,
-  p_group_id               =>null+wwv_flow_api.g_id_offset,
   p_column_identifier      =>'B',
   p_column_label           =>'Log Module',
   p_report_label           =>'Log Module',
@@ -1333,7 +1424,6 @@ wwv_flow_api.create_worksheet_column(
   p_worksheet_id => 17383150988449351+wwv_flow_api.g_id_offset,
   p_db_column_name         =>'LOG_MSG',
   p_display_order          =>3,
-  p_group_id               =>null+wwv_flow_api.g_id_offset,
   p_column_identifier      =>'C',
   p_column_label           =>'Log Msg',
   p_report_label           =>'Log Msg',
@@ -1371,7 +1461,6 @@ wwv_flow_api.create_worksheet_column(
   p_worksheet_id => 17383150988449351+wwv_flow_api.g_id_offset,
   p_db_column_name         =>'LOG_TYPE',
   p_display_order          =>4,
-  p_group_id               =>null+wwv_flow_api.g_id_offset,
   p_column_identifier      =>'D',
   p_column_label           =>'Log Type',
   p_report_label           =>'Log Type',
@@ -1409,7 +1498,6 @@ wwv_flow_api.create_worksheet_column(
   p_worksheet_id => 17383150988449351+wwv_flow_api.g_id_offset,
   p_db_column_name         =>'LOG_LEVEL',
   p_display_order          =>5,
-  p_group_id               =>null+wwv_flow_api.g_id_offset,
   p_column_identifier      =>'E',
   p_column_label           =>'Log Level',
   p_report_label           =>'Log Level',
@@ -1447,7 +1535,6 @@ wwv_flow_api.create_worksheet_column(
   p_worksheet_id => 17383150988449351+wwv_flow_api.g_id_offset,
   p_db_column_name         =>'LOG_CREATED_ON',
   p_display_order          =>6,
-  p_group_id               =>null+wwv_flow_api.g_id_offset,
   p_column_identifier      =>'F',
   p_column_label           =>'Log Created On',
   p_report_label           =>'Log Created On',
@@ -1486,7 +1573,6 @@ wwv_flow_api.create_worksheet_column(
   p_worksheet_id => 17383150988449351+wwv_flow_api.g_id_offset,
   p_db_column_name         =>'LOG_CREATED_BY',
   p_display_order          =>7,
-  p_group_id               =>null+wwv_flow_api.g_id_offset,
   p_column_identifier      =>'G',
   p_column_label           =>'Log Created By',
   p_report_label           =>'Log Created By',
@@ -1584,12 +1670,15 @@ begin
 wwv_flow_api.create_page (
   p_flow_id => wwv_flow.g_flow_id
  ,p_id => 3
+ ,p_user_interface_id => 64731510056518 + wwv_flow_api.g_id_offset
  ,p_tab_set => 'TS1'
  ,p_name => 'Samples'
  ,p_step_title => 'Samples'
  ,p_step_sub_title_type => 'TEXT_WITH_SUBSTITUTIONS'
  ,p_first_item => 'NO_FIRST_ITEM'
  ,p_include_apex_css_js_yn => 'Y'
+ ,p_autocomplete_on_off => 'ON'
+ ,p_page_is_public_y_n => 'N'
  ,p_cache_page_yn => 'N'
  ,p_last_updated_by => 'DIETMAR.AUST'
  ,p_last_upd_yyyymmddhh24miss => '20150412123831'
@@ -1611,14 +1700,18 @@ wwv_flow_api.create_page_plug (
   p_page_id=> 3,
   p_plug_name=> 'Breadcrumb',
   p_region_name=>'',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 17328333600409399+ wwv_flow_api.g_id_offset,
   p_plug_display_sequence=> 1,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 1,
   p_plug_display_point=> 'REGION_POSITION_01',
+  p_plug_item_display_point=> 'BELOW',
   p_plug_source=> s,
   p_plug_source_type=> 'M'|| to_char(56539424029997642 + wwv_flow_api.g_id_offset),
   p_menu_template_id=> 17346735300409418+ wwv_flow_api.g_id_offset,
-  p_plug_display_error_message=> '#SQLERRM#',
   p_plug_query_row_template=> 1,
   p_plug_query_headings_type=> 'COLON_DELMITED_LIST',
   p_plug_query_row_count_max => 500,
@@ -1639,14 +1732,19 @@ wwv_flow_api.create_page_plug (
   p_page_id=> 3,
   p_plug_name=> 'Samples',
   p_region_name=>'',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 17334362203409410+ wwv_flow_api.g_id_offset,
   p_plug_display_sequence=> 11,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
   p_plug_source=> s,
   p_plug_source_type=> 13274509416463482 + wwv_flow_api.g_id_offset,
+  p_list_template_id=> 17340849953409415+ wwv_flow_api.g_id_offset,
   p_translate_title=> 'Y',
-  p_plug_display_error_message=> '#SQLERRM#',
   p_plug_query_row_template=> 1,
   p_plug_query_headings_type=> 'COLON_DELMITED_LIST',
   p_plug_query_row_count_max => 500,
@@ -1698,6 +1796,7 @@ begin
 wwv_flow_api.create_page (
   p_flow_id => wwv_flow.g_flow_id
  ,p_id => 4
+ ,p_user_interface_id => 64731510056518 + wwv_flow_api.g_id_offset
  ,p_tab_set => 'TS1'
  ,p_name => 'Verify Setup'
  ,p_step_title => 'Verify Setup'
@@ -1705,8 +1804,8 @@ wwv_flow_api.create_page (
  ,p_step_sub_title_type => 'TEXT_WITH_SUBSTITUTIONS'
  ,p_first_item => 'NO_FIRST_ITEM'
  ,p_include_apex_css_js_yn => 'Y'
- ,p_welcome_text => '<style>'||chr(10)||
-'.t15ReportsRegion{width: 500px;}'||chr(10)||
+ ,p_welcome_text => '<style>'||unistr('\000a')||
+'.t15ReportsRegion{width: 500px;}'||unistr('\000a')||
 '</style>'
  ,p_autocomplete_on_off => 'ON'
  ,p_page_is_public_y_n => 'N'
@@ -1733,19 +1832,204 @@ wwv_flow_api.create_page_plug (
   p_page_id=> 4,
   p_plug_name=> 'Check 2: Are the required network privileges set (ACL)?',
   p_region_name=>'',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 17332845056409410+ wwv_flow_api.g_id_offset,
   p_plug_display_sequence=> 31,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
   p_plug_source=> s,
   p_plug_source_type=> 'STATIC_TEXT',
   p_translate_title=> 'Y',
-  p_plug_display_error_message=> '#SQLERRM#',
   p_plug_query_row_template=> 1,
   p_plug_query_headings_type=> 'QUERY_COLUMNS',
   p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
   p_plug_query_row_count_max => 500,
   p_plug_column_width => 'valign=top',
+  p_plug_query_show_nulls_as => ' - ',
+  p_plug_display_condition_type => '',
+  p_pagination_display_position=>'BOTTOM_RIGHT',
+  p_plug_customized=>'0',
+  p_plug_caching=> 'NOT_CACHED',
+  p_plug_comment=> '');
+end;
+/
+declare
+  s varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+s:=s||'declare'||unistr('\000a')||
+'  l_dummy varchar2(1);'||unistr('\000a')||
+'  l_str varchar2(32767);'||unistr('\000a')||
+'  l_clob   clob;'||unistr('\000a')||
+'  l_sqlerrm varchar2(32767);'||unistr('\000a')||
+'begin'||unistr('\000a')||
+'  SELECT HTTPURITYPE (:p0_server_url).getclob ()'||unistr('\000a')||
+'    INTO l_clob'||unistr('\000a')||
+'    from dual;'||unistr('\000a')||
+''||unistr('\000a')||
+'/*  SELECT HTTPURITYPE (''http://www.opal-consulting.de'').getclob ()'||unistr('\000a')||
+'    into l_clob'||unistr('\000a')||
+'    from dual;'||unistr('\000a')||
+'*/'||unistr('\000a')||
+''||unistr('\000a')||
+'  -- ok'||unistr('\000a')||
+'  htp.p(''All tests PASSED.'');'||unistr('\000a')||
+'  '||unistr('\000a')||
+'exception'||unistr('\000a')||
+'  when others then'||unistr('\000a')||
+'    l_sqlerrm := sqlerrm;'||unistr('\000a')||
+'    '||unistr('\000a')||
+'    -- ';
+
+s:=s||'ACL problem'||unistr('\000a')||
+'    if instr(l_sqlerrm, ''ORA-24247'')>0 then'||unistr('\000a')||
+'      l_str := q''['||unistr('\000a')||
+'      '||unistr('\000a')||
+'Error occured: #SQLERRM#<br>'||unistr('\000a')||
+'<br>'||unistr('\000a')||
+'Please issue the following statement as SYS:<br>'||unistr('\000a')||
+'<br>'||unistr('\000a')||
+'<br>'||unistr('\000a')||
+'<div style="font-family: Consolas,Courier;">'||unistr('\000a')||
+'declare<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; l_acl_name varchar2(100) :='||unistr('\000a')||
+'''JasperReportsIntegration-#USER#.xml'';<br>'||unistr('\000a')||
+'begin<br>'||unistr('\000a')||
+'&nbsp; begin<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; dbms_network_acl_admin.drop_acl(';
+
+s:=s||'<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; acl'||unistr('\000a')||
+'=&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; l_acl_name<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; );<br>'||unistr('\000a')||
+'&nbsp; exception <br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; when others then null; -- ACL does not exist yet<br>'||unistr('\000a')||
+'&nbsp; end;<br>'||unistr('\000a')||
+'&nbsp; <br>'||unistr('\000a')||
+'&nbsp; -- Privilege to connect to a host<br>'||unistr('\000a')||
+'&nbsp; dbms_network_acl_admin.create_acl(<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; acl'||unistr('\000a')||
+'=&gt;&nbsp;&nbsp;&nbsp;&nbsp;';
+
+s:=s||'&nbsp;&nbsp;&nbsp;&nbsp; l_acl_name,<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; description =&gt; ''Accessing the local host for'||unistr('\000a')||
+'printing with Tomcat'',<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; principal =&gt;&nbsp;&nbsp; upper(''#USER#''), -- DB'||unistr('\000a')||
+'Schema (grantee)<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; is_grant =&gt;&nbsp;&nbsp;&nbsp; true,<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; privilege =&gt;&nbsp;&nbsp; ''connect'',<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; start_date&nbsp; =&gt; null, <b';
+
+s:=s||'r>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; end_date&nbsp; =&gt;&nbsp;&nbsp; null<br>'||unistr('\000a')||
+'&nbsp; );<br>'||unistr('\000a')||
+'&nbsp; <br>'||unistr('\000a')||
+'&nbsp; -- Privilege to resolve a hostname (DNS lookup)<br>'||unistr('\000a')||
+'&nbsp; DBMS_NETWORK_ACL_ADMIN.ADD_PRIVILEGE(<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; acl'||unistr('\000a')||
+'=&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; l_acl_name,<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; principal =&gt;&nbsp;&nbsp; upper(''#USER#''), -- DB'||unistr('\000a')||
+'Schema (grantee)<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp;';
+
+s:=s||' is_grant&nbsp; =&gt;&nbsp;&nbsp; true,<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; privilege =&gt;&nbsp;&nbsp; ''resolve'',<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; start_date&nbsp; =&gt; null, <br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; end_date&nbsp; =&gt;&nbsp;&nbsp; null<br>'||unistr('\000a')||
+'&nbsp; );<br>'||unistr('\000a')||
+'&nbsp; <br>'||unistr('\000a')||
+'&nbsp; -- Privilege to connect to localhost<br>'||unistr('\000a')||
+'&nbsp; dbms_network_acl_admin.assign_acl(<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; acl'||unistr('\000a')||
+'=&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n';
+
+s:=s||'bsp;&nbsp;&nbsp; l_acl_name,<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; host =&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||unistr('\000a')||
+'''127.0.0.1'',<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; lower_port =&gt;&nbsp; 80,<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; upper_port =&gt;&nbsp; 10000<br>'||unistr('\000a')||
+'&nbsp; );<br>'||unistr('\000a')||
+'<br>'||unistr('\000a')||
+'&nbsp; -- Privilege to connect to localhost<br>'||unistr('\000a')||
+'&nbsp; dbms_network_acl_admin.assign_acl(<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; acl'||unistr('\000a')||
+'=&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp';
+
+s:=s||';&nbsp;&nbsp; l_acl_name,<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; host =&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||unistr('\000a')||
+'''localhost'',<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; lower_port =&gt;&nbsp; 80,<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; upper_port =&gt;&nbsp; 10000<br>'||unistr('\000a')||
+'&nbsp; );<br>'||unistr('\000a')||
+'<br>'||unistr('\000a')||
+'&nbsp; -- Privilege to connect to #HOST#<br>'||unistr('\000a')||
+'&nbsp; dbms_network_acl_admin.assign_acl(<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; acl'||unistr('\000a')||
+'=&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp';
+
+s:=s||';&nbsp; l_acl_name,<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; host =&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||unistr('\000a')||
+'''#HOST#'',<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; lower_port =&gt;&nbsp; 80,<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; upper_port =&gt;&nbsp; 10000<br>'||unistr('\000a')||
+'&nbsp; );<br>'||unistr('\000a')||
+'&nbsp; <br>'||unistr('\000a')||
+'end;<br>'||unistr('\000a')||
+'/<br>'||unistr('\000a')||
+'&nbsp;&nbsp;&nbsp; <br>'||unistr('\000a')||
+'commit<br>'||unistr('\000a')||
+'/<br>'||unistr('\000a')||
+'</div>      '||unistr('\000a')||
+'      '||unistr('\000a')||
+'      ]'';'||unistr('\000a')||
+'      l_str := replace(l_str, ''#SQLERRM#'', l_sqlerrm);'||unistr('\000a')||
+'      l_str := replac';
+
+s:=s||'e(l_str, ''#USER#'', sys_context(''userenv'', ''current_user''));'||unistr('\000a')||
+'      l_str := replace(l_str, ''#HOST#'', :p0_server);'||unistr('\000a')||
+''||unistr('\000a')||
+'      htp.p(l_str);'||unistr('\000a')||
+'    else'||unistr('\000a')||
+'      -- no ACL problem'||unistr('\000a')||
+'      -- ok'||unistr('\000a')||
+'      htp.p(''All tests PASSED.'');'||unistr('\000a')||
+''||unistr('\000a')||
+'    end if;'||unistr('\000a')||
+'  '||unistr('\000a')||
+'end;'||unistr('\000a')||
+''||unistr('\000a')||
+''||unistr('\000a')||
+'';
+
+wwv_flow_api.create_page_plug (
+  p_id=> 17362857667298393 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_page_id=> 4,
+  p_plug_name=> 'Detail Validation',
+  p_region_name=>'',
+  p_parent_plug_id=>17362656610298392 + wwv_flow_api.g_id_offset,
+  p_escape_on_http_output=>'Y',
+  p_plug_template=> 17327142303409386+ wwv_flow_api.g_id_offset,
+  p_plug_display_sequence=> 181,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
+  p_plug_display_column=> null,
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
+  p_plug_source=> s,
+  p_plug_source_type=> 'PLSQL_PROCEDURE',
+  p_translate_title=> 'Y',
+  p_plug_query_row_template=> 17344347028409417+ wwv_flow_api.g_id_offset,
+  p_plug_query_headings_type=> 'QUERY_COLUMNS',
+  p_plug_query_num_rows => 15,
+  p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
+  p_plug_query_row_count_max => 500,
   p_plug_query_show_nulls_as => ' - ',
   p_plug_display_condition_type => '',
   p_pagination_display_position=>'BOTTOM_RIGHT',
@@ -1766,16 +2050,104 @@ wwv_flow_api.create_page_plug (
   p_page_id=> 4,
   p_plug_name=> 'Check 5: Is the J2EE application JasperReportsIntegration deployed?',
   p_region_name=>'',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 17332845056409410+ wwv_flow_api.g_id_offset,
   p_plug_display_sequence=> 91,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
   p_plug_source=> s,
   p_plug_source_type=> 'STATIC_TEXT',
   p_translate_title=> 'Y',
-  p_plug_display_error_message=> '#SQLERRM#',
   p_plug_query_row_template=> 1,
   p_plug_query_headings_type=> 'QUERY_COLUMNS',
+  p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
+  p_plug_query_row_count_max => 500,
+  p_plug_query_show_nulls_as => ' - ',
+  p_plug_display_condition_type => '',
+  p_pagination_display_position=>'BOTTOM_RIGHT',
+  p_plug_customized=>'0',
+  p_plug_caching=> 'NOT_CACHED',
+  p_plug_comment=> '');
+end;
+/
+declare
+  s varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+s:=s||'declare'||unistr('\000a')||
+'  l_dummy varchar2(1);'||unistr('\000a')||
+'  l_str varchar2(32767);'||unistr('\000a')||
+'  l_clob   clob;'||unistr('\000a')||
+'  l_sqlerrm varchar2(32767);'||unistr('\000a')||
+'begin'||unistr('\000a')||
+'  SELECT HTTPURITYPE (:p0_integration_context_url).getclob ()'||unistr('\000a')||
+'    INTO l_clob'||unistr('\000a')||
+'    from dual;'||unistr('\000a')||
+''||unistr('\000a')||
+'  -- ok'||unistr('\000a')||
+'  htp.p(''All tests PASSED.'');'||unistr('\000a')||
+'  '||unistr('\000a')||
+'exception'||unistr('\000a')||
+'  when others then'||unistr('\000a')||
+'    l_sqlerrm := sqlerrm;'||unistr('\000a')||
+'    '||unistr('\000a')||
+'      l_str := q''['||unistr('\000a')||
+'      '||unistr('\000a')||
+'Error occured: #SQLERRM#<br>'||unistr('\000a')||
+'<br>'||unistr('\000a')||
+'We couldn''t make a successful connect';
+
+s:=s||'ion to #SERVER_URL#.<br>'||unistr('\000a')||
+''||unistr('\000a')||
+'<br />'||unistr('\000a')||
+'<span style="font-size: 130%; font-weight: bold;">This can be ignored when the  the parameter infoPageIsEnabled=false is set in the application.properties file. Then the J2EE server will respond with an 403 error code for security reasons.</span>'||unistr('\000a')||
+'<br><br />'||unistr('\000a')||
+''||unistr('\000a')||
+'Please make sure the J2EE application (jri.war) is'||unistr('\000a')||
+'deployed and can be accessed.'||unistr('\000a')||
+'   '||unistr('\000a')||
+'  ';
+
+s:=s||'    '||unistr('\000a')||
+'      ]'';'||unistr('\000a')||
+'      l_str := replace(l_str, ''#SQLERRM#'', l_sqlerrm);'||unistr('\000a')||
+'      l_str := replace(l_str, ''#USER#'', sys_context(''userenv'', ''current_user''));'||unistr('\000a')||
+'      l_str := replace(l_str, ''#SERVER_URL#'', :p0_integration_context_url);'||unistr('\000a')||
+''||unistr('\000a')||
+'      htp.p(l_str);'||unistr('\000a')||
+''||unistr('\000a')||
+'end;'||unistr('\000a')||
+''||unistr('\000a')||
+''||unistr('\000a')||
+'';
+
+wwv_flow_api.create_page_plug (
+  p_id=> 17369560408904850 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_page_id=> 4,
+  p_plug_name=> 'Detail Validation',
+  p_region_name=>'',
+  p_parent_plug_id=>17369359801904847 + wwv_flow_api.g_id_offset,
+  p_escape_on_http_output=>'Y',
+  p_plug_template=> 17327142303409386+ wwv_flow_api.g_id_offset,
+  p_plug_display_sequence=> 201,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
+  p_plug_display_column=> null,
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
+  p_plug_source=> s,
+  p_plug_source_type=> 'PLSQL_PROCEDURE',
+  p_translate_title=> 'Y',
+  p_plug_query_row_template=> 17344347028409417+ wwv_flow_api.g_id_offset,
+  p_plug_query_headings_type=> 'QUERY_COLUMNS',
+  p_plug_query_num_rows => 15,
   p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
   p_plug_query_row_count_max => 500,
   p_plug_query_show_nulls_as => ' - ',
@@ -1798,16 +2170,104 @@ wwv_flow_api.create_page_plug (
   p_page_id=> 4,
   p_plug_name=> 'Check 6: Is the data source "default" configured properly?',
   p_region_name=>'',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 17332845056409410+ wwv_flow_api.g_id_offset,
   p_plug_display_sequence=> 101,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
   p_plug_source=> s,
   p_plug_source_type=> 'STATIC_TEXT',
   p_translate_title=> 'Y',
-  p_plug_display_error_message=> '#SQLERRM#',
   p_plug_query_row_template=> 1,
   p_plug_query_headings_type=> 'QUERY_COLUMNS',
+  p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
+  p_plug_query_row_count_max => 500,
+  p_plug_query_show_nulls_as => ' - ',
+  p_plug_display_condition_type => '',
+  p_pagination_display_position=>'BOTTOM_RIGHT',
+  p_plug_customized=>'0',
+  p_plug_caching=> 'NOT_CACHED',
+  p_plug_comment=> '');
+end;
+/
+declare
+  s varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+s:=s||'declare'||unistr('\000a')||
+'  l_dummy varchar2(1);'||unistr('\000a')||
+'  l_str varchar2(32767);'||unistr('\000a')||
+'  l_clob   clob;'||unistr('\000a')||
+'  l_sqlerrm varchar2(32767);'||unistr('\000a')||
+'  l_url varchar2(32767) := :p0_integration_context_url || ''/test?_dataSource=default'';'||unistr('\000a')||
+'begin'||unistr('\000a')||
+'  SELECT HTTPURITYPE (l_url).getclob ()'||unistr('\000a')||
+'    INTO l_clob'||unistr('\000a')||
+'    from dual;'||unistr('\000a')||
+''||unistr('\000a')||
+'  -- ok'||unistr('\000a')||
+'  htp.p(''All tests PASSED.'');'||unistr('\000a')||
+'  '||unistr('\000a')||
+'exception'||unistr('\000a')||
+'  when others then'||unistr('\000a')||
+'    l_sqlerrm := sqlerrm;'||unistr('\000a')||
+'    '||unistr('\000a')||
+'      l_str := q''['||unistr('\000a')||
+'      '||unistr('\000a')||
+'Error ';
+
+s:=s||'occured: #SQLERRM#<br>'||unistr('\000a')||
+'<br>'||unistr('\000a')||
+'We couldn''t make a successful connection to #URL#.<br>'||unistr('\000a')||
+''||unistr('\000a')||
+'<br />'||unistr('\000a')||
+'<span style="font-size: 130%; font-weight: bold;">This can be ignored when the  the parameter infoPageIsEnabled=false is set in the application.properties file. Then the J2EE server will respond with an 403 error code for security reasons.</span>'||unistr('\000a')||
+'<br><br />'||unistr('\000a')||
+''||unistr('\000a')||
+'It seems like the data source default is not confi';
+
+s:=s||'gured properly. <br>'||unistr('\000a')||
+'   '||unistr('\000a')||
+'      '||unistr('\000a')||
+'      ]'';'||unistr('\000a')||
+'      l_str := replace(l_str, ''#SQLERRM#'', l_sqlerrm);'||unistr('\000a')||
+'      l_str := replace(l_str, ''#USER#'', sys_context(''userenv'', ''current_user''));'||unistr('\000a')||
+'      l_str := replace(l_str, ''#URL#'', l_url);'||unistr('\000a')||
+''||unistr('\000a')||
+'      htp.p(l_str);'||unistr('\000a')||
+''||unistr('\000a')||
+'end;'||unistr('\000a')||
+''||unistr('\000a')||
+''||unistr('\000a')||
+'';
+
+wwv_flow_api.create_page_plug (
+  p_id=> 17371533641947586 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_page_id=> 4,
+  p_plug_name=> 'Detail Validation',
+  p_region_name=>'',
+  p_parent_plug_id=>17371344179947585 + wwv_flow_api.g_id_offset,
+  p_escape_on_http_output=>'Y',
+  p_plug_template=> 17327142303409386+ wwv_flow_api.g_id_offset,
+  p_plug_display_sequence=> 201,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
+  p_plug_display_column=> null,
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
+  p_plug_source=> s,
+  p_plug_source_type=> 'PLSQL_PROCEDURE',
+  p_translate_title=> 'Y',
+  p_plug_query_row_template=> 17344347028409417+ wwv_flow_api.g_id_offset,
+  p_plug_query_headings_type=> 'QUERY_COLUMNS',
+  p_plug_query_num_rows => 15,
   p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
   p_plug_query_row_count_max => 500,
   p_plug_query_show_nulls_as => ' - ',
@@ -1830,16 +2290,98 @@ wwv_flow_api.create_page_plug (
   p_page_id=> 4,
   p_plug_name=> 'Check 7: Does the test report return a result for the data source "default"?',
   p_region_name=>'',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 17332845056409410+ wwv_flow_api.g_id_offset,
   p_plug_display_sequence=> 211,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
   p_plug_source=> s,
   p_plug_source_type=> 'STATIC_TEXT',
   p_translate_title=> 'Y',
-  p_plug_display_error_message=> '#SQLERRM#',
   p_plug_query_row_template=> 1,
   p_plug_query_headings_type=> 'QUERY_COLUMNS',
+  p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
+  p_plug_query_row_count_max => 500,
+  p_plug_query_show_nulls_as => ' - ',
+  p_plug_display_condition_type => '',
+  p_pagination_display_position=>'BOTTOM_RIGHT',
+  p_plug_customized=>'0',
+  p_plug_caching=> 'NOT_CACHED',
+  p_plug_comment=> '');
+end;
+/
+declare
+  s varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+s:=s||'declare'||unistr('\000a')||
+'  l_dummy varchar2(1);'||unistr('\000a')||
+'  l_str varchar2(32767);'||unistr('\000a')||
+'  l_clob   clob;'||unistr('\000a')||
+'  l_sqlerrm varchar2(32767);'||unistr('\000a')||
+'  l_url varchar2(32767) := :p0_integration_context_url || ''/report?_dataSource=default'';'||unistr('\000a')||
+'begin'||unistr('\000a')||
+'  SELECT HTTPURITYPE (l_url).getclob ()'||unistr('\000a')||
+'    INTO l_clob'||unistr('\000a')||
+'    from dual;'||unistr('\000a')||
+''||unistr('\000a')||
+'  -- ok'||unistr('\000a')||
+'  htp.p(''All tests PASSED.'');'||unistr('\000a')||
+'  '||unistr('\000a')||
+'exception'||unistr('\000a')||
+'  when others then'||unistr('\000a')||
+'    l_sqlerrm := sqlerrm;'||unistr('\000a')||
+'    '||unistr('\000a')||
+'      l_str := q''['||unistr('\000a')||
+'      '||unistr('\000a')||
+'Erro';
+
+s:=s||'r occured: #SQLERRM#<br>'||unistr('\000a')||
+'<br>'||unistr('\000a')||
+'We couldn''t make a successful connection to #URL#.<br>'||unistr('\000a')||
+'<br>'||unistr('\000a')||
+'It seems like the data source default is not configured properly. <br>'||unistr('\000a')||
+'   '||unistr('\000a')||
+'      '||unistr('\000a')||
+'      ]'';'||unistr('\000a')||
+'      l_str := replace(l_str, ''#SQLERRM#'', l_sqlerrm);'||unistr('\000a')||
+'      l_str := replace(l_str, ''#USER#'', sys_context(''userenv'', ''current_user''));'||unistr('\000a')||
+'      l_str := replace(l_str, ''#URL#'', l_url);'||unistr('\000a')||
+''||unistr('\000a')||
+'      htp.p(l_str);'||unistr('\000a')||
+''||unistr('\000a')||
+'end;'||unistr('\000a')||
+''||unistr('\000a')||
+''||unistr('\000a')||
+'';
+
+wwv_flow_api.create_page_plug (
+  p_id=> 17375442613049813 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_page_id=> 4,
+  p_plug_name=> 'Detail Validation',
+  p_region_name=>'',
+  p_parent_plug_id=>17375237657049813 + wwv_flow_api.g_id_offset,
+  p_escape_on_http_output=>'Y',
+  p_plug_template=> 17327142303409386+ wwv_flow_api.g_id_offset,
+  p_plug_display_sequence=> 201,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
+  p_plug_display_column=> null,
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
+  p_plug_source=> s,
+  p_plug_source_type=> 'PLSQL_PROCEDURE',
+  p_translate_title=> 'Y',
+  p_plug_query_row_template=> 17344347028409417+ wwv_flow_api.g_id_offset,
+  p_plug_query_headings_type=> 'QUERY_COLUMNS',
+  p_plug_query_num_rows => 15,
   p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
   p_plug_query_row_count_max => 500,
   p_plug_query_show_nulls_as => ' - ',
@@ -1862,14 +2404,18 @@ wwv_flow_api.create_page_plug (
   p_page_id=> 4,
   p_plug_name=> 'Installation',
   p_region_name=>'',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 17328333600409399+ wwv_flow_api.g_id_offset,
   p_plug_display_sequence=> 1,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 1,
   p_plug_display_point=> 'REGION_POSITION_01',
+  p_plug_item_display_point=> 'BELOW',
   p_plug_source=> s,
   p_plug_source_type=> 'M'|| to_char(56539424029997642 + wwv_flow_api.g_id_offset),
   p_menu_template_id=> 17346735300409418+ wwv_flow_api.g_id_offset,
-  p_plug_display_error_message=> '#SQLERRM#',
   p_plug_query_row_template=> 1,
   p_plug_query_headings_type=> 'COLON_DELMITED_LIST',
   p_plug_query_row_count_max => 500,
@@ -1883,100 +2429,100 @@ declare
   l_clob clob;
   l_length number := 1;
 begin
-s:=s||'SELECT   *'||chr(10)||
-'    FROM (SELECT 1 step, ''Step 1: Grant execute on utl_http'' step_name,'||chr(10)||
-'                 status, ''*'' required'||chr(10)||
-'            FROM (SELECT DECODE (installed,'||chr(10)||
-'                                 1, ''/i/Fndokay1.gif'','||chr(10)||
-'                                 ''/i/FNDCANCE.gif'''||chr(10)||
-'                                ) status'||chr(10)||
-'                    FROM (SELECT SUM (CASE'||chr(10)||
+s:=s||'SELECT   *'||unistr('\000a')||
+'    FROM (SELECT 1 step, ''Step 1: Grant execute on utl_http'' step_name,'||unistr('\000a')||
+'                 status, ''*'' required'||unistr('\000a')||
+'            FROM (SELECT DECODE (installed,'||unistr('\000a')||
+'                                 1, ''/i/Fndokay1.gif'','||unistr('\000a')||
+'                                 ''/i/FNDCANCE.gif'''||unistr('\000a')||
+'                                ) status'||unistr('\000a')||
+'                    FROM (SELECT SUM (CASE'||unistr('\000a')||
 '                                         WHEN';
 
-s:=s||' owner = ''SYS'''||chr(10)||
-'                                         AND grantee = ''#OWNER#'''||chr(10)||
-'                                         AND table_name = ''UTL_HTTP'''||chr(10)||
-'                                         AND PRIVILEGE = ''EXECUTE'''||chr(10)||
-'                                            THEN 1'||chr(10)||
-'                                         ELSE 0'||chr(10)||
-'                                      END'||chr(10)||
+s:=s||' owner = ''SYS'''||unistr('\000a')||
+'                                         AND grantee = ''#OWNER#'''||unistr('\000a')||
+'                                         AND table_name = ''UTL_HTTP'''||unistr('\000a')||
+'                                         AND PRIVILEGE = ''EXECUTE'''||unistr('\000a')||
+'                                            THEN 1'||unistr('\000a')||
+'                                         ELSE 0'||unistr('\000a')||
+'                                      END'||unistr('\000a')||
 '                                     ) inst';
 
-s:=s||'alled'||chr(10)||
-'                            FROM user_tab_privs))'||chr(10)||
-'          UNION'||chr(10)||
-'          SELECT 2 step, ''Step 2: Install XLIB packages'' step_name, status,'||chr(10)||
-'                 ''*'' required'||chr(10)||
-'            FROM (SELECT DECODE (installed,'||chr(10)||
-'                                 2, ''/i/Fndokay1.gif'','||chr(10)||
-'                                 ''/i/FNDCANCE.gif'''||chr(10)||
-'                                ) status'||chr(10)||
+s:=s||'alled'||unistr('\000a')||
+'                            FROM user_tab_privs))'||unistr('\000a')||
+'          UNION'||unistr('\000a')||
+'          SELECT 2 step, ''Step 2: Install XLIB packages'' step_name, status,'||unistr('\000a')||
+'                 ''*'' required'||unistr('\000a')||
+'            FROM (SELECT DECODE (installed,'||unistr('\000a')||
+'                                 2, ''/i/Fndokay1.gif'','||unistr('\000a')||
+'                                 ''/i/FNDCANCE.gif'''||unistr('\000a')||
+'                                ) status'||unistr('\000a')||
 '                    FROM (SELEC';
 
-s:=s||'T SUM'||chr(10)||
-'                                    (CASE'||chr(10)||
-'                                        WHEN OBJECT_NAME IN'||chr(10)||
-'                                                   (''XLIB_HTTP'', ''XLIB_JASPERREPORTS'')'||chr(10)||
-'                                           THEN 1'||chr(10)||
-'                                        ELSE 0'||chr(10)||
-'                                     END'||chr(10)||
-'                                    ) installed'||chr(10)||
+s:=s||'T SUM'||unistr('\000a')||
+'                                    (CASE'||unistr('\000a')||
+'                                        WHEN OBJECT_NAME IN'||unistr('\000a')||
+'                                                   (''XLIB_HTTP'', ''XLIB_JASPERREPORTS'')'||unistr('\000a')||
+'                                           THEN 1'||unistr('\000a')||
+'                                        ELSE 0'||unistr('\000a')||
+'                                     END'||unistr('\000a')||
+'                                    ) installed'||unistr('\000a')||
 '                   ';
 
-s:=s||'         FROM user_objects '||chr(10)||
-'                           WHERE status=''VALID'''||chr(10)||
-'                             AND object_type=''PACKAGE''))'||chr(10)||
-'          UNION'||chr(10)||
-'          SELECT 3 step, ''Step 3: Install Tomcat'' step_name, status,'||chr(10)||
-'                 ''*'' required'||chr(10)||
-'            FROM (SELECT DECODE (installed,'||chr(10)||
-'                                 1, ''/i/Fndokay1.gif'','||chr(10)||
-'                                 ''/i/FNDCANCE.gif'''||chr(10)||
+s:=s||'         FROM user_objects '||unistr('\000a')||
+'                           WHERE status=''VALID'''||unistr('\000a')||
+'                             AND object_type=''PACKAGE''))'||unistr('\000a')||
+'          UNION'||unistr('\000a')||
+'          SELECT 3 step, ''Step 3: Install Tomcat'' step_name, status,'||unistr('\000a')||
+'                 ''*'' required'||unistr('\000a')||
+'            FROM (SELECT DECODE (installed,'||unistr('\000a')||
+'                                 1, ''/i/Fndokay1.gif'','||unistr('\000a')||
+'                                 ''/i/FNDCANCE.gif'''||unistr('\000a')||
 '  ';
 
-s:=s||'                              ) status'||chr(10)||
-'                    FROM (SELECT xlib_http.check_get_request'||chr(10)||
-'                                                 (:P0_INTEGRATION_CONTEXT_URL || '''''||chr(10)||
-'                                                 ) installed'||chr(10)||
-'                            FROM DUAL))'||chr(10)||
-'          UNION'||chr(10)||
-'          SELECT 4 step, ''Step 4: Install JasperReportsIntegration'' step_name,'||chr(10)||
+s:=s||'                              ) status'||unistr('\000a')||
+'                    FROM (SELECT xlib_http.check_get_request'||unistr('\000a')||
+'                                                 (:P0_INTEGRATION_CONTEXT_URL || '''''||unistr('\000a')||
+'                                                 ) installed'||unistr('\000a')||
+'                            FROM DUAL))'||unistr('\000a')||
+'          UNION'||unistr('\000a')||
+'          SELECT 4 step, ''Step 4: Install JasperReportsIntegration'' step_name,'||unistr('\000a')||
 '                 sta';
 
-s:=s||'tus, ''*'' required'||chr(10)||
-'            FROM (SELECT DECODE (installed,'||chr(10)||
-'                                 1, ''/i/Fndokay1.gif'','||chr(10)||
-'                                 ''/i/FNDCANCE.gif'''||chr(10)||
-'                                ) status'||chr(10)||
-'                    FROM (SELECT xlib_http.check_get_request'||chr(10)||
-'                                       (   :P0_INTEGRATION_CONTEXT_URL'||chr(10)||
-'                                        || '''''||chr(10)||
+s:=s||'tus, ''*'' required'||unistr('\000a')||
+'            FROM (SELECT DECODE (installed,'||unistr('\000a')||
+'                                 1, ''/i/Fndokay1.gif'','||unistr('\000a')||
+'                                 ''/i/FNDCANCE.gif'''||unistr('\000a')||
+'                                ) status'||unistr('\000a')||
+'                    FROM (SELECT xlib_http.check_get_request'||unistr('\000a')||
+'                                       (   :P0_INTEGRATION_CONTEXT_URL'||unistr('\000a')||
+'                                        || '''''||unistr('\000a')||
 '             ';
 
-s:=s||'                          ) installed'||chr(10)||
-'                            FROM DUAL))'||chr(10)||
-'          UNION'||chr(10)||
-'          SELECT 6 step, ''Step 6: Install sample application'' step_name,'||chr(10)||
-'                 status, ''&nbsp;'' required'||chr(10)||
-'            FROM (SELECT DECODE (installed,'||chr(10)||
-'                                 2, ''/i/Fndokay1.gif'','||chr(10)||
-'                                 ''/i/FNDCANCE.gif'''||chr(10)||
+s:=s||'                          ) installed'||unistr('\000a')||
+'                            FROM DUAL))'||unistr('\000a')||
+'          UNION'||unistr('\000a')||
+'          SELECT 6 step, ''Step 6: Install sample application'' step_name,'||unistr('\000a')||
+'                 status, ''&nbsp;'' required'||unistr('\000a')||
+'            FROM (SELECT DECODE (installed,'||unistr('\000a')||
+'                                 2, ''/i/Fndokay1.gif'','||unistr('\000a')||
+'                                 ''/i/FNDCANCE.gif'''||unistr('\000a')||
 '                                ) status';
 
-s:=s||''||chr(10)||
-'                    FROM (SELECT SUM'||chr(10)||
-'                                    (CASE'||chr(10)||
-'                                        WHEN object_name IN'||chr(10)||
-'                                               (''DEMO_ORDERS'','||chr(10)||
-'                                                ''DEMO_CUSTOMERS'')'||chr(10)||
-'                                           THEN 1'||chr(10)||
-'                                        ELSE 0'||chr(10)||
+s:=s||''||unistr('\000a')||
+'                    FROM (SELECT SUM'||unistr('\000a')||
+'                                    (CASE'||unistr('\000a')||
+'                                        WHEN object_name IN'||unistr('\000a')||
+'                                               (''DEMO_ORDERS'','||unistr('\000a')||
+'                                                ''DEMO_CUSTOMERS'')'||unistr('\000a')||
+'                                           THEN 1'||unistr('\000a')||
+'                                        ELSE 0'||unistr('\000a')||
 '                                  ';
 
-s:=s||'   END'||chr(10)||
-'                                    ) installed'||chr(10)||
-'                            FROM user_objects))'||chr(10)||
-'          )'||chr(10)||
+s:=s||'   END'||unistr('\000a')||
+'                                    ) installed'||unistr('\000a')||
+'                            FROM user_objects))'||unistr('\000a')||
+'          )'||unistr('\000a')||
 'ORDER BY step';
 
 wwv_flow_api.create_report_region (
@@ -1987,11 +2533,14 @@ wwv_flow_api.create_report_region (
   p_region_name=>'',
   p_template=> 17332845056409410+ wwv_flow_api.g_id_offset,
   p_display_sequence=> 11,
+  p_new_grid         => false,
+  p_new_grid_row     => false,
+  p_new_grid_column  => false,
   p_display_column=> 1,
-  p_display_point=> 'AFTER_SHOW_ITEMS',
+  p_display_point=> 'BODY_3',
+  p_item_display_point=> 'ABOVE',
   p_source=> s,
   p_source_type=> 'SQL_QUERY',
-  p_display_error_message=> '#SQLERRM#',
   p_plug_caching=> 'NOT_CACHED',
   p_customized=> '0',
   p_translate_title=> 'Y',
@@ -2144,16 +2693,88 @@ wwv_flow_api.create_page_plug (
   p_page_id=> 4,
   p_plug_name=> 'Check 3: Are the required PL/SQL packages installed?',
   p_region_name=>'',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 17332845056409410+ wwv_flow_api.g_id_offset,
   p_plug_display_sequence=> 51,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
   p_plug_source=> s,
   p_plug_source_type=> 'STATIC_TEXT',
   p_translate_title=> 'Y',
-  p_plug_display_error_message=> '#SQLERRM#',
   p_plug_query_row_template=> 1,
   p_plug_query_headings_type=> 'QUERY_COLUMNS',
+  p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
+  p_plug_query_row_count_max => 500,
+  p_plug_query_show_nulls_as => ' - ',
+  p_plug_display_condition_type => '',
+  p_pagination_display_position=>'BOTTOM_RIGHT',
+  p_plug_customized=>'0',
+  p_plug_caching=> 'NOT_CACHED',
+  p_plug_comment=> '');
+end;
+/
+declare
+  s varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+s:=s||'declare'||unistr('\000a')||
+'  l_dummy number;'||unistr('\000a')||
+'  l_cnt number;'||unistr('\000a')||
+'  l_str varchar2(23767);'||unistr('\000a')||
+'begin'||unistr('\000a')||
+'  select count(*)'||unistr('\000a')||
+'    into l_cnt'||unistr('\000a')||
+'    from user_objects'||unistr('\000a')||
+'   where object_name in (''XLIB_JASPERREPORTS'', ''XLIB_HTTP'')'||unistr('\000a')||
+'     and object_type = ''PACKAGE'''||unistr('\000a')||
+'     and status = ''VALID'';'||unistr('\000a')||
+''||unistr('\000a')||
+'  if l_cnt=2 then'||unistr('\000a')||
+'    -- ok'||unistr('\000a')||
+'    htp.p(''All tests PASSED.'');'||unistr('\000a')||
+'  else'||unistr('\000a')||
+'    l_str := ''The packages <span style="font-family: Consolas;">XLIB_HTTP</span> and';
+
+s:=s||''||unistr('\000a')||
+'<span style="font-family: Consolas;">XLIB_JASPERREPORTS</span> are not'||unistr('\000a')||
+'installed or not valid. These are required.<br>'||unistr('\000a')||
+'<br>'||unistr('\000a')||
+'They have to be installed in the application schema <span'||unistr('\000a')||
+'style="font-family: Consolas;">#USER#</span>.'||unistr('\000a')||
+'<br>'';'||unistr('\000a')||
+''||unistr('\000a')||
+'    l_str := replace(l_str, ''#USER#'', sys_context(''userenv'', ''current_user''));'||unistr('\000a')||
+'    htp.p(l_str);    '||unistr('\000a')||
+'  end if;'||unistr('\000a')||
+'end;';
+
+wwv_flow_api.create_page_plug (
+  p_id=> 17367862366640628 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_page_id=> 4,
+  p_plug_name=> 'Detail Validation',
+  p_region_name=>'',
+  p_parent_plug_id=>26316485576009598 + wwv_flow_api.g_id_offset,
+  p_escape_on_http_output=>'Y',
+  p_plug_template=> 17327142303409386+ wwv_flow_api.g_id_offset,
+  p_plug_display_sequence=> 191,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
+  p_plug_display_column=> null,
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
+  p_plug_source=> s,
+  p_plug_source_type=> 'PLSQL_PROCEDURE',
+  p_translate_title=> 'Y',
+  p_plug_query_row_template=> 17344347028409417+ wwv_flow_api.g_id_offset,
+  p_plug_query_headings_type=> 'QUERY_COLUMNS',
+  p_plug_query_num_rows => 15,
   p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
   p_plug_query_row_count_max => 500,
   p_plug_query_show_nulls_as => ' - ',
@@ -2176,19 +2797,87 @@ wwv_flow_api.create_page_plug (
   p_page_id=> 4,
   p_plug_name=> 'Check 1: Do we have EXECUTE privileges on UTL_HTTP?',
   p_region_name=>'',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 17332845056409410+ wwv_flow_api.g_id_offset,
   p_plug_display_sequence=> 21,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
   p_plug_source=> s,
   p_plug_source_type=> 'STATIC_TEXT',
   p_translate_title=> 'Y',
-  p_plug_display_error_message=> '#SQLERRM#',
   p_plug_query_row_template=> 1,
   p_plug_query_headings_type=> 'QUERY_COLUMNS',
   p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
   p_plug_query_row_count_max => 500,
   p_plug_column_width => 'valign=top',
+  p_plug_query_show_nulls_as => ' - ',
+  p_plug_display_condition_type => '',
+  p_pagination_display_position=>'BOTTOM_RIGHT',
+  p_plug_customized=>'0',
+  p_plug_caching=> 'NOT_CACHED',
+  p_plug_comment=> '');
+end;
+/
+declare
+  s varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+s:=s||'declare'||unistr('\000a')||
+'  l_dummy varchar2(1);'||unistr('\000a')||
+'  l_str varchar2(32767);'||unistr('\000a')||
+'begin'||unistr('\000a')||
+'  select null '||unistr('\000a')||
+'    into l_dummy'||unistr('\000a')||
+'    from user_tab_privs'||unistr('\000a')||
+'   where owner=''SYS'''||unistr('\000a')||
+'     and grantee=sys_context(''userenv'', ''current_user'')'||unistr('\000a')||
+'     and table_name=''UTL_HTTP'''||unistr('\000a')||
+'     and privilege=''EXECUTE'';'||unistr('\000a')||
+''||unistr('\000a')||
+'  -- ok'||unistr('\000a')||
+'  htp.p(''All tests PASSED.'');'||unistr('\000a')||
+'exception'||unistr('\000a')||
+'  when no_data_found then'||unistr('\000a')||
+'    l_str := ''Please issue the following command as SYS:'||unistr('\000a')||
+'    <br />'||unistr('\000a')||
+' ';
+
+s:=s||'   <br />'||unistr('\000a')||
+'    GRANT EXECUTE ON SYS.UTL_HTTP TO #USER#;'';'||unistr('\000a')||
+''||unistr('\000a')||
+'    l_str := replace(l_str, ''#USER#'', sys_context(''userenv'', ''current_user''));'||unistr('\000a')||
+'    htp.p(l_str);    '||unistr('\000a')||
+'end;';
+
+wwv_flow_api.create_page_plug (
+  p_id=> 17361137807160497 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_page_id=> 4,
+  p_plug_name=> 'Detail Validation',
+  p_region_name=>'',
+  p_parent_plug_id=>26320684377122790 + wwv_flow_api.g_id_offset,
+  p_escape_on_http_output=>'Y',
+  p_plug_template=> 17327142303409386+ wwv_flow_api.g_id_offset,
+  p_plug_display_sequence=> 181,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
+  p_plug_display_column=> null,
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
+  p_plug_source=> s,
+  p_plug_source_type=> 'PLSQL_PROCEDURE',
+  p_translate_title=> 'Y',
+  p_plug_query_row_template=> 17344347028409417+ wwv_flow_api.g_id_offset,
+  p_plug_query_headings_type=> 'QUERY_COLUMNS',
+  p_plug_query_num_rows => 15,
+  p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
+  p_plug_query_row_count_max => 500,
   p_plug_query_show_nulls_as => ' - ',
   p_plug_display_condition_type => '',
   p_pagination_display_position=>'BOTTOM_RIGHT',
@@ -2210,14 +2899,18 @@ wwv_flow_api.create_page_plug (
   p_page_id=> 4,
   p_plug_name=> 'Step 3: Install Tomcat - configure URL',
   p_region_name=>'',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 0,
   p_plug_display_sequence=> 131,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
   p_plug_source=> s,
   p_plug_source_type=> 'STATIC_TEXT',
   p_translate_title=> 'Y',
-  p_plug_display_error_message=> '#SQLERRM#',
   p_plug_query_row_template=> 1,
   p_plug_query_headings_type=> 'QUERY_COLUMNS',
   p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
@@ -2235,7 +2928,7 @@ declare
   l_clob clob;
   l_length number := 1;
 begin
-s:=s||''||chr(10)||
+s:=s||''||unistr('\000a')||
 '';
 
 wwv_flow_api.create_page_plug (
@@ -2244,14 +2937,18 @@ wwv_flow_api.create_page_plug (
   p_page_id=> 4,
   p_plug_name=> 'Check 4: Can the talk to the J2EE server?',
   p_region_name=>'',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 17332845056409410+ wwv_flow_api.g_id_offset,
   p_plug_display_sequence=> 81,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
   p_plug_source=> s,
   p_plug_source_type=> 'STATIC_TEXT',
   p_translate_title=> 'Y',
-  p_plug_display_error_message=> '#SQLERRM#',
   p_plug_query_row_template=> 1,
   p_plug_query_headings_type=> 'QUERY_COLUMNS',
   p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
@@ -2269,591 +2966,56 @@ declare
   l_clob clob;
   l_length number := 1;
 begin
-s:=s||'declare'||chr(10)||
-'  l_dummy varchar2(1);'||chr(10)||
-'  l_str varchar2(32767);'||chr(10)||
-'  l_clob   clob;'||chr(10)||
-'  l_sqlerrm varchar2(32767);'||chr(10)||
-'begin'||chr(10)||
-'  SELECT HTTPURITYPE (:p0_server_url).getclob ()'||chr(10)||
-'    INTO l_clob'||chr(10)||
-'    from dual;'||chr(10)||
-''||chr(10)||
-'/*  SELECT HTTPURITYPE (''http://www.opal-consulting.de'').getclob ()'||chr(10)||
-'    into l_clob'||chr(10)||
-'    from dual;'||chr(10)||
-'*/'||chr(10)||
-''||chr(10)||
-'  -- ok'||chr(10)||
-'  htp.p(''All tests PASSED.'');'||chr(10)||
-'  '||chr(10)||
-'exception'||chr(10)||
-'  when others then'||chr(10)||
-'    l_sqlerrm := sqlerrm;'||chr(10)||
-'    '||chr(10)||
-'    -- ';
-
-s:=s||'ACL problem'||chr(10)||
-'    if instr(l_sqlerrm, ''ORA-24247'')>0 then'||chr(10)||
-'      l_str := q''['||chr(10)||
-'      '||chr(10)||
-'Error occured: #SQLERRM#<br>'||chr(10)||
-'<br>'||chr(10)||
-'Please issue the following statement as SYS:<br>'||chr(10)||
-'<br>'||chr(10)||
-'<br>'||chr(10)||
-'<div style="font-family: Consolas,Courier;">'||chr(10)||
-'declare<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; l_acl_name varchar2(100) :='||chr(10)||
-'''JasperReportsIntegration-#USER#.xml'';<br>'||chr(10)||
-'begin<br>'||chr(10)||
-'&nbsp; begin<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; dbms_network_acl_admin.drop_acl(';
-
-s:=s||'<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; acl'||chr(10)||
-'=&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; l_acl_name<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; );<br>'||chr(10)||
-'&nbsp; exception <br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; when others then null; -- ACL does not exist yet<br>'||chr(10)||
-'&nbsp; end;<br>'||chr(10)||
-'&nbsp; <br>'||chr(10)||
-'&nbsp; -- Privilege to connect to a host<br>'||chr(10)||
-'&nbsp; dbms_network_acl_admin.create_acl(<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; acl'||chr(10)||
-'=&gt;&nbsp;&nbsp;&nbsp;&nbsp;';
-
-s:=s||'&nbsp;&nbsp;&nbsp;&nbsp; l_acl_name,<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; description =&gt; ''Accessing the local host for'||chr(10)||
-'printing with Tomcat'',<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; principal =&gt;&nbsp;&nbsp; upper(''#USER#''), -- DB'||chr(10)||
-'Schema (grantee)<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; is_grant =&gt;&nbsp;&nbsp;&nbsp; true,<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; privilege =&gt;&nbsp;&nbsp; ''connect'',<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; start_date&nbsp; =&gt; null, <b';
-
-s:=s||'r>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; end_date&nbsp; =&gt;&nbsp;&nbsp; null<br>'||chr(10)||
-'&nbsp; );<br>'||chr(10)||
-'&nbsp; <br>'||chr(10)||
-'&nbsp; -- Privilege to resolve a hostname (DNS lookup)<br>'||chr(10)||
-'&nbsp; DBMS_NETWORK_ACL_ADMIN.ADD_PRIVILEGE(<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; acl'||chr(10)||
-'=&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; l_acl_name,<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; principal =&gt;&nbsp;&nbsp; upper(''#USER#''), -- DB'||chr(10)||
-'Schema (grantee)<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp;';
-
-s:=s||' is_grant&nbsp; =&gt;&nbsp;&nbsp; true,<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; privilege =&gt;&nbsp;&nbsp; ''resolve'',<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; start_date&nbsp; =&gt; null, <br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; end_date&nbsp; =&gt;&nbsp;&nbsp; null<br>'||chr(10)||
-'&nbsp; );<br>'||chr(10)||
-'&nbsp; <br>'||chr(10)||
-'&nbsp; -- Privilege to connect to localhost<br>'||chr(10)||
-'&nbsp; dbms_network_acl_admin.assign_acl(<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; acl'||chr(10)||
-'=&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n';
-
-s:=s||'bsp;&nbsp;&nbsp; l_acl_name,<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; host =&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||chr(10)||
-'''127.0.0.1'',<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; lower_port =&gt;&nbsp; 80,<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; upper_port =&gt;&nbsp; 10000<br>'||chr(10)||
-'&nbsp; );<br>'||chr(10)||
-'<br>'||chr(10)||
-'&nbsp; -- Privilege to connect to localhost<br>'||chr(10)||
-'&nbsp; dbms_network_acl_admin.assign_acl(<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; acl'||chr(10)||
-'=&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp';
-
-s:=s||';&nbsp;&nbsp; l_acl_name,<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; host =&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||chr(10)||
-'''localhost'',<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; lower_port =&gt;&nbsp; 80,<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; upper_port =&gt;&nbsp; 10000<br>'||chr(10)||
-'&nbsp; );<br>'||chr(10)||
-'<br>'||chr(10)||
-'&nbsp; -- Privilege to connect to #HOST#<br>'||chr(10)||
-'&nbsp; dbms_network_acl_admin.assign_acl(<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; acl'||chr(10)||
-'=&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp';
-
-s:=s||';&nbsp; l_acl_name,<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; host =&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||chr(10)||
-'''#HOST#'',<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; lower_port =&gt;&nbsp; 80,<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; upper_port =&gt;&nbsp; 10000<br>'||chr(10)||
-'&nbsp; );<br>'||chr(10)||
-'&nbsp; <br>'||chr(10)||
-'end;<br>'||chr(10)||
-'/<br>'||chr(10)||
-'&nbsp;&nbsp;&nbsp; <br>'||chr(10)||
-'commit<br>'||chr(10)||
-'/<br>'||chr(10)||
-'</div>      '||chr(10)||
-'      '||chr(10)||
-'      ]'';'||chr(10)||
-'      l_str := replace(l_str, ''#SQLERRM#'', l_sqlerrm);'||chr(10)||
-'      l_str := replac';
-
-s:=s||'e(l_str, ''#USER#'', sys_context(''userenv'', ''current_user''));'||chr(10)||
-'      l_str := replace(l_str, ''#HOST#'', :p0_server);'||chr(10)||
-''||chr(10)||
-'      htp.p(l_str);'||chr(10)||
-'    else'||chr(10)||
-'      -- no ACL problem'||chr(10)||
-'      -- ok'||chr(10)||
-'      htp.p(''All tests PASSED.'');'||chr(10)||
-''||chr(10)||
-'    end if;'||chr(10)||
-'  '||chr(10)||
-'end;'||chr(10)||
-''||chr(10)||
-''||chr(10)||
-'';
-
-wwv_flow_api.create_page_plug (
-  p_id=> 17362857667298393 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_page_id=> 4,
-  p_plug_name=> 'Detail Validation',
-  p_region_name=>'',
-  p_parent_plug_id=>17362656610298392 + wwv_flow_api.g_id_offset,
-  p_plug_template=> 17327142303409386+ wwv_flow_api.g_id_offset,
-  p_plug_display_sequence=> 181,
-  p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
-  p_plug_source=> s,
-  p_plug_source_type=> 'PLSQL_PROCEDURE',
-  p_translate_title=> 'Y',
-  p_plug_display_error_message=> '#SQLERRM#',
-  p_plug_query_row_template=> 17344347028409417+ wwv_flow_api.g_id_offset,
-  p_plug_query_headings_type=> 'QUERY_COLUMNS',
-  p_plug_query_num_rows => 15,
-  p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
-  p_plug_query_row_count_max => 500,
-  p_plug_query_show_nulls_as => ' - ',
-  p_plug_display_condition_type => '',
-  p_pagination_display_position=>'BOTTOM_RIGHT',
-  p_plug_customized=>'0',
-  p_plug_caching=> 'NOT_CACHED',
-  p_plug_comment=> '');
-end;
-/
-declare
-  s varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-s:=s||'declare'||chr(10)||
-'  l_dummy varchar2(1);'||chr(10)||
-'  l_str varchar2(32767);'||chr(10)||
-'  l_clob   clob;'||chr(10)||
-'  l_sqlerrm varchar2(32767);'||chr(10)||
-'begin'||chr(10)||
-'  SELECT HTTPURITYPE (:p0_integration_context_url).getclob ()'||chr(10)||
-'    INTO l_clob'||chr(10)||
-'    from dual;'||chr(10)||
-''||chr(10)||
-'  -- ok'||chr(10)||
-'  htp.p(''All tests PASSED.'');'||chr(10)||
-'  '||chr(10)||
-'exception'||chr(10)||
-'  when others then'||chr(10)||
-'    l_sqlerrm := sqlerrm;'||chr(10)||
-'    '||chr(10)||
-'      l_str := q''['||chr(10)||
-'      '||chr(10)||
-'Error occured: #SQLERRM#<br>'||chr(10)||
-'<br>'||chr(10)||
-'We couldn''t make a successful connect';
-
-s:=s||'ion to #SERVER_URL#.<br>'||chr(10)||
-''||chr(10)||
-'<br />'||chr(10)||
-'<span style="font-size: 130%; font-weight: bold;">This can be ignored when the  the parameter infoPageIsEnabled=false is set in the application.properties file. Then the J2EE server will respond with an 403 error code for security reasons.</span>'||chr(10)||
-'<br><br />'||chr(10)||
-''||chr(10)||
-'Please make sure the J2EE application (JasperReportsIntegration.war) is'||chr(10)||
-'deployed and can be accessed.'||chr(10)||
-'   '||chr(10)||
-'  ';
-
-s:=s||'    '||chr(10)||
-'      ]'';'||chr(10)||
-'      l_str := replace(l_str, ''#SQLERRM#'', l_sqlerrm);'||chr(10)||
-'      l_str := replace(l_str, ''#USER#'', sys_context(''userenv'', ''current_user''));'||chr(10)||
-'      l_str := replace(l_str, ''#SERVER_URL#'', :p0_integration_context_url);'||chr(10)||
-''||chr(10)||
-'      htp.p(l_str);'||chr(10)||
-''||chr(10)||
-'end;'||chr(10)||
-''||chr(10)||
-''||chr(10)||
-'';
-
-wwv_flow_api.create_page_plug (
-  p_id=> 17369560408904850 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_page_id=> 4,
-  p_plug_name=> 'Detail Validation',
-  p_region_name=>'',
-  p_parent_plug_id=>17369359801904847 + wwv_flow_api.g_id_offset,
-  p_plug_template=> 17327142303409386+ wwv_flow_api.g_id_offset,
-  p_plug_display_sequence=> 201,
-  p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
-  p_plug_source=> s,
-  p_plug_source_type=> 'PLSQL_PROCEDURE',
-  p_translate_title=> 'Y',
-  p_plug_display_error_message=> '#SQLERRM#',
-  p_plug_query_row_template=> 17344347028409417+ wwv_flow_api.g_id_offset,
-  p_plug_query_headings_type=> 'QUERY_COLUMNS',
-  p_plug_query_num_rows => 15,
-  p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
-  p_plug_query_row_count_max => 500,
-  p_plug_query_show_nulls_as => ' - ',
-  p_plug_display_condition_type => '',
-  p_pagination_display_position=>'BOTTOM_RIGHT',
-  p_plug_customized=>'0',
-  p_plug_caching=> 'NOT_CACHED',
-  p_plug_comment=> '');
-end;
-/
-declare
-  s varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-s:=s||'declare'||chr(10)||
-'  l_dummy varchar2(1);'||chr(10)||
-'  l_str varchar2(32767);'||chr(10)||
-'  l_clob   clob;'||chr(10)||
-'  l_sqlerrm varchar2(32767);'||chr(10)||
-'  l_url varchar2(32767) := :p0_integration_context_url || ''/test?_dataSource=default'';'||chr(10)||
-'begin'||chr(10)||
-'  SELECT HTTPURITYPE (l_url).getclob ()'||chr(10)||
-'    INTO l_clob'||chr(10)||
-'    from dual;'||chr(10)||
-''||chr(10)||
-'  -- ok'||chr(10)||
-'  htp.p(''All tests PASSED.'');'||chr(10)||
-'  '||chr(10)||
-'exception'||chr(10)||
-'  when others then'||chr(10)||
-'    l_sqlerrm := sqlerrm;'||chr(10)||
-'    '||chr(10)||
-'      l_str := q''['||chr(10)||
-'      '||chr(10)||
-'Error ';
-
-s:=s||'occured: #SQLERRM#<br>'||chr(10)||
-'<br>'||chr(10)||
-'We couldn''t make a successful connection to #URL#.<br>'||chr(10)||
-''||chr(10)||
-'<br />'||chr(10)||
-'<span style="font-size: 130%; font-weight: bold;">This can be ignored when the  the parameter infoPageIsEnabled=false is set in the application.properties file. Then the J2EE server will respond with an 403 error code for security reasons.</span>'||chr(10)||
-'<br><br />'||chr(10)||
-''||chr(10)||
-'It seems like the data source default is not confi';
-
-s:=s||'gured properly. <br>'||chr(10)||
-'   '||chr(10)||
-'      '||chr(10)||
-'      ]'';'||chr(10)||
-'      l_str := replace(l_str, ''#SQLERRM#'', l_sqlerrm);'||chr(10)||
-'      l_str := replace(l_str, ''#USER#'', sys_context(''userenv'', ''current_user''));'||chr(10)||
-'      l_str := replace(l_str, ''#URL#'', l_url);'||chr(10)||
-''||chr(10)||
-'      htp.p(l_str);'||chr(10)||
-''||chr(10)||
-'end;'||chr(10)||
-''||chr(10)||
-''||chr(10)||
-'';
-
-wwv_flow_api.create_page_plug (
-  p_id=> 17371533641947586 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_page_id=> 4,
-  p_plug_name=> 'Detail Validation',
-  p_region_name=>'',
-  p_parent_plug_id=>17371344179947585 + wwv_flow_api.g_id_offset,
-  p_plug_template=> 17327142303409386+ wwv_flow_api.g_id_offset,
-  p_plug_display_sequence=> 201,
-  p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
-  p_plug_source=> s,
-  p_plug_source_type=> 'PLSQL_PROCEDURE',
-  p_translate_title=> 'Y',
-  p_plug_display_error_message=> '#SQLERRM#',
-  p_plug_query_row_template=> 17344347028409417+ wwv_flow_api.g_id_offset,
-  p_plug_query_headings_type=> 'QUERY_COLUMNS',
-  p_plug_query_num_rows => 15,
-  p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
-  p_plug_query_row_count_max => 500,
-  p_plug_query_show_nulls_as => ' - ',
-  p_plug_display_condition_type => '',
-  p_pagination_display_position=>'BOTTOM_RIGHT',
-  p_plug_customized=>'0',
-  p_plug_caching=> 'NOT_CACHED',
-  p_plug_comment=> '');
-end;
-/
-declare
-  s varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-s:=s||'declare'||chr(10)||
-'  l_dummy varchar2(1);'||chr(10)||
-'  l_str varchar2(32767);'||chr(10)||
-'  l_clob   clob;'||chr(10)||
-'  l_sqlerrm varchar2(32767);'||chr(10)||
-'  l_url varchar2(32767) := :p0_integration_context_url || ''/report?_dataSource=default'';'||chr(10)||
-'begin'||chr(10)||
-'  SELECT HTTPURITYPE (l_url).getclob ()'||chr(10)||
-'    INTO l_clob'||chr(10)||
-'    from dual;'||chr(10)||
-''||chr(10)||
-'  -- ok'||chr(10)||
-'  htp.p(''All tests PASSED.'');'||chr(10)||
-'  '||chr(10)||
-'exception'||chr(10)||
-'  when others then'||chr(10)||
-'    l_sqlerrm := sqlerrm;'||chr(10)||
-'    '||chr(10)||
-'      l_str := q''['||chr(10)||
-'      '||chr(10)||
-'Erro';
-
-s:=s||'r occured: #SQLERRM#<br>'||chr(10)||
-'<br>'||chr(10)||
-'We couldn''t make a successful connection to #URL#.<br>'||chr(10)||
-'<br>'||chr(10)||
-'It seems like the data source default is not configured properly. <br>'||chr(10)||
-'   '||chr(10)||
-'      '||chr(10)||
-'      ]'';'||chr(10)||
-'      l_str := replace(l_str, ''#SQLERRM#'', l_sqlerrm);'||chr(10)||
-'      l_str := replace(l_str, ''#USER#'', sys_context(''userenv'', ''current_user''));'||chr(10)||
-'      l_str := replace(l_str, ''#URL#'', l_url);'||chr(10)||
-''||chr(10)||
-'      htp.p(l_str);'||chr(10)||
-''||chr(10)||
-'end;'||chr(10)||
-''||chr(10)||
-''||chr(10)||
-'';
-
-wwv_flow_api.create_page_plug (
-  p_id=> 17375442613049813 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_page_id=> 4,
-  p_plug_name=> 'Detail Validation',
-  p_region_name=>'',
-  p_parent_plug_id=>17375237657049813 + wwv_flow_api.g_id_offset,
-  p_plug_template=> 17327142303409386+ wwv_flow_api.g_id_offset,
-  p_plug_display_sequence=> 201,
-  p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
-  p_plug_source=> s,
-  p_plug_source_type=> 'PLSQL_PROCEDURE',
-  p_translate_title=> 'Y',
-  p_plug_display_error_message=> '#SQLERRM#',
-  p_plug_query_row_template=> 17344347028409417+ wwv_flow_api.g_id_offset,
-  p_plug_query_headings_type=> 'QUERY_COLUMNS',
-  p_plug_query_num_rows => 15,
-  p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
-  p_plug_query_row_count_max => 500,
-  p_plug_query_show_nulls_as => ' - ',
-  p_plug_display_condition_type => '',
-  p_pagination_display_position=>'BOTTOM_RIGHT',
-  p_plug_customized=>'0',
-  p_plug_caching=> 'NOT_CACHED',
-  p_plug_comment=> '');
-end;
-/
-declare
-  s varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-s:=s||'declare'||chr(10)||
-'  l_dummy number;'||chr(10)||
-'  l_cnt number;'||chr(10)||
-'  l_str varchar2(23767);'||chr(10)||
-'begin'||chr(10)||
-'  select count(*)'||chr(10)||
-'    into l_cnt'||chr(10)||
-'    from user_objects'||chr(10)||
-'   where object_name in (''XLIB_JASPERREPORTS'', ''XLIB_HTTP'')'||chr(10)||
-'     and object_type = ''PACKAGE'''||chr(10)||
-'     and status = ''VALID'';'||chr(10)||
-''||chr(10)||
-'  if l_cnt=2 then'||chr(10)||
-'    -- ok'||chr(10)||
-'    htp.p(''All tests PASSED.'');'||chr(10)||
-'  else'||chr(10)||
-'    l_str := ''The packages <span style="font-family: Consolas;">XLIB_HTTP</span> and';
-
-s:=s||''||chr(10)||
-'<span style="font-family: Consolas;">XLIB_JASPERREPORTS</span> are not'||chr(10)||
-'installed or not valid. These are required.<br>'||chr(10)||
-'<br>'||chr(10)||
-'They have to be installed in the application schema <span'||chr(10)||
-'style="font-family: Consolas;">#USER#</span>.'||chr(10)||
-'<br>'';'||chr(10)||
-''||chr(10)||
-'    l_str := replace(l_str, ''#USER#'', sys_context(''userenv'', ''current_user''));'||chr(10)||
-'    htp.p(l_str);    '||chr(10)||
-'  end if;'||chr(10)||
-'end;';
-
-wwv_flow_api.create_page_plug (
-  p_id=> 17367862366640628 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_page_id=> 4,
-  p_plug_name=> 'Detail Validation',
-  p_region_name=>'',
-  p_parent_plug_id=>26316485576009598 + wwv_flow_api.g_id_offset,
-  p_plug_template=> 17327142303409386+ wwv_flow_api.g_id_offset,
-  p_plug_display_sequence=> 191,
-  p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
-  p_plug_source=> s,
-  p_plug_source_type=> 'PLSQL_PROCEDURE',
-  p_translate_title=> 'Y',
-  p_plug_display_error_message=> '#SQLERRM#',
-  p_plug_query_row_template=> 17344347028409417+ wwv_flow_api.g_id_offset,
-  p_plug_query_headings_type=> 'QUERY_COLUMNS',
-  p_plug_query_num_rows => 15,
-  p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
-  p_plug_query_row_count_max => 500,
-  p_plug_query_show_nulls_as => ' - ',
-  p_plug_display_condition_type => '',
-  p_pagination_display_position=>'BOTTOM_RIGHT',
-  p_plug_customized=>'0',
-  p_plug_caching=> 'NOT_CACHED',
-  p_plug_comment=> '');
-end;
-/
-declare
-  s varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-s:=s||'declare'||chr(10)||
-'  l_dummy varchar2(1);'||chr(10)||
-'  l_str varchar2(32767);'||chr(10)||
-'begin'||chr(10)||
-'  select null '||chr(10)||
-'    into l_dummy'||chr(10)||
-'    from user_tab_privs'||chr(10)||
-'   where owner=''SYS'''||chr(10)||
-'     and grantee=sys_context(''userenv'', ''current_user'')'||chr(10)||
-'     and table_name=''UTL_HTTP'''||chr(10)||
-'     and privilege=''EXECUTE'';'||chr(10)||
-''||chr(10)||
-'  -- ok'||chr(10)||
-'  htp.p(''All tests PASSED.'');'||chr(10)||
-'exception'||chr(10)||
-'  when no_data_found then'||chr(10)||
-'    l_str := ''Please issue the following command as SYS:'||chr(10)||
-'    <br />'||chr(10)||
-' ';
-
-s:=s||'   <br />'||chr(10)||
-'    GRANT EXECUTE ON SYS.UTL_HTTP TO #USER#;'';'||chr(10)||
-''||chr(10)||
-'    l_str := replace(l_str, ''#USER#'', sys_context(''userenv'', ''current_user''));'||chr(10)||
-'    htp.p(l_str);    '||chr(10)||
-'end;';
-
-wwv_flow_api.create_page_plug (
-  p_id=> 17361137807160497 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_page_id=> 4,
-  p_plug_name=> 'Detail Validation',
-  p_region_name=>'',
-  p_parent_plug_id=>26320684377122790 + wwv_flow_api.g_id_offset,
-  p_plug_template=> 17327142303409386+ wwv_flow_api.g_id_offset,
-  p_plug_display_sequence=> 181,
-  p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
-  p_plug_source=> s,
-  p_plug_source_type=> 'PLSQL_PROCEDURE',
-  p_translate_title=> 'Y',
-  p_plug_display_error_message=> '#SQLERRM#',
-  p_plug_query_row_template=> 17344347028409417+ wwv_flow_api.g_id_offset,
-  p_plug_query_headings_type=> 'QUERY_COLUMNS',
-  p_plug_query_num_rows => 15,
-  p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
-  p_plug_query_row_count_max => 500,
-  p_plug_query_show_nulls_as => ' - ',
-  p_plug_display_condition_type => '',
-  p_pagination_display_position=>'BOTTOM_RIGHT',
-  p_plug_customized=>'0',
-  p_plug_caching=> 'NOT_CACHED',
-  p_plug_comment=> '');
-end;
-/
-declare
-  s varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-s:=s||'declare'||chr(10)||
-'  l_dummy varchar2(1);'||chr(10)||
-'  l_str varchar2(32767);'||chr(10)||
-'  l_clob   clob;'||chr(10)||
-'  l_sqlerrm varchar2(32767);'||chr(10)||
-'begin'||chr(10)||
-'  SELECT HTTPURITYPE (:p0_server_url).getclob ()'||chr(10)||
-'    INTO l_clob'||chr(10)||
-'    from dual;'||chr(10)||
-''||chr(10)||
-'  -- ok'||chr(10)||
-'  htp.p(''All tests PASSED.'');'||chr(10)||
-'  '||chr(10)||
-'exception'||chr(10)||
-'  when others then'||chr(10)||
-'    l_sqlerrm := sqlerrm;'||chr(10)||
-'    '||chr(10)||
-'--    if instr(l_sqlerrm, ''ORA-12541'')>0 then'||chr(10)||
-'      l_str := q''['||chr(10)||
-'      '||chr(10)||
-'Error occured: #SQLERRM#<br>'||chr(10)||
-'<br>'||chr(10)||
+s:=s||'declare'||unistr('\000a')||
+'  l_dummy varchar2(1);'||unistr('\000a')||
+'  l_str varchar2(32767);'||unistr('\000a')||
+'  l_clob   clob;'||unistr('\000a')||
+'  l_sqlerrm varchar2(32767);'||unistr('\000a')||
+'begin'||unistr('\000a')||
+'  SELECT HTTPURITYPE (:p0_server_url).getclob ()'||unistr('\000a')||
+'    INTO l_clob'||unistr('\000a')||
+'    from dual;'||unistr('\000a')||
+''||unistr('\000a')||
+'  -- ok'||unistr('\000a')||
+'  htp.p(''All tests PASSED.'');'||unistr('\000a')||
+'  '||unistr('\000a')||
+'exception'||unistr('\000a')||
+'  when others then'||unistr('\000a')||
+'    l_sqlerrm := sqlerrm;'||unistr('\000a')||
+'    '||unistr('\000a')||
+'--    if instr(l_sqlerrm, ''ORA-12541'')>0 then'||unistr('\000a')||
+'      l_str := q''['||unistr('\000a')||
+'      '||unistr('\000a')||
+'Error occured: #SQLERRM#<br>'||unistr('\000a')||
+'<br>'||unistr('\000a')||
 'We c';
 
-s:=s||'ouldn''t make a successful connection to <span style="font-size: 130%; font-weight: bold;">#SERVER_URL#</span>.<br /><br />'||chr(10)||
-'<span style="font-size: 130%; font-weight: bold;">This can be ignored when the other tests are successful. Sometimes the J2EE server doesn''t have a working index page (mostly for security reasons).</span>'||chr(10)||
-'<br><br />'||chr(10)||
-'Please make sure: <br>'||chr(10)||
-'<ul>'||chr(10)||
+s:=s||'ouldn''t make a successful connection to <span style="font-size: 130%; font-weight: bold;">#SERVER_URL#</span>.<br /><br />'||unistr('\000a')||
+'<span style="font-size: 130%; font-weight: bold;">This can be ignored when the other tests are successful. Sometimes the J2EE server doesn''t have a working index page (mostly for security reasons).</span>'||unistr('\000a')||
+'<br><br />'||unistr('\000a')||
+'Please make sure: <br>'||unistr('\000a')||
+'<ul>'||unistr('\000a')||
 '<li>The J2EE server is up and acc';
 
-s:=s||'epting connections</li>'||chr(10)||
-'<li>The firewalls allow the communication from the database to the'||chr(10)||
-'J2EE server (if not installed locally)</li>'||chr(10)||
-'</ul>'||chr(10)||
-'   '||chr(10)||
-'      '||chr(10)||
-'      ]'';'||chr(10)||
-'      l_str := replace(l_str, ''#SQLERRM#'', l_sqlerrm);'||chr(10)||
-'      l_str := replace(l_str, ''#USER#'', sys_context(''userenv'', ''current_user''));'||chr(10)||
-'      l_str := replace(l_str, ''#SERVER_URL#'', :p0_server_url);'||chr(10)||
-''||chr(10)||
-'      htp.p(l_str);'||chr(10)||
-'--    end if;'||chr(10)||
-'  '||chr(10)||
+s:=s||'epting connections</li>'||unistr('\000a')||
+'<li>The firewalls allow the communication from the database to the'||unistr('\000a')||
+'J2EE server (if not installed locally)</li>'||unistr('\000a')||
+'</ul>'||unistr('\000a')||
+'   '||unistr('\000a')||
+'      '||unistr('\000a')||
+'      ]'';'||unistr('\000a')||
+'      l_str := replace(l_str, ''#SQLERRM#'', l_sqlerrm);'||unistr('\000a')||
+'      l_str := replace(l_str, ''#USER#'', sys_context(''userenv'', ''current_user''));'||unistr('\000a')||
+'      l_str := replace(l_str, ''#SERVER_URL#'', :p0_server_url);'||unistr('\000a')||
+''||unistr('\000a')||
+'      htp.p(l_str);'||unistr('\000a')||
+'--    end if;'||unistr('\000a')||
+'  '||unistr('\000a')||
 'e';
 
-s:=s||'nd;'||chr(10)||
-''||chr(10)||
-''||chr(10)||
+s:=s||'nd;'||unistr('\000a')||
+''||unistr('\000a')||
+''||unistr('\000a')||
 '';
 
 wwv_flow_api.create_page_plug (
@@ -2863,14 +3025,18 @@ wwv_flow_api.create_page_plug (
   p_plug_name=> 'Detail Validation',
   p_region_name=>'',
   p_parent_plug_id=>26332883693548365 + wwv_flow_api.g_id_offset,
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 17327142303409386+ wwv_flow_api.g_id_offset,
   p_plug_display_sequence=> 201,
-  p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
+  p_plug_display_column=> null,
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
   p_plug_source=> s,
   p_plug_source_type=> 'PLSQL_PROCEDURE',
   p_translate_title=> 'Y',
-  p_plug_display_error_message=> '#SQLERRM#',
   p_plug_query_row_template=> 17344347028409417+ wwv_flow_api.g_id_offset,
   p_plug_query_headings_type=> 'QUERY_COLUMNS',
   p_plug_query_num_rows => 15,
@@ -2894,7 +3060,9 @@ wwv_flow_api.create_page_button(
   p_button_sequence=> 30,
   p_button_plug_id => 26311502713976717+wwv_flow_api.g_id_offset,
   p_button_name    => 'BTN_REFRESH',
+  p_button_action  => 'SUBMIT',
   p_button_image   => 'template:'||to_char(17325751309409385+wwv_flow_api.g_id_offset),
+  p_button_is_hot=>'N',
   p_button_image_alt=> 'Refresh',
   p_button_position=> 'BOTTOM',
   p_button_alignment=> 'LEFT',
@@ -2913,6 +3081,7 @@ wwv_flow_api.create_page_branch(
   p_id=>26362182929848509 + wwv_flow_api.g_id_offset,
   p_flow_id=> wwv_flow.g_flow_id,
   p_flow_step_id=> 4,
+  p_branch_name=> '',
   p_branch_action=> 'f?p=&FLOW_ID.:4:&SESSION.::&DEBUG.&success_msg=#SUCCESS_MSG#',
   p_branch_point=> 'AFTER_PROCESSING',
   p_branch_type=> 'REDIRECT_URL',
@@ -2925,6 +3094,7 @@ wwv_flow_api.create_page_branch(
   p_id=>26337300774642671 + wwv_flow_api.g_id_offset,
   p_flow_id=> wwv_flow.g_flow_id,
   p_flow_step_id=> 4,
+  p_branch_name=> '',
   p_branch_action=> 'f?p=&APP_ID.:4:&SESSION.::&DEBUG.:::&success_msg=#SUCCESS_MSG#',
   p_branch_point=> 'AFTER_PROCESSING',
   p_branch_type=> 'REDIRECT_URL',
@@ -2962,89 +3132,98 @@ begin
 wwv_flow_api.create_page (
   p_flow_id => wwv_flow.g_flow_id
  ,p_id => 5
+ ,p_user_interface_id => 64731510056518 + wwv_flow_api.g_id_offset
  ,p_tab_set => 'TS1'
  ,p_name => 'USAGE'
  ,p_step_title => 'Usage'
+ ,p_allow_duplicate_submissions => 'Y'
  ,p_html_page_onload => 'onLoad="xlibJasperDemo_makeDemoUrl();"'
  ,p_step_sub_title_type => 'TEXT_WITH_SUBSTITUTIONS'
  ,p_first_item => 'NO_FIRST_ITEM'
  ,p_include_apex_css_js_yn => 'Y'
- ,p_welcome_text => '<style type="text/css">'||chr(10)||
-'<!--'||chr(10)||
-'.myTable {'||chr(10)||
-'	margin: 0px;'||chr(10)||
-'	/*border: thin solid #000000;*/'||chr(10)||
-'	border-collapse:collapse;'||chr(10)||
-'}'||chr(10)||
-'.myTable td, .myTable th{ '||chr(10)||
-'    border: 1px solid black;'||chr(10)||
-'	padding: 2px;'||chr(10)||
-'}'||chr(10)||
-'.myTable th{ '||chr(10)||
-'    background-color:#CCCCCC;'||chr(10)||
-'}'||chr(10)||
-''||chr(10)||
-'-->'||chr(10)||
+ ,p_welcome_text => '<style type="text/css">'||unistr('\000a')||
+'<!--'||unistr('\000a')||
+'.myTable {'||unistr('\000a')||
+'	margin: 0px;'||unistr('\000a')||
+'	/*border: thin solid #000000;*/'||unistr('\000a')||
+'	border-collapse:collapse;'||unistr('\000a')||
+'}'||unistr('\000a')||
+'.myTable td, .myTable th{ '||unistr('\000a')||
+'    border: 1px solid black;'||unistr('\000a')||
+'	padding: 2px;'||unistr('\000a')||
+'}'||unistr('\000a')||
+'.myTable th{ '||unistr('\000a')||
+'    background-color:#CCCCCC;'||unistr('\000a')||
+'}'||unistr('\000a')||
+''||unistr('\000a')||
+'-->'||unistr('\000a')||
 '</style>'
+ ,p_autocomplete_on_off => 'ON'
  ,p_html_page_header => 
-'<script>'||chr(10)||
-''||chr(10)||
-'function setValue(pItemName, pValue){'||chr(10)||
-'  $x(pItemName).value = pValue;'||chr(10)||
-'  xlibJasperDemo_makeDemoUrl();'||chr(10)||
-''||chr(10)||
-'  return false;'||chr(10)||
-'}'||chr(10)||
-''||chr(10)||
-'function xlibJasperDemo_generateUrl(pBaseUrl, pRepName, pRepFormat, pDataSource, pOutFilename, pRepLocale, pRepEncoding, pAdditionalParams){'||chr(10)||
-'  var url;'||chr(10)||
-''||chr(10)||
-'  url = pBaseUrl;'||chr(10)||
-'  url = url + "?_repName=" + pRepName;'||chr(10)||
-'  url = url + "&_repFormat=" + pRepFormat;'||chr(10)||
+'<script>'||unistr('\000a')||
+''||unistr('\000a')||
+'function setValue(pItemName, pValue){'||unistr('\000a')||
+'  $x(pItemName).value = pValue;'||unistr('\000a')||
+'  xlibJasperDemo_makeDemoUrl();'||unistr('\000a')||
+''||unistr('\000a')||
+'  return false;'||unistr('\000a')||
+'}'||unistr('\000a')||
+''||unistr('\000a')||
+'function xlibJasperDemo_generateUrl(pBaseUrl, pRepName, pRepFormat, pDataSource, pOutFilename, pRepLocale, pRepEncoding, pAdditionalParams){'||unistr('\000a')||
+'  var url;'||unistr('\000a')||
+''||unistr('\000a')||
+'  url = pBaseUrl;'||unistr('\000a')||
+'  url = url + "?_repName=" + pRepName;'||unistr('\000a')||
+'  url = url + "&_repFormat=" + pRepFormat;'||unistr('\000a')||
 '  url = url + "'||
-'&_dataSource=" + pDataSource;'||chr(10)||
-'  url = url + "&_outFilename=" + pOutFilename;'||chr(10)||
-'  url = url + "&_repLocale=" + pRepLocale;'||chr(10)||
-'  url = url + "&_repEncoding=" + pRepEncoding;'||chr(10)||
-'  if (pAdditionalParams)  url = url + "&" + pAdditionalParams;'||chr(10)||
-''||chr(10)||
-'  return url;'||chr(10)||
-'}'||chr(10)||
-''||chr(10)||
-'function xlibJasperDemo_makeDemoUrl(){ '||chr(10)||
+'&_dataSource=" + pDataSource;'||unistr('\000a')||
+'  url = url + "&_outFilename=" + pOutFilename;'||unistr('\000a')||
+'  url = url + "&_repLocale=" + pRepLocale;'||unistr('\000a')||
+'  url = url + "&_repEncoding=" + pRepEncoding;'||unistr('\000a')||
+'  if (pAdditionalParams)  url = url + "&" + pAdditionalParams;'||unistr('\000a')||
+''||unistr('\000a')||
+'  return url;'||unistr('\000a')||
+'}'||unistr('\000a')||
+''||unistr('\000a')||
+'function xlibJasperDemo_makeDemoUrl(){ '||unistr('\000a')||
 '  $x(''P5_REPORT_URL'').value=xlibJasperDemo_generateUrl($x(''P5_JASPER_REPORT_URL'').value, $x(''P5_REP_NAME'').value'||
-', $x(''P5_REP_FORMAT'').value, $x(''P5_DATA_SOURCE'').value, $x(''P5_OUT_FILENAME'').value, $x(''P5_REP_LOCALE'').value, $x(''P5_REP_ENCODING'').value, $x(''P5_ADDITIONAL_PARAMS'').value );'||chr(10)||
-'}'||chr(10)||
-''||chr(10)||
-'function xlibShowUrl(pUrl){'||chr(10)||
-'  window.open(pUrl);'||chr(10)||
-'  '||chr(10)||
-'  return false; '||chr(10)||
-'}'||chr(10)||
-''||chr(10)||
-'function xlibShowUrlTunnel(pUrl){'||chr(10)||
-'  var newUrl;'||chr(10)||
-''||chr(10)||
-'  alert(pUrl);'||chr(10)||
-'   // !!! use encodeURIComponent, not escape !!!'||chr(10)||
+', $x(''P5_REP_FORMAT'').value, $x(''P5_DATA_SOURCE'').value, $x(''P5_OUT_FILENAME'').value, $x(''P5_REP_LOCALE'').value, $x(''P5_REP_ENCODING'').value, $x(''P5_ADDITIONAL_PARAMS'').value );'||unistr('\000a')||
+'}'||unistr('\000a')||
+''||unistr('\000a')||
+'function xlibShowUrl(pUrl){'||unistr('\000a')||
+'  window.open(pUrl);'||unistr('\000a')||
+'  '||unistr('\000a')||
+'  return false; '||unistr('\000a')||
+'}'||unistr('\000a')||
+''||unistr('\000a')||
+'function xlibShowUrlTunnel(pUrl){'||unistr('\000a')||
+'  var newUrl;'||unistr('\000a')||
+''||unistr('\000a')||
+'  alert(pUrl);'||unistr('\000a')||
+'   // !!! use encodeURIComponent, not escape !!!'||unistr('\000a')||
 '  newUrl = encodeURIComponent(pUrl'||
-'.replace(/:/gi,''|''));'||chr(10)||
-'  alert(newUrl);'||chr(10)||
-'  newUrl = ''f?p=&APP_ID.:0:&APP_SESSION.:APPLICATION_PROCESS=prc_show_url:::F_TMP_1:'' + newUrl;'||chr(10)||
-''||chr(10)||
-'  alert(newUrl);'||chr(10)||
-'  window.open(newUrl);'||chr(10)||
-'  '||chr(10)||
-'  return false; '||chr(10)||
-'}'||chr(10)||
-''||chr(10)||
-''||chr(10)||
+'.replace(/:/gi,''|''));'||unistr('\000a')||
+'  alert(newUrl);'||unistr('\000a')||
+'  newUrl = ''f?p=&APP_ID.:0:&APP_SESSION.:APPLICATION_PROCESS=prc_show_url:::F_TMP_1:'' + newUrl;'||unistr('\000a')||
+''||unistr('\000a')||
+'  alert(newUrl);'||unistr('\000a')||
+'  window.open(newUrl);'||unistr('\000a')||
+'  '||unistr('\000a')||
+'  return false; '||unistr('\000a')||
+'}'||unistr('\000a')||
+''||unistr('\000a')||
+''||unistr('\000a')||
 '</script>'
+ ,p_inline_css => 
+'#REPORT_TESTER td{'||unistr('\000a')||
+'  vertical-align: top;'||unistr('\000a')||
+'}'
  ,p_page_is_public_y_n => 'N'
  ,p_cache_page_yn => 'N'
+ ,p_cache_timeout_seconds => 21600
+ ,p_cache_by_user_yn => 'N'
  ,p_last_updated_by => 'DIETMAR.AUST'
- ,p_last_upd_yyyymmddhh24miss => '20151004191956'
+ ,p_last_upd_yyyymmddhh24miss => '20181002193217'
   );
 null;
  
@@ -3056,9 +3235,9 @@ declare
   l_clob clob;
   l_length number := 1;
 begin
-s:=s||'This report tester will only pass the parameters to the J2EE'||chr(10)||
-'application. <br>'||chr(10)||
-'<br>'||chr(10)||
+s:=s||'This report tester will only pass the parameters to the J2EE'||unistr('\000a')||
+'application. <br>'||unistr('\000a')||
+'<br>'||unistr('\000a')||
 'The different parameters are explained in the local report tester as part of the J2EE application: <a href="&P0_INTEGRATION_CONTEXT_URL." target="_new">&P0_INTEGRATION_CONTEXT_URL.</a><br>';
 
 wwv_flow_api.create_page_plug (
@@ -3067,14 +3246,18 @@ wwv_flow_api.create_page_plug (
   p_page_id=> 5,
   p_plug_name=> 'Info',
   p_region_name=>'',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 17332845056409410+ wwv_flow_api.g_id_offset,
   p_plug_display_sequence=> 21,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
   p_plug_source=> s,
   p_plug_source_type=> 'STATIC_TEXT',
   p_translate_title=> 'Y',
-  p_plug_display_error_message=> '#SQLERRM#',
   p_plug_query_row_template=> 17344347028409417+ wwv_flow_api.g_id_offset,
   p_plug_query_headings_type=> 'QUERY_COLUMNS',
   p_plug_query_num_rows => 15,
@@ -3100,14 +3283,18 @@ wwv_flow_api.create_page_plug (
   p_page_id=> 5,
   p_plug_name=> 'Usage',
   p_region_name=>'',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 17328333600409399+ wwv_flow_api.g_id_offset,
   p_plug_display_sequence=> 1,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 1,
   p_plug_display_point=> 'REGION_POSITION_01',
+  p_plug_item_display_point=> 'BELOW',
   p_plug_source=> s,
   p_plug_source_type=> 'M'|| to_char(56539424029997642 + wwv_flow_api.g_id_offset),
   p_menu_template_id=> 17346735300409418+ wwv_flow_api.g_id_offset,
-  p_plug_display_error_message=> '#SQLERRM#',
   p_plug_query_row_template=> 1,
   p_plug_query_headings_type=> 'COLON_DELMITED_LIST',
   p_plug_query_row_count_max => 500,
@@ -3127,15 +3314,19 @@ wwv_flow_api.create_page_plug (
   p_flow_id=> wwv_flow.g_flow_id,
   p_page_id=> 5,
   p_plug_name=> 'Report tester',
-  p_region_name=>'',
+  p_region_name=>'REPORT_TESTER',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 17332845056409410+ wwv_flow_api.g_id_offset,
   p_plug_display_sequence=> 31,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
   p_plug_source=> s,
   p_plug_source_type=> 'STATIC_TEXT',
   p_translate_title=> 'Y',
-  p_plug_display_error_message=> '#SQLERRM#',
   p_plug_query_row_template=> 1,
   p_plug_query_headings_type=> 'QUERY_COLUMNS',
   p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
@@ -3158,7 +3349,9 @@ wwv_flow_api.create_page_button(
   p_button_sequence=> 10,
   p_button_plug_id => 26406201775509334+wwv_flow_api.g_id_offset,
   p_button_name    => 'SHOW_REPORT',
+  p_button_action  => 'SUBMIT',
   p_button_image   => 'template:'||to_char(17325751309409385+wwv_flow_api.g_id_offset),
+  p_button_is_hot=>'N',
   p_button_image_alt=> 'Show Report',
   p_button_position=> 'TOP_AND_BOTTOM',
   p_button_alignment=> 'LEFT',
@@ -3173,7 +3366,9 @@ wwv_flow_api.create_page_button(
   p_button_sequence=> 20,
   p_button_plug_id => 26406201775509334+wwv_flow_api.g_id_offset,
   p_button_name    => 'GET_REPORT',
+  p_button_action  => 'SUBMIT',
   p_button_image   => 'template:'||to_char(17325751309409385+wwv_flow_api.g_id_offset),
+  p_button_is_hot=>'N',
   p_button_image_alt=> 'Get Report as BLOB, then Show',
   p_button_position=> 'TOP_AND_BOTTOM',
   p_button_alignment=> 'LEFT',
@@ -3192,6 +3387,7 @@ wwv_flow_api.create_page_branch(
   p_id=>13692704968627381 + wwv_flow_api.g_id_offset,
   p_flow_id=> wwv_flow.g_flow_id,
   p_flow_step_id=> 5,
+  p_branch_name=> '',
   p_branch_action=> 'f?p=&APP_ID.:5:&SESSION.:SHOW_REPORT:&DEBUG.:::',
   p_branch_point=> 'AFTER_PROCESSING',
   p_branch_type=> 'REDIRECT_URL',
@@ -3204,6 +3400,7 @@ wwv_flow_api.create_page_branch(
   p_id=>13693432597729955 + wwv_flow_api.g_id_offset,
   p_flow_id=> wwv_flow.g_flow_id,
   p_flow_step_id=> 5,
+  p_branch_name=> '',
   p_branch_action=> 'f?p=&APP_ID.:5:&SESSION.:GET_REPORT:&DEBUG.:::',
   p_branch_point=> 'AFTER_PROCESSING',
   p_branch_type=> 'REDIRECT_URL',
@@ -3216,12 +3413,117 @@ wwv_flow_api.create_page_branch(
   p_id=>26452383822308417 + wwv_flow_api.g_id_offset,
   p_flow_id=> wwv_flow.g_flow_id,
   p_flow_step_id=> 5,
+  p_branch_name=> '',
   p_branch_action=> 'f?p=&APP_ID.:5:&SESSION.::&DEBUG.:::',
   p_branch_point=> 'AFTER_PROCESSING',
   p_branch_type=> 'REDIRECT_URL',
   p_branch_sequence=> 1029,
   p_save_state_before_branch_yn=>'Y',
   p_branch_comment=> 'Created 07-AUG-2008 16:28 by ADMIN');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>3500721319475207 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5,
+  p_name=>'P5_REP_TIME_ZONE',
+  p_data_type=> 'VARCHAR',
+  p_is_required=> false,
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 18,
+  p_item_plug_id => 26406201775509334+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'YES',
+  p_item_default_type=> 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_prompt=>'p_rep_time_zone',
+  p_source_type=> 'STATIC',
+  p_display_as=> 'NATIVE_TEXT_FIELD',
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 30,
+  p_cMaxlength=> 2000,
+  p_cHeight=> 1,
+  p_cAttributes=> 'nowrap',
+  p_new_grid=> false,
+  p_begin_on_new_line=> 'YES',
+  p_begin_on_new_field=> 'YES',
+  p_colspan=> 1,
+  p_rowspan=> 1,
+  p_grid_column=> null,
+  p_label_alignment=> 'RIGHT',
+  p_field_alignment=> 'LEFT',
+  p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
+  p_is_persistent=> 'Y',
+  p_lov_display_extra=>'NO',
+  p_protection_level => 'N',
+  p_escape_on_http_output => 'Y',
+  p_attribute_01 => 'N',
+  p_attribute_02 => 'N',
+  p_attribute_04 => 'TEXT',
+  p_show_quick_picks=>'Y',
+  p_quick_pick_label_01=>'Europe/Berlin',
+  p_quick_pick_value_01=>'Europe/Berlin',
+  p_quick_pick_label_02=>'Europe/London',
+  p_quick_pick_value_02=>'Europe/London',
+  p_quick_pick_label_03=>'US/Central',
+  p_quick_pick_value_03=>'US/Central',
+  p_quick_pick_label_04=>'US/Pacific',
+  p_quick_pick_value_04=>'US/Pacific',
+  p_quick_pick_label_05=>'Etc/Greenwich',
+  p_quick_pick_value_05=>'Etc/Greenwich',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>3750612062065154 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5,
+  p_name=>'P5_PRINT_JOB_NAME',
+  p_data_type=> 'VARCHAR',
+  p_is_required=> false,
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 99,
+  p_item_plug_id => 26406201775509334+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'YES',
+  p_item_default_type=> 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_prompt=>'p_print_job_name',
+  p_source_type=> 'STATIC',
+  p_display_as=> 'NATIVE_TEXT_FIELD',
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 30,
+  p_cMaxlength=> 2000,
+  p_cHeight=> 1,
+  p_cAttributes=> 'nowrap',
+  p_new_grid=> false,
+  p_begin_on_new_line=> 'YES',
+  p_begin_on_new_field=> 'YES',
+  p_colspan=> 1,
+  p_rowspan=> 1,
+  p_grid_column=> null,
+  p_label_alignment=> 'RIGHT',
+  p_field_alignment=> 'LEFT',
+  p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
+  p_is_persistent=> 'Y',
+  p_lov_display_extra=>'NO',
+  p_protection_level => 'N',
+  p_escape_on_http_output => 'Y',
+  p_attribute_01 => 'N',
+  p_attribute_02 => 'N',
+  p_attribute_04 => 'TEXT',
+  p_show_quick_picks=>'N',
+  p_item_comment => '');
  
  
 end;
@@ -3238,7 +3540,7 @@ wwv_flow_api.create_page_item(
   p_data_type=> 'VARCHAR',
   p_is_required=> false,
   p_accept_processing=> 'REPLACE_EXISTING',
-  p_item_sequence=> 19,
+  p_item_sequence=> 39,
   p_item_plug_id => 26406201775509334+wwv_flow_api.g_id_offset,
   p_use_cache_before_default=> 'YES',
   p_item_default_type=> 'STATIC_TEXT_WITH_SUBSTITUTIONS',
@@ -3252,10 +3554,12 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 2000,
   p_cHeight=> 1,
   p_cAttributes=> 'nowrap',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'RIGHT',
   p_field_alignment=> 'LEFT',
   p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
@@ -3282,7 +3586,7 @@ wwv_flow_api.create_page_item(
   p_data_type=> 'VARCHAR',
   p_is_required=> false,
   p_accept_processing=> 'REPLACE_EXISTING',
-  p_item_sequence=> 29,
+  p_item_sequence=> 49,
   p_item_plug_id => 26406201775509334+wwv_flow_api.g_id_offset,
   p_use_cache_before_default=> 'YES',
   p_item_default_type=> 'STATIC_TEXT_WITH_SUBSTITUTIONS',
@@ -3295,10 +3599,12 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 2000,
   p_cHeight=> 1,
   p_cAttributes=> 'nowrap',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'RIGHT',
   p_field_alignment=> 'LEFT',
   p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
@@ -3308,6 +3614,7 @@ wwv_flow_api.create_page_item(
   p_escape_on_http_output => 'Y',
   p_attribute_01 => 'N',
   p_attribute_02 => 'N',
+  p_attribute_04 => 'TEXT',
   p_show_quick_picks=>'N',
   p_item_comment => '');
  
@@ -3326,7 +3633,7 @@ wwv_flow_api.create_page_item(
   p_data_type=> 'VARCHAR',
   p_is_required=> false,
   p_accept_processing=> 'REPLACE_EXISTING',
-  p_item_sequence=> 39,
+  p_item_sequence=> 59,
   p_item_plug_id => 26406201775509334+wwv_flow_api.g_id_offset,
   p_use_cache_before_default=> 'YES',
   p_item_default_type=> 'STATIC_TEXT_WITH_SUBSTITUTIONS',
@@ -3339,10 +3646,12 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 2000,
   p_cHeight=> 1,
   p_cAttributes=> 'nowrap',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'RIGHT',
   p_field_alignment=> 'LEFT',
   p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
@@ -3352,6 +3661,7 @@ wwv_flow_api.create_page_item(
   p_escape_on_http_output => 'Y',
   p_attribute_01 => 'N',
   p_attribute_02 => 'N',
+  p_attribute_04 => 'TEXT',
   p_show_quick_picks=>'N',
   p_item_comment => '');
  
@@ -3370,7 +3680,7 @@ wwv_flow_api.create_page_item(
   p_data_type=> 'VARCHAR',
   p_is_required=> false,
   p_accept_processing=> 'REPLACE_EXISTING',
-  p_item_sequence=> 49,
+  p_item_sequence=> 69,
   p_item_plug_id => 26406201775509334+wwv_flow_api.g_id_offset,
   p_use_cache_before_default=> 'YES',
   p_item_default_type=> 'STATIC_TEXT_WITH_SUBSTITUTIONS',
@@ -3383,10 +3693,12 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 2000,
   p_cHeight=> 1,
   p_cAttributes=> 'nowrap',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'RIGHT',
   p_field_alignment=> 'LEFT',
   p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
@@ -3396,6 +3708,7 @@ wwv_flow_api.create_page_item(
   p_escape_on_http_output => 'Y',
   p_attribute_01 => 'N',
   p_attribute_02 => 'N',
+  p_attribute_04 => 'TEXT',
   p_show_quick_picks=>'N',
   p_item_comment => '');
  
@@ -3414,7 +3727,7 @@ wwv_flow_api.create_page_item(
   p_data_type=> 'VARCHAR',
   p_is_required=> false,
   p_accept_processing=> 'REPLACE_EXISTING',
-  p_item_sequence=> 59,
+  p_item_sequence=> 79,
   p_item_plug_id => 26406201775509334+wwv_flow_api.g_id_offset,
   p_use_cache_before_default=> 'YES',
   p_item_default_type=> 'STATIC_TEXT_WITH_SUBSTITUTIONS',
@@ -3428,10 +3741,12 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 2000,
   p_cHeight=> 1,
   p_cAttributes=> 'nowrap',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'RIGHT',
   p_field_alignment=> 'LEFT',
   p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
@@ -3458,7 +3773,7 @@ wwv_flow_api.create_page_item(
   p_data_type=> 'VARCHAR',
   p_is_required=> false,
   p_accept_processing=> 'REPLACE_EXISTING',
-  p_item_sequence=> 69,
+  p_item_sequence=> 89,
   p_item_plug_id => 26406201775509334+wwv_flow_api.g_id_offset,
   p_use_cache_before_default=> 'YES',
   p_item_default_type=> 'STATIC_TEXT_WITH_SUBSTITUTIONS',
@@ -3472,10 +3787,12 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 2000,
   p_cHeight=> 1,
   p_cAttributes=> 'nowrap',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'RIGHT',
   p_field_alignment=> 'LEFT',
   p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
@@ -3502,7 +3819,7 @@ wwv_flow_api.create_page_item(
   p_data_type=> 'VARCHAR',
   p_is_required=> false,
   p_accept_processing=> 'REPLACE_EXISTING',
-  p_item_sequence=> 79,
+  p_item_sequence=> 119,
   p_item_plug_id => 26406201775509334+wwv_flow_api.g_id_offset,
   p_use_cache_before_default=> 'YES',
   p_item_default_type=> 'STATIC_TEXT_WITH_SUBSTITUTIONS',
@@ -3516,10 +3833,12 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 2000,
   p_cHeight=> 1,
   p_cAttributes=> 'nowrap',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'RIGHT',
   p_field_alignment=> 'LEFT',
   p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
@@ -3546,7 +3865,7 @@ wwv_flow_api.create_page_item(
   p_data_type=> 'VARCHAR',
   p_is_required=> false,
   p_accept_processing=> 'REPLACE_EXISTING',
-  p_item_sequence=> 89,
+  p_item_sequence=> 129,
   p_item_plug_id => 26406201775509334+wwv_flow_api.g_id_offset,
   p_use_cache_before_default=> 'YES',
   p_item_default_type=> 'STATIC_TEXT_WITH_SUBSTITUTIONS',
@@ -3559,10 +3878,12 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 2000,
   p_cHeight=> 1,
   p_cAttributes=> 'nowrap',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'RIGHT',
   p_field_alignment=> 'LEFT',
   p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
@@ -3572,6 +3893,7 @@ wwv_flow_api.create_page_item(
   p_escape_on_http_output => 'Y',
   p_attribute_01 => 'N',
   p_attribute_02 => 'N',
+  p_attribute_04 => 'TEXT',
   p_show_quick_picks=>'N',
   p_item_comment => '');
  
@@ -3604,10 +3926,12 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 2000,
   p_cHeight=> 1,
   p_cAttributes=> 'nowrap',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'RIGHT',
   p_field_alignment=> 'LEFT',
   p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
@@ -3617,10 +3941,11 @@ wwv_flow_api.create_page_item(
   p_escape_on_http_output => 'Y',
   p_attribute_01 => 'N',
   p_attribute_02 => 'N',
+  p_attribute_04 => 'TEXT',
   p_show_quick_picks=>'Y',
-  p_quick_pick_label_01=>'[ test with logo ]',
+  p_quick_pick_label_01=>'test with logo',
   p_quick_pick_value_01=>'demo/test2',
-  p_quick_pick_label_02=>'[ test with logo and blob images ]',
+  p_quick_pick_label_02=>'test with logo and blob images',
   p_quick_pick_value_02=>'demo/orders',
   p_item_comment => '');
  
@@ -3654,10 +3979,12 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 2000,
   p_cHeight=> 1,
   p_cAttributes=> 'nowrap',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'RIGHT',
   p_field_alignment=> 'LEFT',
   p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
@@ -3699,10 +4026,12 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 2000,
   p_cHeight=> 1,
   p_cAttributes=> 'nowrap',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'RIGHT',
   p_field_alignment=> 'LEFT',
   p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
@@ -3712,6 +4041,7 @@ wwv_flow_api.create_page_item(
   p_escape_on_http_output => 'Y',
   p_attribute_01 => 'N',
   p_attribute_02 => 'N',
+  p_attribute_04 => 'TEXT',
   p_show_quick_picks=>'N',
   p_item_comment => '');
  
@@ -3735,7 +4065,6 @@ wwv_flow_api.create_page_item(
   p_use_cache_before_default=> 'YES',
   p_item_default_type=> 'STATIC_TEXT_WITH_SUBSTITUTIONS',
   p_prompt=>'p_out_filename',
-  p_post_element_text=>'&nbsp;&nbsp;<a href="" onClick="return setValue(''#CURRENT_ITEM_NAME#'', ''myTest.pdf'');">[myTest.pdf]</a>&nbsp;<a href="" onClick="return setValue(''#CURRENT_ITEM_NAME#'', ''myTest.rtf'');">[myTest.rtf]</a>       ',
   p_source_type=> 'STATIC',
   p_display_as=> 'NATIVE_TEXT_FIELD',
   p_lov_display_null=> 'NO',
@@ -3744,10 +4073,12 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 2000,
   p_cHeight=> 1,
   p_cAttributes=> 'nowrap',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'RIGHT',
   p_field_alignment=> 'LEFT',
   p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
@@ -3757,7 +4088,12 @@ wwv_flow_api.create_page_item(
   p_escape_on_http_output => 'Y',
   p_attribute_01 => 'N',
   p_attribute_02 => 'N',
-  p_show_quick_picks=>'N',
+  p_attribute_04 => 'TEXT',
+  p_show_quick_picks=>'Y',
+  p_quick_pick_label_01=>'myTest.pdf',
+  p_quick_pick_value_01=>'myTest.pdf',
+  p_quick_pick_label_02=>'myTest.rtf',
+  p_quick_pick_value_02=>'myTest.rtf',
   p_item_comment => '');
  
  
@@ -3781,7 +4117,6 @@ wwv_flow_api.create_page_item(
   p_item_default=> 'de_DE',
   p_item_default_type=> 'STATIC_TEXT_WITH_SUBSTITUTIONS',
   p_prompt=>'p_rep_locale',
-  p_post_element_text=>'&nbsp;&nbsp;<a href="" onClick="return setValue(''#CURRENT_ITEM_NAME#'', ''de_DE'');">[de_DE]</a>&nbsp;<a href="" onClick="return setValue(''#CURRENT_ITEM_NAME#'', ''en_US'');">[en_US]</a>',
   p_source_type=> 'STATIC',
   p_display_as=> 'NATIVE_TEXT_FIELD',
   p_lov_display_null=> 'NO',
@@ -3790,10 +4125,12 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 2000,
   p_cHeight=> 1,
   p_cAttributes=> 'nowrap',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'RIGHT',
   p_field_alignment=> 'LEFT',
   p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
@@ -3803,7 +4140,12 @@ wwv_flow_api.create_page_item(
   p_escape_on_http_output => 'Y',
   p_attribute_01 => 'N',
   p_attribute_02 => 'N',
-  p_show_quick_picks=>'N',
+  p_attribute_04 => 'TEXT',
+  p_show_quick_picks=>'Y',
+  p_quick_pick_label_01=>'de_DE',
+  p_quick_pick_value_01=>'de_DE',
+  p_quick_pick_label_02=>'en_US',
+  p_quick_pick_value_02=>'en_US',
   p_item_comment => '');
  
  
@@ -3827,7 +4169,6 @@ wwv_flow_api.create_page_item(
   p_item_default=> 'UTF-8',
   p_item_default_type=> 'STATIC_TEXT_WITH_SUBSTITUTIONS',
   p_prompt=>'p_rep_encoding',
-  p_post_element_text=>'&nbsp;&nbsp;<a href="" onClick="return setValue(''#CURRENT_ITEM_NAME#'', ''ISO-8859-1'');">[ISO-8859-1]</a>&nbsp;<a href="" onClick="return setValue(''#CURRENT_ITEM_NAME#'', ''ISO-8859-15'');">[ISO-8859-15]</a>&nbsp;<a href="" onClick="return setValue(''#CURRENT_ITEM_NAME#'', ''UTF-8'');">[UTF-8]</a>&nbsp;<a href="" onClick="return setValue(''#CURRENT_ITEM_NAME#'', ''Windows-1252'');">[Windows-1252]</a>',
   p_source_type=> 'STATIC',
   p_display_as=> 'NATIVE_TEXT_FIELD',
   p_lov_display_null=> 'NO',
@@ -3836,10 +4177,12 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 2000,
   p_cHeight=> 1,
   p_cAttributes=> 'nowrap',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'RIGHT',
   p_field_alignment=> 'LEFT',
   p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
@@ -3849,7 +4192,16 @@ wwv_flow_api.create_page_item(
   p_escape_on_http_output => 'Y',
   p_attribute_01 => 'N',
   p_attribute_02 => 'N',
-  p_show_quick_picks=>'N',
+  p_attribute_04 => 'TEXT',
+  p_show_quick_picks=>'Y',
+  p_quick_pick_label_01=>'ISO-8859-1',
+  p_quick_pick_value_01=>'ISO-8859-1',
+  p_quick_pick_label_02=>'ISO-8859-15',
+  p_quick_pick_value_02=>'ISO-8859-15',
+  p_quick_pick_label_03=>'UTF-8',
+  p_quick_pick_value_03=>'UTF-8',
+  p_quick_pick_label_04=>'Windows-1252',
+  p_quick_pick_value_04=>'Windows-1252',
   p_item_comment => '');
  
  
@@ -3867,7 +4219,7 @@ wwv_flow_api.create_page_item(
   p_data_type=> 'VARCHAR',
   p_is_required=> false,
   p_accept_processing=> 'REPLACE_EXISTING',
-  p_item_sequence=> 9,
+  p_item_sequence=> 29,
   p_item_plug_id => 26406201775509334+wwv_flow_api.g_id_offset,
   p_use_cache_before_default=> 'YES',
   p_item_default_type=> 'STATIC_TEXT_WITH_SUBSTITUTIONS',
@@ -3880,10 +4232,12 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> 2000,
   p_cHeight=> 5,
   p_cAttributes=> 'nowrap',
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'RIGHT',
   p_field_alignment=> 'LEFT',
   p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
@@ -3909,8 +4263,8 @@ declare
   l_clob clob;
   l_length number := 1;
 begin
-p:=p||'--xlib_jasperreports.set_images_uri(xlib_jasperreports.c_images_uri_no_tunnel);'||chr(10)||
-'xlib_jasperreports.set_images_uri(xlib_jasperreports.c_images_uri_tunnel);'||chr(10)||
+p:=p||'--xlib_jasperreports.set_images_uri(xlib_jasperreports.c_images_uri_no_tunnel);'||unistr('\000a')||
+'xlib_jasperreports.set_images_uri(xlib_jasperreports.c_images_uri_tunnel);'||unistr('\000a')||
 'null;';
 
 wwv_flow_api.create_page_process(
@@ -3921,8 +4275,9 @@ wwv_flow_api.create_page_process(
   p_process_point=> 'BEFORE_HEADER',
   p_process_type=> 'PLSQL',
   p_process_name=> 'set image handler',
-  p_process_sql_clob => p, 
+  p_process_sql_clob => p,
   p_process_error_message=> '',
+  p_error_display_location=> 'ON_ERROR_PAGE',
   p_process_success_message=> '',
   p_process_is_stateful_y_n=>'N',
   p_process_comment=>'');
@@ -3940,42 +4295,48 @@ declare
   l_clob clob;
   l_length number := 1;
 begin
-p:=p||'declare'||chr(10)||
-'  l_proc varchar2(100) := ''show report'';'||chr(10)||
-'  l_report_url varchar2(32767 char) := :p0_report_url;'||chr(10)||
-'BEGIN'||chr(10)||
-'  xlog (l_proc, ''url (orig):'' || l_report_url);'||chr(10)||
-''||chr(10)||
-'  xlib_jasperreports.set_report_url(l_report_url);'||chr(10)||
-'  xlib_jasperreports.show_report (p_rep_name => :p5_rep_name,'||chr(10)||
-'          p_rep_format          => :p5_rep_format,'||chr(10)||
-'          p_data_source         => :p5_data_source,'||chr(10)||
-'          p_out_filename ';
+p:=p||'declare'||unistr('\000a')||
+'  l_proc varchar2(100) := ''show report'';'||unistr('\000a')||
+'  l_report_url varchar2(32767 char) := :p0_report_url;'||unistr('\000a')||
+'BEGIN'||unistr('\000a')||
+'  xlog (l_proc, ''url (orig):'' || l_report_url);'||unistr('\000a')||
+''||unistr('\000a')||
+'  xlib_jasperreports.set_report_url(l_report_url);'||unistr('\000a')||
+'  xlib_jasperreports.show_report (p_rep_name => apex_util.url_encode(:p5_rep_name),'||unistr('\000a')||
+'          p_rep_format          => apex_util.url_encode(:p5_rep_format),'||unistr('\000a')||
+'          p_data_source         =';
 
-p:=p||'       => :p5_out_filename,'||chr(10)||
-'          p_rep_locale          => :p5_rep_locale,'||chr(10)||
-'          p_rep_encoding        => :p5_rep_encoding,'||chr(10)||
-'          p_additional_params   => :p5_additional_params,'||chr(10)||
-'          p_print_is_enabled    => case when :p5_print_is_enabled=''1'' then true else false end,'||chr(10)||
-'          p_print_printer_name  => :p5_print_printer_name,'||chr(10)||
-'          p_print_media         => :p5_print_media,'||chr(10)||
-'   ';
+p:=p||'> apex_util.url_encode(:p5_data_source),'||unistr('\000a')||
+'          p_out_filename        => apex_util.url_encode(:p5_out_filename),'||unistr('\000a')||
+'          p_rep_locale          => apex_util.url_encode(:p5_rep_locale),'||unistr('\000a')||
+'          p_rep_encoding        => apex_util.url_encode(:p5_rep_encoding),'||unistr('\000a')||
+'          p_additional_params   => :p5_additional_params,'||unistr('\000a')||
+'          p_print_is_enabled    => case when :p5_print_is_enabled=''1'' then tru';
 
-p:=p||'       p_print_copies        => :p5_print_copies,'||chr(10)||
-'          p_print_duplex        => case when :p5_print_duplex=''1'' then true else false end,'||chr(10)||
-'          p_print_collate       => case when :p5_print_collate=''1'' then true else false end,'||chr(10)||
-'          p_save_is_enabled     => case when :p5_save_is_enabled=''1'' then true else false end,'||chr(10)||
-'          p_save_filename       => :p5_save_filename'||chr(10)||
-'          );'||chr(10)||
-'  '||chr(10)||
-' ';
+p:=p||'e else false end,'||unistr('\000a')||
+'          p_print_printer_name  => apex_util.url_encode(:p5_print_printer_name),'||unistr('\000a')||
+'          p_print_media         => apex_util.url_encode(:p5_print_media),'||unistr('\000a')||
+'          p_print_copies        => apex_util.url_encode(:p5_print_copies),'||unistr('\000a')||
+'          p_print_duplex        => case when :p5_print_duplex=''1'' then true else false end,'||unistr('\000a')||
+'          p_print_collate       => case when :p5_print_colla';
 
-p:=p||' apex_application.g_unrecoverable_error := true;'||chr(10)||
-''||chr(10)||
-'exception'||chr(10)||
-'  when others then '||chr(10)||
-'    xlog(l_proc, substr(dbms_utility.format_error_backtrace,1,3500), ''ERROR'');'||chr(10)||
-'    raise;'||chr(10)||
+p:=p||'te=''1'' then true else false end,'||unistr('\000a')||
+'          p_save_is_enabled     => case when :p5_save_is_enabled=''1'' then true else false end,'||unistr('\000a')||
+'          p_save_filename       => apex_util.url_encode(:p5_save_filename),'||unistr('\000a')||
+'          p_rep_time_zone       => apex_util.url_encode(:p5_rep_time_zone),'||unistr('\000a')||
+'          p_print_job_name      => apex_util.url_encode(:p5_print_job_name)'||unistr('\000a')||
+'          );'||unistr('\000a')||
+'  '||unistr('\000a')||
+'  -- this was used before ap';
+
+p:=p||'ex 4.1'||unistr('\000a')||
+'  --apex_application.g_unrecoverable_error := true;'||unistr('\000a')||
+'  apex_application.stop_apex_engine;'||unistr('\000a')||
+''||unistr('\000a')||
+'exception'||unistr('\000a')||
+'  when others then '||unistr('\000a')||
+'    xlog(l_proc, substr(dbms_utility.format_error_backtrace,1,3500), ''ERROR'');'||unistr('\000a')||
+'    raise;'||unistr('\000a')||
 'end;';
 
 wwv_flow_api.create_page_process(
@@ -3986,8 +4347,9 @@ wwv_flow_api.create_page_process(
   p_process_point=> 'BEFORE_HEADER',
   p_process_type=> 'PLSQL',
   p_process_name=> 'show report - render',
-  p_process_sql_clob => p, 
+  p_process_sql_clob => p,
   p_process_error_message=> '',
+  p_error_display_location=> 'ON_ERROR_PAGE',
   p_process_when=>'SHOW_REPORT',
   p_process_when_type=>'REQUEST_EQUALS_CONDITION',
   p_process_success_message=> '',
@@ -4007,78 +4369,84 @@ declare
   l_clob clob;
   l_length number := 1;
 begin
-p:=p||'DECLARE'||chr(10)||
-'   l_blob        BLOB;'||chr(10)||
-'   l_mime_type   VARCHAR2 (100);'||chr(10)||
-'   '||chr(10)||
-'   l_proc varchar2(100) := ''get report as blob, then show'';'||chr(10)||
-'BEGIN'||chr(10)||
-'   xlog (l_proc, ''url (orig):'' || :p0_report_url);'||chr(10)||
-'   '||chr(10)||
-'   ------------------------------------------------------------------------'||chr(10)||
-'   -- generate the report and return in BLOB'||chr(10)||
-'   ------------------------------------------------------------------------'||chr(10)||
+p:=p||'DECLARE'||unistr('\000a')||
+'   l_blob        BLOB;'||unistr('\000a')||
+'   l_mime_type   VARCHAR2 (100);'||unistr('\000a')||
+'   '||unistr('\000a')||
+'   l_proc varchar2(100) := ''get report as blob, then show'';'||unistr('\000a')||
+'BEGIN'||unistr('\000a')||
+'   xlog (l_proc, ''url (orig):'' || :p0_report_url);'||unistr('\000a')||
+'   '||unistr('\000a')||
+'   ------------------------------------------------------------------------'||unistr('\000a')||
+'   -- generate the report and return in BLOB'||unistr('\000a')||
+'   ------------------------------------------------------------------------'||unistr('\000a')||
 '   xlib_jasper';
 
-p:=p||'reports.set_report_url (:p0_report_url);'||chr(10)||
-'   xlib_jasperreports.get_report(p_rep_name => :p5_rep_name,'||chr(10)||
-'          p_rep_format          => :p5_rep_format,'||chr(10)||
-'          p_data_source         => :p5_data_source,'||chr(10)||
-'          p_rep_locale          => :p5_rep_locale,'||chr(10)||
-'          p_rep_encoding        => :p5_rep_encoding,'||chr(10)||
-'          p_additional_params   => :p5_additional_params,'||chr(10)||
-'          p_print_is_enabled    =';
+p:=p||'reports.set_report_url (:p0_report_url);'||unistr('\000a')||
+'   xlib_jasperreports.get_report(p_rep_name => apex_util.url_encode(:p5_rep_name),'||unistr('\000a')||
+'          p_rep_format          => apex_util.url_encode(:p5_rep_format),'||unistr('\000a')||
+'          p_data_source         => apex_util.url_encode(:p5_data_source),'||unistr('\000a')||
+'          p_rep_locale          => apex_util.url_encode(:p5_rep_locale),'||unistr('\000a')||
+'          p_rep_encoding        => apex_util.url_encode(';
 
-p:=p||'> case when :p5_print_is_enabled=''1'' then true else false end,'||chr(10)||
-'          p_print_printer_name  => :p5_print_printer_name,'||chr(10)||
-'          p_print_media         => :p5_print_media,'||chr(10)||
-'          p_print_copies        => :p5_print_copies,'||chr(10)||
-'          p_print_duplex        => case when :p5_print_duplex=''1'' then true else false end,'||chr(10)||
-'          p_print_collate       => case when :p5_print_collate=''1'' then true else';
+p:=p||':p5_rep_encoding),'||unistr('\000a')||
+'          p_additional_params   => :p5_additional_params,'||unistr('\000a')||
+'          p_print_is_enabled    => case when :p5_print_is_enabled=''1'' then true else false end,'||unistr('\000a')||
+'          p_print_printer_name  => apex_util.url_encode(:p5_print_printer_name),'||unistr('\000a')||
+'          p_print_media         => apex_util.url_encode(:p5_print_media),'||unistr('\000a')||
+'          p_print_copies        => apex_util.url_encode(:p5_print_copies';
 
-p:=p||' false end,'||chr(10)||
-'          p_save_is_enabled     => case when :p5_save_is_enabled=''1'' then true else false end,'||chr(10)||
-'          p_save_filename       => :p5_save_filename,'||chr(10)||
-'          p_out_blob            => l_blob,'||chr(10)||
-'          p_out_mime_type       => l_mime_type'||chr(10)||
-'   );'||chr(10)||
-'   ------------------------------------------------------------------------'||chr(10)||
-'   -- set mime header'||chr(10)||
-'   ------------------------------------------';
+p:=p||'),'||unistr('\000a')||
+'          p_print_duplex        => case when :p5_print_duplex=''1'' then true else false end,'||unistr('\000a')||
+'          p_print_collate       => case when :p5_print_collate=''1'' then true else false end,'||unistr('\000a')||
+'          p_save_is_enabled     => case when :p5_save_is_enabled=''1'' then true else false end,'||unistr('\000a')||
+'          p_save_filename       => apex_util.url_encode(:p5_save_filename),'||unistr('\000a')||
+'          p_rep_time_zone       => apex_u';
 
-p:=p||'------------------------------'||chr(10)||
-'   htp.flush;'||chr(10)||
-'   htp.init;'||chr(10)||
-'   OWA_UTIL.mime_header (ccontent_type      => l_mime_type,'||chr(10)||
-'                         bclose_header      => FALSE);'||chr(10)||
-'   ------------------------------------------------------------------------'||chr(10)||
-'   -- set content length'||chr(10)||
-'   ------------------------------------------------------------------------'||chr(10)||
-'   HTP.p (''Content-length: '' || DBMS_LOB.getlength';
+p:=p||'til.url_encode(:p5_rep_time_zone),'||unistr('\000a')||
+'          p_out_blob            => l_blob,'||unistr('\000a')||
+'          p_out_mime_type       => l_mime_type,'||unistr('\000a')||
+'          p_print_job_name      => apex_util.url_encode(:p5_print_job_name));'||unistr('\000a')||
+'   '||unistr('\000a')||
+'   ------------------------------------------------------------------------'||unistr('\000a')||
+'   -- set mime header'||unistr('\000a')||
+'   ------------------------------------------------------------------------'||unistr('\000a')||
+'   htp.flush;'||unistr('\000a')||
+'   h';
 
-p:=p||' (l_blob));'||chr(10)||
-'   OWA_UTIL.http_header_close;'||chr(10)||
-'   ------------------------------------------------------------------------'||chr(10)||
-'   -- download the file and display in browser'||chr(10)||
-'   ------------------------------------------------------------------------'||chr(10)||
-'   WPG_DOCLOAD.download_file (l_blob);'||chr(10)||
-'   ------------------------------------------------------------------------'||chr(10)||
-'   -- release resources'||chr(10)||
-'   ----------------';
+p:=p||'tp.init;'||unistr('\000a')||
+'   OWA_UTIL.mime_header (ccontent_type      => l_mime_type,'||unistr('\000a')||
+'                         bclose_header      => FALSE);'||unistr('\000a')||
+'   ------------------------------------------------------------------------'||unistr('\000a')||
+'   -- set content length'||unistr('\000a')||
+'   ------------------------------------------------------------------------'||unistr('\000a')||
+'   HTP.p (''Content-length: '' || DBMS_LOB.getlength (l_blob));'||unistr('\000a')||
+'   OWA_UTIL.http_header_close;'||unistr('\000a')||
+'   ---';
 
-p:=p||'--------------------------------------------------------'||chr(10)||
-'   DBMS_LOB.freetemporary (l_blob);'||chr(10)||
-'   ------------------------------------------------------------------------'||chr(10)||
-'   -- stop rendering of APEX page'||chr(10)||
-'   ------------------------------------------------------------------------'||chr(10)||
-'   apex_application.g_unrecoverable_error := TRUE;'||chr(10)||
-'EXCEPTION'||chr(10)||
-'   WHEN OTHERS'||chr(10)||
-'   THEN'||chr(10)||
-'      xlog (l_proc, SQLERRM, ''ERROR'')';
+p:=p||'---------------------------------------------------------------------'||unistr('\000a')||
+'   -- download the file and display in browser'||unistr('\000a')||
+'   ------------------------------------------------------------------------'||unistr('\000a')||
+'   WPG_DOCLOAD.download_file (l_blob);'||unistr('\000a')||
+'   ------------------------------------------------------------------------'||unistr('\000a')||
+'   -- release resources'||unistr('\000a')||
+'   -----------------------------------------------------------------';
 
-p:=p||';'||chr(10)||
-'      RAISE;'||chr(10)||
+p:=p||'-------'||unistr('\000a')||
+'   DBMS_LOB.freetemporary (l_blob);'||unistr('\000a')||
+'   ------------------------------------------------------------------------'||unistr('\000a')||
+'   -- stop rendering of APEX page'||unistr('\000a')||
+'   ------------------------------------------------------------------------'||unistr('\000a')||
+'  -- this was used before apex 4.1'||unistr('\000a')||
+'  --apex_application.g_unrecoverable_error := true;'||unistr('\000a')||
+'  apex_application.stop_apex_engine;'||unistr('\000a')||
+'EXCEPTION'||unistr('\000a')||
+'   WHEN OTHERS'||unistr('\000a')||
+'   THEN'||unistr('\000a')||
+'      xlog (l';
+
+p:=p||'_proc, SQLERRM, ''ERROR'');'||unistr('\000a')||
+'      RAISE;'||unistr('\000a')||
 'END;';
 
 wwv_flow_api.create_page_process(
@@ -4089,8 +4457,9 @@ wwv_flow_api.create_page_process(
   p_process_point=> 'BEFORE_HEADER',
   p_process_type=> 'PLSQL',
   p_process_name=> 'get report as blob, then show',
-  p_process_sql_clob => p, 
+  p_process_sql_clob => p,
   p_process_error_message=> '',
+  p_error_display_location=> 'ON_ERROR_PAGE',
   p_process_when_button_id=>17377339228163807 + wwv_flow_api.g_id_offset,
   p_process_when=>'GET_REPORT',
   p_process_when_type=>'REQUEST_EQUALS_CONDITION',
@@ -4129,12 +4498,15 @@ begin
 wwv_flow_api.create_page (
   p_flow_id => wwv_flow.g_flow_id
  ,p_id => 6
+ ,p_user_interface_id => 64731510056518 + wwv_flow_api.g_id_offset
  ,p_tab_set => 'TS1'
  ,p_name => 'Samples > Show report and branch to other page'
  ,p_step_title => 'Samples > Show report and branch to other page'
  ,p_step_sub_title_type => 'TEXT_WITH_SUBSTITUTIONS'
  ,p_first_item => 'NO_FIRST_ITEM'
  ,p_include_apex_css_js_yn => 'Y'
+ ,p_autocomplete_on_off => 'ON'
+ ,p_page_is_public_y_n => 'N'
  ,p_cache_page_yn => 'N'
  ,p_last_updated_by => 'DIETMAR.AUST'
  ,p_last_upd_yyyymmddhh24miss => '20150412123831'
@@ -4156,14 +4528,18 @@ wwv_flow_api.create_page_plug (
   p_page_id=> 6,
   p_plug_name=> 'Breadcrumb',
   p_region_name=>'',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 17328333600409399+ wwv_flow_api.g_id_offset,
   p_plug_display_sequence=> 1,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 1,
   p_plug_display_point=> 'REGION_POSITION_01',
+  p_plug_item_display_point=> 'BELOW',
   p_plug_source=> s,
   p_plug_source_type=> 'M'|| to_char(56539424029997642 + wwv_flow_api.g_id_offset),
   p_menu_template_id=> 17346735300409418+ wwv_flow_api.g_id_offset,
-  p_plug_display_error_message=> '#SQLERRM#',
   p_plug_query_row_template=> 1,
   p_plug_query_headings_type=> 'COLON_DELMITED_LIST',
   p_plug_query_row_count_max => 500,
@@ -4184,13 +4560,17 @@ wwv_flow_api.create_page_plug (
   p_page_id=> 6,
   p_plug_name=> 'Call Report',
   p_region_name=>'',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 17332845056409410+ wwv_flow_api.g_id_offset,
   p_plug_display_sequence=> 11,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
   p_plug_source=> s,
   p_plug_source_type=> 'STATIC_TEXT',
-  p_plug_display_error_message=> '#SQLERRM#',
   p_plug_query_row_template=> 1,
   p_plug_query_headings_type=> 'QUERY_COLUMNS',
   p_plug_query_num_rows => 15,
@@ -4213,7 +4593,9 @@ wwv_flow_api.create_page_button(
   p_button_sequence=> 10,
   p_button_plug_id => 13275631280498269+wwv_flow_api.g_id_offset,
   p_button_name    => 'SHOW_REPORT',
+  p_button_action  => 'REDIRECT_URL',
   p_button_image   => 'template:'||to_char(17325751309409385+wwv_flow_api.g_id_offset),
+  p_button_is_hot=>'N',
   p_button_image_alt=> 'Show Report',
   p_button_position=> 'TOP',
   p_button_alignment=> 'RIGHT',
@@ -4232,6 +4614,7 @@ wwv_flow_api.create_page_branch(
   p_id=>13276706692841169 + wwv_flow_api.g_id_offset,
   p_flow_id=> wwv_flow.g_flow_id,
   p_flow_step_id=> 6,
+  p_branch_name=> '',
   p_branch_action=> 'f?p=&APP_ID.:1:&SESSION.::&DEBUG.:::',
   p_branch_point=> 'AFTER_PROCESSING',
   p_branch_type=> 'REDIRECT_URL',
@@ -4253,26 +4636,26 @@ declare
   l_clob clob;
   l_length number := 1;
 begin
-p:=p||'declare'||chr(10)||
-'  l_proc varchar2(100) := ''show report'';'||chr(10)||
-'BEGIN'||chr(10)||
-'  xlog (l_proc, ''url (orig):'' || :p0_report_url);'||chr(10)||
-''||chr(10)||
-'  xlib_jasperreports.set_report_url(:P0_report_url);'||chr(10)||
-'  xlib_jasperreports.show_report (p_rep_name => ''test'','||chr(10)||
-'          p_rep_format          => xlib_jasperreports.c_rep_format_pdf,'||chr(10)||
-'          p_data_source         => ''default'','||chr(10)||
-'          p_out_filename        => ''test.pdf'''||chr(10)||
-'          );'||chr(10)||
-''||chr(10)||
+p:=p||'declare'||unistr('\000a')||
+'  l_proc varchar2(100) := ''show report'';'||unistr('\000a')||
+'BEGIN'||unistr('\000a')||
+'  xlog (l_proc, ''url (orig):'' || :p0_report_url);'||unistr('\000a')||
+''||unistr('\000a')||
+'  xlib_jasperreports.set_report_url(:P0_report_url);'||unistr('\000a')||
+'  xlib_jasperreports.show_report (p_rep_name => ''test'','||unistr('\000a')||
+'          p_rep_format          => xlib_jasperreports.c_rep_format_pdf,'||unistr('\000a')||
+'          p_data_source         => ''default'','||unistr('\000a')||
+'          p_out_filename        => ''test.pdf'''||unistr('\000a')||
+'          );'||unistr('\000a')||
+''||unistr('\000a')||
 '  apex_';
 
-p:=p||'application.g_unrecoverable_error := true;'||chr(10)||
-''||chr(10)||
-'exception'||chr(10)||
-'  when others then '||chr(10)||
-'    xlog(l_proc, sqlerrm, ''ERROR'');'||chr(10)||
-'    raise;'||chr(10)||
+p:=p||'application.g_unrecoverable_error := true;'||unistr('\000a')||
+''||unistr('\000a')||
+'exception'||unistr('\000a')||
+'  when others then '||unistr('\000a')||
+'    xlog(l_proc, sqlerrm, ''ERROR'');'||unistr('\000a')||
+'    raise;'||unistr('\000a')||
 'end;';
 
 wwv_flow_api.create_page_process(
@@ -4283,8 +4666,9 @@ wwv_flow_api.create_page_process(
   p_process_point=> 'AFTER_SUBMIT',
   p_process_type=> 'PLSQL',
   p_process_name=> 'show report',
-  p_process_sql_clob => p, 
+  p_process_sql_clob => p,
   p_process_error_message=> '',
+  p_error_display_location=> 'ON_ERROR_PAGE',
   p_process_when_button_id=>13275802453508803 + wwv_flow_api.g_id_offset,
   p_process_success_message=> '',
   p_process_is_stateful_y_n=>'N',
@@ -4321,12 +4705,14 @@ begin
 wwv_flow_api.create_page (
   p_flow_id => wwv_flow.g_flow_id
  ,p_id => 101
+ ,p_user_interface_id => 64731510056518 + wwv_flow_api.g_id_offset
  ,p_name => 'Anmelden'
  ,p_alias => 'LOGIN'
  ,p_step_title => 'Anmelden'
  ,p_step_sub_title_type => 'TEXT_WITH_SUBSTITUTIONS'
  ,p_first_item => 'AUTO_FIRST_ITEM'
  ,p_include_apex_css_js_yn => 'Y'
+ ,p_autocomplete_on_off => 'ON'
  ,p_step_template => 17321340089409358 + wwv_flow_api.g_id_offset
  ,p_page_is_public_y_n => 'N'
  ,p_cache_page_yn => 'N'
@@ -4350,10 +4736,15 @@ wwv_flow_api.create_page_plug (
   p_page_id=> 101,
   p_plug_name=> 'Anmelden',
   p_region_name=>'',
+  p_escape_on_http_output=>'Y',
   p_plug_template=> 0,
   p_plug_display_sequence=> 10,
+  p_plug_new_grid         => false,
+  p_plug_new_grid_row     => false,
+  p_plug_new_grid_column  => false,
   p_plug_display_column=> 1,
-  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
+  p_plug_display_point=> 'BODY_3',
+  p_plug_item_display_point=> 'ABOVE',
   p_plug_source=> s,
   p_plug_source_type=> 'STATIC_TEXT',
   p_plug_query_row_template=> 1,
@@ -4403,10 +4794,12 @@ wwv_flow_api.create_page_item(
   p_cSize=> 40,
   p_cMaxlength=> 100,
   p_cHeight=> 1,
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 2,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'RIGHT',
   p_field_alignment=> 'LEFT',
   p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
@@ -4416,6 +4809,7 @@ wwv_flow_api.create_page_item(
   p_escape_on_http_output => 'Y',
   p_attribute_01 => 'N',
   p_attribute_02 => 'N',
+  p_attribute_04 => 'TEXT',
   p_show_quick_picks=>'N',
   p_item_comment => '');
  
@@ -4446,10 +4840,12 @@ wwv_flow_api.create_page_item(
   p_cSize=> 40,
   p_cMaxlength=> 100,
   p_cHeight=> 1,
+  p_new_grid=> false,
   p_begin_on_new_line=> 'YES',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'RIGHT',
   p_field_alignment=> 'LEFT',
   p_field_template=> 17346441206409418+wwv_flow_api.g_id_offset,
@@ -4491,13 +4887,16 @@ wwv_flow_api.create_page_item(
   p_cMaxlength=> null,
   p_cHeight=> null,
   p_tag_attributes  => 'template:'||to_char(17325751309409385 + wwv_flow_api.g_id_offset),
+  p_new_grid=> false,
   p_begin_on_new_line=> 'NO',
   p_begin_on_new_field=> 'YES',
   p_colspan=> 1,
   p_rowspan=> 1,
+  p_grid_column=> null,
   p_label_alignment=> 'LEFT',
   p_field_alignment=> 'LEFT',
   p_is_persistent=> 'Y',
+  p_button_action => 'SUBMIT',
   p_item_comment => '');
  
  
@@ -4512,12 +4911,12 @@ declare
   l_clob clob;
   l_length number := 1;
 begin
-p:=p||'begin'||chr(10)||
-'owa_util.mime_header(''text/html'', FALSE);'||chr(10)||
-'owa_cookie.send('||chr(10)||
-'    name=>''LOGIN_USERNAME_COOKIE'','||chr(10)||
-'    value=>lower(:P101_USERNAME));'||chr(10)||
-'exception when others then null;'||chr(10)||
+p:=p||'begin'||unistr('\000a')||
+'owa_util.mime_header(''text/html'', FALSE);'||unistr('\000a')||
+'owa_cookie.send('||unistr('\000a')||
+'    name=>''LOGIN_USERNAME_COOKIE'','||unistr('\000a')||
+'    value=>lower(:P101_USERNAME));'||unistr('\000a')||
+'exception when others then null;'||unistr('\000a')||
 'end;';
 
 wwv_flow_api.create_page_process(
@@ -4528,8 +4927,9 @@ wwv_flow_api.create_page_process(
   p_process_point=> 'AFTER_SUBMIT',
   p_process_type=> 'PLSQL',
   p_process_name=> 'Benutzername-Cookie festlegen',
-  p_process_sql_clob => p, 
+  p_process_sql_clob => p,
   p_process_error_message=> '',
+  p_error_display_location=> 'ON_ERROR_PAGE',
   p_process_success_message=> '',
   p_process_is_stateful_y_n=>'N',
   p_process_comment=>'');
@@ -4547,11 +4947,11 @@ declare
   l_clob clob;
   l_length number := 1;
 begin
-p:=p||'wwv_flow_custom_auth_std.login('||chr(10)||
-'    P_UNAME       => :P101_USERNAME,'||chr(10)||
-'    P_PASSWORD    => :P101_PASSWORD,'||chr(10)||
-'    P_SESSION_ID  => v(''APP_SESSION''),'||chr(10)||
-'    P_FLOW_PAGE   => :APP_ID||'':1'''||chr(10)||
+p:=p||'wwv_flow_custom_auth_std.login('||unistr('\000a')||
+'    P_UNAME       => :P101_USERNAME,'||unistr('\000a')||
+'    P_PASSWORD    => :P101_PASSWORD,'||unistr('\000a')||
+'    P_SESSION_ID  => v(''APP_SESSION''),'||unistr('\000a')||
+'    P_FLOW_PAGE   => :APP_ID||'':1'''||unistr('\000a')||
 '    );';
 
 wwv_flow_api.create_page_process(
@@ -4562,8 +4962,9 @@ wwv_flow_api.create_page_process(
   p_process_point=> 'AFTER_SUBMIT',
   p_process_type=> 'PLSQL',
   p_process_name=> 'Login',
-  p_process_sql_clob => p, 
+  p_process_sql_clob => p,
   p_process_error_message=> '',
+  p_error_display_location=> 'ON_ERROR_PAGE',
   p_process_success_message=> '',
   p_process_is_stateful_y_n=>'N',
   p_process_comment=>'');
@@ -4591,8 +4992,9 @@ wwv_flow_api.create_page_process(
   p_process_point=> 'AFTER_SUBMIT',
   p_process_type=> 'CLEAR_CACHE_FOR_PAGES',
   p_process_name=> 'Seiten-Cache-Inhalt löschen',
-  p_process_sql_clob => p, 
+  p_process_sql_clob => p,
   p_process_error_message=> '',
+  p_error_display_location=> 'ON_ERROR_PAGE',
   p_process_success_message=> '',
   p_process_is_stateful_y_n=>'N',
   p_process_comment=>'');
@@ -4610,13 +5012,13 @@ declare
   l_clob clob;
   l_length number := 1;
 begin
-p:=p||'declare'||chr(10)||
-'    v varchar2(255) := null;'||chr(10)||
-'    c owa_cookie.cookie;'||chr(10)||
-'begin'||chr(10)||
-'   c := owa_cookie.get(''LOGIN_USERNAME_COOKIE'');'||chr(10)||
-'   :P101_USERNAME := c.vals(1);'||chr(10)||
-'exception when others then null;'||chr(10)||
+p:=p||'declare'||unistr('\000a')||
+'    v varchar2(255) := null;'||unistr('\000a')||
+'    c owa_cookie.cookie;'||unistr('\000a')||
+'begin'||unistr('\000a')||
+'   c := owa_cookie.get(''LOGIN_USERNAME_COOKIE'');'||unistr('\000a')||
+'   :P101_USERNAME := c.vals(1);'||unistr('\000a')||
+'exception when others then null;'||unistr('\000a')||
 'end;';
 
 wwv_flow_api.create_page_process(
@@ -4627,8 +5029,9 @@ wwv_flow_api.create_page_process(
   p_process_point=> 'BEFORE_HEADER',
   p_process_type=> 'PLSQL',
   p_process_name=> 'Benutzername-Cookie abrufen',
-  p_process_sql_clob => p, 
+  p_process_sql_clob => p,
   p_process_error_message=> '',
+  p_error_display_location=> 'ON_ERROR_PAGE',
   p_process_success_message=> '',
   p_process_is_stateful_y_n=>'N',
   p_process_comment=>'');
@@ -4664,9 +5067,10 @@ wwv_flow_api.create_list (
   p_id=> 13274509416463482 + wwv_flow_api.g_id_offset,
   p_flow_id=> wwv_flow.g_flow_id,
   p_name=> 'Menu - Samples',
+  p_list_type=> 'STATIC',
+  p_list_query=>'',
   p_list_status=> 'PUBLIC',
-  p_list_displayed=> 'BY_DEFAULT',
-  p_display_row_template_id=> 17340849953409415 + wwv_flow_api.g_id_offset);
+  p_list_displayed=> 'BY_DEFAULT' );
  
 wwv_flow_api.create_list_item (
   p_id=> 13274721394463508 + wwv_flow_api.g_id_offset,
@@ -4777,82 +5181,65 @@ prompt  ......Page template 17321340089409358
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||chr(10)||
-'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'  <title>#TITLE#</title>'||chr(10)||
-'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  <link rel="shortcut icon" href="#IMAG';
-
-c1:=c1||'E_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  #HEAD#'||chr(10)||
-'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||chr(10)||
-'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||chr(10)||
-'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endi';
-
-c1:=c1||'f]-->'||chr(10)||
-'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>'||chr(10)||
-'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||chr(10)||
-'#FORM_OPEN#'||chr(10)||
-'';
-
-c2:=c2||'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<div id="login">'||chr(10)||
-'  <div id="messages">#SUCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||chr(10)||
-'  <div id="login-main">#REGION_POSITION_02##BOX_BODY##REGION_POSITION_03#</div>'||chr(10)||
-'</div>'||chr(10)||
-'';
-
-wwv_flow_api.create_template(
-  p_id=> 17321340089409358 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'Login',
-  p_body_title=> '',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="success" id="success-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||chr(10)||
-'  #SUCCESS_MESSAGE#'||chr(10)||
-'</div>',
-  p_current_tab=> '',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="notification" id="notification-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||chr(10)||
-'</div>',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> ' summary="" cellpadding="0" border="0" cellspacing="0"',
-  p_theme_id  => 22,
-  p_theme_class_id => 6,
-  p_translate_this_template => 'N',
-  p_template_comment => '18');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 17321340089409358 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 22
+ ,p_name => 'Login'
+ ,p_is_popup => false
+ ,p_header_template => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||unistr('\000a')||
+'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'  <title>#TITLE#</title>'||unistr('\000a')||
+'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  <link rel="shortcut icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  #APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||unistr('\000a')||
+'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>'||unistr('\000a')||
+'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||unistr('\000a')||
+'#FORM_OPEN#'||unistr('\000a')||
+''
+ ,p_box => 
+'<div id="login">'||unistr('\000a')||
+'  <div id="messages">#SUCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||unistr('\000a')||
+'  <div id="login-main">#REGION_POSITION_02##BOX_BODY##REGION_POSITION_03#</div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+''
+ ,p_footer_template => 
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_success_message => '<div class="success" id="success-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||unistr('\000a')||
+'  #SUCCESS_MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_notification_message => '<div class="notification" id="notification-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>'
+ ,p_region_table_cattributes => ' summary="" cellpadding="0" border="0" cellspacing="0"'
+ ,p_theme_class_id => 6
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+ ,p_template_comment => '18'
+  );
 null;
  
 end;
@@ -4863,114 +5250,95 @@ prompt  ......Page template 17321535586409361
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||chr(10)||
-'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'  <title>#TITLE#</title>'||chr(10)||
-'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  <link rel="shortcut icon" href="#IMAG';
-
-c1:=c1||'E_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  #HEAD#'||chr(10)||
-'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||chr(10)||
-'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||chr(10)||
-'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endi';
-
-c1:=c1||'f]-->'||chr(10)||
-'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>'||chr(10)||
-'#FORM_OPEN#'||chr(10)||
-'';
-
-c2:=c2||'<div id="footer"><div class="content">'||chr(10)||
-'<div id="customize">#CUSTOMIZE#</div>'||chr(10)||
-'<div class="app-version">#APP_VERSION#</div>'||chr(10)||
-'<div class="clear"></div>'||chr(10)||
-'  #REGION_POSITION_05#'||chr(10)||
-'</div></div>'||chr(10)||
-'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<div id="header">'||chr(10)||
-'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||chr(10)||
-'  #REGION_POSITION_07#'||chr(10)||
-'  <div id="navbar">'||chr(10)||
-'    #NAVIGATION_BAR#'||chr(10)||
-'    <div class="app-user">#WELCOME_USER#</div>'||chr(10)||
-'    #REGION_POSITION_08#'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'<div id="tabs">'||chr(10)||
-'  <div class="frame">'||chr(10)||
-'    <div class="bg">'||chr(10)||
-'      <div class="tab-holder">'||chr(10)||
-'        &nbsp;'||chr(10)||
-'      </div>'||chr(10)||
-'    </div>'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'<div id="';
-
-c3:=c3||'topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||chr(10)||
-'<div id="messages">#SUCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||chr(10)||
-'<div id="body">'||chr(10)||
-'  <div id="two-col-sb-left">'||chr(10)||
-'    <div id="left-sidebar">#REGION_POSITION_02#</div>'||chr(10)||
-'    <div id="main-sb-left">'||chr(10)||
-'      #BOX_BODY##REGION_POSITION_03#'||chr(10)||
-'    </div>'||chr(10)||
-'  </div>'||chr(10)||
-'</div>';
-
-wwv_flow_api.create_template(
-  p_id=> 17321535586409361 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'No Tabs - Left Sidebar (fixed-width / DIV based)',
-  p_body_title=> '',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="success" id="success-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||chr(10)||
-'  #SUCCESS_MESSAGE#'||chr(10)||
-'</div>',
-  p_current_tab=> '',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="notification" id="notification-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||chr(10)||
-'</div>',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> 'summary="" cellpadding="0" border="0" cellspacing="0" width="100%"',
-  p_sidebar_def_reg_pos => 'REGION_POSITION_02',
-  p_breadcrumb_def_reg_pos => 'REGION_POSITION_01',
-  p_theme_id  => 22,
-  p_theme_class_id => 17,
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 17321535586409361 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 22
+ ,p_name => 'No Tabs - Left Sidebar (fixed-width / DIV based)'
+ ,p_is_popup => false
+ ,p_header_template => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||unistr('\000a')||
+'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'  <title>#TITLE#</title>'||unistr('\000a')||
+'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  <link rel="shortcut icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  #APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||unistr('\000a')||
+'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>'||unistr('\000a')||
+'#FORM_OPEN#'||unistr('\000a')||
+''
+ ,p_box => 
+'<div id="header">'||unistr('\000a')||
+'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||unistr('\000a')||
+'  #REGION_POSITION_07#'||unistr('\000a')||
+'  <div id="navbar">'||unistr('\000a')||
+'    #NAVIGATION_BAR#'||unistr('\000a')||
+'    <div class="app-user">#WELCOME_USER#</div>'||unistr('\000a')||
+'    #REGION_POSITION_08#'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+'<div id="tabs">'||unistr('\000a')||
+'  <div class="frame">'||unistr('\000a')||
+'    <div class="bg">'||unistr('\000a')||
+'      <div class="tab-holder">'||unistr('\000a')||
+'        &nbsp;'||unistr('\000a')||
+'      </div>'||unistr('\000a')||
+'    </div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+'<div id="'||
+'topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||unistr('\000a')||
+'<div id="messages">#SUCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||unistr('\000a')||
+'<div id="body">'||unistr('\000a')||
+'  <div id="two-col-sb-left">'||unistr('\000a')||
+'    <div id="left-sidebar">#REGION_POSITION_02#</div>'||unistr('\000a')||
+'    <div id="main-sb-left">'||unistr('\000a')||
+'      #BOX_BODY##REGION_POSITION_03#'||unistr('\000a')||
+'    </div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'
+ ,p_footer_template => 
+'<div id="footer"><div class="content">'||unistr('\000a')||
+'<div id="customize">#CUSTOMIZE#</div>'||unistr('\000a')||
+'<div class="app-version">#APP_VERSION#</div>'||unistr('\000a')||
+'<div class="clear"></div>'||unistr('\000a')||
+'  #REGION_POSITION_05#'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_success_message => '<div class="success" id="success-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||unistr('\000a')||
+'  #SUCCESS_MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_notification_message => '<div class="notification" id="notification-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>'
+ ,p_region_table_cattributes => 'summary="" cellpadding="0" border="0" cellspacing="0" width="100%"'
+ ,p_sidebar_def_reg_pos => 'REGION_POSITION_02'
+ ,p_breadcrumb_def_reg_pos => 'REGION_POSITION_01'
+ ,p_theme_class_id => 17
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -4981,124 +5349,104 @@ prompt  ......Page template 17321835681409361
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||chr(10)||
-'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'  <title>#TITLE#</title>'||chr(10)||
-'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  <link rel="shortcut icon" href="#IMAG';
-
-c1:=c1||'E_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  #HEAD#'||chr(10)||
-'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||chr(10)||
-'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||chr(10)||
-'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endi';
-
-c1:=c1||'f]-->'||chr(10)||
-'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>'||chr(10)||
-'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||chr(10)||
-'#FORM_OPEN#'||chr(10)||
-'';
-
-c2:=c2||'<div id="footer"><div class="content">'||chr(10)||
-'<div id="customize">#CUSTOMIZE#</div>'||chr(10)||
-'<div class="app-version">#APP_VERSION#</div>'||chr(10)||
-'<div class="clear"></div>'||chr(10)||
-'  #REGION_POSITION_05#'||chr(10)||
-'</div></div>'||chr(10)||
-'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<div id="header">'||chr(10)||
-'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||chr(10)||
-'  #REGION_POSITION_07#'||chr(10)||
-'  <div id="navbar">'||chr(10)||
-'    <div class="app-user">#WELCOME_USER#</div>'||chr(10)||
-'    #NAVIGATION_BAR#'||chr(10)||
-'    #REGION_POSITION_08#'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'<div id="tabs">'||chr(10)||
-'  <div class="frame">'||chr(10)||
-'    <div class="bg">'||chr(10)||
-'      <div class="tab-holder">'||chr(10)||
-'        &nbsp;'||chr(10)||
-'      </div>'||chr(10)||
-'    </div>'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'<div id="';
-
-c3:=c3||'topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||chr(10)||
-'<div id="messages">#SUCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||chr(10)||
-'<div id="body">'||chr(10)||
-'  <div id="three-col">'||chr(10)||
-'    <div id="left-sidebar">#REGION_POSITION_02#</div>'||chr(10)||
-'    <div id="two-col-tbl">'||chr(10)||
-'      <table class="tbl-body" cellspacing="0" cellpadding="0" border="0" summary="">'||chr(10)||
-'        <tbody>'||chr(10)||
-'          <tr>'||chr(10)||
-'            <td class="';
-
-c3:=c3||'tbl-main" width="100%">#BOX_BODY#</td>'||chr(10)||
-'            <td class="tbl-sidebar">#REGION_POSITION_03#</td>     '||chr(10)||
-'          </tr>'||chr(10)||
-'        </tbody>'||chr(10)||
-'      </table>'||chr(10)||
-'    </div>'||chr(10)||
-'  </div>'||chr(10)||
-'</div>';
-
-wwv_flow_api.create_template(
-  p_id=> 17321835681409361 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'No Tabs - Left and Right Sidebar (fixed-width / DIV left and optional table-based right)',
-  p_body_title=> '',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="success" id="success-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||chr(10)||
-'  #SUCCESS_MESSAGE#'||chr(10)||
-'</div>',
-  p_current_tab=> '',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="notification" id="notification-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||chr(10)||
-'</div>',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> 'summary="" cellpadding="0" border="0" cellspacing="0" width="100%"',
-  p_sidebar_def_reg_pos => 'REGION_POSITION_02',
-  p_breadcrumb_def_reg_pos => 'REGION_POSITION_01',
-  p_theme_id  => 22,
-  p_theme_class_id => 17,
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 17321835681409361 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 22
+ ,p_name => 'No Tabs - Left and Right Sidebar (fixed-width / DIV left and optional table-based right)'
+ ,p_is_popup => false
+ ,p_header_template => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||unistr('\000a')||
+'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'  <title>#TITLE#</title>'||unistr('\000a')||
+'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  <link rel="shortcut icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  #APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||unistr('\000a')||
+'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>'||unistr('\000a')||
+'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||unistr('\000a')||
+'#FORM_OPEN#'||unistr('\000a')||
+''
+ ,p_box => 
+'<div id="header">'||unistr('\000a')||
+'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||unistr('\000a')||
+'  #REGION_POSITION_07#'||unistr('\000a')||
+'  <div id="navbar">'||unistr('\000a')||
+'    <div class="app-user">#WELCOME_USER#</div>'||unistr('\000a')||
+'    #NAVIGATION_BAR#'||unistr('\000a')||
+'    #REGION_POSITION_08#'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+'<div id="tabs">'||unistr('\000a')||
+'  <div class="frame">'||unistr('\000a')||
+'    <div class="bg">'||unistr('\000a')||
+'      <div class="tab-holder">'||unistr('\000a')||
+'        &nbsp;'||unistr('\000a')||
+'      </div>'||unistr('\000a')||
+'    </div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+'<div id="'||
+'topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||unistr('\000a')||
+'<div id="messages">#SUCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||unistr('\000a')||
+'<div id="body">'||unistr('\000a')||
+'  <div id="three-col">'||unistr('\000a')||
+'    <div id="left-sidebar">#REGION_POSITION_02#</div>'||unistr('\000a')||
+'    <div id="two-col-tbl">'||unistr('\000a')||
+'      <table class="tbl-body" cellspacing="0" cellpadding="0" border="0" summary="">'||unistr('\000a')||
+'        <tbody>'||unistr('\000a')||
+'          <tr>'||unistr('\000a')||
+'            <td class="'||
+'tbl-main" width="100%">#BOX_BODY#</td>'||unistr('\000a')||
+'            <td class="tbl-sidebar">#REGION_POSITION_03#</td>     '||unistr('\000a')||
+'          </tr>'||unistr('\000a')||
+'        </tbody>'||unistr('\000a')||
+'      </table>'||unistr('\000a')||
+'    </div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'
+ ,p_footer_template => 
+'<div id="footer"><div class="content">'||unistr('\000a')||
+'<div id="customize">#CUSTOMIZE#</div>'||unistr('\000a')||
+'<div class="app-version">#APP_VERSION#</div>'||unistr('\000a')||
+'<div class="clear"></div>'||unistr('\000a')||
+'  #REGION_POSITION_05#'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_success_message => '<div class="success" id="success-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||unistr('\000a')||
+'  #SUCCESS_MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_notification_message => '<div class="notification" id="notification-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>'
+ ,p_region_table_cattributes => 'summary="" cellpadding="0" border="0" cellspacing="0" width="100%"'
+ ,p_sidebar_def_reg_pos => 'REGION_POSITION_02'
+ ,p_breadcrumb_def_reg_pos => 'REGION_POSITION_01'
+ ,p_theme_class_id => 17
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -5109,114 +5457,95 @@ prompt  ......Page template 17322147266409361
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||chr(10)||
-'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'  <title>#TITLE#</title>'||chr(10)||
-'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  <link rel="shortcut icon" href="#IMAG';
-
-c1:=c1||'E_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  #HEAD#'||chr(10)||
-'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||chr(10)||
-'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||chr(10)||
-'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endi';
-
-c1:=c1||'f]-->'||chr(10)||
-'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>'||chr(10)||
-'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||chr(10)||
-'#FORM_OPEN#'||chr(10)||
-'';
-
-c2:=c2||'<div id="footer"><div class="content">'||chr(10)||
-'<div id="customize">#CUSTOMIZE#</div>'||chr(10)||
-'<div class="app-version">#APP_VERSION#</div>'||chr(10)||
-'<div class="clear"></div>'||chr(10)||
-'  #REGION_POSITION_05#'||chr(10)||
-'</div></div>'||chr(10)||
-'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<div id="header">'||chr(10)||
-'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||chr(10)||
-'  #REGION_POSITION_07#'||chr(10)||
-'  <div id="navbar">'||chr(10)||
-'    <div class="app-user">#WELCOME_USER#</div>'||chr(10)||
-'    #NAVIGATION_BAR#'||chr(10)||
-'    #REGION_POSITION_08#'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'<div id="tabs">'||chr(10)||
-'  <div class="frame">'||chr(10)||
-'    <div class="bg">'||chr(10)||
-'      <div class="tab-holder">'||chr(10)||
-'        &nbsp;'||chr(10)||
-'      </div>'||chr(10)||
-'    </div>'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'<div id="';
-
-c3:=c3||'topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||chr(10)||
-'<div id="messages">#SUCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||chr(10)||
-'<div id="body">'||chr(10)||
-'  <div id="two-col">'||chr(10)||
-'    <div id="sidebar">#REGION_POSITION_03#</div>     '||chr(10)||
-'    <div id="main">#REGION_POSITION_02##BOX_BODY#</div>'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'';
-
-wwv_flow_api.create_template(
-  p_id=> 17322147266409361 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'No Tabs - Right Sidebar (fixed-width / DIV based)',
-  p_body_title=> '',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="success" id="success-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||chr(10)||
-'  #SUCCESS_MESSAGE#'||chr(10)||
-'</div>',
-  p_current_tab=> '',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="notification" id="notification-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||chr(10)||
-'</div>',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> ' summary="" cellpadding="0" border="0" cellspacing="0" width="100%"',
-  p_sidebar_def_reg_pos => 'REGION_POSITION_02',
-  p_breadcrumb_def_reg_pos => 'REGION_POSITION_01',
-  p_theme_id  => 22,
-  p_theme_class_id => 3,
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 17322147266409361 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 22
+ ,p_name => 'No Tabs - Right Sidebar (fixed-width / DIV based)'
+ ,p_is_popup => false
+ ,p_header_template => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||unistr('\000a')||
+'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'  <title>#TITLE#</title>'||unistr('\000a')||
+'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  <link rel="shortcut icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  #APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||unistr('\000a')||
+'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>'||unistr('\000a')||
+'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||unistr('\000a')||
+'#FORM_OPEN#'||unistr('\000a')||
+''
+ ,p_box => 
+'<div id="header">'||unistr('\000a')||
+'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||unistr('\000a')||
+'  #REGION_POSITION_07#'||unistr('\000a')||
+'  <div id="navbar">'||unistr('\000a')||
+'    <div class="app-user">#WELCOME_USER#</div>'||unistr('\000a')||
+'    #NAVIGATION_BAR#'||unistr('\000a')||
+'    #REGION_POSITION_08#'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+'<div id="tabs">'||unistr('\000a')||
+'  <div class="frame">'||unistr('\000a')||
+'    <div class="bg">'||unistr('\000a')||
+'      <div class="tab-holder">'||unistr('\000a')||
+'        &nbsp;'||unistr('\000a')||
+'      </div>'||unistr('\000a')||
+'    </div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+'<div id="'||
+'topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||unistr('\000a')||
+'<div id="messages">#SUCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||unistr('\000a')||
+'<div id="body">'||unistr('\000a')||
+'  <div id="two-col">'||unistr('\000a')||
+'    <div id="sidebar">#REGION_POSITION_03#</div>     '||unistr('\000a')||
+'    <div id="main">#REGION_POSITION_02##BOX_BODY#</div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+''
+ ,p_footer_template => 
+'<div id="footer"><div class="content">'||unistr('\000a')||
+'<div id="customize">#CUSTOMIZE#</div>'||unistr('\000a')||
+'<div class="app-version">#APP_VERSION#</div>'||unistr('\000a')||
+'<div class="clear"></div>'||unistr('\000a')||
+'  #REGION_POSITION_05#'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_success_message => '<div class="success" id="success-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||unistr('\000a')||
+'  #SUCCESS_MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_notification_message => '<div class="notification" id="notification-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>'
+ ,p_region_table_cattributes => ' summary="" cellpadding="0" border="0" cellspacing="0" width="100%"'
+ ,p_sidebar_def_reg_pos => 'REGION_POSITION_02'
+ ,p_breadcrumb_def_reg_pos => 'REGION_POSITION_01'
+ ,p_theme_class_id => 3
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -5227,145 +5556,125 @@ prompt  ......Page template 17322454697409361
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||chr(10)||
-'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'  <title>#TITLE#</title>'||chr(10)||
-'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  <link rel="shortcut icon" href="#IMAG';
-
-c1:=c1||'E_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  #HEAD#'||chr(10)||
-'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||chr(10)||
-'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||chr(10)||
-'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endi';
-
-c1:=c1||'f]-->'||chr(10)||
-'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>'||chr(10)||
-'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||chr(10)||
-'#FORM_OPEN#'||chr(10)||
-'';
-
-c2:=c2||'<div id="footer"><div class="content">'||chr(10)||
-'<div id="customize">#CUSTOMIZE#</div>'||chr(10)||
-'<div class="app-version">#APP_VERSION#</div>'||chr(10)||
-'<div class="clear"></div>'||chr(10)||
-'  #REGION_POSITION_05#'||chr(10)||
-'</div></div>'||chr(10)||
-'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<div id="header">'||chr(10)||
-'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||chr(10)||
-'  #REGION_POSITION_07#'||chr(10)||
-'  <div id="navbar">'||chr(10)||
-'    <div class="app-user">#WELCOME_USER#</div>'||chr(10)||
-'    #NAVIGATION_BAR#'||chr(10)||
-'    #REGION_POSITION_08#'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'<div id="tabs">'||chr(10)||
-'  <div class="frame">'||chr(10)||
-'    <div class="bg">'||chr(10)||
-'      <div class="tab-holder">'||chr(10)||
-'      </div>'||chr(10)||
-'    </div>'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'<div id="topbar">#REGION';
-
-c3:=c3||'_POSITION_01##REGION_POSITION_04#</div>'||chr(10)||
-'<div id="messages">#SUCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||chr(10)||
-'<div id="body">'||chr(10)||
-'  <table class="tbl-body" cellspacing="0" cellpadding="0" border="0" summary="">'||chr(10)||
-'    <tbody>'||chr(10)||
-'      <tr>'||chr(10)||
-'        <td class="tbl-main" width="100%">#REGION_POSITION_02##BOX_BODY#</td>'||chr(10)||
-'        <td class="tbl-sidebar">#REGION_POSITION_03#</td>     '||chr(10)||
-'      </tr>'||chr(10)||
-' ';
-
-c3:=c3||'   </tbody>'||chr(10)||
-'  </table>'||chr(10)||
-'</div>';
-
-wwv_flow_api.create_template(
-  p_id=> 17322454697409361 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'No Tabs - Right Sidebar (optional / table-based)',
-  p_body_title=> '',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="success" id="success-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||chr(10)||
-'  #SUCCESS_MESSAGE#'||chr(10)||
-'</div>',
-  p_current_tab=> '',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="notification" id="notification-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||chr(10)||
-'</div>',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> ' summary="" cellpadding="0" border="0" cellspacing="0" width="100%"',
-  p_sidebar_def_reg_pos => 'REGION_POSITION_02',
-  p_breadcrumb_def_reg_pos => 'REGION_POSITION_01',
-  p_theme_id  => 22,
-  p_theme_class_id => 3,
-  p_error_page_template => '<div class="error_container">'||chr(10)||
-'	<div class="rounded-corner-region-blank-alt">'||chr(10)||
-'		<div class="rc-gray-top">'||chr(10)||
-'			<div class="rc-gray-top-r"></div>'||chr(10)||
-'		</div>'||chr(10)||
-'		<div class="rc-body">'||chr(10)||
-'			<div class="rc-body-r">'||chr(10)||
-'				<div class="rc-content-main">'||chr(10)||
-'					<div class="sErrorText">'||chr(10)||
-'					<strong>#INTERNAL_MESSAGE#</strong>'||chr(10)||
-'					<strong>#MESSAGE#</strong>'||chr(10)||
-'					<p>'||chr(10)||
-'						<button onclick="#BACK_LINK#" class="button-default" type="button">'||chr(10)||
-'						  <span>#OK#</span>'||chr(10)||
-'						</button>'||chr(10)||
-'					</p>'||chr(10)||
-'					</div>'||chr(10)||
-'					<div class="clear"></div>'||chr(10)||
-'				</div>'||chr(10)||
-'				<div class="clear"></div>'||chr(10)||
-'			</div>'||chr(10)||
-'		</div>'||chr(10)||
-'		<div class="rc-bottom">'||chr(10)||
-'			<div class="rc-bottom-r"></div>'||chr(10)||
-'		</div>'||chr(10)||
-'	</div>'||chr(10)||
-'</div>',
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 17322454697409361 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 22
+ ,p_name => 'No Tabs - Right Sidebar (optional / table-based)'
+ ,p_is_popup => false
+ ,p_header_template => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||unistr('\000a')||
+'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'  <title>#TITLE#</title>'||unistr('\000a')||
+'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  <link rel="shortcut icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  #APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||unistr('\000a')||
+'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>'||unistr('\000a')||
+'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||unistr('\000a')||
+'#FORM_OPEN#'||unistr('\000a')||
+''
+ ,p_box => 
+'<div id="header">'||unistr('\000a')||
+'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||unistr('\000a')||
+'  #REGION_POSITION_07#'||unistr('\000a')||
+'  <div id="navbar">'||unistr('\000a')||
+'    <div class="app-user">#WELCOME_USER#</div>'||unistr('\000a')||
+'    #NAVIGATION_BAR#'||unistr('\000a')||
+'    #REGION_POSITION_08#'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+'<div id="tabs">'||unistr('\000a')||
+'  <div class="frame">'||unistr('\000a')||
+'    <div class="bg">'||unistr('\000a')||
+'      <div class="tab-holder">'||unistr('\000a')||
+'      </div>'||unistr('\000a')||
+'    </div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+'<div id="topbar">#REGION'||
+'_POSITION_01##REGION_POSITION_04#</div>'||unistr('\000a')||
+'<div id="messages">#SUCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||unistr('\000a')||
+'<div id="body">'||unistr('\000a')||
+'  <table class="tbl-body" cellspacing="0" cellpadding="0" border="0" summary="">'||unistr('\000a')||
+'    <tbody>'||unistr('\000a')||
+'      <tr>'||unistr('\000a')||
+'        <td class="tbl-main" width="100%">#REGION_POSITION_02##BOX_BODY#</td>'||unistr('\000a')||
+'        <td class="tbl-sidebar">#REGION_POSITION_03#</td>     '||unistr('\000a')||
+'      </tr>'||unistr('\000a')||
+' '||
+'   </tbody>'||unistr('\000a')||
+'  </table>'||unistr('\000a')||
+'</div>'
+ ,p_footer_template => 
+'<div id="footer"><div class="content">'||unistr('\000a')||
+'<div id="customize">#CUSTOMIZE#</div>'||unistr('\000a')||
+'<div class="app-version">#APP_VERSION#</div>'||unistr('\000a')||
+'<div class="clear"></div>'||unistr('\000a')||
+'  #REGION_POSITION_05#'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_success_message => '<div class="success" id="success-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||unistr('\000a')||
+'  #SUCCESS_MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_notification_message => '<div class="notification" id="notification-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>'
+ ,p_region_table_cattributes => ' summary="" cellpadding="0" border="0" cellspacing="0" width="100%"'
+ ,p_sidebar_def_reg_pos => 'REGION_POSITION_02'
+ ,p_breadcrumb_def_reg_pos => 'REGION_POSITION_01'
+ ,p_theme_class_id => 3
+ ,p_error_page_template => '<div class="error_container">'||unistr('\000a')||
+'	<div class="rounded-corner-region-blank-alt">'||unistr('\000a')||
+'		<div class="rc-gray-top">'||unistr('\000a')||
+'			<div class="rc-gray-top-r"></div>'||unistr('\000a')||
+'		</div>'||unistr('\000a')||
+'		<div class="rc-body">'||unistr('\000a')||
+'			<div class="rc-body-r">'||unistr('\000a')||
+'				<div class="rc-content-main">'||unistr('\000a')||
+'					<div class="sErrorText">'||unistr('\000a')||
+'					<strong>#ADDITIONAL_INFO#</strong>'||unistr('\000a')||
+'					<strong>#MESSAGE#</strong>'||unistr('\000a')||
+'					<p>'||unistr('\000a')||
+'						<button onclick="#BACK_LINK#" class="button-default" type="button">'||unistr('\000a')||
+'						  <span>#OK#</span>'||unistr('\000a')||
+'						</button>'||unistr('\000a')||
+'					</p>'||unistr('\000a')||
+'					</div>'||unistr('\000a')||
+'					<div class="clear"></div>'||unistr('\000a')||
+'				</div>'||unistr('\000a')||
+'				<div class="clear"></div>'||unistr('\000a')||
+'			</div>'||unistr('\000a')||
+'		</div>'||unistr('\000a')||
+'		<div class="rc-bottom">'||unistr('\000a')||
+'			<div class="rc-bottom-r"></div>'||unistr('\000a')||
+'		</div>'||unistr('\000a')||
+'	</div>'||unistr('\000a')||
+'</div>'
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -5376,114 +5685,97 @@ prompt  ......Page template 17322734533409362
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||chr(10)||
-'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'  <title>#TITLE#</title>'||chr(10)||
-'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  <link rel="shortcut icon" href="#IMAG';
-
-c1:=c1||'E_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  #HEAD#'||chr(10)||
-'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||chr(10)||
-'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||chr(10)||
-'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endi';
-
-c1:=c1||'f]-->'||chr(10)||
-'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>'||chr(10)||
-'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||chr(10)||
-'#FORM_OPEN#'||chr(10)||
-'';
-
-c2:=c2||'<div id="footer"><div class="content">'||chr(10)||
-'<div id="customize">#CUSTOMIZE#</div>'||chr(10)||
-'<div class="app-version">#APP_VERSION#</div>'||chr(10)||
-'<div class="clear"></div>'||chr(10)||
-'  #REGION_POSITION_05#'||chr(10)||
-'</div></div>'||chr(10)||
-'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<div id="header">'||chr(10)||
-'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||chr(10)||
-'  #REGION_POSITION_07#'||chr(10)||
-'  <div id="navbar">'||chr(10)||
-'    <div class="app-user">#WELCOME_USER#</div>'||chr(10)||
-'    #NAVIGATION_BAR#'||chr(10)||
-'    #REGION_POSITION_08#'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'<ul id="tabs">'||chr(10)||
-'#TAB_CELLS#'||chr(10)||
-'<li class="last"><span></span></li>'||chr(10)||
-'</ul>'||chr(10)||
-'<div id="topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||chr(10)||
-'<div id="messages">#S';
-
-c3:=c3||'UCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||chr(10)||
-'<div id="body">'||chr(10)||
-'  <div id="two-col-sb-left">'||chr(10)||
-'    <div id="left-sidebar">#REGION_POSITION_02#</div>'||chr(10)||
-'    <div id="main-sb-left">'||chr(10)||
-'      #BOX_BODY##REGION_POSITION_03#'||chr(10)||
-'    </div>'||chr(10)||
-'  </div>'||chr(10)||
-'</div>';
-
-wwv_flow_api.create_template(
-  p_id=> 17322734533409362 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'One Level Tabs - Left Sidebar (fixed-width / DIV based)',
-  p_body_title=> '',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="success" id="success-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||chr(10)||
-'  #SUCCESS_MESSAGE#'||chr(10)||
-'</div>',
-  p_current_tab=> '<li class="#TAB_STATUS#">'||chr(10)||
-'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||chr(10)||
-'</li>',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '<li class="#TAB_STATUS#">'||chr(10)||
-'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||chr(10)||
-'</li>',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="notification" id="notification-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||chr(10)||
-'</div>',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> ' summary="" cellpadding="0" border="0" cellspacing="0" width="100%"',
-  p_sidebar_def_reg_pos => 'REGION_POSITION_02',
-  p_breadcrumb_def_reg_pos => 'REGION_POSITION_01',
-  p_theme_id  => 22,
-  p_theme_class_id => 16,
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 17322734533409362 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 22
+ ,p_name => 'One Level Tabs - Left Sidebar (fixed-width / DIV based)'
+ ,p_is_popup => false
+ ,p_header_template => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||unistr('\000a')||
+'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'  <title>#TITLE#</title>'||unistr('\000a')||
+'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  <link rel="shortcut icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  #APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||unistr('\000a')||
+'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>'||unistr('\000a')||
+'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||unistr('\000a')||
+'#FORM_OPEN#'||unistr('\000a')||
+''
+ ,p_box => 
+'<div id="header">'||unistr('\000a')||
+'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||unistr('\000a')||
+'  #REGION_POSITION_07#'||unistr('\000a')||
+'  <div id="navbar">'||unistr('\000a')||
+'    <div class="app-user">#WELCOME_USER#</div>'||unistr('\000a')||
+'    #NAVIGATION_BAR#'||unistr('\000a')||
+'    #REGION_POSITION_08#'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+'<ul id="tabs">'||unistr('\000a')||
+'#TAB_CELLS#'||unistr('\000a')||
+'<li class="last"><span></span></li>'||unistr('\000a')||
+'</ul>'||unistr('\000a')||
+'<div id="topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||unistr('\000a')||
+'<div id="messages">#S'||
+'UCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||unistr('\000a')||
+'<div id="body">'||unistr('\000a')||
+'  <div id="two-col-sb-left">'||unistr('\000a')||
+'    <div id="left-sidebar">#REGION_POSITION_02#</div>'||unistr('\000a')||
+'    <div id="main-sb-left">'||unistr('\000a')||
+'      #BOX_BODY##REGION_POSITION_03#'||unistr('\000a')||
+'    </div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'
+ ,p_footer_template => 
+'<div id="footer"><div class="content">'||unistr('\000a')||
+'<div id="customize">#CUSTOMIZE#</div>'||unistr('\000a')||
+'<div class="app-version">#APP_VERSION#</div>'||unistr('\000a')||
+'<div class="clear"></div>'||unistr('\000a')||
+'  #REGION_POSITION_05#'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_success_message => '<div class="success" id="success-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||unistr('\000a')||
+'  #SUCCESS_MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_current_tab => '<li class="#TAB_STATUS#">'||unistr('\000a')||
+'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||unistr('\000a')||
+'</li>'
+ ,p_non_current_tab => '<li class="#TAB_STATUS#">'||unistr('\000a')||
+'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||unistr('\000a')||
+'</li>'
+ ,p_notification_message => '<div class="notification" id="notification-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>'
+ ,p_region_table_cattributes => ' summary="" cellpadding="0" border="0" cellspacing="0" width="100%"'
+ ,p_sidebar_def_reg_pos => 'REGION_POSITION_02'
+ ,p_breadcrumb_def_reg_pos => 'REGION_POSITION_01'
+ ,p_theme_class_id => 16
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -5494,123 +5786,105 @@ prompt  ......Page template 17323044035409362
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||chr(10)||
-'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'  <title>#TITLE#</title>'||chr(10)||
-'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  <link rel="shortcut icon" href="#IMAG';
-
-c1:=c1||'E_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  #HEAD#'||chr(10)||
-'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||chr(10)||
-'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||chr(10)||
-'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endi';
-
-c1:=c1||'f]-->'||chr(10)||
-'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>'||chr(10)||
-'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||chr(10)||
-'#FORM_OPEN#'||chr(10)||
-'';
-
-c2:=c2||'<div id="footer"><div class="content">'||chr(10)||
-'<div id="customize">#CUSTOMIZE#</div>'||chr(10)||
-'<div class="app-version">#APP_VERSION#</div>'||chr(10)||
-'<div class="clear"></div>'||chr(10)||
-'  #REGION_POSITION_05#'||chr(10)||
-'</div></div>'||chr(10)||
-'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<div id="header">'||chr(10)||
-'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||chr(10)||
-'  #REGION_POSITION_07#'||chr(10)||
-'  <div id="navbar">'||chr(10)||
-'    <div class="app-user">#WELCOME_USER#</div>'||chr(10)||
-'    #NAVIGATION_BAR#'||chr(10)||
-'    #REGION_POSITION_08#'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'<ul id="tabs">'||chr(10)||
-'#TAB_CELLS#'||chr(10)||
-'<li class="last"><span></span></li>'||chr(10)||
-'</ul>'||chr(10)||
-'<div id="topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||chr(10)||
-'<div id="messages">#S';
-
-c3:=c3||'UCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||chr(10)||
-'<div id="body">'||chr(10)||
-'  <div id="three-col">'||chr(10)||
-'    <div id="left-sidebar">#REGION_POSITION_02#</div>'||chr(10)||
-'    <div id="two-col-tbl">'||chr(10)||
-'      <table class="tbl-body" cellspacing="0" cellpadding="0" border="0" summary="">'||chr(10)||
-'        <tbody>'||chr(10)||
-'          <tr>'||chr(10)||
-'            <td class="tbl-main" width="100%">#BOX_BODY#</td>'||chr(10)||
-'            <td class="tbl-sidebar">#';
-
-c3:=c3||'REGION_POSITION_03#</td>     '||chr(10)||
-'          </tr>'||chr(10)||
-'        </tbody>'||chr(10)||
-'      </table>'||chr(10)||
-'    </div>'||chr(10)||
-'  </div>'||chr(10)||
-'</div>';
-
-wwv_flow_api.create_template(
-  p_id=> 17323044035409362 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'One Level Tabs - Left and Right Sidebar (fixed-width / DIV left and optional table-based right)',
-  p_body_title=> '',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="success" id="success-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||chr(10)||
-'  #SUCCESS_MESSAGE#'||chr(10)||
-'</div>',
-  p_current_tab=> '<li class="#TAB_STATUS#">'||chr(10)||
-'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||chr(10)||
-'</li>',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '<li class="#TAB_STATUS#">'||chr(10)||
-'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||chr(10)||
-'</li>',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="notification" id="notification-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||chr(10)||
-'</div>',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> ' summary="" cellpadding="0" border="0" cellspacing="0" width="100%"',
-  p_sidebar_def_reg_pos => 'REGION_POSITION_02',
-  p_breadcrumb_def_reg_pos => 'REGION_POSITION_01',
-  p_theme_id  => 22,
-  p_theme_class_id => 16,
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 17323044035409362 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 22
+ ,p_name => 'One Level Tabs - Left and Right Sidebar (fixed-width / DIV left and optional table-based right)'
+ ,p_is_popup => false
+ ,p_header_template => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||unistr('\000a')||
+'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'  <title>#TITLE#</title>'||unistr('\000a')||
+'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  <link rel="shortcut icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  #APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||unistr('\000a')||
+'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>'||unistr('\000a')||
+'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||unistr('\000a')||
+'#FORM_OPEN#'||unistr('\000a')||
+''
+ ,p_box => 
+'<div id="header">'||unistr('\000a')||
+'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||unistr('\000a')||
+'  #REGION_POSITION_07#'||unistr('\000a')||
+'  <div id="navbar">'||unistr('\000a')||
+'    <div class="app-user">#WELCOME_USER#</div>'||unistr('\000a')||
+'    #NAVIGATION_BAR#'||unistr('\000a')||
+'    #REGION_POSITION_08#'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+'<ul id="tabs">'||unistr('\000a')||
+'#TAB_CELLS#'||unistr('\000a')||
+'<li class="last"><span></span></li>'||unistr('\000a')||
+'</ul>'||unistr('\000a')||
+'<div id="topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||unistr('\000a')||
+'<div id="messages">#S'||
+'UCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||unistr('\000a')||
+'<div id="body">'||unistr('\000a')||
+'  <div id="three-col">'||unistr('\000a')||
+'    <div id="left-sidebar">#REGION_POSITION_02#</div>'||unistr('\000a')||
+'    <div id="two-col-tbl">'||unistr('\000a')||
+'      <table class="tbl-body" cellspacing="0" cellpadding="0" border="0" summary="">'||unistr('\000a')||
+'        <tbody>'||unistr('\000a')||
+'          <tr>'||unistr('\000a')||
+'            <td class="tbl-main" width="100%">#BOX_BODY#</td>'||unistr('\000a')||
+'            <td class="tbl-sidebar">#'||
+'REGION_POSITION_03#</td>     '||unistr('\000a')||
+'          </tr>'||unistr('\000a')||
+'        </tbody>'||unistr('\000a')||
+'      </table>'||unistr('\000a')||
+'    </div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'
+ ,p_footer_template => 
+'<div id="footer"><div class="content">'||unistr('\000a')||
+'<div id="customize">#CUSTOMIZE#</div>'||unistr('\000a')||
+'<div class="app-version">#APP_VERSION#</div>'||unistr('\000a')||
+'<div class="clear"></div>'||unistr('\000a')||
+'  #REGION_POSITION_05#'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_success_message => '<div class="success" id="success-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||unistr('\000a')||
+'  #SUCCESS_MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_current_tab => '<li class="#TAB_STATUS#">'||unistr('\000a')||
+'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||unistr('\000a')||
+'</li>'
+ ,p_non_current_tab => '<li class="#TAB_STATUS#">'||unistr('\000a')||
+'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||unistr('\000a')||
+'</li>'
+ ,p_notification_message => '<div class="notification" id="notification-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>'
+ ,p_region_table_cattributes => ' summary="" cellpadding="0" border="0" cellspacing="0" width="100%"'
+ ,p_sidebar_def_reg_pos => 'REGION_POSITION_02'
+ ,p_breadcrumb_def_reg_pos => 'REGION_POSITION_01'
+ ,p_theme_class_id => 16
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -5621,112 +5895,94 @@ prompt  ......Page template 17323354655409362
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||chr(10)||
-'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'  <title>#TITLE#</title>'||chr(10)||
-'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  <link rel="shortcut icon" href="#IMAG';
-
-c1:=c1||'E_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  #HEAD#'||chr(10)||
-'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||chr(10)||
-'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||chr(10)||
-'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endi';
-
-c1:=c1||'f]-->'||chr(10)||
-'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>'||chr(10)||
-'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||chr(10)||
-'#FORM_OPEN#'||chr(10)||
-'';
-
-c2:=c2||'<div id="footer"><div class="content">'||chr(10)||
-'<div id="customize">#CUSTOMIZE#</div>'||chr(10)||
-'<div class="app-version">#APP_VERSION#</div>'||chr(10)||
-'<div class="clear"></div>'||chr(10)||
-'  #REGION_POSITION_05#'||chr(10)||
-'</div></div>'||chr(10)||
-'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<div id="header">'||chr(10)||
-'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||chr(10)||
-'  #REGION_POSITION_07#'||chr(10)||
-'  <div id="navbar">'||chr(10)||
-'    <div class="app-user">#WELCOME_USER#</div>'||chr(10)||
-'    #NAVIGATION_BAR#'||chr(10)||
-'    #REGION_POSITION_08#'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'<ul id="tabs">'||chr(10)||
-'#TAB_CELLS#'||chr(10)||
-'<li class="last"><span></span></li>'||chr(10)||
-'</ul>'||chr(10)||
-'<div id="topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||chr(10)||
-'<div id="messages">#S';
-
-c3:=c3||'UCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||chr(10)||
-'<div id="body">'||chr(10)||
-'  <div id="two-col">'||chr(10)||
-'    <div id="sidebar">#REGION_POSITION_03#</div>     '||chr(10)||
-'    <div id="main">#REGION_POSITION_02##BOX_BODY#</div>'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'';
-
-wwv_flow_api.create_template(
-  p_id=> 17323354655409362 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'One Level Tabs - Right Sidebar (fixed-width / DIV based)',
-  p_body_title=> '',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="success" id="success-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||chr(10)||
-'  #SUCCESS_MESSAGE#'||chr(10)||
-'</div>',
-  p_current_tab=> '<li class="#TAB_STATUS#">'||chr(10)||
-'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||chr(10)||
-'</li>',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '<li class="#TAB_STATUS#">'||chr(10)||
-'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||chr(10)||
-'</li>',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="notification" id="notification-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||chr(10)||
-'</div>',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> '',
-  p_breadcrumb_def_reg_pos => 'REGION_POSITION_01',
-  p_theme_id  => 22,
-  p_theme_class_id => 8,
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 17323354655409362 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 22
+ ,p_name => 'One Level Tabs - Right Sidebar (fixed-width / DIV based)'
+ ,p_is_popup => false
+ ,p_header_template => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||unistr('\000a')||
+'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'  <title>#TITLE#</title>'||unistr('\000a')||
+'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  <link rel="shortcut icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  #APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||unistr('\000a')||
+'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>'||unistr('\000a')||
+'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||unistr('\000a')||
+'#FORM_OPEN#'||unistr('\000a')||
+''
+ ,p_box => 
+'<div id="header">'||unistr('\000a')||
+'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||unistr('\000a')||
+'  #REGION_POSITION_07#'||unistr('\000a')||
+'  <div id="navbar">'||unistr('\000a')||
+'    <div class="app-user">#WELCOME_USER#</div>'||unistr('\000a')||
+'    #NAVIGATION_BAR#'||unistr('\000a')||
+'    #REGION_POSITION_08#'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+'<ul id="tabs">'||unistr('\000a')||
+'#TAB_CELLS#'||unistr('\000a')||
+'<li class="last"><span></span></li>'||unistr('\000a')||
+'</ul>'||unistr('\000a')||
+'<div id="topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||unistr('\000a')||
+'<div id="messages">#S'||
+'UCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||unistr('\000a')||
+'<div id="body">'||unistr('\000a')||
+'  <div id="two-col">'||unistr('\000a')||
+'    <div id="sidebar">#REGION_POSITION_03#</div>     '||unistr('\000a')||
+'    <div id="main">#REGION_POSITION_02##BOX_BODY#</div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+''
+ ,p_footer_template => 
+'<div id="footer"><div class="content">'||unistr('\000a')||
+'<div id="customize">#CUSTOMIZE#</div>'||unistr('\000a')||
+'<div class="app-version">#APP_VERSION#</div>'||unistr('\000a')||
+'<div class="clear"></div>'||unistr('\000a')||
+'  #REGION_POSITION_05#'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_success_message => '<div class="success" id="success-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||unistr('\000a')||
+'  #SUCCESS_MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_current_tab => '<li class="#TAB_STATUS#">'||unistr('\000a')||
+'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||unistr('\000a')||
+'</li>'
+ ,p_non_current_tab => '<li class="#TAB_STATUS#">'||unistr('\000a')||
+'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||unistr('\000a')||
+'</li>'
+ ,p_notification_message => '<div class="notification" id="notification-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>'
+ ,p_breadcrumb_def_reg_pos => 'REGION_POSITION_01'
+ ,p_theme_class_id => 8
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -5737,115 +5993,97 @@ prompt  ......Page template 17323635730409362
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||chr(10)||
-'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'  <title>#TITLE#</title>'||chr(10)||
-'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  <link rel="shortcut icon" href="#IMAG';
-
-c1:=c1||'E_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  #HEAD#'||chr(10)||
-'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||chr(10)||
-'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||chr(10)||
-'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endi';
-
-c1:=c1||'f]-->'||chr(10)||
-'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>'||chr(10)||
-'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||chr(10)||
-'#FORM_OPEN#'||chr(10)||
-'';
-
-c2:=c2||'<div id="footer"><div class="content">'||chr(10)||
-'<div id="customize">#CUSTOMIZE#</div>'||chr(10)||
-'<div class="app-version">#APP_VERSION#</div>'||chr(10)||
-'<div class="clear"></div>'||chr(10)||
-'  #REGION_POSITION_05#'||chr(10)||
-'</div></div>'||chr(10)||
-'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<div id="header">'||chr(10)||
-'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||chr(10)||
-'  #REGION_POSITION_07#'||chr(10)||
-'  <div id="navbar">'||chr(10)||
-'    <div class="app-user">#WELCOME_USER#</div>'||chr(10)||
-'    #NAVIGATION_BAR#'||chr(10)||
-'    #REGION_POSITION_08#'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'<ul id="tabs">'||chr(10)||
-'#TAB_CELLS#'||chr(10)||
-'<li class="last"><span></span></li>'||chr(10)||
-'</ul>'||chr(10)||
-'<div id="topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||chr(10)||
-'<div id="messages">#S';
-
-c3:=c3||'UCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||chr(10)||
-'<div id="body">'||chr(10)||
-'  <table class="tbl-body" cellspacing="0" cellpadding="0" border="0" summary="">'||chr(10)||
-'    <tbody>'||chr(10)||
-'      <tr>'||chr(10)||
-'        <td class="tbl-main" width="100%">#REGION_POSITION_02##BOX_BODY#</td>'||chr(10)||
-'        <td class="tbl-sidebar">#REGION_POSITION_03#</td>     '||chr(10)||
-'      </tr>'||chr(10)||
-'    </tbody>'||chr(10)||
-'  </table>'||chr(10)||
-'</div>';
-
-wwv_flow_api.create_template(
-  p_id=> 17323635730409362 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'One Level Tabs - Right Sidebar (optional / table-based)',
-  p_body_title=> '',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="success" id="success-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||chr(10)||
-'  #SUCCESS_MESSAGE#'||chr(10)||
-'</div>',
-  p_current_tab=> '<li class="#TAB_STATUS#">'||chr(10)||
-'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||chr(10)||
-'</li>',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '<li class="#TAB_STATUS#">'||chr(10)||
-'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||chr(10)||
-'</li>',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="notification" id="notification-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||chr(10)||
-'</div>',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<div class="navbar-entry"><a href="#LINK#" class="navbar-link">#TEXT#</a></div>',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> '',
-  p_breadcrumb_def_reg_pos => 'REGION_POSITION_01',
-  p_theme_id  => 22,
-  p_theme_class_id => 1,
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 17323635730409362 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 22
+ ,p_name => 'One Level Tabs - Right Sidebar (optional / table-based)'
+ ,p_is_popup => false
+ ,p_header_template => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||unistr('\000a')||
+'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'  <title>#TITLE#</title>'||unistr('\000a')||
+'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  <link rel="shortcut icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  #APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||unistr('\000a')||
+'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>'||unistr('\000a')||
+'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||unistr('\000a')||
+'#FORM_OPEN#'||unistr('\000a')||
+''
+ ,p_box => 
+'<div id="header">'||unistr('\000a')||
+'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||unistr('\000a')||
+'  #REGION_POSITION_07#'||unistr('\000a')||
+'  <div id="navbar">'||unistr('\000a')||
+'    <div class="app-user">#WELCOME_USER#</div>'||unistr('\000a')||
+'    #NAVIGATION_BAR#'||unistr('\000a')||
+'    #REGION_POSITION_08#'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+'<ul id="tabs">'||unistr('\000a')||
+'#TAB_CELLS#'||unistr('\000a')||
+'<li class="last"><span></span></li>'||unistr('\000a')||
+'</ul>'||unistr('\000a')||
+'<div id="topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||unistr('\000a')||
+'<div id="messages">#S'||
+'UCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||unistr('\000a')||
+'<div id="body">'||unistr('\000a')||
+'  <table class="tbl-body" cellspacing="0" cellpadding="0" border="0" summary="">'||unistr('\000a')||
+'    <tbody>'||unistr('\000a')||
+'      <tr>'||unistr('\000a')||
+'        <td class="tbl-main" width="100%">#REGION_POSITION_02##BOX_BODY#</td>'||unistr('\000a')||
+'        <td class="tbl-sidebar">#REGION_POSITION_03#</td>     '||unistr('\000a')||
+'      </tr>'||unistr('\000a')||
+'    </tbody>'||unistr('\000a')||
+'  </table>'||unistr('\000a')||
+'</div>'
+ ,p_footer_template => 
+'<div id="footer"><div class="content">'||unistr('\000a')||
+'<div id="customize">#CUSTOMIZE#</div>'||unistr('\000a')||
+'<div class="app-version">#APP_VERSION#</div>'||unistr('\000a')||
+'<div class="clear"></div>'||unistr('\000a')||
+'  #REGION_POSITION_05#'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_success_message => '<div class="success" id="success-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||unistr('\000a')||
+'  #SUCCESS_MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_current_tab => '<li class="#TAB_STATUS#">'||unistr('\000a')||
+'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||unistr('\000a')||
+'</li>'
+ ,p_non_current_tab => '<li class="#TAB_STATUS#">'||unistr('\000a')||
+'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||unistr('\000a')||
+'</li>'
+ ,p_notification_message => '<div class="notification" id="notification-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<div class="navbar-entry"><a href="#LINK#" class="navbar-link">#TEXT#</a></div>'
+ ,p_breadcrumb_def_reg_pos => 'REGION_POSITION_01'
+ ,p_theme_class_id => 1
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -5856,74 +6094,56 @@ prompt  ......Page template 17323958377409362
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||chr(10)||
-'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'<title>#TITLE#</title>'||chr(10)||
-'<link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'<link rel="shortcut icon" href="#IMAGE_PREF';
-
-c1:=c1||'IX#favicon.ico" type="image/x-icon">'||chr(10)||
-'#HEAD#'||chr(10)||
-'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||chr(10)||
-'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||chr(10)||
-'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endif]-->'||chr(10)||
-'  ';
-
-c1:=c1||'<!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD# class="pop-up-body">#FORM_OPEN#';
-
-c2:=c2||'#FORM_CLOSE#</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<table summary="" cellpadding="0" width="100%" cellspacing="0" border="0">'||chr(10)||
-'<tr>'||chr(10)||
-'<td width="100%" valign="top"><div class="t1messages">#SUCCESS_MESSAGE##NOTIFICATION_MESSAGE#</div>#BOX_BODY##REGION_POSITION_01##REGION_POSITION_02##REGION_POSITION_04##REGION_POSITION_05##REGION_POSITION_06##REGION_POSITION_07##REGION_POSITION_08#</td>'||chr(10)||
-'<td valign="top">#REGION_POSITION_03#<br /></td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>';
-
-wwv_flow_api.create_template(
-  p_id=> 17323958377409362 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'Popup',
-  p_body_title=> '',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="t1success" id="MESSAGE"><img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''MESSAGE'')"  style="float:right;" class="pb" alt="" />#SUCCESS_MESSAGE#</div>',
-  p_current_tab=> '',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="t1notification" id="MESSAGE"><img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''MESSAGE'')"  style="float:right;" class="pb" alt="" />#MESSAGE#</div>',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<a href="#LINK#">#TEXT#</a>',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> ' summary="" cellpadding="0" border="0" cellspacing="0" width="100%"',
-  p_theme_id  => 22,
-  p_theme_class_id => 4,
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 17323958377409362 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 22
+ ,p_name => 'Popup'
+ ,p_is_popup => false
+ ,p_header_template => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||unistr('\000a')||
+'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'<title>#TITLE#</title>'||unistr('\000a')||
+'<link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'<link rel="shortcut icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'#APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||unistr('\000a')||
+'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD# class="pop-up-body">#FORM_OPEN#'
+ ,p_box => 
+'<table summary="" cellpadding="0" width="100%" cellspacing="0" border="0">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td width="100%" valign="top"><div class="t1messages">#SUCCESS_MESSAGE##NOTIFICATION_MESSAGE#</div>#BOX_BODY##REGION_POSITION_01##REGION_POSITION_02##REGION_POSITION_04##REGION_POSITION_05##REGION_POSITION_06##REGION_POSITION_07##REGION_POSITION_08#</td>'||unistr('\000a')||
+'<td valign="top">#REGION_POSITION_03#<br /></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'
+ ,p_footer_template => 
+'#FORM_CLOSE##DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_success_message => '<div class="t1success" id="MESSAGE"><img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''MESSAGE'')"  style="float:right;" class="pb" alt="" />#SUCCESS_MESSAGE#</div>'
+ ,p_notification_message => '<div class="t1notification" id="MESSAGE"><img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''MESSAGE'')"  style="float:right;" class="pb" alt="" />#MESSAGE#</div>'
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<a href="#LINK#">#TEXT#</a>'
+ ,p_region_table_cattributes => ' summary="" cellpadding="0" border="0" cellspacing="0" width="100%"'
+ ,p_theme_class_id => 4
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -5934,93 +6154,71 @@ prompt  ......Page template 17324253802409363
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||chr(10)||
-'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'  <title>#TITLE#</title>'||chr(10)||
-'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  <link rel="shortcut icon" href="#IMAG';
-
-c1:=c1||'E_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  #HEAD#'||chr(10)||
-'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||chr(10)||
-'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||chr(10)||
-'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endi';
-
-c1:=c1||'f]-->'||chr(10)||
-'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>'||chr(10)||
-'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||chr(10)||
-'#FORM_OPEN#';
-
-c2:=c2||'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<div id="header">'||chr(10)||
-'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||chr(10)||
-'  #REGION_POSITION_07#'||chr(10)||
-'  <div id="navbar">'||chr(10)||
-'    <div class="app-user">#WELCOME_USER#</div>'||chr(10)||
-'    #REGION_POSITION_08#'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'<div id="body">'||chr(10)||
-'  <table class="tbl-body" cellspacing="0" cellpadding="0" border="0" summary="">'||chr(10)||
-'    <tbody>'||chr(10)||
-'      <tr>'||chr(10)||
-'        <td class="tbl-sidebar" style="padding-right: 1';
-
-c3:=c3||'0px;">#REGION_POSITION_02#</td>     '||chr(10)||
-'        <td class="tbl-main" width="100%">#BOX_BODY#</td>'||chr(10)||
-'        <td class="tbl-sidebar">#REGION_POSITION_03#</td>     '||chr(10)||
-'      </tr>'||chr(10)||
-'    </tbody>'||chr(10)||
-'  </table>'||chr(10)||
-'</div>'||chr(10)||
-'';
-
-wwv_flow_api.create_template(
-  p_id=> 17324253802409363 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'Printer Friendly',
-  p_body_title=> '',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '',
-  p_current_tab=> '',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '',
-  p_navigation_bar=> '',
-  p_navbar_entry=> '',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> ' summary="" cellpadding="0" border="0" cellspacing="0" width="100%"',
-  p_theme_id  => 22,
-  p_theme_class_id => 5,
-  p_translate_this_template => 'N',
-  p_template_comment => '3');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 17324253802409363 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 22
+ ,p_name => 'Printer Friendly'
+ ,p_is_popup => false
+ ,p_header_template => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||unistr('\000a')||
+'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'  <title>#TITLE#</title>'||unistr('\000a')||
+'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  <link rel="shortcut icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  #APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||unistr('\000a')||
+'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>'||unistr('\000a')||
+'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||unistr('\000a')||
+'#FORM_OPEN#'
+ ,p_box => 
+'<div id="header">'||unistr('\000a')||
+'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||unistr('\000a')||
+'  #REGION_POSITION_07#'||unistr('\000a')||
+'  <div id="navbar">'||unistr('\000a')||
+'    <div class="app-user">#WELCOME_USER#</div>'||unistr('\000a')||
+'    #REGION_POSITION_08#'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+'<div id="body">'||unistr('\000a')||
+'  <table class="tbl-body" cellspacing="0" cellpadding="0" border="0" summary="">'||unistr('\000a')||
+'    <tbody>'||unistr('\000a')||
+'      <tr>'||unistr('\000a')||
+'        <td class="tbl-sidebar" style="padding-right: 1'||
+'0px;">#REGION_POSITION_02#</td>     '||unistr('\000a')||
+'        <td class="tbl-main" width="100%">#BOX_BODY#</td>'||unistr('\000a')||
+'        <td class="tbl-sidebar">#REGION_POSITION_03#</td>     '||unistr('\000a')||
+'      </tr>'||unistr('\000a')||
+'    </tbody>'||unistr('\000a')||
+'  </table>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+''
+ ,p_footer_template => 
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_region_table_cattributes => ' summary="" cellpadding="0" border="0" cellspacing="0" width="100%"'
+ ,p_theme_class_id => 5
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+ ,p_template_comment => '3'
+  );
 null;
  
 end;
@@ -6031,128 +6229,113 @@ prompt  ......Page template 17324546693409371
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||chr(10)||
-'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'  <title>#TITLE#</title>'||chr(10)||
-' #HEAD#'||chr(10)||
-'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||chr(10)||
-'  <!-';
-
-c1:=c1||'-[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||chr(10)||
-'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endif]-->'||chr(10)||
-'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD';
-
-c1:=c1||'#>'||chr(10)||
-'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||chr(10)||
-'#FORM_OPEN#'||chr(10)||
-'';
-
-c2:=c2||'<div id="footer"><div class="content">'||chr(10)||
-'<div id="customize">#CUSTOMIZE#</div>'||chr(10)||
-'<div class="app-version">#APP_VERSION#</div>'||chr(10)||
-'<div class="clear"></div>'||chr(10)||
-'  #REGION_POSITION_05#'||chr(10)||
-'</div></div>'||chr(10)||
-'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<div id="header">'||chr(10)||
-'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||chr(10)||
-'  #REGION_POSITION_07#'||chr(10)||
-'  <div id="navbar">'||chr(10)||
-'    <div class="app-user">#WELCOME_USER#</div>'||chr(10)||
-'    #NAVIGATION_BAR#'||chr(10)||
-'    #REGION_POSITION_08#'||chr(10)||
-'  </div>'||chr(10)||
-'  <div id="parent-tabs">'||chr(10)||
-'    <div class="tab-holder">#PARENT_TAB_CELLS#</div>'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'<ul id="tabs">'||chr(10)||
-'#TAB_CELLS#'||chr(10)||
-'<li class="last"><span></span></li>'||chr(10)||
-'</ul';
-
-c3:=c3||'>'||chr(10)||
-''||chr(10)||
-'<div id="topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||chr(10)||
-'<div id="messages">#SUCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||chr(10)||
-'<div id="body">'||chr(10)||
-'  <div id="two-col-sb-left">'||chr(10)||
-'    <div id="left-sidebar">#REGION_POSITION_02#</div>'||chr(10)||
-'    <div id="main-sb-left">'||chr(10)||
-'      #BOX_BODY##REGION_POSITION_03#'||chr(10)||
-'    </div>'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'';
-
-wwv_flow_api.create_template(
-  p_id=> 17324546693409371 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'Two Level Tabs - Left Sidebar (fixed-width / DIV based)',
-  p_body_title=> '',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="success" id="success-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||chr(10)||
-'  #SUCCESS_MESSAGE#'||chr(10)||
-'</div>',
-  p_current_tab=> '<li class="#TAB_STATUS#">'||chr(10)||
-'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||chr(10)||
-'</li>',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '<li class="#TAB_STATUS#">'||chr(10)||
-'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||chr(10)||
-'</li>',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '<div class="current"><div>'||chr(10)||
-'#TAB_LABEL##TAB_INLINE_EDIT#'||chr(10)||
-'</div></div>'||chr(10)||
-''||chr(10)||
-'',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '<div class="noncurrent"><div>'||chr(10)||
-'<a href="#TAB_LINK#">#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||chr(10)||
-'</div></div>'||chr(10)||
-''||chr(10)||
-''||chr(10)||
-''||chr(10)||
-''||chr(10)||
-'',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="notification" id="notification-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||chr(10)||
-'</div>',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> ' summary="" cellpadding="0" border="0" cellspacing="0" width="100%"',
-  p_sidebar_def_reg_pos => 'REGION_POSITION_02',
-  p_breadcrumb_def_reg_pos => 'REGION_POSITION_01',
-  p_theme_id  => 22,
-  p_theme_class_id => 18,
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 17324546693409371 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 22
+ ,p_name => 'Two Level Tabs - Left Sidebar (fixed-width / DIV based)'
+ ,p_is_popup => false
+ ,p_header_template => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||unistr('\000a')||
+'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'  <title>#TITLE#</title>'||unistr('\000a')||
+' #APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||unistr('\000a')||
+'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>'||unistr('\000a')||
+'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||unistr('\000a')||
+'#FORM_OPEN#'||unistr('\000a')||
+''
+ ,p_box => 
+'<div id="header">'||unistr('\000a')||
+'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||unistr('\000a')||
+'  #REGION_POSITION_07#'||unistr('\000a')||
+'  <div id="navbar">'||unistr('\000a')||
+'    <div class="app-user">#WELCOME_USER#</div>'||unistr('\000a')||
+'    #NAVIGATION_BAR#'||unistr('\000a')||
+'    #REGION_POSITION_08#'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'  <div id="parent-tabs">'||unistr('\000a')||
+'    <div class="tab-holder">#PARENT_TAB_CELLS#</div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+'<ul id="tabs">'||unistr('\000a')||
+'#TAB_CELLS#'||unistr('\000a')||
+'<li class="last"><span></span></li>'||unistr('\000a')||
+'</ul'||
+'>'||unistr('\000a')||
+''||unistr('\000a')||
+'<div id="topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||unistr('\000a')||
+'<div id="messages">#SUCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||unistr('\000a')||
+'<div id="body">'||unistr('\000a')||
+'  <div id="two-col-sb-left">'||unistr('\000a')||
+'    <div id="left-sidebar">#REGION_POSITION_02#</div>'||unistr('\000a')||
+'    <div id="main-sb-left">'||unistr('\000a')||
+'      #BOX_BODY##REGION_POSITION_03#'||unistr('\000a')||
+'    </div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+''
+ ,p_footer_template => 
+'<div id="footer"><div class="content">'||unistr('\000a')||
+'<div id="customize">#CUSTOMIZE#</div>'||unistr('\000a')||
+'<div class="app-version">#APP_VERSION#</div>'||unistr('\000a')||
+'<div class="clear"></div>'||unistr('\000a')||
+'  #REGION_POSITION_05#'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_success_message => '<div class="success" id="success-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||unistr('\000a')||
+'  #SUCCESS_MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_current_tab => '<li class="#TAB_STATUS#">'||unistr('\000a')||
+'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||unistr('\000a')||
+'</li>'
+ ,p_non_current_tab => '<li class="#TAB_STATUS#">'||unistr('\000a')||
+'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||unistr('\000a')||
+'</li>'
+ ,p_top_current_tab => '<div class="current"><div>'||unistr('\000a')||
+'#TAB_LABEL##TAB_INLINE_EDIT#'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+''||unistr('\000a')||
+''
+ ,p_top_non_curr_tab => '<div class="noncurrent"><div>'||unistr('\000a')||
+'<a href="#TAB_LINK#">#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+''||unistr('\000a')||
+''||unistr('\000a')||
+''||unistr('\000a')||
+''||unistr('\000a')||
+''
+ ,p_notification_message => '<div class="notification" id="notification-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>'
+ ,p_region_table_cattributes => ' summary="" cellpadding="0" border="0" cellspacing="0" width="100%"'
+ ,p_sidebar_def_reg_pos => 'REGION_POSITION_02'
+ ,p_breadcrumb_def_reg_pos => 'REGION_POSITION_01'
+ ,p_theme_class_id => 18
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -6163,138 +6346,122 @@ prompt  ......Page template 17324857350409371
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||chr(10)||
-'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'  <title>#TITLE#</title>'||chr(10)||
-'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  <link rel="shortcut icon" href="#IMAG';
-
-c1:=c1||'E_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-' #HEAD#'||chr(10)||
-'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||chr(10)||
-'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||chr(10)||
-'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endif';
-
-c1:=c1||']-->'||chr(10)||
-'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>'||chr(10)||
-'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||chr(10)||
-'#FORM_OPEN#'||chr(10)||
-'';
-
-c2:=c2||'<div id="footer"><div class="content">'||chr(10)||
-'<div id="customize">#CUSTOMIZE#</div>'||chr(10)||
-'<div class="app-version">#APP_VERSION#</div>'||chr(10)||
-'<div class="clear"></div>'||chr(10)||
-'  #REGION_POSITION_05#'||chr(10)||
-'</div></div>'||chr(10)||
-'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<div id="header">'||chr(10)||
-'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||chr(10)||
-'  #REGION_POSITION_07#'||chr(10)||
-'  <div id="navbar">'||chr(10)||
-'    <div class="app-user">#WELCOME_USER#</div>'||chr(10)||
-'    #NAVIGATION_BAR#'||chr(10)||
-'    #REGION_POSITION_08#'||chr(10)||
-'  </div>'||chr(10)||
-'  <div id="parent-tabs">'||chr(10)||
-'    <div class="tab-holder">#PARENT_TAB_CELLS#</div>'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'<ul id="tabs">'||chr(10)||
-'#TAB_CELLS#'||chr(10)||
-'<li class="last"><span></span></li>'||chr(10)||
-'</ul';
-
-c3:=c3||'>'||chr(10)||
-'<div id="topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||chr(10)||
-'<div id="messages">#SUCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||chr(10)||
-'<div id="body">'||chr(10)||
-'  <div id="three-col">'||chr(10)||
-'    <div id="left-sidebar">#REGION_POSITION_02#</div>'||chr(10)||
-'    <div id="two-col-tbl">'||chr(10)||
-'      <table class="tbl-body" cellspacing="0" cellpadding="0" border="0" summary="">'||chr(10)||
-'        <tbody>'||chr(10)||
-'          <tr>'||chr(10)||
-'            ';
-
-c3:=c3||'<td class="tbl-main" width="100%">#BOX_BODY#</td>'||chr(10)||
-'            <td class="tbl-sidebar">#REGION_POSITION_03#</td>     '||chr(10)||
-'          </tr>'||chr(10)||
-'        </tbody>'||chr(10)||
-'      </table>'||chr(10)||
-'    </div>'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'';
-
-wwv_flow_api.create_template(
-  p_id=> 17324857350409371 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'Two Level Tabs - Left and Right Sidebar (fixed-width / DIV left and optional table-based right)',
-  p_body_title=> '',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="success" id="success-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||chr(10)||
-'  #SUCCESS_MESSAGE#'||chr(10)||
-'</div>',
-  p_current_tab=> '<li class="#TAB_STATUS#">'||chr(10)||
-'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||chr(10)||
-'</li>',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '<li class="#TAB_STATUS#">'||chr(10)||
-'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||chr(10)||
-'</li>',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '<div class="current"><div>'||chr(10)||
-'#TAB_LABEL##TAB_INLINE_EDIT#'||chr(10)||
-'</div></div>'||chr(10)||
-''||chr(10)||
-'',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '<div class="noncurrent"><div>'||chr(10)||
-'<a href="#TAB_LINK#">#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||chr(10)||
-'</div></div>'||chr(10)||
-''||chr(10)||
-''||chr(10)||
-''||chr(10)||
-''||chr(10)||
-'',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="notification" id="notification-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||chr(10)||
-'</div>',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> ' summary="" cellpadding="0" border="0" cellspacing="0" width="100%"',
-  p_sidebar_def_reg_pos => 'REGION_POSITION_02',
-  p_breadcrumb_def_reg_pos => 'REGION_POSITION_01',
-  p_theme_id  => 22,
-  p_theme_class_id => 18,
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 17324857350409371 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 22
+ ,p_name => 'Two Level Tabs - Left and Right Sidebar (fixed-width / DIV left and optional table-based right)'
+ ,p_is_popup => false
+ ,p_header_template => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||unistr('\000a')||
+'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'  <title>#TITLE#</title>'||unistr('\000a')||
+'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  <link rel="shortcut icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+' #APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||unistr('\000a')||
+'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>'||unistr('\000a')||
+'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||unistr('\000a')||
+'#FORM_OPEN#'||unistr('\000a')||
+''
+ ,p_box => 
+'<div id="header">'||unistr('\000a')||
+'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||unistr('\000a')||
+'  #REGION_POSITION_07#'||unistr('\000a')||
+'  <div id="navbar">'||unistr('\000a')||
+'    <div class="app-user">#WELCOME_USER#</div>'||unistr('\000a')||
+'    #NAVIGATION_BAR#'||unistr('\000a')||
+'    #REGION_POSITION_08#'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'  <div id="parent-tabs">'||unistr('\000a')||
+'    <div class="tab-holder">#PARENT_TAB_CELLS#</div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+'<ul id="tabs">'||unistr('\000a')||
+'#TAB_CELLS#'||unistr('\000a')||
+'<li class="last"><span></span></li>'||unistr('\000a')||
+'</ul'||
+'>'||unistr('\000a')||
+'<div id="topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||unistr('\000a')||
+'<div id="messages">#SUCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||unistr('\000a')||
+'<div id="body">'||unistr('\000a')||
+'  <div id="three-col">'||unistr('\000a')||
+'    <div id="left-sidebar">#REGION_POSITION_02#</div>'||unistr('\000a')||
+'    <div id="two-col-tbl">'||unistr('\000a')||
+'      <table class="tbl-body" cellspacing="0" cellpadding="0" border="0" summary="">'||unistr('\000a')||
+'        <tbody>'||unistr('\000a')||
+'          <tr>'||unistr('\000a')||
+'            '||
+'<td class="tbl-main" width="100%">#BOX_BODY#</td>'||unistr('\000a')||
+'            <td class="tbl-sidebar">#REGION_POSITION_03#</td>     '||unistr('\000a')||
+'          </tr>'||unistr('\000a')||
+'        </tbody>'||unistr('\000a')||
+'      </table>'||unistr('\000a')||
+'    </div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+''
+ ,p_footer_template => 
+'<div id="footer"><div class="content">'||unistr('\000a')||
+'<div id="customize">#CUSTOMIZE#</div>'||unistr('\000a')||
+'<div class="app-version">#APP_VERSION#</div>'||unistr('\000a')||
+'<div class="clear"></div>'||unistr('\000a')||
+'  #REGION_POSITION_05#'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_success_message => '<div class="success" id="success-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||unistr('\000a')||
+'  #SUCCESS_MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_current_tab => '<li class="#TAB_STATUS#">'||unistr('\000a')||
+'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||unistr('\000a')||
+'</li>'
+ ,p_non_current_tab => '<li class="#TAB_STATUS#">'||unistr('\000a')||
+'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||unistr('\000a')||
+'</li>'
+ ,p_top_current_tab => '<div class="current"><div>'||unistr('\000a')||
+'#TAB_LABEL##TAB_INLINE_EDIT#'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+''||unistr('\000a')||
+''
+ ,p_top_non_curr_tab => '<div class="noncurrent"><div>'||unistr('\000a')||
+'<a href="#TAB_LINK#">#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+''||unistr('\000a')||
+''||unistr('\000a')||
+''||unistr('\000a')||
+''||unistr('\000a')||
+''
+ ,p_notification_message => '<div class="notification" id="notification-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>'
+ ,p_region_table_cattributes => ' summary="" cellpadding="0" border="0" cellspacing="0" width="100%"'
+ ,p_sidebar_def_reg_pos => 'REGION_POSITION_02'
+ ,p_breadcrumb_def_reg_pos => 'REGION_POSITION_01'
+ ,p_theme_class_id => 18
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -6305,126 +6472,111 @@ prompt  ......Page template 17325148454409371
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||chr(10)||
-'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'  <title>#TITLE#</title>'||chr(10)||
-'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  <link rel="shortcut icon" href="#IMAG';
-
-c1:=c1||'E_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-' #HEAD#'||chr(10)||
-'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||chr(10)||
-'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||chr(10)||
-'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endif';
-
-c1:=c1||']-->'||chr(10)||
-'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>'||chr(10)||
-'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||chr(10)||
-'#FORM_OPEN#'||chr(10)||
-'';
-
-c2:=c2||'<div id="footer"><div class="content">'||chr(10)||
-'<div id="customize">#CUSTOMIZE#</div>'||chr(10)||
-'<div class="app-version">#APP_VERSION#</div>'||chr(10)||
-'<div class="clear"></div>'||chr(10)||
-'  #REGION_POSITION_05#'||chr(10)||
-'</div></div>'||chr(10)||
-'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<div id="header">'||chr(10)||
-'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||chr(10)||
-'  #REGION_POSITION_07#'||chr(10)||
-'  <div id="navbar">'||chr(10)||
-'    <div class="app-user">#WELCOME_USER#</div>'||chr(10)||
-'    #NAVIGATION_BAR#'||chr(10)||
-'    #REGION_POSITION_08#'||chr(10)||
-'  </div>'||chr(10)||
-'  <div id="parent-tabs">'||chr(10)||
-'    <div class="tab-holder">#PARENT_TAB_CELLS#</div>'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'<ul id="tabs">'||chr(10)||
-'#TAB_CELLS#'||chr(10)||
-'<li class="last"><span></span></li>'||chr(10)||
-'</ul';
-
-c3:=c3||'>'||chr(10)||
-'<div id="topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||chr(10)||
-'<div id="messages">#SUCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||chr(10)||
-'<div id="body">'||chr(10)||
-'  <div id="two-col">'||chr(10)||
-'    <div id="sidebar">#REGION_POSITION_03#</div>     '||chr(10)||
-'    <div id="main">#REGION_POSITION_02##BOX_BODY#</div>'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'';
-
-wwv_flow_api.create_template(
-  p_id=> 17325148454409371 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'Two Level Tabs - Right Sidebar (fixed-width / DIV based)',
-  p_body_title=> '',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="success" id="success-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||chr(10)||
-'  #SUCCESS_MESSAGE#'||chr(10)||
-'</div>',
-  p_current_tab=> '<li class="#TAB_STATUS#">'||chr(10)||
-'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||chr(10)||
-'</li>',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '<li class="#TAB_STATUS#">'||chr(10)||
-'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||chr(10)||
-'</li>',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '<div class="current"><div>'||chr(10)||
-'#TAB_LABEL##TAB_INLINE_EDIT#'||chr(10)||
-'</div></div>'||chr(10)||
-''||chr(10)||
-'',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '<div class="noncurrent"><div>'||chr(10)||
-'<a href="#TAB_LINK#">#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||chr(10)||
-'</div></div>'||chr(10)||
-''||chr(10)||
-''||chr(10)||
-''||chr(10)||
-''||chr(10)||
-'',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="notification" id="notification-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||chr(10)||
-'</div>',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> ' summary="" cellpadding="0" border="0" cellspacing="0" width="100%"',
-  p_breadcrumb_def_reg_pos => 'REGION_POSITION_01',
-  p_theme_id  => 22,
-  p_theme_class_id => 2,
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 17325148454409371 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 22
+ ,p_name => 'Two Level Tabs - Right Sidebar (fixed-width / DIV based)'
+ ,p_is_popup => false
+ ,p_header_template => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||unistr('\000a')||
+'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'  <title>#TITLE#</title>'||unistr('\000a')||
+'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  <link rel="shortcut icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+' #APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||unistr('\000a')||
+'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>'||unistr('\000a')||
+'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||unistr('\000a')||
+'#FORM_OPEN#'||unistr('\000a')||
+''
+ ,p_box => 
+'<div id="header">'||unistr('\000a')||
+'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||unistr('\000a')||
+'  #REGION_POSITION_07#'||unistr('\000a')||
+'  <div id="navbar">'||unistr('\000a')||
+'    <div class="app-user">#WELCOME_USER#</div>'||unistr('\000a')||
+'    #NAVIGATION_BAR#'||unistr('\000a')||
+'    #REGION_POSITION_08#'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'  <div id="parent-tabs">'||unistr('\000a')||
+'    <div class="tab-holder">#PARENT_TAB_CELLS#</div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+'<ul id="tabs">'||unistr('\000a')||
+'#TAB_CELLS#'||unistr('\000a')||
+'<li class="last"><span></span></li>'||unistr('\000a')||
+'</ul'||
+'>'||unistr('\000a')||
+'<div id="topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||unistr('\000a')||
+'<div id="messages">#SUCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||unistr('\000a')||
+'<div id="body">'||unistr('\000a')||
+'  <div id="two-col">'||unistr('\000a')||
+'    <div id="sidebar">#REGION_POSITION_03#</div>     '||unistr('\000a')||
+'    <div id="main">#REGION_POSITION_02##BOX_BODY#</div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+''
+ ,p_footer_template => 
+'<div id="footer"><div class="content">'||unistr('\000a')||
+'<div id="customize">#CUSTOMIZE#</div>'||unistr('\000a')||
+'<div class="app-version">#APP_VERSION#</div>'||unistr('\000a')||
+'<div class="clear"></div>'||unistr('\000a')||
+'  #REGION_POSITION_05#'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_success_message => '<div class="success" id="success-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||unistr('\000a')||
+'  #SUCCESS_MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_current_tab => '<li class="#TAB_STATUS#">'||unistr('\000a')||
+'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||unistr('\000a')||
+'</li>'
+ ,p_non_current_tab => '<li class="#TAB_STATUS#">'||unistr('\000a')||
+'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||unistr('\000a')||
+'</li>'
+ ,p_top_current_tab => '<div class="current"><div>'||unistr('\000a')||
+'#TAB_LABEL##TAB_INLINE_EDIT#'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+''||unistr('\000a')||
+''
+ ,p_top_non_curr_tab => '<div class="noncurrent"><div>'||unistr('\000a')||
+'<a href="#TAB_LINK#">#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+''||unistr('\000a')||
+''||unistr('\000a')||
+''||unistr('\000a')||
+''||unistr('\000a')||
+''
+ ,p_notification_message => '<div class="notification" id="notification-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>'
+ ,p_region_table_cattributes => ' summary="" cellpadding="0" border="0" cellspacing="0" width="100%"'
+ ,p_breadcrumb_def_reg_pos => 'REGION_POSITION_01'
+ ,p_theme_class_id => 2
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -6435,131 +6587,115 @@ prompt  ......Page template 17325450581409385
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||chr(10)||
-'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'  <title>#TITLE#</title>'||chr(10)||
-'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-'  <link rel="shortcut icon" href="#IMAG';
-
-c1:=c1||'E_PREFIX#favicon.ico" type="image/x-icon">'||chr(10)||
-' #HEAD#'||chr(10)||
-'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||chr(10)||
-'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||chr(10)||
-'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endif';
-
-c1:=c1||']-->'||chr(10)||
-'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>'||chr(10)||
-'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||chr(10)||
-'#FORM_OPEN#'||chr(10)||
-'';
-
-c2:=c2||'<div id="footer"><div class="content">'||chr(10)||
-'<div id="customize">#CUSTOMIZE#</div>'||chr(10)||
-'<div class="app-version">#APP_VERSION#</div>'||chr(10)||
-'<div class="clear"></div>'||chr(10)||
-'  #REGION_POSITION_05#'||chr(10)||
-'</div></div>'||chr(10)||
-'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<div id="header">'||chr(10)||
-'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||chr(10)||
-'  #REGION_POSITION_07#'||chr(10)||
-'  <div id="navbar">'||chr(10)||
-'    <div class="app-user">#WELCOME_USER#</div>'||chr(10)||
-'    #NAVIGATION_BAR#'||chr(10)||
-'    #REGION_POSITION_08#'||chr(10)||
-'  </div>'||chr(10)||
-'  <div id="parent-tabs">'||chr(10)||
-'    <div class="tab-holder">#PARENT_TAB_CELLS#</div>'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
-'<ul id="tabs">'||chr(10)||
-'#TAB_CELLS#'||chr(10)||
-'<li class="last"><span></span></li>'||chr(10)||
-'</ul';
-
-c3:=c3||'>'||chr(10)||
-'<div id="topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||chr(10)||
-'<div id="messages">#SUCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||chr(10)||
-'<div id="body">'||chr(10)||
-'  <table class="tbl-body" cellspacing="0" cellpadding="0" border="0" summary="">'||chr(10)||
-'    <tbody>'||chr(10)||
-'      <tr>'||chr(10)||
-'        <td class="tbl-main" width="100%">#REGION_POSITION_02##BOX_BODY#</td>'||chr(10)||
-'        <td class="tbl-sidebar">#REGION_POSITION_0';
-
-c3:=c3||'3#</td>     '||chr(10)||
-'      </tr>'||chr(10)||
-'    </tbody>'||chr(10)||
-'  </table>'||chr(10)||
-'</div>';
-
-wwv_flow_api.create_template(
-  p_id=> 17325450581409385 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'Two Level Tabs - Right Sidebar (optional / table-based)',
-  p_body_title=> '',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="success" id="success-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||chr(10)||
-'  #SUCCESS_MESSAGE#'||chr(10)||
-'</div>',
-  p_current_tab=> '<li class="#TAB_STATUS#">'||chr(10)||
-'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||chr(10)||
-'</li>',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '<li class="#TAB_STATUS#">'||chr(10)||
-'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||chr(10)||
-'</li>',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '<div class="current"><div>'||chr(10)||
-'#TAB_LABEL##TAB_INLINE_EDIT#'||chr(10)||
-'</div></div>'||chr(10)||
-''||chr(10)||
-'',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '<div class="noncurrent"><div>'||chr(10)||
-'<a href="#TAB_LINK#">#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||chr(10)||
-'</div></div>'||chr(10)||
-''||chr(10)||
-''||chr(10)||
-''||chr(10)||
-''||chr(10)||
-'',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="notification" id="notification-message">'||chr(10)||
-'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||chr(10)||
-'</div>',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> ' summary="" cellpadding="0" border="0" cellspacing="0" width="100%"',
-  p_breadcrumb_def_reg_pos => 'REGION_POSITION_01',
-  p_theme_id  => 22,
-  p_theme_class_id => 2,
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 17325450581409385 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 22
+ ,p_name => 'Two Level Tabs - Right Sidebar (optional / table-based)'
+ ,p_is_popup => false
+ ,p_header_template => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'||unistr('\000a')||
+'<html lang="&BROWSER_LANGUAGE." xmlns="http://www.w3.org/1999/xhtml" xmlns:htmldb="http://htmldb.oracle.com" xmlns:apex="http://apex.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'  <title>#TITLE#</title>'||unistr('\000a')||
+'  <link rel="icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+'  <link rel="shortcut icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">'||unistr('\000a')||
+' #APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" />'||unistr('\000a')||
+'  <!--[if IE]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 6]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie6.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'  <!--[if IE 7]><link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0_ie7.css" type="text/css" /><![endif]-->'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>'||unistr('\000a')||
+'<!--[if lte IE 6]><div id="outdated-browser">#OUTDATED_BROWSER#</div><![endif]-->'||unistr('\000a')||
+'#FORM_OPEN#'||unistr('\000a')||
+''
+ ,p_box => 
+'<div id="header">'||unistr('\000a')||
+'  <div id="logo"><a href="#HOME_LINK#">#LOGO##REGION_POSITION_06#</a></div>'||unistr('\000a')||
+'  #REGION_POSITION_07#'||unistr('\000a')||
+'  <div id="navbar">'||unistr('\000a')||
+'    <div class="app-user">#WELCOME_USER#</div>'||unistr('\000a')||
+'    #NAVIGATION_BAR#'||unistr('\000a')||
+'    #REGION_POSITION_08#'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'  <div id="parent-tabs">'||unistr('\000a')||
+'    <div class="tab-holder">#PARENT_TAB_CELLS#</div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+'<ul id="tabs">'||unistr('\000a')||
+'#TAB_CELLS#'||unistr('\000a')||
+'<li class="last"><span></span></li>'||unistr('\000a')||
+'</ul'||
+'>'||unistr('\000a')||
+'<div id="topbar">#REGION_POSITION_01##REGION_POSITION_04#</div>'||unistr('\000a')||
+'<div id="messages">#SUCCESS_MESSAGE##NOTIFICATION_MESSAGE##GLOBAL_NOTIFICATION#</div>'||unistr('\000a')||
+'<div id="body">'||unistr('\000a')||
+'  <table class="tbl-body" cellspacing="0" cellpadding="0" border="0" summary="">'||unistr('\000a')||
+'    <tbody>'||unistr('\000a')||
+'      <tr>'||unistr('\000a')||
+'        <td class="tbl-main" width="100%">#REGION_POSITION_02##BOX_BODY#</td>'||unistr('\000a')||
+'        <td class="tbl-sidebar">#REGION_POSITION_0'||
+'3#</td>     '||unistr('\000a')||
+'      </tr>'||unistr('\000a')||
+'    </tbody>'||unistr('\000a')||
+'  </table>'||unistr('\000a')||
+'</div>'
+ ,p_footer_template => 
+'<div id="footer"><div class="content">'||unistr('\000a')||
+'<div id="customize">#CUSTOMIZE#</div>'||unistr('\000a')||
+'<div class="app-version">#APP_VERSION#</div>'||unistr('\000a')||
+'<div class="clear"></div>'||unistr('\000a')||
+'  #REGION_POSITION_05#'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_success_message => '<div class="success" id="success-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''success-message'')" style="float:right;" class="remove-message" alt="" />'||unistr('\000a')||
+'  #SUCCESS_MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_current_tab => '<li class="#TAB_STATUS#">'||unistr('\000a')||
+'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||unistr('\000a')||
+'</li>'
+ ,p_non_current_tab => '<li class="#TAB_STATUS#">'||unistr('\000a')||
+'<a class="tab_link" href="#TAB_LINK#"><span></span>#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||unistr('\000a')||
+'</li>'
+ ,p_top_current_tab => '<div class="current"><div>'||unistr('\000a')||
+'#TAB_LABEL##TAB_INLINE_EDIT#'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+''||unistr('\000a')||
+''
+ ,p_top_non_curr_tab => '<div class="noncurrent"><div>'||unistr('\000a')||
+'<a href="#TAB_LINK#">#TAB_LABEL#</a>#TAB_INLINE_EDIT#'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+''||unistr('\000a')||
+''||unistr('\000a')||
+''||unistr('\000a')||
+''||unistr('\000a')||
+''
+ ,p_notification_message => '<div class="notification" id="notification-message">'||unistr('\000a')||
+'  <img src="#IMAGE_PREFIX#delete.gif" onclick="$x_Remove(''notification-message'')"  style="float:right;" class="remove-message" alt="" />#MESSAGE#'||unistr('\000a')||
+'</div>'
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<div class="navbar-entry"><a href="#LINK#" class="t1NavigationBar">#TEXT#</a></div>'
+ ,p_region_table_cattributes => ' summary="" cellpadding="0" border="0" cellspacing="0" width="100%"'
+ ,p_breadcrumb_def_reg_pos => 'REGION_POSITION_01'
+ ,p_theme_class_id => 2
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -6570,111 +6706,94 @@ prompt  ......Page template 56531013849997418
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<html lang="&BROWSER_LANGUAGE." xmlns:htmldb="http://htmldb.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'<title>#TITLE#</title>'||chr(10)||
-'#HEAD#'||chr(10)||
-'<link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_15/theme_V2.css" type="text/css" />'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>#FORM_OPEN#';
-
-c2:=c2||'<hr />'||chr(10)||
-'<div class="t15customize">#CUSTOMIZE#</div>'||chr(10)||
-'<br />'||chr(10)||
-'#REGION_POSITION_05#'||chr(10)||
-'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<table summary="" cellpadding="0" cellspacing="0" border="0" width="100%">'||chr(10)||
-'<tr>'||chr(10)||
-'<td><div class="t15logo">#LOGO#</div><br />#REGION_POSITION_06#</td>'||chr(10)||
-'<td width="100%" valign="top">#REGION_POSITION_07#</td>'||chr(10)||
-'<td><div class="t15NavBar"><span class="t15NavBarItem">&USER.</span>#NAVIGATION_BAR#</div><br />#REGION_POSITION_08#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>'||chr(10)||
-'<br style="clear:both;"/>'||chr(10)||
-'<table summary="" cellpadding="0';
-
-c3:=c3||'" cellspacing="0" border="0" width="100%">'||chr(10)||
-'<tr>'||chr(10)||
-'<td width="100%" class="t15pagelinecenter"><img src="#IMAGE_PREFIX#themes/theme_15/page_line_center.gif" alt="" /></td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr class="t15PageTopLine">'||chr(10)||
-'<td>#REGION_POSITION_01#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>'||chr(10)||
-'<br />'||chr(10)||
-'<table width="100%" summary="" height="70%" cellspacing="0" cellpadding="0" border="0">'||chr(10)||
-'	<tr>'||chr(10)||
-'        <td valign="top"><table cellspacing="0" cell';
-
-c3:=c3||'padding="0" border="0" class="t15Sidebar" summary="">'||chr(10)||
-'<td class="L"><img src="#IMAGE_PREFIX#themes/theme_15/left_curve.gif" alt=""/></td>'||chr(10)||
-'<td class="C" width="100%"><br /></td>'||chr(10)||
-'<td class="R" align="right"><img src="#IMAGE_PREFIX#themes/theme_15/right_curve.gif" alt=""/></td>'||chr(10)||
-'<tr><td colspan="3" class="B">#REGION_POSITION_02#</td></tr>'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="L"><img src="#IMAGE_PREFIX#themes/theme_15/left';
-
-c3:=c3||'_curve_bottom.gif" alt=""/></td>'||chr(10)||
-'<td class="C" width="100%"><br /></td>'||chr(10)||
-'<td class="R" align="right"><img src="#IMAGE_PREFIX#themes/theme_15/right_curve_bottom.gif" alt=""/></td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table></td>'||chr(10)||
-'	<td align="right" valign="top"><img src="#IMAGE_PREFIX#f_spacer.gif" width="15" height="3" alt="" /></td>'||chr(10)||
-'	<td class="t15PageBody"><div class="t15Messages" align="center">#GLOBAL_NOTIFICATION##NOTIFICA';
-
-c3:=c3||'TION_MESSAGE##SUCCESS_MESSAGE#</div>#BOX_BODY##REGION_POSITION_04#</td>'||chr(10)||
-'	<td align="right" valign="top"><img src="#IMAGE_PREFIX#f_spacer.gif" width="15" height="3" alt="" /></td>'||chr(10)||
-'	<td class="t15RightBar" align="right" valign="top">#REGION_POSITION_03#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>';
-
-wwv_flow_api.create_template(
-  p_id=> 56531013849997418 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'No Tabs With Sidebar',
-  p_body_title=> '#BODY_TITLE#',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="t15Success">#SUCCESS_MESSAGE#</div>',
-  p_current_tab=> '',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="t15Notification">#MESSAGE#</div>'||chr(10)||
-'',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<a href="#LINK#" class="t15NavBarItem">#TEXT#</a>'||chr(10)||
-'',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> 'width="100%"  summary=""',
-  p_sidebar_def_reg_pos => 'REGION_POSITION_02',
-  p_breadcrumb_def_reg_pos => 'REGION_POSITION_01',
-  p_theme_id  => 15,
-  p_theme_class_id => 17,
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 56531013849997418 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 15
+ ,p_name => 'No Tabs With Sidebar'
+ ,p_is_popup => false
+ ,p_body_title => '#BODY_TITLE#'
+ ,p_header_template => '<html lang="&BROWSER_LANGUAGE." xmlns:htmldb="http://htmldb.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'<title>#TITLE#</title>'||unistr('\000a')||
+'#APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'<link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_15/theme_V2.css" type="text/css" />'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>#FORM_OPEN#'
+ ,p_box => 
+'<table summary="" cellpadding="0" cellspacing="0" border="0" width="100%">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td><div class="t15logo">#LOGO#</div><br />#REGION_POSITION_06#</td>'||unistr('\000a')||
+'<td width="100%" valign="top">#REGION_POSITION_07#</td>'||unistr('\000a')||
+'<td><div class="t15NavBar"><span class="t15NavBarItem">&USER.</span>#NAVIGATION_BAR#</div><br />#REGION_POSITION_08#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
+'<br style="clear:both;"/>'||unistr('\000a')||
+'<table summary="" cellpadding="0'||
+'" cellspacing="0" border="0" width="100%">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td width="100%" class="t15pagelinecenter"><img src="#IMAGE_PREFIX#themes/theme_15/page_line_center.gif" alt="" /></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr class="t15PageTopLine">'||unistr('\000a')||
+'<td>#REGION_POSITION_01#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
+'<br />'||unistr('\000a')||
+'<table width="100%" summary="" height="70%" cellspacing="0" cellpadding="0" border="0">'||unistr('\000a')||
+'	<tr>'||unistr('\000a')||
+'        <td valign="top"><table cellspacing="0" cell'||
+'padding="0" border="0" class="t15Sidebar" summary="">'||unistr('\000a')||
+'<td class="L"><img src="#IMAGE_PREFIX#themes/theme_15/left_curve.gif" alt=""/></td>'||unistr('\000a')||
+'<td class="C" width="100%"><br /></td>'||unistr('\000a')||
+'<td class="R" align="right"><img src="#IMAGE_PREFIX#themes/theme_15/right_curve.gif" alt=""/></td>'||unistr('\000a')||
+'<tr><td colspan="3" class="B">#REGION_POSITION_02#</td></tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="L"><img src="#IMAGE_PREFIX#themes/theme_15/left'||
+'_curve_bottom.gif" alt=""/></td>'||unistr('\000a')||
+'<td class="C" width="100%"><br /></td>'||unistr('\000a')||
+'<td class="R" align="right"><img src="#IMAGE_PREFIX#themes/theme_15/right_curve_bottom.gif" alt=""/></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table></td>'||unistr('\000a')||
+'	<td align="right" valign="top"><img src="#IMAGE_PREFIX#f_spacer.gif" width="15" height="3" alt="" /></td>'||unistr('\000a')||
+'	<td class="t15PageBody"><div class="t15Messages" align="center">#GLOBAL_NOTIFICATION##NOTIFICA'||
+'TION_MESSAGE##SUCCESS_MESSAGE#</div>#BOX_BODY##REGION_POSITION_04#</td>'||unistr('\000a')||
+'	<td align="right" valign="top"><img src="#IMAGE_PREFIX#f_spacer.gif" width="15" height="3" alt="" /></td>'||unistr('\000a')||
+'	<td class="t15RightBar" align="right" valign="top">#REGION_POSITION_03#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'
+ ,p_footer_template => 
+'<hr />'||unistr('\000a')||
+'<div class="t15customize">#CUSTOMIZE#</div>'||unistr('\000a')||
+'<br />'||unistr('\000a')||
+'#REGION_POSITION_05#'||unistr('\000a')||
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_success_message => '<div class="t15Success">#SUCCESS_MESSAGE#</div>'
+ ,p_notification_message => '<div class="t15Notification">#MESSAGE#</div>'||unistr('\000a')||
+''
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<a href="#LINK#" class="t15NavBarItem">#TEXT#</a>'||unistr('\000a')||
+''
+ ,p_region_table_cattributes => 'width="100%"  summary=""'
+ ,p_sidebar_def_reg_pos => 'REGION_POSITION_02'
+ ,p_breadcrumb_def_reg_pos => 'REGION_POSITION_01'
+ ,p_theme_class_id => 17
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -6685,104 +6804,92 @@ prompt  ......Page template 56531133622997432
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<html lang="&BROWSER_LANGUAGE." xmlns:htmldb="http://htmldb.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'<title>#TITLE#</title>'||chr(10)||
-'#HEAD#'||chr(10)||
-'<link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_15/theme_V2.css" type="text/css" />'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>#FORM_OPEN#';
-
-c2:=c2||'<hr />'||chr(10)||
-'<div class="t15customize">#CUSTOMIZE#</div>'||chr(10)||
-'<br />'||chr(10)||
-'#REGION_POSITION_05#'||chr(10)||
-'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<table summary="" cellpadding="0" cellspacing="0" border="0" width="97%" align="center">'||chr(10)||
-'<tr>'||chr(10)||
-'<td><div class="t15logo">#LOGO#</div><br />#REGION_POSITION_06#</td>'||chr(10)||
-'<td width="100%" valign="top">#REGION_POSITION_07#</td>'||chr(10)||
-'<td><div class="t15NavBar"><span class="t15NavBarItem">&USER.</span>#NAVIGATION_BAR#</div><br />#REGION_POSITION_08#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>'||chr(10)||
-'<br style="clear:both;"/>'||chr(10)||
-'<table summary="" ';
-
-c3:=c3||'cellpadding="0" cellspacing="0" border="0" width="100%">'||chr(10)||
-'<tr>'||chr(10)||
-'<td><table summary="" cellpadding="0" cellspacing="0" border="0" width="100%">'||chr(10)||
-'<tr><td width="100%"><br /></td>#PARENT_TAB_CELLS#</tr>'||chr(10)||
-'</table></td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr>'||chr(10)||
-'<td width="100%" style="background-color:#336699">#TAB_CELLS#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr class="t15PageTopLine"><td>#REGION_POSITION_01#</td></tr>'||chr(10)||
-'</table>'||chr(10)||
-'<br />'||chr(10)||
-'<table width="100%" summary';
-
-c3:=c3||'="" height="70%" cellspacing="0" cellpadding="0" border="0">'||chr(10)||
-'	<tr>'||chr(10)||
-'	<td align="right" valign="top"><img src="#IMAGE_PREFIX#f_spacer.gif" width="15" height="3" alt="" /></td>'||chr(10)||
-'	<td class="t15PageBody"><div class="t15Messages" align="center">#GLOBAL_NOTIFICATION##NOTIFICATION_MESSAGE##SUCCESS_MESSAGE#</div>#BOX_BODY##REGION_POSITION_02##REGION_POSITION_04#</td>'||chr(10)||
-'	<td align="right" valign="top"><img sr';
-
-c3:=c3||'c="#IMAGE_PREFIX#f_spacer.gif" width="15" height="3" alt="" /></td>'||chr(10)||
-'	<td class="t15RightBar" align="right" valign="top">#REGION_POSITION_03#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>';
-
-wwv_flow_api.create_template(
-  p_id=> 56531133622997432 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'Two Level Tabs',
-  p_body_title=> '<!--#BODY_TITLE#-->',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="t15Success">#SUCCESS_MESSAGE#</div>'||chr(10)||
-'',
-  p_current_tab=> '<a class="t15ChildTabCurrent" href="#TAB_LINK#">#TAB_LABEL#</a>',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '<a class="t15ChildTab" href="#TAB_LINK#">#TAB_LABEL#</a>',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_open_c.gif" alt="" /></td>'||chr(10)||
-'<td class="t15CurrentTabCenter"><a href="#TAB_LINK#">#TAB_LABEL#</a></td>'||chr(10)||
-'<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_close_c.gif" alt="" /></td>',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_open.gif" alt="" /></td>'||chr(10)||
-'<td class="t15TabCenter"><a href="#TAB_LINK#">#TAB_LABEL#</a></td>'||chr(10)||
-'<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_close.gif" alt="" /></td>',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="t15Notification">#MESSAGE#</div>',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<a href="#LINK#" class="t15NavBarItem">#TEXT#</a>'||chr(10)||
-'',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> 'width="100%" summary=""',
-  p_breadcrumb_def_reg_pos => 'REGION_POSITION_01',
-  p_theme_id  => 15,
-  p_theme_class_id => 2,
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 56531133622997432 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 15
+ ,p_name => 'Two Level Tabs'
+ ,p_is_popup => false
+ ,p_body_title => '<!--#BODY_TITLE#-->'
+ ,p_header_template => '<html lang="&BROWSER_LANGUAGE." xmlns:htmldb="http://htmldb.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'<title>#TITLE#</title>'||unistr('\000a')||
+'#APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'<link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_15/theme_V2.css" type="text/css" />'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>#FORM_OPEN#'
+ ,p_box => 
+'<table summary="" cellpadding="0" cellspacing="0" border="0" width="97%" align="center">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td><div class="t15logo">#LOGO#</div><br />#REGION_POSITION_06#</td>'||unistr('\000a')||
+'<td width="100%" valign="top">#REGION_POSITION_07#</td>'||unistr('\000a')||
+'<td><div class="t15NavBar"><span class="t15NavBarItem">&USER.</span>#NAVIGATION_BAR#</div><br />#REGION_POSITION_08#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
+'<br style="clear:both;"/>'||unistr('\000a')||
+'<table summary="" '||
+'cellpadding="0" cellspacing="0" border="0" width="100%">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td><table summary="" cellpadding="0" cellspacing="0" border="0" width="100%">'||unistr('\000a')||
+'<tr><td width="100%"><br /></td>#PARENT_TAB_CELLS#</tr>'||unistr('\000a')||
+'</table></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td width="100%" style="background-color:#336699">#TAB_CELLS#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr class="t15PageTopLine"><td>#REGION_POSITION_01#</td></tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
+'<br />'||unistr('\000a')||
+'<table width="100%" summary'||
+'="" height="70%" cellspacing="0" cellpadding="0" border="0">'||unistr('\000a')||
+'	<tr>'||unistr('\000a')||
+'	<td align="right" valign="top"><img src="#IMAGE_PREFIX#f_spacer.gif" width="15" height="3" alt="" /></td>'||unistr('\000a')||
+'	<td class="t15PageBody"><div class="t15Messages" align="center">#GLOBAL_NOTIFICATION##NOTIFICATION_MESSAGE##SUCCESS_MESSAGE#</div>#BOX_BODY##REGION_POSITION_02##REGION_POSITION_04#</td>'||unistr('\000a')||
+'	<td align="right" valign="top"><img sr'||
+'c="#IMAGE_PREFIX#f_spacer.gif" width="15" height="3" alt="" /></td>'||unistr('\000a')||
+'	<td class="t15RightBar" align="right" valign="top">#REGION_POSITION_03#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'
+ ,p_footer_template => 
+'<hr />'||unistr('\000a')||
+'<div class="t15customize">#CUSTOMIZE#</div>'||unistr('\000a')||
+'<br />'||unistr('\000a')||
+'#REGION_POSITION_05#'||unistr('\000a')||
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_success_message => '<div class="t15Success">#SUCCESS_MESSAGE#</div>'||unistr('\000a')||
+''
+ ,p_current_tab => '<a class="t15ChildTabCurrent" href="#TAB_LINK#">#TAB_LABEL#</a>'
+ ,p_non_current_tab => '<a class="t15ChildTab" href="#TAB_LINK#">#TAB_LABEL#</a>'
+ ,p_top_current_tab => '<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_open_c.gif" alt="" /></td>'||unistr('\000a')||
+'<td class="t15CurrentTabCenter"><a href="#TAB_LINK#">#TAB_LABEL#</a></td>'||unistr('\000a')||
+'<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_close_c.gif" alt="" /></td>'
+ ,p_top_non_curr_tab => '<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_open.gif" alt="" /></td>'||unistr('\000a')||
+'<td class="t15TabCenter"><a href="#TAB_LINK#">#TAB_LABEL#</a></td>'||unistr('\000a')||
+'<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_close.gif" alt="" /></td>'
+ ,p_notification_message => '<div class="t15Notification">#MESSAGE#</div>'
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<a href="#LINK#" class="t15NavBarItem">#TEXT#</a>'||unistr('\000a')||
+''
+ ,p_region_table_cattributes => 'width="100%" summary=""'
+ ,p_breadcrumb_def_reg_pos => 'REGION_POSITION_01'
+ ,p_theme_class_id => 2
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -6793,77 +6900,63 @@ prompt  ......Page template 56531202608997432
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<html lang="&BROWSER_LANGUAGE." xmlns:htmldb="http://htmldb.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'<title>#TITLE#</title>'||chr(10)||
-'#HEAD#'||chr(10)||
-'<link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_15/theme_V2.css" type="text/css" />'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>#FORM_OPEN#';
-
-c2:=c2||'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<table summary="" cellpadding="0" width="100%" cellspacing="0" border="0">'||chr(10)||
-'<tr>'||chr(10)||
-'<td valign="top">#LOGO##REGION_POSITION_06#</td>'||chr(10)||
-'<td width="100%" valign="top">#REGION_POSITION_07#</td>'||chr(10)||
-'<td valign="top">#REGION_POSITION_08#</td>'||chr(10)||
-'</table>'||chr(10)||
-'<table summary="" cellpadding="0" width="100%" cellspacing="0" border="0">'||chr(10)||
-'<tr>'||chr(10)||
-'<td width="100%" valign="top">'||chr(10)||
-'<div style="border:1px solid black;">#SUCCESS_MESSAG';
-
-c3:=c3||'E##NOTIFICATION_MESSAGE#</div>'||chr(10)||
-'#BOX_BODY##REGION_POSITION_04#</td>'||chr(10)||
-'<td valign="top">#REGION_POSITION_03#<br /></td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>'||chr(10)||
-'#REGION_POSITION_05#';
-
-wwv_flow_api.create_template(
-  p_id=> 56531202608997432 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'Printer Friendly',
-  p_body_title=> '<!--#BODY_TITLE#-->',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="t15Success">#SUCCESS_MESSAGE#</div>'||chr(10)||
-'',
-  p_current_tab=> '',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="t15Notification">#MESSAGE#</div>',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<a href="#LINK#" class="t15NavBarItem">#TEXT#</a>',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> 'width="100%"',
-  p_theme_id  => 15,
-  p_theme_class_id => 5,
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 56531202608997432 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 15
+ ,p_name => 'Printer Friendly'
+ ,p_is_popup => false
+ ,p_body_title => '<!--#BODY_TITLE#-->'
+ ,p_header_template => '<html lang="&BROWSER_LANGUAGE." xmlns:htmldb="http://htmldb.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'<title>#TITLE#</title>'||unistr('\000a')||
+'#APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'<link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_15/theme_V2.css" type="text/css" />'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>#FORM_OPEN#'
+ ,p_box => 
+'<table summary="" cellpadding="0" width="100%" cellspacing="0" border="0">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td valign="top">#LOGO##REGION_POSITION_06#</td>'||unistr('\000a')||
+'<td width="100%" valign="top">#REGION_POSITION_07#</td>'||unistr('\000a')||
+'<td valign="top">#REGION_POSITION_08#</td>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
+'<table summary="" cellpadding="0" width="100%" cellspacing="0" border="0">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td width="100%" valign="top">'||unistr('\000a')||
+'<div style="border:1px solid black;">#SUCCESS_MESSAG'||
+'E##NOTIFICATION_MESSAGE#</div>'||unistr('\000a')||
+'#BOX_BODY##REGION_POSITION_04#</td>'||unistr('\000a')||
+'<td valign="top">#REGION_POSITION_03#<br /></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
+'#REGION_POSITION_05#'
+ ,p_footer_template => 
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_success_message => '<div class="t15Success">#SUCCESS_MESSAGE#</div>'||unistr('\000a')||
+''
+ ,p_notification_message => '<div class="t15Notification">#MESSAGE#</div>'
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<a href="#LINK#" class="t15NavBarItem">#TEXT#</a>'
+ ,p_region_table_cattributes => 'width="100%"'
+ ,p_theme_class_id => 5
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -6874,115 +6967,99 @@ prompt  ......Page template 56531316643997432
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<html lang="&BROWSER_LANGUAGE." xmlns:htmldb="http://htmldb.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'<title>#TITLE#</title>'||chr(10)||
-'<style type="text/css">'||chr(10)||
-'<!--'||chr(10)||
-'.space{ height:5px; }'||chr(10)||
-'.code {'||chr(10)||
-'	font-family: "Courier New", Courier, monospace;'||chr(10)||
-'	background-color: #CFE0F1;'||chr(10)||
-'	font-size: 12px;'||chr(10)||
-'}'||chr(10)||
-'-->'||chr(10)||
-'</style>'||chr(10)||
-'#HEAD#'||chr(10)||
-'<link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_15/theme_V2.css" type="text/css" />'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>#FORM_';
-
-c1:=c1||'OPEN#';
-
-c2:=c2||'<hr />'||chr(10)||
-'Version #APP_VERSION# / Dietmar Aust (<a href="http://www.opal-consulting.de" target="_blank">www.opal-consulting.de</a>)'||chr(10)||
-'<div class="t15customize">#CUSTOMIZE#</div>'||chr(10)||
-'<br />'||chr(10)||
-'#REGION_POSITION_05#'||chr(10)||
-'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<table summary="" cellpadding="0" cellspacing="0" border="0" width="100%">'||chr(10)||
-'<tr>'||chr(10)||
-'<td><div class="t15logo">#LOGO#</div><br />#REGION_POSITION_06#</td>'||chr(10)||
-'<td width="100%" valign="top">#REGION_POSITION_07#</td>'||chr(10)||
-'<td><div class="t15NavBar"><span class="t15NavBarItem">&USER.</span>#NAVIGATION_BAR#</div><br />#REGION_POSITION_08#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>'||chr(10)||
-'<br style="clear:both;"/>'||chr(10)||
-'<table summary="" cellpadding="0';
-
-c3:=c3||'" cellspacing="0" border="0" width="100%">'||chr(10)||
-'<tr>'||chr(10)||
-'<td><table summary="" cellpadding="0" cellspacing="0" border="0" width="100%">'||chr(10)||
-'<tr><td width="100%"><br /></td>#TAB_CELLS#</tr>'||chr(10)||
-'</table></td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr>'||chr(10)||
-'<td width="100%" class="t15pagelinecenter"><img src="#IMAGE_PREFIX#themes/theme_15/page_line_center.gif" alt="" /></td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr class="t15PageTopLine"><td>#REGION_POSITION_01#</td></tr>'||chr(10)||
-'</table>'||chr(10)||
-'<b';
-
-c3:=c3||'r />'||chr(10)||
-'<table width="100%" summary="" height="70%" cellspacing="0" cellpadding="0" border="0">'||chr(10)||
-'	<tr>'||chr(10)||
-'	<td class="t15PageBody"><div class="t15Messages" align="center">#GLOBAL_NOTIFICATION##NOTIFICATION_MESSAGE##SUCCESS_MESSAGE#</div>#BOX_BODY##REGION_POSITION_02##REGION_POSITION_04#</td>'||chr(10)||
-'	<td align="right" valign="top"><img src="#IMAGE_PREFIX#f_spacer.gif" width="15" height="3" alt="" /></td>'||chr(10)||
-'	<td cl';
-
-c3:=c3||'ass="t15RightBar" align="right" valign="top">#REGION_POSITION_03#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>';
-
-wwv_flow_api.create_template(
-  p_id=> 56531316643997432 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'One Level Tabs',
-  p_body_title=> '#BODY_TITLE#',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="t15Success">#SUCCESS_MESSAGE#</div>'||chr(10)||
-'',
-  p_current_tab=> '<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_open_c.gif" alt="" /></td>'||chr(10)||
-'<td class="t15CurrentTabCenter"><a href="#TAB_LINK#">#TAB_LABEL#</a></td>'||chr(10)||
-'<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_close_c.gif" alt="" /></td>',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_open.gif" alt="" /></td>'||chr(10)||
-'<td class="t15TabCenter"><a href="#TAB_LINK#">#TAB_LABEL#</a></td>'||chr(10)||
-'<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_close.gif" alt="" /></td>',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="t15Notification">#MESSAGE#</div>',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<a href="#LINK#" class="t15NavBarItem">#TEXT#</a>',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> 'width="100%" summary=""',
-  p_breadcrumb_def_reg_pos => 'REGION_POSITION_01',
-  p_theme_id  => 15,
-  p_theme_class_id => 1,
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 56531316643997432 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 15
+ ,p_name => 'One Level Tabs'
+ ,p_is_popup => false
+ ,p_body_title => '#BODY_TITLE#'
+ ,p_header_template => '<html lang="&BROWSER_LANGUAGE." xmlns:htmldb="http://htmldb.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'<title>#TITLE#</title>'||unistr('\000a')||
+'<style type="text/css">'||unistr('\000a')||
+'<!--'||unistr('\000a')||
+'.space{ height:5px; }'||unistr('\000a')||
+'.code {'||unistr('\000a')||
+'	font-family: "Courier New", Courier, monospace;'||unistr('\000a')||
+'	background-color: #CFE0F1;'||unistr('\000a')||
+'	font-size: 12px;'||unistr('\000a')||
+'}'||unistr('\000a')||
+'-->'||unistr('\000a')||
+'</style>'||unistr('\000a')||
+'#APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'<link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_15/theme_V2.css" type="text/css" />'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>#FORM_OPEN#'
+ ,p_box => 
+'<table summary="" cellpadding="0" cellspacing="0" border="0" width="100%">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td><div class="t15logo">#LOGO#</div><br />#REGION_POSITION_06#</td>'||unistr('\000a')||
+'<td width="100%" valign="top">#REGION_POSITION_07#</td>'||unistr('\000a')||
+'<td><div class="t15NavBar"><span class="t15NavBarItem">&USER.</span>#NAVIGATION_BAR#</div><br />#REGION_POSITION_08#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
+'<br style="clear:both;"/>'||unistr('\000a')||
+'<table summary="" cellpadding="0'||
+'" cellspacing="0" border="0" width="100%">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td><table summary="" cellpadding="0" cellspacing="0" border="0" width="100%">'||unistr('\000a')||
+'<tr><td width="100%"><br /></td>#TAB_CELLS#</tr>'||unistr('\000a')||
+'</table></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td width="100%" class="t15pagelinecenter"><img src="#IMAGE_PREFIX#themes/theme_15/page_line_center.gif" alt="" /></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr class="t15PageTopLine"><td>#REGION_POSITION_01#</td></tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
+'<b'||
+'r />'||unistr('\000a')||
+'<table width="100%" summary="" height="70%" cellspacing="0" cellpadding="0" border="0">'||unistr('\000a')||
+'	<tr>'||unistr('\000a')||
+'	<td class="t15PageBody"><div class="t15Messages" align="center">#GLOBAL_NOTIFICATION##NOTIFICATION_MESSAGE##SUCCESS_MESSAGE#</div>#BOX_BODY##REGION_POSITION_02##REGION_POSITION_04#</td>'||unistr('\000a')||
+'	<td align="right" valign="top"><img src="#IMAGE_PREFIX#f_spacer.gif" width="15" height="3" alt="" /></td>'||unistr('\000a')||
+'	<td cl'||
+'ass="t15RightBar" align="right" valign="top">#REGION_POSITION_03#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'
+ ,p_footer_template => 
+'<hr />'||unistr('\000a')||
+'Version #APP_VERSION# / Dietmar Aust (<a href="http://www.opal-consulting.de" target="_blank">www.opal-consulting.de</a>)'||unistr('\000a')||
+'<div class="t15customize">#CUSTOMIZE#</div>'||unistr('\000a')||
+'<br />'||unistr('\000a')||
+'#REGION_POSITION_05#'||unistr('\000a')||
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_success_message => '<div class="t15Success">#SUCCESS_MESSAGE#</div>'||unistr('\000a')||
+''
+ ,p_current_tab => '<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_open_c.gif" alt="" /></td>'||unistr('\000a')||
+'<td class="t15CurrentTabCenter"><a href="#TAB_LINK#">#TAB_LABEL#</a></td>'||unistr('\000a')||
+'<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_close_c.gif" alt="" /></td>'
+ ,p_non_current_tab => '<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_open.gif" alt="" /></td>'||unistr('\000a')||
+'<td class="t15TabCenter"><a href="#TAB_LINK#">#TAB_LABEL#</a></td>'||unistr('\000a')||
+'<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_close.gif" alt="" /></td>'
+ ,p_notification_message => '<div class="t15Notification">#MESSAGE#</div>'
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<a href="#LINK#" class="t15NavBarItem">#TEXT#</a>'
+ ,p_region_table_cattributes => 'width="100%" summary=""'
+ ,p_breadcrumb_def_reg_pos => 'REGION_POSITION_01'
+ ,p_theme_class_id => 1
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -6993,94 +7070,79 @@ prompt  ......Page template 56531427052997432
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<html lang="&BROWSER_LANGUAGE." xmlns:htmldb="http://htmldb.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'<title>#TITLE#</title>'||chr(10)||
-'#HEAD#'||chr(10)||
-'<link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_15/theme_V2.css" type="text/css" />'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>#FORM_OPEN#';
-
-c2:=c2||'<hr />'||chr(10)||
-'<div class="t15customize">#CUSTOMIZE#</div>'||chr(10)||
-'<br />'||chr(10)||
-'#REGION_POSITION_05#'||chr(10)||
-'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<table summary="" cellpadding="0" cellspacing="0" border="0" width="100%">'||chr(10)||
-'<tr>'||chr(10)||
-'<td><div class="t15logo">#LOGO#</div><br />#REGION_POSITION_06#</td>'||chr(10)||
-'<td width="100%" valign="top">#REGION_POSITION_07#</td>'||chr(10)||
-'<td><div class="t15NavBar"><span class="t15NavBarItem">&USER.</span>#NAVIGATION_BAR#</div><br />#REGION_POSITION_08#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>'||chr(10)||
-'<br style="clear:both;"/>'||chr(10)||
-'<table summary="" cellpadding="0';
-
-c3:=c3||'" cellspacing="0" border="0" width="100%">'||chr(10)||
-'<tr>'||chr(10)||
-'<td width="100%" class="t15pagelinecenter"><img src="#IMAGE_PREFIX#themes/theme_15/page_line_center.gif" alt="" /></td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr class="t15PageTopLine">'||chr(10)||
-'<td>#REGION_POSITION_01#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>'||chr(10)||
-'<br />'||chr(10)||
-'<table width="100%" summary="" height="70%" cellspacing="0" cellpadding="0" border="0">'||chr(10)||
-'	<tr>'||chr(10)||
-'	<td class="t15PageBody"><div class="t15Messages" al';
-
-c3:=c3||'ign="center">#GLOBAL_NOTIFICATION##NOTIFICATION_MESSAGE##SUCCESS_MESSAGE#</div>#BOX_BODY##REGION_POSITION_02##REGION_POSITION_04#</td>'||chr(10)||
-'	<td align="right" valign="top"><img src="#IMAGE_PREFIX#f_spacer.gif" width="15" height="3" alt="" /></td>'||chr(10)||
-'	<td class="t15RightBar" align="right" valign="top">#REGION_POSITION_03#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>';
-
-wwv_flow_api.create_template(
-  p_id=> 56531427052997432 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'No Tabs',
-  p_body_title=> '#BODY_TITLE#',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="t15Success">#SUCCESS_MESSAGE#</div>'||chr(10)||
-'',
-  p_current_tab=> '',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="t15Notification">#MESSAGE#</div>'||chr(10)||
-'',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<a href="#LINK#" class="t15NavBarItem">#TEXT#</a>',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> 'width="100%" summary=""',
-  p_breadcrumb_def_reg_pos => 'REGION_POSITION_01',
-  p_theme_id  => 15,
-  p_theme_class_id => 3,
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 56531427052997432 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 15
+ ,p_name => 'No Tabs'
+ ,p_is_popup => false
+ ,p_body_title => '#BODY_TITLE#'
+ ,p_header_template => '<html lang="&BROWSER_LANGUAGE." xmlns:htmldb="http://htmldb.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'<title>#TITLE#</title>'||unistr('\000a')||
+'#APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'<link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_15/theme_V2.css" type="text/css" />'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>#FORM_OPEN#'
+ ,p_box => 
+'<table summary="" cellpadding="0" cellspacing="0" border="0" width="100%">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td><div class="t15logo">#LOGO#</div><br />#REGION_POSITION_06#</td>'||unistr('\000a')||
+'<td width="100%" valign="top">#REGION_POSITION_07#</td>'||unistr('\000a')||
+'<td><div class="t15NavBar"><span class="t15NavBarItem">&USER.</span>#NAVIGATION_BAR#</div><br />#REGION_POSITION_08#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
+'<br style="clear:both;"/>'||unistr('\000a')||
+'<table summary="" cellpadding="0'||
+'" cellspacing="0" border="0" width="100%">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td width="100%" class="t15pagelinecenter"><img src="#IMAGE_PREFIX#themes/theme_15/page_line_center.gif" alt="" /></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr class="t15PageTopLine">'||unistr('\000a')||
+'<td>#REGION_POSITION_01#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
+'<br />'||unistr('\000a')||
+'<table width="100%" summary="" height="70%" cellspacing="0" cellpadding="0" border="0">'||unistr('\000a')||
+'	<tr>'||unistr('\000a')||
+'	<td class="t15PageBody"><div class="t15Messages" al'||
+'ign="center">#GLOBAL_NOTIFICATION##NOTIFICATION_MESSAGE##SUCCESS_MESSAGE#</div>#BOX_BODY##REGION_POSITION_02##REGION_POSITION_04#</td>'||unistr('\000a')||
+'	<td align="right" valign="top"><img src="#IMAGE_PREFIX#f_spacer.gif" width="15" height="3" alt="" /></td>'||unistr('\000a')||
+'	<td class="t15RightBar" align="right" valign="top">#REGION_POSITION_03#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'
+ ,p_footer_template => 
+'<hr />'||unistr('\000a')||
+'<div class="t15customize">#CUSTOMIZE#</div>'||unistr('\000a')||
+'<br />'||unistr('\000a')||
+'#REGION_POSITION_05#'||unistr('\000a')||
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_success_message => '<div class="t15Success">#SUCCESS_MESSAGE#</div>'||unistr('\000a')||
+''
+ ,p_notification_message => '<div class="t15Notification">#MESSAGE#</div>'||unistr('\000a')||
+''
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<a href="#LINK#" class="t15NavBarItem">#TEXT#</a>'
+ ,p_region_table_cattributes => 'width="100%" summary=""'
+ ,p_breadcrumb_def_reg_pos => 'REGION_POSITION_01'
+ ,p_theme_class_id => 3
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -7091,122 +7153,106 @@ prompt  ......Page template 56531531431997432
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<html lang="&BROWSER_LANGUAGE." xmlns:htmldb="http://htmldb.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'<title>#TITLE#</title>'||chr(10)||
-'#HEAD#'||chr(10)||
-'<link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_15/theme_V2.css" type="text/css" />'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>#FORM_OPEN#';
-
-c2:=c2||'<hr />'||chr(10)||
-'<div class="t15customize">#CUSTOMIZE#</div>'||chr(10)||
-'<br />'||chr(10)||
-'#REGION_POSITION_05#'||chr(10)||
-'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<table summary="" cellpadding="0" cellspacing="0" border="0" width="97%" align="center">'||chr(10)||
-'<tr>'||chr(10)||
-'<td><div class="t15logo">#LOGO#</div><br />#REGION_POSITION_06#</td>'||chr(10)||
-'<td width="100%" valign="top">#REGION_POSITION_07#</td>'||chr(10)||
-'<td><div class="t15NavBar"><span class="t15NavBarItem">&USER.</span>#NAVIGATION_BAR#</div><br />#REGION_POSITION_08#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>'||chr(10)||
-'<br style="clear:both;"/>'||chr(10)||
-'<table summary="" ';
-
-c3:=c3||'cellpadding="0" cellspacing="0" border="0" width="100%">'||chr(10)||
-'<tr>'||chr(10)||
-'<td><table summary="" cellpadding="0" cellspacing="0" border="0" width="100%">'||chr(10)||
-'<tr><td width="100%"><br /></td>#TAB_CELLS#</tr>'||chr(10)||
-'</table></td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr>'||chr(10)||
-'<td width="100%" class="t15pagelinecenter"><img src="#IMAGE_PREFIX#themes/theme_15/page_line_center.gif" alt="" /></td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr class="t15PageTopLine"><td>#REGION_POSITION_01#</td></t';
-
-c3:=c3||'r>'||chr(10)||
-'</table>'||chr(10)||
-'<br />'||chr(10)||
-'<table width="100%" summary="" height="70%" cellspacing="0" cellpadding="0" border="0">'||chr(10)||
-'	<tr>'||chr(10)||
-'        <td valign="top">'||chr(10)||
-'<table cellspacing="0" cellpadding="0" border="0" class="t15Sidebar" summary="">'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="L"><img src="#IMAGE_PREFIX#themes/theme_15/left_curve.gif" alt=""/></td>'||chr(10)||
-'<td class="C" width="100%"><br /></td>'||chr(10)||
-'<td class="R" align="right"><img src="#IMAGE_PREFIX#';
-
-c3:=c3||'themes/theme_15/right_curve.gif" alt=""/></td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr><td colspan="3" class="B">#REGION_POSITION_02#</td></tr>'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="L"><img src="#IMAGE_PREFIX#themes/theme_15/left_curve_bottom.gif" alt=""/></td>'||chr(10)||
-'<td class="C" width="100%"><br /></td>'||chr(10)||
-'<td class="R" align="right"><img src="#IMAGE_PREFIX#themes/theme_15/right_curve_bottom.gif" alt=""/></td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>'||chr(10)||
-'</td>'||chr(10)||
-'	<td align="right" valig';
-
-c3:=c3||'n="top"><img src="#IMAGE_PREFIX#f_spacer.gif" width="15" height="3" alt="" /></td>'||chr(10)||
-'	<td class="t15PageBody"><div class="t15Messages" align="center">#GLOBAL_NOTIFICATION##NOTIFICATION_MESSAGE##SUCCESS_MESSAGE#</div>#BOX_BODY##REGION_POSITION_04#</td>'||chr(10)||
-'	<td align="right" valign="top"><img src="#IMAGE_PREFIX#f_spacer.gif" width="15" height="3" alt="" /></td>'||chr(10)||
-'	<td class="t15RightBar" align="right" vali';
-
-c3:=c3||'gn="top">#REGION_POSITION_03#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>';
-
-wwv_flow_api.create_template(
-  p_id=> 56531531431997432 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'One Level Tabs with Sidebar',
-  p_body_title=> '#BODY_TITLE#',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="t15Success">#SUCCESS_MESSAGE#</div>',
-  p_current_tab=> '<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_open_c.gif" alt="" /></td>'||chr(10)||
-'<td class="t15CurrentTabCenter"><a href="#TAB_LINK#">#TAB_LABEL#</a></td>'||chr(10)||
-'<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_close_c.gif" alt="" /></td>',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_open.gif" alt="" /></td>'||chr(10)||
-'<td class="t15TabCenter"><a href="#TAB_LINK#">#TAB_LABEL#</a></td>'||chr(10)||
-'<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_close.gif" alt="" /></td>',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="t15Notification">#MESSAGE#</div>',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<a href="#LINK#" class="t15NavBarItem">#TEXT#</a>',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> 'width="100%"  summary=""',
-  p_sidebar_def_reg_pos => 'REGION_POSITION_02',
-  p_breadcrumb_def_reg_pos => 'REGION_POSITION_01',
-  p_theme_id  => 15,
-  p_theme_class_id => 16,
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 56531531431997432 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 15
+ ,p_name => 'One Level Tabs with Sidebar'
+ ,p_is_popup => false
+ ,p_body_title => '#BODY_TITLE#'
+ ,p_header_template => '<html lang="&BROWSER_LANGUAGE." xmlns:htmldb="http://htmldb.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'<title>#TITLE#</title>'||unistr('\000a')||
+'#APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'<link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_15/theme_V2.css" type="text/css" />'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>#FORM_OPEN#'
+ ,p_box => 
+'<table summary="" cellpadding="0" cellspacing="0" border="0" width="97%" align="center">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td><div class="t15logo">#LOGO#</div><br />#REGION_POSITION_06#</td>'||unistr('\000a')||
+'<td width="100%" valign="top">#REGION_POSITION_07#</td>'||unistr('\000a')||
+'<td><div class="t15NavBar"><span class="t15NavBarItem">&USER.</span>#NAVIGATION_BAR#</div><br />#REGION_POSITION_08#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
+'<br style="clear:both;"/>'||unistr('\000a')||
+'<table summary="" '||
+'cellpadding="0" cellspacing="0" border="0" width="100%">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td><table summary="" cellpadding="0" cellspacing="0" border="0" width="100%">'||unistr('\000a')||
+'<tr><td width="100%"><br /></td>#TAB_CELLS#</tr>'||unistr('\000a')||
+'</table></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td width="100%" class="t15pagelinecenter"><img src="#IMAGE_PREFIX#themes/theme_15/page_line_center.gif" alt="" /></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr class="t15PageTopLine"><td>#REGION_POSITION_01#</td></t'||
+'r>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
+'<br />'||unistr('\000a')||
+'<table width="100%" summary="" height="70%" cellspacing="0" cellpadding="0" border="0">'||unistr('\000a')||
+'	<tr>'||unistr('\000a')||
+'        <td valign="top">'||unistr('\000a')||
+'<table cellspacing="0" cellpadding="0" border="0" class="t15Sidebar" summary="">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="L"><img src="#IMAGE_PREFIX#themes/theme_15/left_curve.gif" alt=""/></td>'||unistr('\000a')||
+'<td class="C" width="100%"><br /></td>'||unistr('\000a')||
+'<td class="R" align="right"><img src="#IMAGE_PREFIX#'||
+'themes/theme_15/right_curve.gif" alt=""/></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr><td colspan="3" class="B">#REGION_POSITION_02#</td></tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="L"><img src="#IMAGE_PREFIX#themes/theme_15/left_curve_bottom.gif" alt=""/></td>'||unistr('\000a')||
+'<td class="C" width="100%"><br /></td>'||unistr('\000a')||
+'<td class="R" align="right"><img src="#IMAGE_PREFIX#themes/theme_15/right_curve_bottom.gif" alt=""/></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
+'</td>'||unistr('\000a')||
+'	<td align="right" valig'||
+'n="top"><img src="#IMAGE_PREFIX#f_spacer.gif" width="15" height="3" alt="" /></td>'||unistr('\000a')||
+'	<td class="t15PageBody"><div class="t15Messages" align="center">#GLOBAL_NOTIFICATION##NOTIFICATION_MESSAGE##SUCCESS_MESSAGE#</div>#BOX_BODY##REGION_POSITION_04#</td>'||unistr('\000a')||
+'	<td align="right" valign="top"><img src="#IMAGE_PREFIX#f_spacer.gif" width="15" height="3" alt="" /></td>'||unistr('\000a')||
+'	<td class="t15RightBar" align="right" vali'||
+'gn="top">#REGION_POSITION_03#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'
+ ,p_footer_template => 
+'<hr />'||unistr('\000a')||
+'<div class="t15customize">#CUSTOMIZE#</div>'||unistr('\000a')||
+'<br />'||unistr('\000a')||
+'#REGION_POSITION_05#'||unistr('\000a')||
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_success_message => '<div class="t15Success">#SUCCESS_MESSAGE#</div>'
+ ,p_current_tab => '<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_open_c.gif" alt="" /></td>'||unistr('\000a')||
+'<td class="t15CurrentTabCenter"><a href="#TAB_LINK#">#TAB_LABEL#</a></td>'||unistr('\000a')||
+'<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_close_c.gif" alt="" /></td>'
+ ,p_non_current_tab => '<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_open.gif" alt="" /></td>'||unistr('\000a')||
+'<td class="t15TabCenter"><a href="#TAB_LINK#">#TAB_LABEL#</a></td>'||unistr('\000a')||
+'<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_close.gif" alt="" /></td>'
+ ,p_notification_message => '<div class="t15Notification">#MESSAGE#</div>'
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<a href="#LINK#" class="t15NavBarItem">#TEXT#</a>'
+ ,p_region_table_cattributes => 'width="100%"  summary=""'
+ ,p_sidebar_def_reg_pos => 'REGION_POSITION_02'
+ ,p_breadcrumb_def_reg_pos => 'REGION_POSITION_01'
+ ,p_theme_class_id => 16
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -7217,123 +7263,109 @@ prompt  ......Page template 56531611125997437
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<html lang="&BROWSER_LANGUAGE." xmlns:htmldb="http://htmldb.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'<title>#TITLE#</title>'||chr(10)||
-'#HEAD#'||chr(10)||
-'<link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_15/theme_V2.css" type="text/css" />'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>#FORM_OPEN#';
-
-c2:=c2||'<hr />'||chr(10)||
-'<div class="t15customize">#CUSTOMIZE#</div>'||chr(10)||
-'<br />'||chr(10)||
-'#REGION_POSITION_05#'||chr(10)||
-'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>';
-
-c3:=c3||'<table summary="" cellpadding="0" cellspacing="0" border="0" width="97%" align="center">'||chr(10)||
-'<tr>'||chr(10)||
-'<td><div class="t15logo">#LOGO#</div><br />#REGION_POSITION_06#</td>'||chr(10)||
-'<td width="100%" valign="top">#REGION_POSITION_07#</td>'||chr(10)||
-'<td><div class="t15NavBar"><span class="t15NavBarItem">&USER.</span>#NAVIGATION_BAR#</div><br />#REGION_POSITION_08#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>'||chr(10)||
-'<br style="clear:both;"/>'||chr(10)||
-'<table summary="" ';
-
-c3:=c3||'cellpadding="0" cellspacing="0" border="0" width="100%">'||chr(10)||
-'<tr>'||chr(10)||
-'<td><table summary="" cellpadding="0" cellspacing="0" border="0" width="100%">'||chr(10)||
-'<tr><td width="100%"><br /></td>#PARENT_TAB_CELLS#</tr>'||chr(10)||
-'</table></td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr>'||chr(10)||
-'<td width="100%" style="background-color:#336699">#TAB_CELLS#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr class="t15PageTopLine"><td>#REGION_POSITION_01#</td></tr>'||chr(10)||
-'</table>'||chr(10)||
-'<br />'||chr(10)||
-'<table width="100%" summary';
-
-c3:=c3||'="" height="70%" cellspacing="0" cellpadding="0" border="0">'||chr(10)||
-'	<tr>'||chr(10)||
-'        <td valign="top">'||chr(10)||
-'<table cellspacing="0" cellpadding="0" border="0" class="t15Sidebar" summary="">'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="L"><img src="#IMAGE_PREFIX#themes/theme_15/left_curve.gif" alt=""/></td>'||chr(10)||
-'<td class="C" width="100%"><br /></td>'||chr(10)||
-'<td class="R" align="right"><img src="#IMAGE_PREFIX#themes/theme_15/right_curve.gif" alt=""/></td>';
-
-c3:=c3||''||chr(10)||
-'</tr>'||chr(10)||
-'<tr><td colspan="3" class="B">#REGION_POSITION_02#</td></tr>'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="L"><img src="#IMAGE_PREFIX#themes/theme_15/left_curve_bottom.gif" alt=""/></td>'||chr(10)||
-'<td class="C" width="100%"><br /></td>'||chr(10)||
-'<td class="R" align="right"><img src="#IMAGE_PREFIX#themes/theme_15/right_curve_bottom.gif" alt=""/></td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>'||chr(10)||
-'</td>'||chr(10)||
-'	<td align="right" valign="top"><img src="#IMAGE_PREFIX#f_spacer.gif" ';
-
-c3:=c3||'width="15" height="3" alt="" /></td>'||chr(10)||
-'	<td class="t15PageBody"><div class="t15Messages" align="center">#GLOBAL_NOTIFICATION##NOTIFICATION_MESSAGE##SUCCESS_MESSAGE#</div>#BOX_BODY##REGION_POSITION_04#</td>'||chr(10)||
-'	<td align="right" valign="top"><img src="#IMAGE_PREFIX#f_spacer.gif" width="15" height="3" alt="" /></td>'||chr(10)||
-'	<td class="t15RightBar" align="right" valign="top">#REGION_POSITION_03#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'</tab';
-
-c3:=c3||'le>';
-
-wwv_flow_api.create_template(
-  p_id=> 56531611125997437 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'Two Level Tabs with Side Bar',
-  p_body_title=> '<!--#BODY_TITLE#-->',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="t15Success">#SUCCESS_MESSAGE#</div>',
-  p_current_tab=> '<a class="t15ChildTabCurrent" href="#TAB_LINK#">#TAB_LABEL#</a>',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '<a class="t15ChildTab" href="#TAB_LINK#">#TAB_LABEL#</a>',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_open_c.gif" alt="" /></td>'||chr(10)||
-'<td class="t15CurrentTabCenter"><a href="#TAB_LINK#">#TAB_LABEL#</a></td>'||chr(10)||
-'<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_close_c.gif" alt="" /></td>',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_open.gif" alt="" /></td>'||chr(10)||
-'<td class="t15TabCenter"><a href="#TAB_LINK#">#TAB_LABEL#</a></td>'||chr(10)||
-'<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_close.gif" alt="" /></td>',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="t15Notification">#MESSAGE#</div>',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<a href="#LINK#" class="t15NavBarItem">#TEXT#</a>'||chr(10)||
-'',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> 'width="100%" summary=""',
-  p_sidebar_def_reg_pos => 'REGION_POSITION_02',
-  p_breadcrumb_def_reg_pos => 'REGION_POSITION_01',
-  p_theme_id  => 15,
-  p_theme_class_id => 18,
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 56531611125997437 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 15
+ ,p_name => 'Two Level Tabs with Side Bar'
+ ,p_is_popup => false
+ ,p_body_title => '<!--#BODY_TITLE#-->'
+ ,p_header_template => '<html lang="&BROWSER_LANGUAGE." xmlns:htmldb="http://htmldb.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'<title>#TITLE#</title>'||unistr('\000a')||
+'#APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'<link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_15/theme_V2.css" type="text/css" />'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>#FORM_OPEN#'
+ ,p_box => 
+'<table summary="" cellpadding="0" cellspacing="0" border="0" width="97%" align="center">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td><div class="t15logo">#LOGO#</div><br />#REGION_POSITION_06#</td>'||unistr('\000a')||
+'<td width="100%" valign="top">#REGION_POSITION_07#</td>'||unistr('\000a')||
+'<td><div class="t15NavBar"><span class="t15NavBarItem">&USER.</span>#NAVIGATION_BAR#</div><br />#REGION_POSITION_08#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
+'<br style="clear:both;"/>'||unistr('\000a')||
+'<table summary="" '||
+'cellpadding="0" cellspacing="0" border="0" width="100%">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td><table summary="" cellpadding="0" cellspacing="0" border="0" width="100%">'||unistr('\000a')||
+'<tr><td width="100%"><br /></td>#PARENT_TAB_CELLS#</tr>'||unistr('\000a')||
+'</table></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td width="100%" style="background-color:#336699">#TAB_CELLS#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr class="t15PageTopLine"><td>#REGION_POSITION_01#</td></tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
+'<br />'||unistr('\000a')||
+'<table width="100%" summary'||
+'="" height="70%" cellspacing="0" cellpadding="0" border="0">'||unistr('\000a')||
+'	<tr>'||unistr('\000a')||
+'        <td valign="top">'||unistr('\000a')||
+'<table cellspacing="0" cellpadding="0" border="0" class="t15Sidebar" summary="">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="L"><img src="#IMAGE_PREFIX#themes/theme_15/left_curve.gif" alt=""/></td>'||unistr('\000a')||
+'<td class="C" width="100%"><br /></td>'||unistr('\000a')||
+'<td class="R" align="right"><img src="#IMAGE_PREFIX#themes/theme_15/right_curve.gif" alt=""/></td>'||
+''||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr><td colspan="3" class="B">#REGION_POSITION_02#</td></tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="L"><img src="#IMAGE_PREFIX#themes/theme_15/left_curve_bottom.gif" alt=""/></td>'||unistr('\000a')||
+'<td class="C" width="100%"><br /></td>'||unistr('\000a')||
+'<td class="R" align="right"><img src="#IMAGE_PREFIX#themes/theme_15/right_curve_bottom.gif" alt=""/></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
+'</td>'||unistr('\000a')||
+'	<td align="right" valign="top"><img src="#IMAGE_PREFIX#f_spacer.gif" '||
+'width="15" height="3" alt="" /></td>'||unistr('\000a')||
+'	<td class="t15PageBody"><div class="t15Messages" align="center">#GLOBAL_NOTIFICATION##NOTIFICATION_MESSAGE##SUCCESS_MESSAGE#</div>#BOX_BODY##REGION_POSITION_04#</td>'||unistr('\000a')||
+'	<td align="right" valign="top"><img src="#IMAGE_PREFIX#f_spacer.gif" width="15" height="3" alt="" /></td>'||unistr('\000a')||
+'	<td class="t15RightBar" align="right" valign="top">#REGION_POSITION_03#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</tab'||
+'le>'
+ ,p_footer_template => 
+'<hr />'||unistr('\000a')||
+'<div class="t15customize">#CUSTOMIZE#</div>'||unistr('\000a')||
+'<br />'||unistr('\000a')||
+'#REGION_POSITION_05#'||unistr('\000a')||
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'
+ ,p_success_message => '<div class="t15Success">#SUCCESS_MESSAGE#</div>'
+ ,p_current_tab => '<a class="t15ChildTabCurrent" href="#TAB_LINK#">#TAB_LABEL#</a>'
+ ,p_non_current_tab => '<a class="t15ChildTab" href="#TAB_LINK#">#TAB_LABEL#</a>'
+ ,p_top_current_tab => '<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_open_c.gif" alt="" /></td>'||unistr('\000a')||
+'<td class="t15CurrentTabCenter"><a href="#TAB_LINK#">#TAB_LABEL#</a></td>'||unistr('\000a')||
+'<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_close_c.gif" alt="" /></td>'
+ ,p_top_non_curr_tab => '<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_open.gif" alt="" /></td>'||unistr('\000a')||
+'<td class="t15TabCenter"><a href="#TAB_LINK#">#TAB_LABEL#</a></td>'||unistr('\000a')||
+'<td><img src="#IMAGE_PREFIX#themes/theme_15/tab_close.gif" alt="" /></td>'
+ ,p_notification_message => '<div class="t15Notification">#MESSAGE#</div>'
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<a href="#LINK#" class="t15NavBarItem">#TEXT#</a>'||unistr('\000a')||
+''
+ ,p_region_table_cattributes => 'width="100%" summary=""'
+ ,p_sidebar_def_reg_pos => 'REGION_POSITION_02'
+ ,p_breadcrumb_def_reg_pos => 'REGION_POSITION_01'
+ ,p_theme_class_id => 18
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -7344,66 +7376,53 @@ prompt  ......Page template 56531722169997437
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<html lang="&BROWSER_LANGUAGE." xmlns:htmldb="http://htmldb.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'<title>#TITLE#</title>'||chr(10)||
-'#HEAD#'||chr(10)||
-'<link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_15/theme_V2.css" type="text/css" />'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>#FORM_OPEN#';
-
-c2:=c2||'#FORM_CLOSE#'||chr(10)||
-''||chr(10)||
-'</body> '||chr(10)||
-'</html>'||chr(10)||
-'';
-
-c3:=c3||'<div style="padding:10px;text-align:left;" valign="top">#BOX_BODY#</div>'||chr(10)||
-'';
-
-wwv_flow_api.create_template(
-  p_id=> 56531722169997437 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'Popup',
-  p_body_title=> '#BODY_TITLE#',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '<div class="t15Success">#SUCCESS_MESSAGE#</div>'||chr(10)||
-''||chr(10)||
-'',
-  p_current_tab=> '',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="t15Notification">#MESSAGE#</b>',
-  p_navigation_bar=> '#BAR_BODY#',
-  p_navbar_entry=> '<a href="#LINK#" class="t15NavBarItem">#TEXT#</a>'||chr(10)||
-'',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> 'width="100%"',
-  p_theme_id  => 15,
-  p_theme_class_id => 4,
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 56531722169997437 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 15
+ ,p_name => 'Popup'
+ ,p_is_popup => false
+ ,p_body_title => '#BODY_TITLE#'
+ ,p_header_template => '<html lang="&BROWSER_LANGUAGE." xmlns:htmldb="http://htmldb.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'<title>#TITLE#</title>'||unistr('\000a')||
+'#APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'<link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_15/theme_V2.css" type="text/css" />'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>#FORM_OPEN#'
+ ,p_box => 
+'<div style="padding:10px;text-align:left;" valign="top">#BOX_BODY#</div>'||unistr('\000a')||
+''
+ ,p_footer_template => 
+'#FORM_CLOSE#'||unistr('\000a')||
+''||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body> '||unistr('\000a')||
+'</html>'||unistr('\000a')||
+''
+ ,p_success_message => '<div class="t15Success">#SUCCESS_MESSAGE#</div>'||unistr('\000a')||
+''||unistr('\000a')||
+''
+ ,p_notification_message => '<div class="t15Notification">#MESSAGE#</b>'
+ ,p_navigation_bar => '#BAR_BODY#'
+ ,p_navbar_entry => '<a href="#LINK#" class="t15NavBarItem">#TEXT#</a>'||unistr('\000a')||
+''
+ ,p_region_table_cattributes => 'width="100%"'
+ ,p_theme_class_id => 4
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -7414,77 +7433,61 @@ prompt  ......Page template 56531806356997437
  
 begin
  
-declare
-  c1 varchar2(32767) := null;
-  c2 varchar2(32767) := null;
-  c3 varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
-begin
-c1:=c1||'<html lang="&BROWSER_LANGUAGE." xmlns:htmldb="http://htmldb.oracle.com">'||chr(10)||
-'<head>'||chr(10)||
-'<title>#TITLE#</title>'||chr(10)||
-'#HEAD#'||chr(10)||
-'<link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_15/theme_V2.css" type="text/css" />'||chr(10)||
-'</head>'||chr(10)||
-'<body #ONLOAD#>#FORM_OPEN#';
-
-c2:=c2||'#FORM_CLOSE#'||chr(10)||
-'</body>'||chr(10)||
-'</html>'||chr(10)||
-'';
-
-c3:=c3||'#NOTIFICATION_MESSAGE##SUCCESS_MESSAGE#'||chr(10)||
-'<table border="0" summary="" align="center" style="margin:100px auto;width:50%;">'||chr(10)||
-'<tr>'||chr(10)||
-'<td>#BOX_BODY#'||chr(10)||
-'#REGION_POSITION_01#'||chr(10)||
-'#REGION_POSITION_02#'||chr(10)||
-'#REGION_POSITION_03#'||chr(10)||
-'#REGION_POSITION_04#'||chr(10)||
-'#REGION_POSITION_05#'||chr(10)||
-'#REGION_POSITION_06#'||chr(10)||
-'#REGION_POSITION_07#'||chr(10)||
-'#REGION_POSITION_08#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>'||chr(10)||
-''||chr(10)||
-'';
-
-wwv_flow_api.create_template(
-  p_id=> 56531806356997437 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'Login',
-  p_body_title=> '#BODY_TITLE#',
-  p_header_template=> c1,
-  p_box=> c3,
-  p_footer_template=> c2,
-  p_success_message=> '',
-  p_current_tab=> '',
-  p_current_tab_font_attr=> '',
-  p_non_current_tab=> '',
-  p_non_current_tab_font_attr => '',
-  p_top_current_tab=> '',
-  p_top_current_tab_font_attr => '',
-  p_top_non_curr_tab=> '',
-  p_top_non_curr_tab_font_attr=> '',
-  p_current_image_tab=> '',
-  p_non_current_image_tab=> '',
-  p_notification_message=> '<div class="t15Notification">#MESSAGE#</div>'||chr(10)||
-'',
-  p_navigation_bar=> '',
-  p_navbar_entry=> '',
-  p_app_tab_before_tabs=>'',
-  p_app_tab_current_tab=>'',
-  p_app_tab_non_current_tab=>'',
-  p_app_tab_after_tabs=>'',
-  p_region_table_cattributes=> 'width="100%"',
-  p_theme_id  => 15,
-  p_theme_class_id => 6,
-  p_translate_this_template => 'N',
-  p_template_comment => '');
-end;
- 
+wwv_flow_api.create_template (
+  p_id => 56531806356997437 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_theme_id => 15
+ ,p_name => 'Login'
+ ,p_is_popup => false
+ ,p_body_title => '#BODY_TITLE#'
+ ,p_header_template => '<html lang="&BROWSER_LANGUAGE." xmlns:htmldb="http://htmldb.oracle.com">'||unistr('\000a')||
+'<head>'||unistr('\000a')||
+'<title>#TITLE#</title>'||unistr('\000a')||
+'#APEX_CSS#'||unistr('\000a')||
+'#TEMPLATE_CSS#'||unistr('\000a')||
+'#THEME_CSS#'||unistr('\000a')||
+'#PAGE_CSS#'||unistr('\000a')||
+'#APEX_JAVASCRIPT#'||unistr('\000a')||
+'#TEMPLATE_JAVASCRIPT#'||unistr('\000a')||
+'#APPLICATION_JAVASCRIPT#'||unistr('\000a')||
+'#PAGE_JAVASCRIPT#'||unistr('\000a')||
+'#HEAD#'||unistr('\000a')||
+'<link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_15/theme_V2.css" type="text/css" />'||unistr('\000a')||
+'</head>'||unistr('\000a')||
+'<body #ONLOAD#>#FORM_OPEN#'
+ ,p_box => 
+'#NOTIFICATION_MESSAGE##SUCCESS_MESSAGE#'||unistr('\000a')||
+'<table border="0" summary="" align="center" style="margin:100px auto;width:50%;">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td>#BOX_BODY#'||unistr('\000a')||
+'#REGION_POSITION_01#'||unistr('\000a')||
+'#REGION_POSITION_02#'||unistr('\000a')||
+'#REGION_POSITION_03#'||unistr('\000a')||
+'#REGION_POSITION_04#'||unistr('\000a')||
+'#REGION_POSITION_05#'||unistr('\000a')||
+'#REGION_POSITION_06#'||unistr('\000a')||
+'#REGION_POSITION_07#'||unistr('\000a')||
+'#REGION_POSITION_08#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
+''||unistr('\000a')||
+''
+ ,p_footer_template => 
+'#FORM_CLOSE#'||unistr('\000a')||
+'#DEVELOPER_TOOLBAR#'||unistr('\000a')||
+'#GENERATED_CSS#'||unistr('\000a')||
+'#GENERATED_JAVASCRIPT#'||unistr('\000a')||
+'</body>'||unistr('\000a')||
+'</html>'||unistr('\000a')||
+''
+ ,p_notification_message => '<div class="t15Notification">#MESSAGE#</div>'||unistr('\000a')||
+''
+ ,p_region_table_cattributes => 'width="100%"'
+ ,p_theme_class_id => 6
+ ,p_grid_type => 'TABLE'
+ ,p_has_edit_links => true
+ ,p_translate_this_template => 'N'
+  );
 null;
  
 end;
@@ -7494,250 +7497,254 @@ prompt  ...button templates
 --
 --application/shared_components/user_interface/templates/button/button
 prompt  ......Button Template 17325751309409385
-declare
-  t varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
+ 
 begin
-t:=t||'<button value="#LABEL#" onclick="#LINK#" class="button-default" type="button">'||chr(10)||
-'  <span>#LABEL#</span>'||chr(10)||
-'</button>';
-
+ 
 wwv_flow_api.create_button_templates (
-  p_id=>17325751309409385 + wwv_flow_api.g_id_offset,
-  p_flow_id=>wwv_flow.g_flow_id,
-  p_template=>t,
-  p_template_name=> 'Button',
-  p_translate_this_template => 'N',
-  p_theme_id  => 22,
-  p_theme_class_id => 1,
-  p_template_comment       => '');
+  p_id => 17325751309409385 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_template_name => 'Button'
+ ,p_template => 
+'<button value="#LABEL#" onclick="#LINK#" class="button-default" type="button">'||unistr('\000a')||
+'  <span>#LABEL#</span>'||unistr('\000a')||
+'</button>'
+ ,p_translate_this_template => 'N'
+ ,p_theme_class_id => 1
+ ,p_theme_id => 22
+  );
+null;
+ 
 end;
 /
+
 --application/shared_components/user_interface/templates/button/hot_button_black
 prompt  ......Button Template 17325944880409386
-declare
-  t varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
+ 
 begin
-t:=t||'<button value="#LABEL#" onclick="#LINK#" class="button-alt5" type="button">'||chr(10)||
-'  <span>#LABEL#</span>'||chr(10)||
-'</button>';
-
+ 
 wwv_flow_api.create_button_templates (
-  p_id=>17325944880409386 + wwv_flow_api.g_id_offset,
-  p_flow_id=>wwv_flow.g_flow_id,
-  p_template=>t,
-  p_template_name=> 'Hot Button (Black)',
-  p_translate_this_template => 'N',
-  p_theme_id  => 22,
-  p_theme_class_id => 4,
-  p_template_comment       => '');
+  p_id => 17325944880409386 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_template_name => 'Hot Button (Black)'
+ ,p_template => 
+'<button value="#LABEL#" onclick="#LINK#" class="button-alt5" type="button">'||unistr('\000a')||
+'  <span>#LABEL#</span>'||unistr('\000a')||
+'</button>'
+ ,p_translate_this_template => 'N'
+ ,p_theme_class_id => 4
+ ,p_theme_id => 22
+  );
+null;
+ 
 end;
 /
+
 --application/shared_components/user_interface/templates/button/hot_button_blue
 prompt  ......Button Template 17326158433409386
-declare
-  t varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
+ 
 begin
-t:=t||'<button value="#LABEL#" onclick="#LINK#" class="button-alt1" type="button">'||chr(10)||
-'  <span>#LABEL#</span>'||chr(10)||
-'</button>';
-
+ 
 wwv_flow_api.create_button_templates (
-  p_id=>17326158433409386 + wwv_flow_api.g_id_offset,
-  p_flow_id=>wwv_flow.g_flow_id,
-  p_template=>t,
-  p_template_name=> 'Hot Button (Blue)',
-  p_translate_this_template => 'N',
-  p_theme_id  => 22,
-  p_theme_class_id => 4,
-  p_template_comment       => '');
+  p_id => 17326158433409386 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_template_name => 'Hot Button (Blue)'
+ ,p_template => 
+'<button value="#LABEL#" onclick="#LINK#" class="button-alt1" type="button">'||unistr('\000a')||
+'  <span>#LABEL#</span>'||unistr('\000a')||
+'</button>'
+ ,p_translate_this_template => 'N'
+ ,p_theme_class_id => 4
+ ,p_theme_id => 22
+  );
+null;
+ 
 end;
 /
+
 --application/shared_components/user_interface/templates/button/hot_button_yellow
 prompt  ......Button Template 17326339583409386
-declare
-  t varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
+ 
 begin
-t:=t||'<button value="#LABEL#" onclick="#LINK#" class="button-alt4" type="button">'||chr(10)||
-'  <span>#LABEL#</span>'||chr(10)||
-'</button>';
-
+ 
 wwv_flow_api.create_button_templates (
-  p_id=>17326339583409386 + wwv_flow_api.g_id_offset,
-  p_flow_id=>wwv_flow.g_flow_id,
-  p_template=>t,
-  p_template_name=> 'Hot Button (Yellow)',
-  p_translate_this_template => 'N',
-  p_theme_id  => 22,
-  p_theme_class_id => 4,
-  p_template_comment       => '');
+  p_id => 17326339583409386 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_template_name => 'Hot Button (Yellow)'
+ ,p_template => 
+'<button value="#LABEL#" onclick="#LINK#" class="button-alt4" type="button">'||unistr('\000a')||
+'  <span>#LABEL#</span>'||unistr('\000a')||
+'</button>'
+ ,p_translate_this_template => 'N'
+ ,p_theme_class_id => 4
+ ,p_theme_id => 22
+  );
+null;
+ 
 end;
 /
+
 --application/shared_components/user_interface/templates/button/small_button
 prompt  ......Button Template 17326548831409386
-declare
-  t varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
+ 
 begin
-t:=t||'<button value="#LABEL#" onclick="#LINK#" class="button-alt2" type="button">'||chr(10)||
-'  <span>#LABEL#</span>'||chr(10)||
-'</button>';
-
+ 
 wwv_flow_api.create_button_templates (
-  p_id=>17326548831409386 + wwv_flow_api.g_id_offset,
-  p_flow_id=>wwv_flow.g_flow_id,
-  p_template=>t,
-  p_template_name=> 'Small Button',
-  p_translate_this_template => 'N',
-  p_theme_id  => 22,
-  p_theme_class_id => 5,
-  p_template_comment       => 'XP Square FFFFFF');
+  p_id => 17326548831409386 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_template_name => 'Small Button'
+ ,p_template => 
+'<button value="#LABEL#" onclick="#LINK#" class="button-alt2" type="button">'||unistr('\000a')||
+'  <span>#LABEL#</span>'||unistr('\000a')||
+'</button>'
+ ,p_translate_this_template => 'N'
+ ,p_theme_class_id => 5
+ ,p_template_comment => 'XP Square FFFFFF'
+ ,p_theme_id => 22
+  );
+null;
+ 
 end;
 /
+
 --application/shared_components/user_interface/templates/button/small_hot_button_blue
 prompt  ......Button Template 17326744589409386
-declare
-  t varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
+ 
 begin
-t:=t||'<button value="#LABEL#" onclick="#LINK#" class="button-alt3" type="button">'||chr(10)||
-'  <span>#LABEL#</span>'||chr(10)||
-'</button>';
-
+ 
 wwv_flow_api.create_button_templates (
-  p_id=>17326744589409386 + wwv_flow_api.g_id_offset,
-  p_flow_id=>wwv_flow.g_flow_id,
-  p_template=>t,
-  p_template_name=> 'Small Hot Button (Blue)',
-  p_translate_this_template => 'N',
-  p_theme_id  => 22,
-  p_theme_class_id => 2,
-  p_template_comment       => 'Standard Button');
+  p_id => 17326744589409386 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_template_name => 'Small Hot Button (Blue)'
+ ,p_template => 
+'<button value="#LABEL#" onclick="#LINK#" class="button-alt3" type="button">'||unistr('\000a')||
+'  <span>#LABEL#</span>'||unistr('\000a')||
+'</button>'
+ ,p_translate_this_template => 'N'
+ ,p_theme_class_id => 2
+ ,p_template_comment => 'Standard Button'
+ ,p_theme_id => 22
+  );
+null;
+ 
 end;
 /
+
 --application/shared_components/user_interface/templates/button/small_hot_button_yellow
 prompt  ......Button Template 17326938910409386
-declare
-  t varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
+ 
 begin
-t:=t||'<button value="#LABEL#" onclick="#LINK#" class="button-alt6" type="button">'||chr(10)||
-'  <span>#LABEL#</span>'||chr(10)||
-'</button>';
-
+ 
 wwv_flow_api.create_button_templates (
-  p_id=>17326938910409386 + wwv_flow_api.g_id_offset,
-  p_flow_id=>wwv_flow.g_flow_id,
-  p_template=>t,
-  p_template_name=> 'Small Hot Button (Yellow)',
-  p_translate_this_template => 'N',
-  p_theme_id  => 22,
-  p_theme_class_id => 2,
-  p_template_comment       => 'Standard Button');
+  p_id => 17326938910409386 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_template_name => 'Small Hot Button (Yellow)'
+ ,p_template => 
+'<button value="#LABEL#" onclick="#LINK#" class="button-alt6" type="button">'||unistr('\000a')||
+'  <span>#LABEL#</span>'||unistr('\000a')||
+'</button>'
+ ,p_translate_this_template => 'N'
+ ,p_theme_class_id => 2
+ ,p_template_comment => 'Standard Button'
+ ,p_theme_id => 22
+  );
+null;
+ 
 end;
 /
+
 --application/shared_components/user_interface/templates/button/button_alternative_2
 prompt  ......Button Template 56531931349997437
-declare
-  t varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
+ 
 begin
-t:=t||'<a href="#LINK#" class="t15Button2">#LABEL#</a>';
-
+ 
 wwv_flow_api.create_button_templates (
-  p_id=>56531931349997437 + wwv_flow_api.g_id_offset,
-  p_flow_id=>wwv_flow.g_flow_id,
-  p_template=>t,
-  p_template_name=> 'Button, Alternative 2',
-  p_translate_this_template => 'N',
-  p_theme_id  => 15,
-  p_theme_class_id => 5,
-  p_template_comment       => '');
+  p_id => 56531931349997437 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_template_name => 'Button, Alternative 2'
+ ,p_template => 
+'<a href="#LINK#" class="t15Button2">#LABEL#</a>'
+ ,p_translate_this_template => 'N'
+ ,p_theme_class_id => 5
+ ,p_theme_id => 15
+  );
+null;
+ 
 end;
 /
+
 --application/shared_components/user_interface/templates/button/button_alternative_1
 prompt  ......Button Template 56532011423997446
-declare
-  t varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
+ 
 begin
-t:=t||'<table class="t15Button1" cellspacing="0" cellpadding="0" border="0"  summary="">'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="t15L"><a href="#LINK#"><img src="#IMAGE_PREFIX#themes/theme_15/button_left.gif" alt="" width="4" height="24" /></a></td>'||chr(10)||
-'<td class="t15C"><a href="#LINK#">#LABEL#</a></td>'||chr(10)||
-'<td class="t15R"><a href="#LINK#"><img src="#IMAGE_PREFIX#themes/theme_15/button_right.gif" width="4" height="24" alt="" /></a></t';
-
-t:=t||'d>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>';
-
+ 
 wwv_flow_api.create_button_templates (
-  p_id=>56532011423997446 + wwv_flow_api.g_id_offset,
-  p_flow_id=>wwv_flow.g_flow_id,
-  p_template=>t,
-  p_template_name=> 'Button, Alternative 1',
-  p_translate_this_template => 'N',
-  p_theme_id  => 15,
-  p_theme_class_id => 4,
-  p_template_comment       => 'BLAF style, rounded on left side only. Uses classes in platform2.css or /css/einstein.css');
+  p_id => 56532011423997446 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_template_name => 'Button, Alternative 1'
+ ,p_template => 
+'<table class="t15Button1" cellspacing="0" cellpadding="0" border="0"  summary="">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="t15L"><a href="#LINK#"><img src="#IMAGE_PREFIX#themes/theme_15/button_left.gif" alt="" width="4" height="24" /></a></td>'||unistr('\000a')||
+'<td class="t15C"><a href="#LINK#">#LABEL#</a></td>'||unistr('\000a')||
+'<td class="t15R"><a href="#LINK#"><img src="#IMAGE_PREFIX#themes/theme_15/button_right.gif" width="4" height="24" alt="" /></a></t'||
+'d>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'
+ ,p_translate_this_template => 'N'
+ ,p_theme_class_id => 4
+ ,p_template_comment => 'BLAF style, rounded on left side only. Uses classes in platform2.css or /css/einstein.css'
+ ,p_theme_id => 15
+  );
+null;
+ 
 end;
 /
+
 --application/shared_components/user_interface/templates/button/button
 prompt  ......Button Template 56532105108997446
-declare
-  t varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
+ 
 begin
-t:=t||'<table class="t15Button" cellspacing="0" cellpadding="0" border="0"  summary=""><tr>'||chr(10)||
-'<td class="t15L"><img src="#IMAGE_PREFIX#themes/theme_15/button-l.gif" alt="" /></td>'||chr(10)||
-'<td class="t15C"><a href="#LINK#">#LABEL#</a></td>'||chr(10)||
-'<td class="t15R"><img src="#IMAGE_PREFIX#themes/theme_15/button-r.gif" alt="" /></td>'||chr(10)||
-'</tr></table>';
-
+ 
 wwv_flow_api.create_button_templates (
-  p_id=>56532105108997446 + wwv_flow_api.g_id_offset,
-  p_flow_id=>wwv_flow.g_flow_id,
-  p_template=>t,
-  p_template_name=> 'Button',
-  p_translate_this_template => 'N',
-  p_theme_id  => 15,
-  p_theme_class_id => 1,
-  p_template_comment       => '');
+  p_id => 56532105108997446 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_template_name => 'Button'
+ ,p_template => 
+'<table class="t15Button" cellspacing="0" cellpadding="0" border="0"  summary=""><tr>'||unistr('\000a')||
+'<td class="t15L"><img src="#IMAGE_PREFIX#themes/theme_15/button-l.gif" alt="" /></td>'||unistr('\000a')||
+'<td class="t15C"><a href="#LINK#">#LABEL#</a></td>'||unistr('\000a')||
+'<td class="t15R"><img src="#IMAGE_PREFIX#themes/theme_15/button-r.gif" alt="" /></td>'||unistr('\000a')||
+'</tr></table>'
+ ,p_translate_this_template => 'N'
+ ,p_theme_class_id => 1
+ ,p_theme_id => 15
+  );
+null;
+ 
 end;
 /
+
 --application/shared_components/user_interface/templates/button/button_alternative_3
 prompt  ......Button Template 56532219454997446
-declare
-  t varchar2(32767) := null;
-  l_clob clob;
-  l_length number := 1;
+ 
 begin
-t:=t||'<a href="#LINK#" class="t15Button3">#LABEL#</a>';
-
+ 
 wwv_flow_api.create_button_templates (
-  p_id=>56532219454997446 + wwv_flow_api.g_id_offset,
-  p_flow_id=>wwv_flow.g_flow_id,
-  p_template=>t,
-  p_template_name=> 'Button, Alternative 3',
-  p_translate_this_template => 'N',
-  p_theme_id  => 15,
-  p_theme_class_id => 2,
-  p_template_comment       => 'Standard Button');
+  p_id => 56532219454997446 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_template_name => 'Button, Alternative 3'
+ ,p_template => 
+'<a href="#LINK#" class="t15Button3">#LABEL#</a>'
+ ,p_translate_this_template => 'N'
+ ,p_theme_class_id => 2
+ ,p_template_comment => 'Standard Button'
+ ,p_theme_id => 15
+  );
+null;
+ 
 end;
 /
+
 ---------------------------------------
 prompt  ...region templates
 --
@@ -7749,33 +7756,19 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17327142303409386 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="blank-region">'||chr(10)||
-'#BODY#'||chr(10)||
-'<div class="clear"></div>'||chr(10)||
+'<div class="blank-region">'||unistr('\000a')||
+'#BODY#'||unistr('\000a')||
+'<div class="clear"></div>'||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Blank Region'
  ,p_theme_id => 22
  ,p_theme_class_id => 7
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17327142303409386 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -7789,42 +7782,28 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17327443195409398 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="borderless-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'  <div class="bl-top">'||chr(10)||
-'    <div class="bl-title">#TITLE#</div>'||chr(10)||
-'    <div class="bl-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||chr(10)||
-'  </div>'||chr(10)||
-'  <div class="bl-body">#BODY#</div>'||chr(10)||
-'</div>'||chr(10)||
+'<div class="borderless-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'  <div class="bl-top">'||unistr('\000a')||
+'    <div class="bl-title">#TITLE#</div>'||unistr('\000a')||
+'    <div class="bl-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'  <div class="bl-body">#BODY#</div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
 '<div class="clear"></div>'
  ,p_page_plug_template_name => 'Borderless Region'
  ,p_theme_id => 22
  ,p_theme_class_id => 7
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
- ,p_template_comment => 'Use this region template when you want to contain content without a border.'||chr(10)||
-''||chr(10)||
-'TITLE=YES'||chr(10)||
-'BUTTONS=YES'||chr(10)||
+ ,p_template_comment => 'Use this region template when you want to contain content without a border.'||unistr('\000a')||
+''||unistr('\000a')||
+'TITLE=YES'||unistr('\000a')||
+'BUTTONS=YES'||unistr('\000a')||
 '100% WIDTH=NO'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17327443195409398 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -7838,42 +7817,28 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17327759627409398 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="borderless-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'  <div class="bl-top">'||chr(10)||
-'    '||chr(10)||
-'    <div class="bl-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||chr(10)||
-'  </div>'||chr(10)||
-'  <div class="bl-body">#BODY#</div>'||chr(10)||
-'</div>'||chr(10)||
+'<div class="borderless-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'  <div class="bl-top">'||unistr('\000a')||
+'    '||unistr('\000a')||
+'    <div class="bl-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'  <div class="bl-body">#BODY#</div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
 '<div class="clear"></div>'
  ,p_page_plug_template_name => 'Borderless Region - No Title'
  ,p_theme_id => 22
  ,p_theme_class_id => 7
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
- ,p_template_comment => 'Use this region template when you want to contain content without a border.'||chr(10)||
-''||chr(10)||
-'TITLE=YES'||chr(10)||
-'BUTTONS=YES'||chr(10)||
+ ,p_template_comment => 'Use this region template when you want to contain content without a border.'||unistr('\000a')||
+''||unistr('\000a')||
+'TITLE=YES'||unistr('\000a')||
+'BUTTONS=YES'||unistr('\000a')||
 '100% WIDTH=NO'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17327759627409398 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -7887,47 +7852,33 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17328056743409398 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="bracketed-region brackets" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'  <div class="bk-top">'||chr(10)||
-'    <div class="bk-top-r">'||chr(10)||
-'      <div class="bk-title">#TITLE#</div>'||chr(10)||
-'      <div class="bk-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||chr(10)||
-'    </div>'||chr(10)||
-'  </div>'||chr(10)||
-'  <div class="bk-body">#BODY#</div>'||chr(10)||
-'  <div class="bk-bottom">'||chr(10)||
+'<div class="bracketed-region brackets" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'  <div class="bk-top">'||unistr('\000a')||
+'    <div class="bk-top-r">'||unistr('\000a')||
+'      <div class="bk-title">#TITLE#</div>'||unistr('\000a')||
+'      <div class="bk-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||unistr('\000a')||
+'    </div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'  <div class="bk-body">#BODY#</div>'||unistr('\000a')||
+'  <div class="bk-bottom">'||unistr('\000a')||
 '    <div class="bk-bott'||
-'om-r">&nbsp;</div>'||chr(10)||
-'  </div>'||chr(10)||
+'om-r">&nbsp;</div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Bracketed Region'
  ,p_theme_id => 22
  ,p_theme_class_id => 18
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
- ,p_template_comment => 'Use this region template when you want to contain content with a bracket UI.'||chr(10)||
-''||chr(10)||
-'TITLE=YES'||chr(10)||
-'BUTTONS=YES'||chr(10)||
+ ,p_template_comment => 'Use this region template when you want to contain content with a bracket UI.'||unistr('\000a')||
+''||unistr('\000a')||
+'TITLE=YES'||unistr('\000a')||
+'BUTTONS=YES'||unistr('\000a')||
 '100% WIDTH=NO'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17328056743409398 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -7941,31 +7892,17 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17328333600409399 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
 '<div class="breadcrumb-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>#BODY#</div>'
  ,p_page_plug_template_name => 'Breadcrumb Region'
  ,p_theme_id => 22
  ,p_theme_class_id => 6
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
  ,p_template_comment => 'Use this region template to contain breadcrumb menus.  Breadcrumb menus are implemented using breadcrumbs.  Breadcrumb menus are designed to displayed in #REGION_POSITION_01#'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17328333600409399 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -7979,51 +7916,37 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17328655401409408 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="rounded-corner-region-blank" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'  <div class="rc-gray-top">'||chr(10)||
-'    <div class="rc-gray-top-r"></div>'||chr(10)||
-'  </div>'||chr(10)||
-'  <div class="rc-body">'||chr(10)||
-'    <div class="rc-body-r">'||chr(10)||
-'      <div class="rc-content-main">'||chr(10)||
-'        <div class="rc-left">'||chr(10)||
-'          <h3>#TITLE#</h3>'||chr(10)||
-'        </div>'||chr(10)||
-'        <div class="rc-right">'||chr(10)||
+'<div class="rounded-corner-region-blank" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'  <div class="rc-gray-top">'||unistr('\000a')||
+'    <div class="rc-gray-top-r"></div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'  <div class="rc-body">'||unistr('\000a')||
+'    <div class="rc-body-r">'||unistr('\000a')||
+'      <div class="rc-content-main">'||unistr('\000a')||
+'        <div class="rc-left">'||unistr('\000a')||
+'          <h3>#TITLE#</h3>'||unistr('\000a')||
+'        </div>'||unistr('\000a')||
+'        <div class="rc-right">'||unistr('\000a')||
 '#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CR'||
-'EATE##CREATE2##EXPAND##COPY##HELP#'||chr(10)||
-'        </div>'||chr(10)||
-'        <div class="clear"></div>'||chr(10)||
-'      </div>'||chr(10)||
-'    </div>'||chr(10)||
-'  </div>'||chr(10)||
-'  <div class="rc-bottom">'||chr(10)||
-'    <div class="rc-bottom-r"></div>'||chr(10)||
-'  </div>'||chr(10)||
+'EATE##CREATE2##EXPAND##COPY##HELP#'||unistr('\000a')||
+'        </div>'||unistr('\000a')||
+'        <div class="clear"></div>'||unistr('\000a')||
+'      </div>'||unistr('\000a')||
+'    </div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'  <div class="rc-bottom">'||unistr('\000a')||
+'    <div class="rc-bottom-r"></div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Button Region with Title'
  ,p_theme_id => 22
  ,p_theme_class_id => 4
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17328655401409408 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -8037,51 +7960,37 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17328957280409408 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="rounded-corner-region-blank" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'  <div class="rc-gray-top">'||chr(10)||
-'    <div class="rc-gray-top-r"></div>'||chr(10)||
-'  </div>'||chr(10)||
-'  <div class="rc-body">'||chr(10)||
-'    <div class="rc-body-r">'||chr(10)||
-'      <div class="rc-content-main">'||chr(10)||
-'        <div class="rc-left">'||chr(10)||
-'          #BODY#'||chr(10)||
-'        </div>'||chr(10)||
-'        <div class="rc-right">'||chr(10)||
+'<div class="rounded-corner-region-blank" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'  <div class="rc-gray-top">'||unistr('\000a')||
+'    <div class="rc-gray-top-r"></div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'  <div class="rc-body">'||unistr('\000a')||
+'    <div class="rc-body-r">'||unistr('\000a')||
+'      <div class="rc-content-main">'||unistr('\000a')||
+'        <div class="rc-left">'||unistr('\000a')||
+'          #BODY#'||unistr('\000a')||
+'        </div>'||unistr('\000a')||
+'        <div class="rc-right">'||unistr('\000a')||
 '#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREA'||
-'TE2##EXPAND##COPY##HELP#'||chr(10)||
-'        </div>'||chr(10)||
-'        <div class="clear"></div>'||chr(10)||
-'      </div>'||chr(10)||
-'    </div>'||chr(10)||
-'  </div>'||chr(10)||
-'  <div class="rc-bottom">'||chr(10)||
-'    <div class="rc-bottom-r"></div>'||chr(10)||
-'  </div>'||chr(10)||
+'TE2##EXPAND##COPY##HELP#'||unistr('\000a')||
+'        </div>'||unistr('\000a')||
+'        <div class="clear"></div>'||unistr('\000a')||
+'      </div>'||unistr('\000a')||
+'    </div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'  <div class="rc-bottom">'||unistr('\000a')||
+'    <div class="rc-bottom-r"></div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Button Region without Title'
  ,p_theme_id => 22
  ,p_theme_class_id => 17
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17328957280409408 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -8095,39 +8004,25 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17329259291409408 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="tSC">'||chr(10)||
-'  #BODY#'||chr(10)||
-'</div>'||chr(10)||
-'<div class="tSF">'||chr(10)||
-'  <div class="tSFO">'||chr(10)||
-'    <div class="tSFI">'||chr(10)||
-'    </div>'||chr(10)||
-'  </div>'||chr(10)||
-'</div>'||chr(10)||
+'<div class="tSC">'||unistr('\000a')||
+'  #BODY#'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+'<div class="tSF">'||unistr('\000a')||
+'  <div class="tSFO">'||unistr('\000a')||
+'    <div class="tSFI">'||unistr('\000a')||
+'    </div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
 ''
  ,p_page_plug_template_name => 'Centered Tab Set Region'
  ,p_theme_id => 22
  ,p_theme_class_id => 21
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17329259291409408 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -8141,20 +8036,21 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17329539356409408 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="rounded-corner-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||chr(10)||
-'    <div class="rc-title">#TITLE#</div>'||chr(10)||
-'    <div class="rc-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||chr(10)||
-'  </div></div>'||chr(10)||
-'  <div class="rc-body"><div class="rc-body-r"><div class="rc-content-main">'||chr(10)||
+'<div class="rounded-corner-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||unistr('\000a')||
+'    <div class="rc-title">#TITLE#</div>'||unistr('\000a')||
+'    <div class="rc-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||unistr('\000a')||
+'  </div></div>'||unistr('\000a')||
+'  <div class="rc-body"><div class="rc-body-r"><div class="rc-content-main">'||unistr('\000a')||
 '     <div class="'||
-'rc-image"><img src="#IMAGE_PREFIX#themes/theme_22/images/report_icon.png" alt="" /></div>'||chr(10)||
-'      <div class="rc-content">#BODY#</div>'||chr(10)||
-'<div class="clear"></div>'||chr(10)||
-'</div>'||chr(10)||
-'</div></div>'||chr(10)||
-'  <div class="rc-bottom"><div class="rc-bottom-r"></div></div>'||chr(10)||
+'rc-image"><img src="#IMAGE_PREFIX#themes/theme_22/images/report_icon.png" alt="" /></div>'||unistr('\000a')||
+'      <div class="rc-content">#BODY#</div>'||unistr('\000a')||
+'<div class="clear"></div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+'  <div class="rc-bottom"><div class="rc-bottom-r"></div></div>'||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Chart List'
  ,p_plug_table_bgcolor => '#ffffff'
@@ -8162,26 +8058,11 @@ wwv_flow_api.create_plug_template (
  ,p_theme_class_id => 29
  ,p_plug_heading_bgcolor => '#ffffff'
  ,p_plug_font_size => '-1'
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
  ,p_template_comment => 'Red Theme'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17329539356409408 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -8195,16 +8076,17 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17329842275409409 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="rounded-corner-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||chr(10)||
-'    <div class="rc-title">#TITLE#</div>'||chr(10)||
-'  </div></div>'||chr(10)||
-'  <div class="rc-body"><div class="rc-body-r">'||chr(10)||
-'<div class="rc-content-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||chr(10)||
+'<div class="rounded-corner-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||unistr('\000a')||
+'    <div class="rc-title">#TITLE#</div>'||unistr('\000a')||
+'  </div></div>'||unistr('\000a')||
+'  <div class="rc-body"><div class="rc-body-r">'||unistr('\000a')||
+'<div class="rc-content-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||unistr('\000a')||
 '<div class="rc-content-main">#BODY#<div cl'||
-'ass="clear"></div></div></div></div>'||chr(10)||
-'  <div class="rc-bottom"><div class="rc-bottom-r"></div></div>'||chr(10)||
+'ass="clear"></div></div></div></div>'||unistr('\000a')||
+'  <div class="rc-bottom"><div class="rc-bottom-r"></div></div>'||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Chart Region'
  ,p_plug_table_bgcolor => '#ffffff'
@@ -8212,26 +8094,11 @@ wwv_flow_api.create_plug_template (
  ,p_theme_class_id => 30
  ,p_plug_heading_bgcolor => '#ffffff'
  ,p_plug_font_size => '-1'
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
  ,p_template_comment => 'Red Theme'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17329842275409409 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -8245,17 +8112,18 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17330148237409409 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="rounded-corner-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||chr(10)||
-'    <div class="rc-title">#TITLE#</div>'||chr(10)||
-'  </div></div>'||chr(10)||
-'  <div class="rc-body"><div class="rc-body-r">'||chr(10)||
-'<div class="rc-content-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||chr(10)||
-'<div class="rc-content-main">'||chr(10)||
+'<div class="rounded-corner-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||unistr('\000a')||
+'    <div class="rc-title">#TITLE#</div>'||unistr('\000a')||
+'  </div></div>'||unistr('\000a')||
+'  <div class="rc-body"><div class="rc-body-r">'||unistr('\000a')||
+'<div class="rc-content-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||unistr('\000a')||
+'<div class="rc-content-main">'||unistr('\000a')||
 '#BODY#<div c'||
-'lass="clear"></div></div></div></div>'||chr(10)||
-'  <div class="rc-bottom"><div class="rc-bottom-r"></div></div>'||chr(10)||
+'lass="clear"></div></div></div></div>'||unistr('\000a')||
+'  <div class="rc-bottom"><div class="rc-bottom-r"></div></div>'||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Form Region'
  ,p_plug_table_bgcolor => '#f7f7e7'
@@ -8263,26 +8131,11 @@ wwv_flow_api.create_plug_template (
  ,p_theme_class_id => 8
  ,p_plug_heading_bgcolor => '#f7f7e7'
  ,p_plug_font_size => '-1'
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
  ,p_template_comment => 'Red Theme'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17330148237409409 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -8296,39 +8149,25 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17330446778409409 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="hide-show-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'  <div class="hide-show-top">'||chr(10)||
+'<div class="hide-show-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'  <div class="hide-show-top">'||unistr('\000a')||
 '    <div class="hide-show-title"><a href="javascript:hideShow(''region#REGION_SEQUENCE_ID#'',''shIMG#REGION_SEQUENCE_ID#'',''#IMAGE_PREFIX#themes/theme_22/images/right_arrow.png'',''#IMAGE_PREFIX#themes/theme_22/images/down_arrow.png'');" class="t1HideandShowRegionLink"><img src="#IMAGE_PREFIX#themes/t'||
-'heme_22/images/right_arrow.png" '||chr(10)||
-'  id="shIMG#REGION_SEQUENCE_ID#" alt="" /></a> #TITLE#</div>'||chr(10)||
-'    <div class="hide-show-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||chr(10)||
-'  </div>'||chr(10)||
-'<div class="hide" id="region#REGION_SEQUENCE_ID#" style="float:left;">#BODY#</div>'||chr(10)||
+'heme_22/images/right_arrow.png" '||unistr('\000a')||
+'  id="shIMG#REGION_SEQUENCE_ID#" alt="" /></a> #TITLE#</div>'||unistr('\000a')||
+'    <div class="hide-show-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'<div class="hide" id="region#REGION_SEQUENCE_ID#" style="float:left;">#BODY#</div>'||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Hide and Show Region'
  ,p_theme_id => 22
  ,p_theme_class_id => 1
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
  ,p_template_comment => 'Gray Head, white body'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17330446778409409 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -8342,35 +8181,21 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17330741439409409 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="navigation-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'    <h3>#TITLE#</h3>'||chr(10)||
-'  <div>'||chr(10)||
-'    #BODY#'||chr(10)||
-'  </div>'||chr(10)||
+'<div class="navigation-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'    <h3>#TITLE#</h3>'||unistr('\000a')||
+'  <div>'||unistr('\000a')||
+'    #BODY#'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Navigation Region'
  ,p_theme_id => 22
  ,p_theme_class_id => 5
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17330741439409409 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -8384,30 +8209,16 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17331054913409409 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
 '<div class="navigation-region-alt" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>#BODY#</div>'
  ,p_page_plug_template_name => 'Navigation Region, Alternative 1'
  ,p_theme_id => 22
  ,p_theme_class_id => 16
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17331054913409409 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -8421,49 +8232,35 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17331356595409409 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="rounded-corner-region-nested" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'	<div class="nr-top">'||chr(10)||
-'		<div class="nr-top-r">'||chr(10)||
-'    <div class="nr-title">#TITLE#</div>'||chr(10)||
-'    <div class="nr-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||chr(10)||
-'		</div>'||chr(10)||
-'	</div>'||chr(10)||
-'	<div class="nr-body">'||chr(10)||
-'		<div class="nr-content-main">'||chr(10)||
-'			#BODY#'||chr(10)||
+'<div class="rounded-corner-region-nested" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'	<div class="nr-top">'||unistr('\000a')||
+'		<div class="nr-top-r">'||unistr('\000a')||
+'    <div class="nr-title">#TITLE#</div>'||unistr('\000a')||
+'    <div class="nr-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||unistr('\000a')||
+'		</div>'||unistr('\000a')||
+'	</div>'||unistr('\000a')||
+'	<div class="nr-body">'||unistr('\000a')||
+'		<div class="nr-content-main">'||unistr('\000a')||
+'			#BODY#'||unistr('\000a')||
 '			<div class="clear"></div'||
-'>'||chr(10)||
-'		</div>'||chr(10)||
-'	</div>'||chr(10)||
+'>'||unistr('\000a')||
+'		</div>'||unistr('\000a')||
+'	</div>'||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Nested Region'
  ,p_theme_id => 22
  ,p_theme_class_id => 7
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
- ,p_template_comment => 'Use this region template when you want to contain content without a border.'||chr(10)||
-''||chr(10)||
-'TITLE=YES'||chr(10)||
-'BUTTONS=YES'||chr(10)||
+ ,p_template_comment => 'Use this region template when you want to contain content without a border.'||unistr('\000a')||
+''||unistr('\000a')||
+'TITLE=YES'||unistr('\000a')||
+'BUTTONS=YES'||unistr('\000a')||
 '100% WIDTH=NO'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17331356595409409 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -8477,32 +8274,18 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17331657839409409 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="borderless-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'  <div class="bl-body">#BODY#</div>'||chr(10)||
+'<div class="borderless-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'  <div class="bl-body">#BODY#</div>'||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Region without Buttons and Titles'
  ,p_theme_id => 22
  ,p_theme_class_id => 19
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17331657839409409 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -8516,36 +8299,22 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17331941178409409 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="borderless-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'  <div class="bl-top">'||chr(10)||
-'    <div class="bl-title">&nbsp;</div>'||chr(10)||
-'    <div class="bl-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||chr(10)||
-'  </div>'||chr(10)||
-'  <div class="bl-body">#BODY#</div>'||chr(10)||
+'<div class="borderless-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'  <div class="bl-top">'||unistr('\000a')||
+'    <div class="bl-title">&nbsp;</div>'||unistr('\000a')||
+'    <div class="bl-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
+'  <div class="bl-body">#BODY#</div>'||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Region without Title'
  ,p_theme_id => 22
  ,p_theme_class_id => 11
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17331941178409409 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -8559,46 +8328,32 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17332250053409409 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<table class="apex_finderbar" cellpadding="0" cellspacing="0" border="0" summary="" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'<tbody>'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="apex_finderbar_left_top" valign="top"><img src="#IMAGE_PREFIX#1px_trans.gif" width="10" height="8" alt=""  class="spacer" alt="" /></td>'||chr(10)||
+'<table class="apex_finderbar" cellpadding="0" cellspacing="0" border="0" summary="" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'<tbody>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="apex_finderbar_left_top" valign="top"><img src="#IMAGE_PREFIX#1px_trans.gif" width="10" height="8" alt=""  class="spacer" alt="" /></td>'||unistr('\000a')||
 '<td class="apex_finderbar_middle" rowspan="3" valign="middle"><img src="#IMAGE_PREFIX#htmldb/builder/builder_f'||
-'ind.png" /></td>'||chr(10)||
-'<td class="apex_finderbar_middle" rowspan="3" valign="middle" style="">#BODY#</td>'||chr(10)||
-'<td class="apex_finderbar_left" rowspan="3" width="10"><br /></td>'||chr(10)||
-'<td class="apex_finderbar_buttons" rowspan="3" valign="middle" nowrap="nowrap"><span class="apex_close">#CLOSE#</span><span>#EDIT##CHANGE##DELETE##CREATE##CREATE2##COPY##PREVIOUS##NEXT##EXPAND##HELP#</span></td>'||chr(10)||
-'</tr>'||chr(10)||
+'ind.png" /></td>'||unistr('\000a')||
+'<td class="apex_finderbar_middle" rowspan="3" valign="middle" style="">#BODY#</td>'||unistr('\000a')||
+'<td class="apex_finderbar_left" rowspan="3" width="10"><br /></td>'||unistr('\000a')||
+'<td class="apex_finderbar_buttons" rowspan="3" valign="middle" nowrap="nowrap"><span class="apex_close">#CLOSE#</span><span>#EDIT##CHANGE##DELETE##CREATE##CREATE2##COPY##PREVIOUS##NEXT##EXPAND##HELP#</span></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 '<tr><td class="'||
-'apex_finderbar_left_middle"><br /></td></tr>'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="apex_finderbar_left_bottom" valign="bottom"><img src="#IMAGE_PREFIX#1px_trans.gif" width="10" height="8"  class="spacer" alt="" /></td>'||chr(10)||
-'</tr>'||chr(10)||
-'</tbody>'||chr(10)||
+'apex_finderbar_left_middle"><br /></td></tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="apex_finderbar_left_bottom" valign="bottom"><img src="#IMAGE_PREFIX#1px_trans.gif" width="10" height="8"  class="spacer" alt="" /></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</tbody>'||unistr('\000a')||
 '</table>'
  ,p_page_plug_template_name => 'Report Filter - Single Row'
  ,p_theme_id => 22
  ,p_theme_class_id => 31
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17332250053409409 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -8612,19 +8367,20 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17332545141409410 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="rounded-corner-region-alt" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||chr(10)||
-'    <div class="rc-title">#TITLE#</div>'||chr(10)||
-'  </div></div>'||chr(10)||
-'  <div class="rc-body"><div class="rc-body-r">'||chr(10)||
-'<div class="rc-content-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||chr(10)||
-'    <div class="rc-content-main">'||chr(10)||
+'<div class="rounded-corner-region-alt" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||unistr('\000a')||
+'    <div class="rc-title">#TITLE#</div>'||unistr('\000a')||
+'  </div></div>'||unistr('\000a')||
+'  <div class="rc-body"><div class="rc-body-r">'||unistr('\000a')||
+'<div class="rc-content-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||unistr('\000a')||
+'    <div class="rc-content-main">'||unistr('\000a')||
 '    '||
-'#BODY#'||chr(10)||
-'    </div>'||chr(10)||
-'  </div></div>'||chr(10)||
-'  <div class="rc-bottom"><div class="rc-bottom-r"></div></div>'||chr(10)||
+'#BODY#'||unistr('\000a')||
+'    </div>'||unistr('\000a')||
+'  </div></div>'||unistr('\000a')||
+'  <div class="rc-bottom"><div class="rc-bottom-r"></div></div>'||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Report List'
  ,p_plug_table_bgcolor => '#ffffff'
@@ -8632,26 +8388,11 @@ wwv_flow_api.create_plug_template (
  ,p_theme_class_id => 29
  ,p_plug_heading_bgcolor => '#ffffff'
  ,p_plug_font_size => '-1'
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
  ,p_template_comment => 'Red Theme'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17332545141409410 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -8665,16 +8406,17 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17332845056409410 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="rounded-corner-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||chr(10)||
-'    <div class="rc-title">#TITLE#</div>'||chr(10)||
-'  </div></div>'||chr(10)||
-'  <div class="rc-body"><div class="rc-body-r">'||chr(10)||
-'<div class="rc-content-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||chr(10)||
+'<div class="rounded-corner-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||unistr('\000a')||
+'    <div class="rc-title">#TITLE#</div>'||unistr('\000a')||
+'  </div></div>'||unistr('\000a')||
+'  <div class="rc-body"><div class="rc-body-r">'||unistr('\000a')||
+'<div class="rc-content-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||unistr('\000a')||
 '<div class="rc-content-main">#BODY#<div cl'||
-'ass="clear"></div></div></div></div>'||chr(10)||
-'  <div class="rc-bottom"><div class="rc-bottom-r"></div></div>'||chr(10)||
+'ass="clear"></div></div></div></div>'||unistr('\000a')||
+'  <div class="rc-bottom"><div class="rc-bottom-r"></div></div>'||unistr('\000a')||
 '</div> '
  ,p_page_plug_template_name => 'Reports Region'
  ,p_plug_table_bgcolor => '#ffffff'
@@ -8682,26 +8424,11 @@ wwv_flow_api.create_plug_template (
  ,p_theme_class_id => 9
  ,p_plug_heading_bgcolor => '#ffffff'
  ,p_plug_font_size => '-1'
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
  ,p_template_comment => 'Red Theme'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17332845056409410 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -8715,17 +8442,18 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17333159174409410 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="rounded-corner-region float-left-100pct" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||chr(10)||
-'    <div class="rc-title">#TITLE#</div>'||chr(10)||
-'  </div></div>'||chr(10)||
-'  <div class="rc-body"><div class="rc-body-r">'||chr(10)||
-'<div class="rc-content-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||chr(10)||
+'<div class="rounded-corner-region float-left-100pct" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||unistr('\000a')||
+'    <div class="rc-title">#TITLE#</div>'||unistr('\000a')||
+'  </div></div>'||unistr('\000a')||
+'  <div class="rc-body"><div class="rc-body-r">'||unistr('\000a')||
+'<div class="rc-content-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||unistr('\000a')||
 '<div class="rc-content-m'||
-'ain">#BODY#<div class="clear"></div></div></div></div>'||chr(10)||
-'  <div class="rc-bottom"><div class="rc-bottom-r"></div></div>'||chr(10)||
-'</div>'||chr(10)||
+'ain">#BODY#<div class="clear"></div></div></div></div>'||unistr('\000a')||
+'  <div class="rc-bottom"><div class="rc-bottom-r"></div></div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
 ''
  ,p_page_plug_template_name => 'Reports Region 100% Width'
  ,p_plug_table_bgcolor => '#ffffff'
@@ -8733,26 +8461,11 @@ wwv_flow_api.create_plug_template (
  ,p_theme_class_id => 13
  ,p_plug_heading_bgcolor => '#ffffff'
  ,p_plug_font_size => '-1'
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
  ,p_template_comment => 'Red Theme'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17333159174409410 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -8766,50 +8479,36 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17333461960409410 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="rounded-corner-region-blank-white" id="#REGION_STATIC_ID#"  #REGION_ATTRIBUTES#>'||chr(10)||
-'	<div class="rc-gray-top">'||chr(10)||
-'		<div class="rc-gray-top-r"></div>'||chr(10)||
-'	</div>'||chr(10)||
-'	<div class="rc-body">'||chr(10)||
-'		<div class="rc-body-r">'||chr(10)||
-'			<div class="rc-content-main">'||chr(10)||
-'				#BODY#'||chr(10)||
-'				<div class="clear"></div>'||chr(10)||
-'			</div>'||chr(10)||
-'			<div class="rc-content-buttons">'||chr(10)||
+'<div class="rounded-corner-region-blank-white" id="#REGION_STATIC_ID#"  #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'	<div class="rc-gray-top">'||unistr('\000a')||
+'		<div class="rc-gray-top-r"></div>'||unistr('\000a')||
+'	</div>'||unistr('\000a')||
+'	<div class="rc-body">'||unistr('\000a')||
+'		<div class="rc-body-r">'||unistr('\000a')||
+'			<div class="rc-content-main">'||unistr('\000a')||
+'				#BODY#'||unistr('\000a')||
+'				<div class="clear"></div>'||unistr('\000a')||
+'			</div>'||unistr('\000a')||
+'			<div class="rc-content-buttons">'||unistr('\000a')||
 '				#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##'||
-'EXPAND##COPY##HELP#'||chr(10)||
-'			</div>'||chr(10)||
-'			<div class="clear"></div>'||chr(10)||
-'		</div>'||chr(10)||
-'	</div>'||chr(10)||
-'	<div class="rc-bottom">'||chr(10)||
-'		<div class="rc-bottom-r"></div>'||chr(10)||
-'	</div>'||chr(10)||
+'EXPAND##COPY##HELP#'||unistr('\000a')||
+'			</div>'||unistr('\000a')||
+'			<div class="clear"></div>'||unistr('\000a')||
+'		</div>'||unistr('\000a')||
+'	</div>'||unistr('\000a')||
+'	<div class="rc-bottom">'||unistr('\000a')||
+'		<div class="rc-bottom-r"></div>'||unistr('\000a')||
+'	</div>'||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Reports Region No Title'
  ,p_theme_id => 22
  ,p_theme_class_id => 9
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17333461960409410 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -8823,50 +8522,36 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17333740624409410 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="rounded-corner-region-blank-alt" id="#REGION_STATIC_ID#"  #REGION_ATTRIBUTES#>'||chr(10)||
-'	<div class="rc-gray-top">'||chr(10)||
-'		<div class="rc-gray-top-r"></div>'||chr(10)||
-'	</div>'||chr(10)||
-'	<div class="rc-body">'||chr(10)||
-'		<div class="rc-body-r">'||chr(10)||
-'			<div class="rc-content-main">'||chr(10)||
-'				#BODY#'||chr(10)||
-'				<div class="clear"></div>'||chr(10)||
-'			</div>'||chr(10)||
-'			<div class="rc-content-buttons">'||chr(10)||
+'<div class="rounded-corner-region-blank-alt" id="#REGION_STATIC_ID#"  #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'	<div class="rc-gray-top">'||unistr('\000a')||
+'		<div class="rc-gray-top-r"></div>'||unistr('\000a')||
+'	</div>'||unistr('\000a')||
+'	<div class="rc-body">'||unistr('\000a')||
+'		<div class="rc-body-r">'||unistr('\000a')||
+'			<div class="rc-content-main">'||unistr('\000a')||
+'				#BODY#'||unistr('\000a')||
+'				<div class="clear"></div>'||unistr('\000a')||
+'			</div>'||unistr('\000a')||
+'			<div class="rc-content-buttons">'||unistr('\000a')||
 '				#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EX'||
-'PAND##COPY##HELP#'||chr(10)||
-'			</div>'||chr(10)||
-'			<div class="clear"></div>'||chr(10)||
-'		</div>'||chr(10)||
-'	</div>'||chr(10)||
-'	<div class="rc-bottom">'||chr(10)||
-'		<div class="rc-bottom-r"></div>'||chr(10)||
-'	</div>'||chr(10)||
+'PAND##COPY##HELP#'||unistr('\000a')||
+'			</div>'||unistr('\000a')||
+'			<div class="clear"></div>'||unistr('\000a')||
+'		</div>'||unistr('\000a')||
+'	</div>'||unistr('\000a')||
+'	<div class="rc-bottom">'||unistr('\000a')||
+'		<div class="rc-bottom-r"></div>'||unistr('\000a')||
+'	</div>'||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Reports Region No Title, Alternative 1'
  ,p_theme_id => 22
  ,p_theme_class_id => 10
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17333740624409410 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -8880,19 +8565,20 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17334061330409410 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="rounded-corner-region-alt" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||chr(10)||
-'    <div class="rc-title">#TITLE#</div>'||chr(10)||
-'  </div></div>'||chr(10)||
-'  <div class="rc-body"><div class="rc-body-r">'||chr(10)||
-'<div class="rc-content-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||chr(10)||
+'<div class="rounded-corner-region-alt" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||unistr('\000a')||
+'    <div class="rc-title">#TITLE#</div>'||unistr('\000a')||
+'  </div></div>'||unistr('\000a')||
+'  <div class="rc-body"><div class="rc-body-r">'||unistr('\000a')||
+'<div class="rc-content-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||unistr('\000a')||
 '<div class="rc-content-main">#BODY#<di'||
-'v class="clear"></div>'||chr(10)||
-'<div class="clear"></div>'||chr(10)||
-'</div>'||chr(10)||
-'</div></div>'||chr(10)||
-'  <div class="rc-bottom"><div class="rc-bottom-r"></div></div>'||chr(10)||
+'v class="clear"></div>'||unistr('\000a')||
+'<div class="clear"></div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
+'</div></div>'||unistr('\000a')||
+'  <div class="rc-bottom"><div class="rc-bottom-r"></div></div>'||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Reports Region, Alternative 1'
  ,p_plug_table_bgcolor => '#ffffff'
@@ -8900,26 +8586,11 @@ wwv_flow_api.create_plug_template (
  ,p_theme_class_id => 10
  ,p_plug_heading_bgcolor => '#ffffff'
  ,p_plug_font_size => '-1'
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
  ,p_template_comment => 'Red Theme'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17334061330409410 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -8933,17 +8604,18 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17334362203409410 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="sidebar-region">'||chr(10)||
-'<div class="rounded-corner-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||chr(10)||
-'    <div class="rc-title">#TITLE#</div>'||chr(10)||
-'  </div></div>'||chr(10)||
-'  <div class="rc-body"><div class="rc-body-r">'||chr(10)||
-'<div class="rc-content-main">#BODY#<div class="clear"></div></div></div></div>'||chr(10)||
+'<div class="sidebar-region">'||unistr('\000a')||
+'<div class="rounded-corner-region" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||unistr('\000a')||
+'    <div class="rc-title">#TITLE#</div>'||unistr('\000a')||
+'  </div></div>'||unistr('\000a')||
+'  <div class="rc-body"><div class="rc-body-r">'||unistr('\000a')||
+'<div class="rc-content-main">#BODY#<div class="clear"></div></div></div></div>'||unistr('\000a')||
 '  <div class="rc-bottom"><div class="rc-bottom-r"></div'||
-'></div>'||chr(10)||
-'</div> '||chr(10)||
+'></div>'||unistr('\000a')||
+'</div> '||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Sidebar Region'
  ,p_plug_table_bgcolor => '#f7f7e7'
@@ -8951,87 +8623,72 @@ wwv_flow_api.create_plug_template (
  ,p_theme_class_id => 2
  ,p_plug_heading_bgcolor => '#f7f7e7'
  ,p_plug_font_size => '-1'
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
- ,p_template_comment => '<table border="0" cellpadding="0" cellspacing="0">'||chr(10)||
-'        <tr>'||chr(10)||
-'          <td rowspan="2" valign="top" width="4" bgcolor="#FF0000"><img src="#IMAGE_PREFIX#tl_img.gif" border="0" width="4" height="18" alt="" /></td>'||chr(10)||
-'          <td bgcolor="#000000" height="1"><img src="#IMAGE_PREFIX#stretch.gif" width="142" height="1" border="0" alt="" /></td>'||chr(10)||
-'          <td rowspan="2" valign="top" width="4" bgcolor="#FF0000"><img src="#IMAGE_PREFIX#tr_img.gif" border="0" width="4" height="18" alt="" /></td>'||chr(10)||
-'        </tr>'||chr(10)||
-'        <tr>'||chr(10)||
-'          <td bgcolor="#FF0000" height="16">'||chr(10)||
-'            <table border="0" cellpadding="0" cellspacing="0" width="100%">'||chr(10)||
-'              <tr>'||chr(10)||
-'                <td align=middle valign="top">'||chr(10)||
-'                  <div align="center">'||chr(10)||
-'                     <font color="#ffffff" face="Arial, Helvetica, sans-serif" size="1">'||chr(10)||
-'                      <b>#TITLE# </b></font></div>'||chr(10)||
-'                </td>'||chr(10)||
-'              </tr>'||chr(10)||
-'            </table>'||chr(10)||
-'          </td>'||chr(10)||
-'        </tr>'||chr(10)||
-'</table>'||chr(10)||
-'<table border="0" cellpadding="0" cellspacing="0">'||chr(10)||
-'   <tr>'||chr(10)||
-'   <td bgcolor="#000000" width="1" height="96"><img src="#IMAGE_PREFIX#stretch.gif" width="1" height="1" border="0" alt="" /></td>'||chr(10)||
-'   <td valign="top" height="96"><img src="#IMAGE_PREFIX#stretch.gif" width="146" height="1" border="0" alt="" /><br />'||chr(10)||
-'            <table border="0" cellpadding="1" cellspacing="0" width="146" summary="">'||chr(10)||
-'              <tr>'||chr(10)||
-'                <td colspan="2">'||chr(10)||
-'                  <table border="0" cellpadding="2" cellspacing="0" width="124" summary="">'||chr(10)||
-'                    <tr>'||chr(10)||
-'                      <td>&nbsp;</td>'||chr(10)||
-'                      <td valign="top" width="106">'||chr(10)||
-'                        <P><FONT face="arial, helvetica" size="1">'||chr(10)||
-'                            #BODY#'||chr(10)||
-'                           </font>'||chr(10)||
-'                        </P>'||chr(10)||
-'                      </td>'||chr(10)||
-'                    </tr>'||chr(10)||
-'                  </table>'||chr(10)||
-'            </table>'||chr(10)||
-'          </td>'||chr(10)||
-'          <td bgcolor="#000000" width="1" height="96"><img src="#IMAGE_PREFIX#stretch.gif" width="1" height="1" border="0" alt="" /></td>'||chr(10)||
-'          <td bgcolor="#9a9c9a" width="1" height="96"><img src="#IMAGE_PREFIX#stretch.gif" width="1" height="1" border="0" alt="" /></td>'||chr(10)||
-'          <td bgcolor="#b3b4b3" width="1" height="96"><img src="#IMAGE_PREFIX#stretch.gif" width="1" height="1" border="0" alt="" /></td>'||chr(10)||
-'        </tr>'||chr(10)||
-'      </table>'||chr(10)||
-'      <table border="0" cellpadding="0" cellspacing="0">'||chr(10)||
-'        <tr>'||chr(10)||
-'          <td rowspan="4" valign="top" width="4"><img src="#IMAGE_PREFIX#bl_img.gif" border="0" width="4" height="6" alt="" /></td>'||chr(10)||
-'          <td bgcolor="#ffffff" height="2"><img src="#IMAGE_PREFIX#stretch.gif" width="142" height="1" border="0" alt="" /></td>'||chr(10)||
-'          <td rowspan="4" valign="top" width="4"><img src="#IMAGE_PREFIX#br_img.gif" border="0" width="4" height="6" alt="" /></td>'||chr(10)||
-'        </tr>'||chr(10)||
-'        <tr>'||chr(10)||
-'          <td bgcolor="#000000" width="1"><img src="#IMAGE_PREFIX#stretch.gif" width="1" height="1" border="0" alt="" /></td>'||chr(10)||
-'        </tr>'||chr(10)||
-'        <tr>'||chr(10)||
-'          <td bgcolor="#9a9c9a" width="1"><img src="#IMAGE_PREFIX#stretch.gif" width="1" height="1" border="0" alt="" /></td>'||chr(10)||
-'        </tr>'||chr(10)||
-'        <tr>'||chr(10)||
-'          <td bgcolor="#b3b4b3" width="1" height="2"><img src="#IMAGE_PREFIX#stretch.gif" width="1" height="1" border="0" alt="" /></td>'||chr(10)||
-'        </tr>'||chr(10)||
-'</table>'||chr(10)||
+ ,p_template_comment => '<table border="0" cellpadding="0" cellspacing="0">'||unistr('\000a')||
+'        <tr>'||unistr('\000a')||
+'          <td rowspan="2" valign="top" width="4" bgcolor="#FF0000"><img src="#IMAGE_PREFIX#tl_img.gif" border="0" width="4" height="18" alt="" /></td>'||unistr('\000a')||
+'          <td bgcolor="#000000" height="1"><img src="#IMAGE_PREFIX#stretch.gif" width="142" height="1" border="0" alt="" /></td>'||unistr('\000a')||
+'          <td rowspan="2" valign="top" width="4" bgcolor="#FF0000"><img src="#IMAGE_PREFIX#tr_img.gif" border="0" width="4" height="18" alt="" /></td>'||unistr('\000a')||
+'        </tr>'||unistr('\000a')||
+'        <tr>'||unistr('\000a')||
+'          <td bgcolor="#FF0000" height="16">'||unistr('\000a')||
+'            <table border="0" cellpadding="0" cellspacing="0" width="100%">'||unistr('\000a')||
+'              <tr>'||unistr('\000a')||
+'                <td align=middle valign="top">'||unistr('\000a')||
+'                  <div align="center">'||unistr('\000a')||
+'                     <font color="#ffffff" face="Arial, Helvetica, sans-serif" size="1">'||unistr('\000a')||
+'                      <b>#TITLE# </b></font></div>'||unistr('\000a')||
+'                </td>'||unistr('\000a')||
+'              </tr>'||unistr('\000a')||
+'            </table>'||unistr('\000a')||
+'          </td>'||unistr('\000a')||
+'        </tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
+'<table border="0" cellpadding="0" cellspacing="0">'||unistr('\000a')||
+'   <tr>'||unistr('\000a')||
+'   <td bgcolor="#000000" width="1" height="96"><img src="#IMAGE_PREFIX#stretch.gif" width="1" height="1" border="0" alt="" /></td>'||unistr('\000a')||
+'   <td valign="top" height="96"><img src="#IMAGE_PREFIX#stretch.gif" width="146" height="1" border="0" alt="" /><br />'||unistr('\000a')||
+'            <table border="0" cellpadding="1" cellspacing="0" width="146" summary="">'||unistr('\000a')||
+'              <tr>'||unistr('\000a')||
+'                <td colspan="2">'||unistr('\000a')||
+'                  <table border="0" cellpadding="2" cellspacing="0" width="124" summary="">'||unistr('\000a')||
+'                    <tr>'||unistr('\000a')||
+'                      <td>&nbsp;</td>'||unistr('\000a')||
+'                      <td valign="top" width="106">'||unistr('\000a')||
+'                        <P><FONT face="arial, helvetica" size="1">'||unistr('\000a')||
+'                            #BODY#'||unistr('\000a')||
+'                           </font>'||unistr('\000a')||
+'                        </P>'||unistr('\000a')||
+'                      </td>'||unistr('\000a')||
+'                    </tr>'||unistr('\000a')||
+'                  </table>'||unistr('\000a')||
+'            </table>'||unistr('\000a')||
+'          </td>'||unistr('\000a')||
+'          <td bgcolor="#000000" width="1" height="96"><img src="#IMAGE_PREFIX#stretch.gif" width="1" height="1" border="0" alt="" /></td>'||unistr('\000a')||
+'          <td bgcolor="#9a9c9a" width="1" height="96"><img src="#IMAGE_PREFIX#stretch.gif" width="1" height="1" border="0" alt="" /></td>'||unistr('\000a')||
+'          <td bgcolor="#b3b4b3" width="1" height="96"><img src="#IMAGE_PREFIX#stretch.gif" width="1" height="1" border="0" alt="" /></td>'||unistr('\000a')||
+'        </tr>'||unistr('\000a')||
+'      </table>'||unistr('\000a')||
+'      <table border="0" cellpadding="0" cellspacing="0">'||unistr('\000a')||
+'        <tr>'||unistr('\000a')||
+'          <td rowspan="4" valign="top" width="4"><img src="#IMAGE_PREFIX#bl_img.gif" border="0" width="4" height="6" alt="" /></td>'||unistr('\000a')||
+'          <td bgcolor="#ffffff" height="2"><img src="#IMAGE_PREFIX#stretch.gif" width="142" height="1" border="0" alt="" /></td>'||unistr('\000a')||
+'          <td rowspan="4" valign="top" width="4"><img src="#IMAGE_PREFIX#br_img.gif" border="0" width="4" height="6" alt="" /></td>'||unistr('\000a')||
+'        </tr>'||unistr('\000a')||
+'        <tr>'||unistr('\000a')||
+'          <td bgcolor="#000000" width="1"><img src="#IMAGE_PREFIX#stretch.gif" width="1" height="1" border="0" alt="" /></td>'||unistr('\000a')||
+'        </tr>'||unistr('\000a')||
+'        <tr>'||unistr('\000a')||
+'          <td bgcolor="#9a9c9a" width="1"><img src="#IMAGE_PREFIX#stretch.gif" width="1" height="1" border="0" alt="" /></td>'||unistr('\000a')||
+'        </tr>'||unistr('\000a')||
+'        <tr>'||unistr('\000a')||
+'          <td bgcolor="#b3b4b3" width="1" height="2"><img src="#IMAGE_PREFIX#stretch.gif" width="1" height="1" border="0" alt="" /></td>'||unistr('\000a')||
+'        </tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
 ''
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17334362203409410 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -9045,17 +8702,18 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17334649764409410 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="sidebar-region">'||chr(10)||
-'<div class="rounded-corner-region-alt" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||chr(10)||
-'    <div class="rc-title">#TITLE#</div>'||chr(10)||
-'  </div></div>'||chr(10)||
-'  <div class="rc-body"><div class="rc-body-r">'||chr(10)||
-'<div class="rc-content-main">#BODY#<div class="clear"></div></div></div></div>'||chr(10)||
+'<div class="sidebar-region">'||unistr('\000a')||
+'<div class="rounded-corner-region-alt" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||unistr('\000a')||
+'    <div class="rc-title">#TITLE#</div>'||unistr('\000a')||
+'  </div></div>'||unistr('\000a')||
+'  <div class="rc-body"><div class="rc-body-r">'||unistr('\000a')||
+'<div class="rc-content-main">#BODY#<div class="clear"></div></div></div></div>'||unistr('\000a')||
 '  <div class="rc-bottom"><div class="rc-bottom-r"><'||
-'/div></div>'||chr(10)||
-'</div> '||chr(10)||
+'/div></div>'||unistr('\000a')||
+'</div> '||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Sidebar Region, Alternative 1'
  ,p_plug_table_bgcolor => '#f7f7e7'
@@ -9063,25 +8721,10 @@ wwv_flow_api.create_plug_template (
  ,p_theme_class_id => 3
  ,p_plug_heading_bgcolor => '#f7f7e7'
  ,p_plug_font_size => '-1'
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17334649764409410 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -9095,50 +8738,36 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17334932023409411 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="rounded-corner-region-blank-white sidebar-alt2" id="#REGION_STATIC_ID#"  #REGION_ATTRIBUTES#>'||chr(10)||
-'	<div class="rc-gray-top">'||chr(10)||
-'		<div class="rc-gray-top-r"></div>'||chr(10)||
-'	</div>'||chr(10)||
-'	<div class="rc-body">'||chr(10)||
-'		<div class="rc-body-r">'||chr(10)||
-'			<div class="rc-content-main">'||chr(10)||
-'				#BODY#'||chr(10)||
-'				<div class="clear"></div>'||chr(10)||
-'			</div>'||chr(10)||
-'			<div class="rc-content-buttons">'||chr(10)||
+'<div class="rounded-corner-region-blank-white sidebar-alt2" id="#REGION_STATIC_ID#"  #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'	<div class="rc-gray-top">'||unistr('\000a')||
+'		<div class="rc-gray-top-r"></div>'||unistr('\000a')||
+'	</div>'||unistr('\000a')||
+'	<div class="rc-body">'||unistr('\000a')||
+'		<div class="rc-body-r">'||unistr('\000a')||
+'			<div class="rc-content-main">'||unistr('\000a')||
+'				#BODY#'||unistr('\000a')||
+'				<div class="clear"></div>'||unistr('\000a')||
+'			</div>'||unistr('\000a')||
+'			<div class="rc-content-buttons">'||unistr('\000a')||
 '				#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREA'||
-'TE##CREATE2##EXPAND##COPY##HELP#'||chr(10)||
-'			</div>'||chr(10)||
-'			<div class="clear"></div>'||chr(10)||
-'		</div>'||chr(10)||
-'	</div>'||chr(10)||
-'	<div class="rc-bottom">'||chr(10)||
-'		<div class="rc-bottom-r"></div>'||chr(10)||
-'	</div>'||chr(10)||
+'TE##CREATE2##EXPAND##COPY##HELP#'||unistr('\000a')||
+'			</div>'||unistr('\000a')||
+'			<div class="clear"></div>'||unistr('\000a')||
+'		</div>'||unistr('\000a')||
+'	</div>'||unistr('\000a')||
+'	<div class="rc-bottom">'||unistr('\000a')||
+'		<div class="rc-bottom-r"></div>'||unistr('\000a')||
+'	</div>'||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Sidebar Region, Bordered'
  ,p_theme_id => 22
  ,p_theme_class_id => 3
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17334932023409411 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -9152,50 +8781,36 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17335247488409411 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="rounded-corner-region-blank-alt sidebar-alt2" id="#REGION_STATIC_ID#"  #REGION_ATTRIBUTES#>'||chr(10)||
-'	<div class="rc-gray-top">'||chr(10)||
-'		<div class="rc-gray-top-r"></div>'||chr(10)||
-'	</div>'||chr(10)||
-'	<div class="rc-body">'||chr(10)||
-'		<div class="rc-body-r">'||chr(10)||
-'			<div class="rc-content-main">'||chr(10)||
-'				#BODY#'||chr(10)||
-'				<div class="clear"></div>'||chr(10)||
-'			</div>'||chr(10)||
-'			<div class="rc-content-buttons">'||chr(10)||
+'<div class="rounded-corner-region-blank-alt sidebar-alt2" id="#REGION_STATIC_ID#"  #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'	<div class="rc-gray-top">'||unistr('\000a')||
+'		<div class="rc-gray-top-r"></div>'||unistr('\000a')||
+'	</div>'||unistr('\000a')||
+'	<div class="rc-body">'||unistr('\000a')||
+'		<div class="rc-body-r">'||unistr('\000a')||
+'			<div class="rc-content-main">'||unistr('\000a')||
+'				#BODY#'||unistr('\000a')||
+'				<div class="clear"></div>'||unistr('\000a')||
+'			</div>'||unistr('\000a')||
+'			<div class="rc-content-buttons">'||unistr('\000a')||
 '				#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE'||
-'##CREATE2##EXPAND##COPY##HELP#'||chr(10)||
-'			</div>'||chr(10)||
-'			<div class="clear"></div>'||chr(10)||
-'		</div>'||chr(10)||
-'	</div>'||chr(10)||
-'	<div class="rc-bottom">'||chr(10)||
-'		<div class="rc-bottom-r"></div>'||chr(10)||
-'	</div>'||chr(10)||
+'##CREATE2##EXPAND##COPY##HELP#'||unistr('\000a')||
+'			</div>'||unistr('\000a')||
+'			<div class="clear"></div>'||unistr('\000a')||
+'		</div>'||unistr('\000a')||
+'	</div>'||unistr('\000a')||
+'	<div class="rc-bottom">'||unistr('\000a')||
+'		<div class="rc-bottom-r"></div>'||unistr('\000a')||
+'	</div>'||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Sidebar Region, Bordered Alternative'
  ,p_theme_id => 22
  ,p_theme_class_id => 3
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17335247488409411 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -9209,39 +8824,25 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17335553776409411 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="rounded-corner-region-wizard" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||chr(10)||
-'    <div class="rc-title">#TITLE#</div>'||chr(10)||
-'<div class="rc-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||chr(10)||
-'  </div></div>'||chr(10)||
-'  <div class="rc-body"><div class="rc-body-r">'||chr(10)||
+'<div class="rounded-corner-region-wizard" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||unistr('\000a')||
+'    <div class="rc-title">#TITLE#</div>'||unistr('\000a')||
+'<div class="rc-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||unistr('\000a')||
+'  </div></div>'||unistr('\000a')||
+'  <div class="rc-body"><div class="rc-body-r">'||unistr('\000a')||
 '<div class="rc-content-main">#BODY#<div cla'||
-'ss="clear"></div></div></div></div>'||chr(10)||
-'  <div class="rc-bottom"><div class="rc-bottom-r"></div></div>'||chr(10)||
+'ss="clear"></div></div></div></div>'||unistr('\000a')||
+'  <div class="rc-bottom"><div class="rc-bottom-r"></div></div>'||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Wizard Region'
  ,p_theme_id => 22
  ,p_theme_class_id => 12
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17335553776409411 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -9255,39 +8856,25 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 17335862307409411 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<div class="rounded-corner-region-wizard" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||chr(10)||
-'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||chr(10)||
-'    <div class="rc-title">#TITLE#</div>'||chr(10)||
-'<div class="rc-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||chr(10)||
-'  </div></div>'||chr(10)||
-'  <div class="rc-body"><div class="rc-body-r">'||chr(10)||
+'<div class="rounded-corner-region-wizard" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>'||unistr('\000a')||
+'  <div class="rc-gray-top"><div class="rc-gray-top-r">'||unistr('\000a')||
+'    <div class="rc-title">#TITLE#</div>'||unistr('\000a')||
+'<div class="rc-buttons">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</div>'||unistr('\000a')||
+'  </div></div>'||unistr('\000a')||
+'  <div class="rc-body"><div class="rc-body-r">'||unistr('\000a')||
 '<div class="rc-content-main">#BODY#<div cla'||
-'ss="clear"></div></div></div></div>'||chr(10)||
-'  <div class="rc-bottom"><div class="rc-bottom-r"></div></div>'||chr(10)||
+'ss="clear"></div></div></div></div>'||unistr('\000a')||
+'  <div class="rc-bottom"><div class="rc-bottom-r"></div></div>'||unistr('\000a')||
 '</div>'
  ,p_page_plug_template_name => 'Wizard Region with Icon'
  ,p_theme_id => 22
  ,p_theme_class_id => 20
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 17335862307409411 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -9301,35 +8888,21 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 56532314559997446 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<table cellspacing="0" border="0" summary="" class="t15ButtonRegionwithoutTitle" id="#REGION_ID#">'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>'||chr(10)||
+'<table cellspacing="0" border="0" summary="" class="t15ButtonRegionwithoutTitle" id="#REGION_ID#">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
 '#BODY#'
  ,p_page_plug_template_name => 'Button Region without Title'
  ,p_theme_id => 15
  ,p_theme_class_id => 17
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 56532314559997446 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -9343,38 +8916,24 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 56532429495997459 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<table cellpadding="0" cellspacing="0" border="0" summary="" class="t15BorderlessRegion" id="#REGION_ID#">'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="t15RegionHeader">#TITLE#</td>'||chr(10)||
-'<td align="right" class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="t15Body" colspan="2">#BODY#</td>'||chr(10)||
-'</tr>'||chr(10)||
+'<table cellpadding="0" cellspacing="0" border="0" summary="" class="t15BorderlessRegion" id="#REGION_ID#">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="t15RegionHeader">#TITLE#</td>'||unistr('\000a')||
+'<td align="right" class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="t15Body" colspan="2">#BODY#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 '</table>'
  ,p_page_plug_template_name => 'Borderless Region'
  ,p_theme_id => 15
  ,p_theme_class_id => 7
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 56532429495997459 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -9388,40 +8947,26 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 56532502984997459 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<table cellspacing="0" cellpadding="0" border="0" class="t15SidebarRegionAlt1" summary="" id="#REGION_ID#">'||chr(10)||
-'<tr class="t15RegionHeader">'||chr(10)||
-'<th class="L" valign="top"><img src="#IMAGE_PREFIX#1px_trans.gif" width="10" height="10" alt="" /></th>'||chr(10)||
-'<th class="C">#TITLE#</th>'||chr(10)||
-'<th class="R" valign="top"><img src="#IMAGE_PREFIX#1px_trans.gif" width="10" height="10" alt="" /></th>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr>'||chr(10)||
+'<table cellspacing="0" cellpadding="0" border="0" class="t15SidebarRegionAlt1" summary="" id="#REGION_ID#">'||unistr('\000a')||
+'<tr class="t15RegionHeader">'||unistr('\000a')||
+'<th class="L" valign="top"><img src="#IMAGE_PREFIX#1px_trans.gif" width="10" height="10" alt="" /></th>'||unistr('\000a')||
+'<th class="C">#TITLE#</th>'||unistr('\000a')||
+'<th class="R" valign="top"><img src="#IMAGE_PREFIX#1px_trans.gif" width="10" height="10" alt="" /></th>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
 '<td colspan="3" c'||
-'lass="t15Body">#BODY#<img src="#IMAGE_PREFIX#1px_trans.gif" width="200" height="1" alt="" /></td>'||chr(10)||
-'</tr>'||chr(10)||
+'lass="t15Body">#BODY#<img src="#IMAGE_PREFIX#1px_trans.gif" width="200" height="1" alt="" /></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 '</table>'
  ,p_page_plug_template_name => 'Sidebar Region, Alternative 1'
  ,p_theme_id => 15
  ,p_theme_class_id => 3
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 56532502984997459 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -9435,30 +8980,16 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 56532617724997459 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
 '<div class="t15NavigationRegion" id="#REGION_ID#">#BODY#<img src="#IMAGE_PREFIX#1px_trans.gif" width="200" height="1" alt="" class="vsp" /></div>'
  ,p_page_plug_template_name => 'Navigation Region'
  ,p_theme_id => 15
  ,p_theme_class_id => 5
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 56532617724997459 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -9472,17 +9003,18 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 56532708150997459 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<table cellspacing="0" cellpadding="0" border="0" class="t15SidebarRegion" summary="" id="#REGION_ID#">'||chr(10)||
-'<tr class="t15RegionHeader">'||chr(10)||
-'<th class="L" valign="top"><img src="#IMAGE_PREFIX#1px_trans.gif" width="10" height="10" alt="" /></th>'||chr(10)||
-'<th class="C">#TITLE#</th>'||chr(10)||
-'<th class="R" valign="top"><img src="#IMAGE_PREFIX#1px_trans.gif" width="10" height="10" alt="" /></th>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr>'||chr(10)||
+'<table cellspacing="0" cellpadding="0" border="0" class="t15SidebarRegion" summary="" id="#REGION_ID#">'||unistr('\000a')||
+'<tr class="t15RegionHeader">'||unistr('\000a')||
+'<th class="L" valign="top"><img src="#IMAGE_PREFIX#1px_trans.gif" width="10" height="10" alt="" /></th>'||unistr('\000a')||
+'<th class="C">#TITLE#</th>'||unistr('\000a')||
+'<th class="R" valign="top"><img src="#IMAGE_PREFIX#1px_trans.gif" width="10" height="10" alt="" /></th>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
 '<td colspan="3" class'||
-'="t15Body">#BODY#<img src="#IMAGE_PREFIX#1px_trans.gif" width="200" height="1" alt="" /></td>'||chr(10)||
-'</tr>'||chr(10)||
+'="t15Body">#BODY#<img src="#IMAGE_PREFIX#1px_trans.gif" width="200" height="1" alt="" /></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 '</table>'
  ,p_page_plug_template_name => 'Sidebar Region'
  ,p_plug_table_bgcolor => '#f7f7e7'
@@ -9490,25 +9022,10 @@ wwv_flow_api.create_plug_template (
  ,p_theme_class_id => 2
  ,p_plug_heading_bgcolor => '#f7f7e7'
  ,p_plug_font_size => '-1'
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 56532708150997459 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -9522,39 +9039,25 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 56532832493997459 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<table cellpadding="0" cellspacing="0" border="0" summary="" class="t15BracketedRegion" id="#REGION_ID#">'||chr(10)||
-'<tr>'||chr(10)||
-'    <td class="t15RegionHeader">#TITLE#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr>'||chr(10)||
-'    <td class="t15Bracket"><table summary=""><tr><td class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td></tr></table></td>'||chr(10)||
-'</tr>'||chr(10)||
+'<table cellpadding="0" cellspacing="0" border="0" summary="" class="t15BracketedRegion" id="#REGION_ID#">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'    <td class="t15RegionHeader">#TITLE#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'    <td class="t15Bracket"><table summary=""><tr><td class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td></tr></table></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 '<tr><td class="t15Body">#B'||
-'ODY#</td></tr>'||chr(10)||
+'ODY#</td></tr>'||unistr('\000a')||
 '</table>'
  ,p_page_plug_template_name => 'Bracketed Region'
  ,p_theme_id => 15
  ,p_theme_class_id => 18
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 56532832493997459 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -9568,30 +9071,16 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 56532925014997460 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
 '<div id="#REGION_ID#" class="t15breadcrumb">#BODY#</div>'
  ,p_page_plug_template_name => 'Breadcrumb Region'
  ,p_theme_id => 15
  ,p_theme_class_id => 6
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 56532925014997460 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -9605,17 +9094,18 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 56533003924997460 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<table cellpadding="0" cellspacing="0" border="0" summary="" class="t15ListRegionwithIcon" id="#REGION_ID#">'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="t15RegionHeader">#TITLE#</td>'||chr(10)||
-''||chr(10)||
-'<td align="right" class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td></tr>'||chr(10)||
-'<tr>'||chr(10)||
+'<table cellpadding="0" cellspacing="0" border="0" summary="" class="t15ListRegionwithIcon" id="#REGION_ID#">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="t15RegionHeader">#TITLE#</td>'||unistr('\000a')||
+''||unistr('\000a')||
+'<td align="right" class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td></tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
 '<td class="t15Body" colspan="2"><table cellpadding="0" cellspacing="0" border="0" summ'||
-'ary="" ><tr><td valign="top"><img src="#IMAGE_PREFIX#themes/theme_15/monitor_icons_graph.gif" alt=""/></td>'||chr(10)||
-'<td>#BODY#</td></tr></table></td>'||chr(10)||
-'</tr>'||chr(10)||
+'ary="" ><tr><td valign="top"><img src="#IMAGE_PREFIX#themes/theme_15/monitor_icons_graph.gif" alt=""/></td>'||unistr('\000a')||
+'<td>#BODY#</td></tr></table></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 '</table>'
  ,p_page_plug_template_name => 'List Region with Icon - Chart List'
  ,p_plug_table_bgcolor => '#ffffff'
@@ -9623,26 +9113,11 @@ wwv_flow_api.create_plug_template (
  ,p_theme_class_id => 29
  ,p_plug_heading_bgcolor => '#ffffff'
  ,p_plug_font_size => '-1'
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
  ,p_template_comment => 'Red Theme'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 56533003924997460 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -9656,37 +9131,23 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 56533104607997460 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<table summary="" id="#REGION_ID#">'||chr(10)||
-'<tr>'||chr(10)||
-'<td align="right">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr>'||chr(10)||
-'<td align="left" class="t15instructiontext">#BODY#</td>'||chr(10)||
-'</tr>'||chr(10)||
+'<table summary="" id="#REGION_ID#">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td align="right">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td align="left" class="t15instructiontext">#BODY#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 '</table>'
  ,p_page_plug_template_name => 'Region without Title'
  ,p_theme_id => 15
  ,p_theme_class_id => 11
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 56533104607997460 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -9700,40 +9161,26 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 56533205186997460 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<table class="t15WizardRegion" id="#REGION_ID#" summary="">'||chr(10)||
-'<thead class="t15RegionHeader">'||chr(10)||
-'<tr>'||chr(10)||
-'<th class="t15RegionTitle">#TITLE#</th>'||chr(10)||
-'<td align="right" class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'</thead>'||chr(10)||
-'<tbody>'||chr(10)||
-'<tr><td colspan="2" class="t15Body">#BODY#</td></tr>'||chr(10)||
-'</tbody>'||chr(10)||
+'<table class="t15WizardRegion" id="#REGION_ID#" summary="">'||unistr('\000a')||
+'<thead class="t15RegionHeader">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<th class="t15RegionTitle">#TITLE#</th>'||unistr('\000a')||
+'<td align="right" class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</thead>'||unistr('\000a')||
+'<tbody>'||unistr('\000a')||
+'<tr><td colspan="2" class="t15Body">#BODY#</td></tr>'||unistr('\000a')||
+'</tbody>'||unistr('\000a')||
 '</table>'
  ,p_page_plug_template_name => 'Wizard Region'
  ,p_theme_id => 15
  ,p_theme_class_id => 12
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 56533205186997460 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -9747,30 +9194,16 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 56533302341997460 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
 '<div class="t15NavigationRegionAlternative1" id="#REGION_ID#"><h2 class="t15RegionHeader">#TITLE#</h2><div class="t15Body">#BODY#<img src="#IMAGE_PREFIX#1px_trans.gif" width="200" height="1" alt="" class="vsp" /></div></div>'
  ,p_page_plug_template_name => 'Navigation Region, Alternative 1'
  ,p_theme_id => 15
  ,p_theme_class_id => 16
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 56533302341997460 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -9784,36 +9217,22 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 56533418191997460 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<table summary="" cellpadding="0" cellspacing="0" border="0" class="t15RegionwithoutButtonsandTitles" id="#REGION_ID#">'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="t15Body">#BODY#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>'||chr(10)||
-''||chr(10)||
+'<table summary="" cellpadding="0" cellspacing="0" border="0" class="t15RegionwithoutButtonsandTitles" id="#REGION_ID#">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="t15Body">#BODY#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
+''||unistr('\000a')||
 ''
  ,p_page_plug_template_name => 'Region without Buttons and Titles'
  ,p_theme_id => 15
  ,p_theme_class_id => 19
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 56533418191997460 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -9827,38 +9246,24 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 56533516268997460 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<table width="100%" border="0" cellspacing="0" cellpadding="0" id="#REGION_ID#" class="t15ReportsRegion" summary="">'||chr(10)||
-'<tr>'||chr(10)||
-'<td valign="bottom" class="t15RegionHeader">#TITLE#</td>'||chr(10)||
-'<td align="right" class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td></tr>'||chr(10)||
-'<tr>'||chr(10)||
-'<td colspan="2" valign="top" class="t15Body">#BODY#</td>'||chr(10)||
-'</tr>'||chr(10)||
+'<table width="100%" border="0" cellspacing="0" cellpadding="0" id="#REGION_ID#" class="t15ReportsRegion" summary="">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td valign="bottom" class="t15RegionHeader">#TITLE#</td>'||unistr('\000a')||
+'<td align="right" class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td></tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td colspan="2" valign="top" class="t15Body">#BODY#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 ''||
 '</table>'
  ,p_page_plug_template_name => 'Reports Region'
  ,p_theme_id => 15
  ,p_theme_class_id => 9
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 56533516268997460 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -9872,14 +9277,15 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 56533603958997460 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<table cellpadding="0" cellspacing="0" border="0" summary="" class="t15ChartRegion" id="#REGION_ID#">'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="t15RegionHeader">#TITLE#</td>'||chr(10)||
-'<td align="right" class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td></tr>'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="t15Body" colspan="2">#BODY#</td>'||chr(10)||
-'</tr>'||chr(10)||
+'<table cellpadding="0" cellspacing="0" border="0" summary="" class="t15ChartRegion" id="#REGION_ID#">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="t15RegionHeader">#TITLE#</td>'||unistr('\000a')||
+'<td align="right" class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td></tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="t15Body" colspan="2">#BODY#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 '</table>'
  ,p_page_plug_template_name => 'Chart Region'
  ,p_plug_table_bgcolor => '#ffffff'
@@ -9887,25 +9293,10 @@ wwv_flow_api.create_plug_template (
  ,p_theme_class_id => 30
  ,p_plug_heading_bgcolor => '#ffffff'
  ,p_plug_font_size => '-1'
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 56533603958997460 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -9919,18 +9310,19 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 56533722239997460 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<table cellpadding="0" cellspacing="0" border="0" summary="" class="t15ListRegionwithIcon" id="#REGION_ID#">'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="t15RegionHeader">#TITLE#</td>'||chr(10)||
-''||chr(10)||
-'<td align="right" class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td></tr>'||chr(10)||
-'<tr>'||chr(10)||
+'<table cellpadding="0" cellspacing="0" border="0" summary="" class="t15ListRegionwithIcon" id="#REGION_ID#">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="t15RegionHeader">#TITLE#</td>'||unistr('\000a')||
+''||unistr('\000a')||
+'<td align="right" class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td></tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
 '<td class="t15Body" colspan="2"><table cellpadding="0" cellspacing="0" border="0" summ'||
-'ary="" ><tr>'||chr(10)||
-'<td valign="top"><img src="#IMAGE_PREFIX#themes/theme_15/provisioning_reports.gif" alt=""/></td>'||chr(10)||
-'<td>#BODY#</td></tr></table></td>'||chr(10)||
-'</tr>'||chr(10)||
+'ary="" ><tr>'||unistr('\000a')||
+'<td valign="top"><img src="#IMAGE_PREFIX#themes/theme_15/provisioning_reports.gif" alt=""/></td>'||unistr('\000a')||
+'<td>#BODY#</td></tr></table></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 '</table>'
  ,p_page_plug_template_name => 'List Region with Icon - Report List'
  ,p_plug_table_bgcolor => '#ffffff'
@@ -9938,26 +9330,11 @@ wwv_flow_api.create_plug_template (
  ,p_theme_class_id => 29
  ,p_plug_heading_bgcolor => '#ffffff'
  ,p_plug_font_size => '-1'
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
  ,p_template_comment => 'Red Theme'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 56533722239997460 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -9971,46 +9348,32 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 56533802752997460 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<table cellpadding="0" cellspacing="0" border="0" summary="" class="t15HideandShowRegion" id="#REGION_ID#">'||chr(10)||
-'<tr>'||chr(10)||
-'<td><table width="100%" cellpadding="0" cellspacing="0" border="0" summary="">'||chr(10)||
-'<tr>'||chr(10)||
+'<table cellpadding="0" cellspacing="0" border="0" summary="" class="t15HideandShowRegion" id="#REGION_ID#">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td><table width="100%" cellpadding="0" cellspacing="0" border="0" summary="">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
 '<td class="t15RegionHeader"><a style="margin-left:5px;" href="javascript:hideShow(''region#REGION_SEQUENCE_ID#'',''shIMG#REGION_SEQUENCE_ID#'',''#IMAGE_PREFIX#themes/theme_15/rollup_plus_dgray.gif'',''#IMAGE_PR'||
-'EFIX#themes/theme_15/rollup_minus_dgray.gif'');" class="t15HideandShowRegionLink"><img src="#IMAGE_PREFIX#themes/theme_15/rollup_plus_dgray.gif" '||chr(10)||
-'  id="shIMG#REGION_SEQUENCE_ID#" alt="" /></a>#TITLE#</td>'||chr(10)||
-'<td class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table></td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr>'||chr(10)||
+'EFIX#themes/theme_15/rollup_minus_dgray.gif'');" class="t15HideandShowRegionLink"><img src="#IMAGE_PREFIX#themes/theme_15/rollup_plus_dgray.gif" '||unistr('\000a')||
+'  id="shIMG#REGION_SEQUENCE_ID#" alt="" /></a>#TITLE#</td>'||unistr('\000a')||
+'<td class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
 '<td class="t15Body"><div class='||
-'"t15Hide" id="region#REGION_SEQUENCE_ID#">#BODY#</div></td>'||chr(10)||
-'</tr>'||chr(10)||
+'"t15Hide" id="region#REGION_SEQUENCE_ID#">#BODY#</div></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 '</table>'
  ,p_page_plug_template_name => 'Hide and Show Region'
  ,p_theme_id => 15
  ,p_theme_class_id => 1
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
  ,p_template_comment => 'Gray Head, white body'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 56533802752997460 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -10024,40 +9387,26 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 56533926166997460 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<table class="t15WizardRegion" id="#REGION_ID#" summary="">'||chr(10)||
-'<thead class="t15RegionHeader">'||chr(10)||
-'<tr>'||chr(10)||
-'<th class="t15RegionTitle">#TITLE#</th>'||chr(10)||
-'<td align="right" class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'</thead>'||chr(10)||
-'<tbody>'||chr(10)||
-'<tr><td colspan="2" class="t15Body">#BODY#</td></tr>'||chr(10)||
-'</tbody>'||chr(10)||
+'<table class="t15WizardRegion" id="#REGION_ID#" summary="">'||unistr('\000a')||
+'<thead class="t15RegionHeader">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<th class="t15RegionTitle">#TITLE#</th>'||unistr('\000a')||
+'<td align="right" class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</thead>'||unistr('\000a')||
+'<tbody>'||unistr('\000a')||
+'<tr><td colspan="2" class="t15Body">#BODY#</td></tr>'||unistr('\000a')||
+'</tbody>'||unistr('\000a')||
 '</table>'
  ,p_page_plug_template_name => 'Wizard Region with Icon'
  ,p_theme_id => 15
  ,p_theme_class_id => 20
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 56533926166997460 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -10071,15 +9420,16 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 56534027572997460 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<table cellpadding="0" cellspacing="0" border="0" summary="" width="100%" class="t15ReportsRegion100Width" id="#REGION_ID#">'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="t15RegionHeader">#TITLE#</td>'||chr(10)||
-'<td align="right" class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="t15Body" colspan="2">#BODY#</td>'||chr(10)||
-'</tr>'||chr(10)||
+'<table cellpadding="0" cellspacing="0" border="0" summary="" width="100%" class="t15ReportsRegion100Width" id="#REGION_ID#">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="t15RegionHeader">#TITLE#</td>'||unistr('\000a')||
+'<td align="right" class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="t15Body" colspan="2">#BODY#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 '</table>'
  ,p_page_plug_template_name => 'Reports Region 100% Width'
  ,p_plug_table_bgcolor => '#ffffff'
@@ -10087,26 +9437,11 @@ wwv_flow_api.create_plug_template (
  ,p_theme_class_id => 13
  ,p_plug_heading_bgcolor => '#ffffff'
  ,p_plug_font_size => '-1'
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
  ,p_template_comment => 'Red Theme'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 56534027572997460 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -10120,38 +9455,24 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 56534126062997460 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<table class="t15FormRegion" cellspacing="0"  border="0" summary="layout" id="#REGION_ID#">'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="t15RegionHeader">#TITLE#</td>'||chr(10)||
-'<td align="right" class="t15ButtonHolder">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr class="t15Body">'||chr(10)||
-'<td colspan="2" class="t15Body">#BODY#</td>'||chr(10)||
-'</tr>'||chr(10)||
+'<table class="t15FormRegion" cellspacing="0"  border="0" summary="layout" id="#REGION_ID#">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="t15RegionHeader">#TITLE#</td>'||unistr('\000a')||
+'<td align="right" class="t15ButtonHolder">#CLOSE##PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr class="t15Body">'||unistr('\000a')||
+'<td colspan="2" class="t15Body">#BODY#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 '</table>'
  ,p_page_plug_template_name => 'Form Region'
  ,p_theme_id => 15
  ,p_theme_class_id => 8
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 56534126062997460 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -10165,14 +9486,15 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 56534215378997460 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<table cellpadding="0" cellspacing="0" border="0" summary="" class="t15ReportsRegionAlternative1" id="#REGION_ID#">'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="t15RegionHeader">#TITLE#</td>'||chr(10)||
-'<td class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td></tr>'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="t15Body" colspan="2">#BODY#</td>'||chr(10)||
-'</tr>'||chr(10)||
+'<table cellpadding="0" cellspacing="0" border="0" summary="" class="t15ReportsRegionAlternative1" id="#REGION_ID#">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="t15RegionHeader">#TITLE#</td>'||unistr('\000a')||
+'<td class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td></tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="t15Body" colspan="2">#BODY#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 '</table>'
  ,p_page_plug_template_name => 'Reports Region, Alternative 1'
  ,p_plug_table_bgcolor => '#ffffff'
@@ -10180,25 +9502,10 @@ wwv_flow_api.create_plug_template (
  ,p_theme_class_id => 10
  ,p_plug_heading_bgcolor => '#ffffff'
  ,p_plug_font_size => '-1'
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 56534215378997460 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -10212,37 +9519,23 @@ begin
 wwv_flow_api.create_plug_template (
   p_id => 56534306270997460 + wwv_flow_api.g_id_offset
  ,p_flow_id => wwv_flow.g_flow_id
+ ,p_layout => 'TABLE'
  ,p_template => 
-'<table cellpadding="0" cellspacing="0" border="0" summary="" class="t15ButtonRegionwithTitle" id="#REGION_ID#">'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="t15RegionHeader">#TITLE#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td>'||chr(10)||
-'</tr>'||chr(10)||
+'<table cellpadding="0" cellspacing="0" border="0" summary="" class="t15ButtonRegionwithTitle" id="#REGION_ID#">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="t15RegionHeader">#TITLE#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="t15ButtonHolder">#CLOSE#&nbsp;&nbsp;&nbsp;#PREVIOUS##NEXT##DELETE##EDIT##CHANGE##CREATE##CREATE2##EXPAND##COPY##HELP#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 '</table>#BODY#'
  ,p_page_plug_template_name => 'Button Region with Title'
  ,p_theme_id => 15
  ,p_theme_class_id => 4
+ ,p_default_label_alignment => 'RIGHT'
+ ,p_default_field_alignment => 'LEFT'
  ,p_translate_this_template => 'N'
   );
-null;
- 
-end;
-/
-
- 
-begin
- 
-declare
-    t2 varchar2(32767) := null;
-begin
-t2 := null;
-wwv_flow_api.set_plug_template_tab_attr (
-  p_id=> 56534306270997460 + wwv_flow_api.g_id_offset,
-  p_form_table_attr=> t2 );
-exception when others then null;
-end;
 null;
  
 end;
@@ -10274,12 +9567,12 @@ declare
   l_clob8 clob;
   l_length number := 1;
 begin
-t:=t||'<button value="#TEXT#" onclick="javascript:location.href=''#LINK#''" class="button-alt1" type="button">'||chr(10)||
-'  <span>#TEXT#</span>'||chr(10)||
+t:=t||'<button value="#TEXT#" onclick="javascript:location.href=''#LINK#''" class="button-alt1" type="button">'||unistr('\000a')||
+'  <span>#TEXT#</span>'||unistr('\000a')||
 '</button>';
 
-t2:=t2||'<button value="#TEXT#" onclick="javascript:location.href=''#LINK#''" class="button-default" type="button">'||chr(10)||
-'  <span>#TEXT#</span>'||chr(10)||
+t2:=t2||'<button value="#TEXT#" onclick="javascript:location.href=''#LINK#''" class="button-default" type="button">'||unistr('\000a')||
+'  <span>#TEXT#</span>'||unistr('\000a')||
 '</button>';
 
 t3 := null;
@@ -10330,12 +9623,12 @@ declare
   l_clob8 clob;
   l_length number := 1;
 begin
-t:=t||'          <li class="#LIST_STATUS#">'||chr(10)||
-'            <a href="#LINK#"><span>#TEXT#</span></a>'||chr(10)||
+t:=t||'          <li class="#LIST_STATUS#">'||unistr('\000a')||
+'            <a href="#LINK#"><span>#TEXT#</span></a>'||unistr('\000a')||
 '          </li>';
 
-t2:=t2||'          <li class="#LIST_STATUS#">'||chr(10)||
-'            <a href="#LINK#"><span>#TEXT#</span></a>'||chr(10)||
+t2:=t2||'          <li class="#LIST_STATUS#">'||unistr('\000a')||
+'            <a href="#LINK#"><span>#TEXT#</span></a>'||unistr('\000a')||
 '          </li>';
 
 t3 := null;
@@ -10352,15 +9645,15 @@ wwv_flow_api.create_list_template (
   p_list_template_name=>'Centered Tab Set',
   p_theme_id  => 22,
   p_theme_class_id => 7,
-  p_list_template_before_rows=>'<div class="tS">'||chr(10)||
-'  <div class="tSO">'||chr(10)||
-'    <div class="tSI">'||chr(10)||
-'      <div class="tSU">'||chr(10)||
+  p_list_template_before_rows=>'<div class="tS">'||unistr('\000a')||
+'  <div class="tSO">'||unistr('\000a')||
+'    <div class="tSI">'||unistr('\000a')||
+'      <div class="tSU">'||unistr('\000a')||
 '        <ul>',
-  p_list_template_after_rows=>'         </ul>'||chr(10)||
-'      </div>'||chr(10)||
-'    </div>'||chr(10)||
-'  </div>'||chr(10)||
+  p_list_template_after_rows=>'         </ul>'||unistr('\000a')||
+'      </div>'||unistr('\000a')||
+'    </div>'||unistr('\000a')||
+'  </div>'||unistr('\000a')||
 '</div>',
   p_translate_this_template => 'N',
   p_list_template_comment=>'');
@@ -10526,14 +9819,14 @@ declare
   l_clob8 clob;
   l_length number := 1;
 begin
-t:=t||'<div class="list-item-current">'||chr(10)||
-'  <div class="list-item-image"><a href="#LINK#" class="current"><img src="#IMAGE_PREFIX##IMAGE#" #IMAGE_ATTR# alt="" / ></a></div>'||chr(10)||
-'  <div class="list-item-label"><a href="#LINK#" class="current">#TEXT#</a></div>'||chr(10)||
+t:=t||'<div class="list-item-current">'||unistr('\000a')||
+'  <div class="list-item-image"><a href="#LINK#" class="current"><img src="#IMAGE_PREFIX##IMAGE#" #IMAGE_ATTR# alt="" / ></a></div>'||unistr('\000a')||
+'  <div class="list-item-label"><a href="#LINK#" class="current">#TEXT#</a></div>'||unistr('\000a')||
 '</div>';
 
-t2:=t2||'<div class="list-item">'||chr(10)||
-'  <div class="list-item-image"><a href="#LINK#" class="current"><img src="#IMAGE_PREFIX##IMAGE#" #IMAGE_ATTR# alt="" / ></a></div>'||chr(10)||
-'  <div class="list-item-label"><a href="#LINK#" class="current">#TEXT#</a></div>'||chr(10)||
+t2:=t2||'<div class="list-item">'||unistr('\000a')||
+'  <div class="list-item-image"><a href="#LINK#" class="current"><img src="#IMAGE_PREFIX##IMAGE#" #IMAGE_ATTR# alt="" / ></a></div>'||unistr('\000a')||
+'  <div class="list-item-label"><a href="#LINK#" class="current">#TEXT#</a></div>'||unistr('\000a')||
 '</div>';
 
 t3 := null;
@@ -10654,11 +9947,11 @@ wwv_flow_api.create_list_template (
   p_list_template_name=>'Horizontal Tabs Rounded List',
   p_theme_id  => 22,
   p_theme_class_id => 7,
-  p_list_template_before_rows=>'<div class="sHTabs">'||chr(10)||
-'	<div class="sHTabsInner">'||chr(10)||
+  p_list_template_before_rows=>'<div class="sHTabs">'||unistr('\000a')||
+'	<div class="sHTabsInner">'||unistr('\000a')||
 '		<ul>',
-  p_list_template_after_rows=>'		</ul>'||chr(10)||
-'	</div>'||chr(10)||
+  p_list_template_after_rows=>'		</ul>'||unistr('\000a')||
+'	</div>'||unistr('\000a')||
 '</div>',
   p_translate_this_template => 'N',
   p_list_template_comment=>'');
@@ -10710,14 +10003,14 @@ wwv_flow_api.create_list_template (
   p_list_template_name=>'Horizontal Tabs Rounded List (Full Width)',
   p_theme_id  => 22,
   p_theme_class_id => 7,
-  p_list_template_before_rows=>'<div class="sHFWTabs">'||chr(10)||
-'<div class="sHTabs">'||chr(10)||
-'	<div class="sHTabsInner">'||chr(10)||
+  p_list_template_before_rows=>'<div class="sHFWTabs">'||unistr('\000a')||
+'<div class="sHTabs">'||unistr('\000a')||
+'	<div class="sHTabsInner">'||unistr('\000a')||
 '		<ul>',
-  p_list_template_after_rows=>'			<li class="last"></li>'||chr(10)||
-'		</ul>'||chr(10)||
-'	</div>'||chr(10)||
-'</div>'||chr(10)||
+  p_list_template_after_rows=>'			<li class="last"></li>'||unistr('\000a')||
+'		</ul>'||unistr('\000a')||
+'	</div>'||unistr('\000a')||
+'</div>'||unistr('\000a')||
 '</div>',
   p_translate_this_template => 'N',
   p_list_template_comment=>'');
@@ -10769,12 +10062,12 @@ wwv_flow_api.create_list_template (
   p_list_template_name=>'Page Level Tabs List',
   p_theme_id  => 22,
   p_theme_class_id => 7,
-  p_list_template_before_rows=>'<div class="sBTabs">'||chr(10)||
-'	<div class="sBTabsInner">'||chr(10)||
+  p_list_template_before_rows=>'<div class="sBTabs">'||unistr('\000a')||
+'	<div class="sBTabsInner">'||unistr('\000a')||
 '		<ul>',
-  p_list_template_after_rows=>'			<li class="last"></li>'||chr(10)||
-'		</ul>'||chr(10)||
-'	</div>'||chr(10)||
+  p_list_template_after_rows=>'			<li class="last"></li>'||unistr('\000a')||
+'		</ul>'||unistr('\000a')||
+'	</div>'||unistr('\000a')||
 '</div>',
   p_translate_this_template => 'N',
   p_list_template_comment=>'');
@@ -10816,7 +10109,7 @@ t3:=t3||'<li class="dhtmlMenuSep2"><img src="#IMAGE_PREFIX#themes/theme_13/1px_t
 
 t4:=t4||'<li><a href="#LINK#" class="dhtmlSubMenuN" onmouseover="dhtml_CloseAllSubMenusL(this)">#TEXT#</a></li>';
 
-t5:=t5||'<li class="dhtmlMenuItem1"><a href="#LINK#">#TEXT#</a><img src="#IMAGE_PREFIX#themes/theme_22/images/menu-small.gif" alt="Expand" onclick="app_AppMenuMultiOpenBottom2(this,''#LIST_ITEM_ID#'',false)" />'||chr(10)||
+t5:=t5||'<li class="dhtmlMenuItem1"><a href="#LINK#">#TEXT#</a><img src="#IMAGE_PREFIX#themes/theme_22/images/menu-small.gif" alt="Expand" onclick="app_AppMenuMultiOpenBottom2(this,''#LIST_ITEM_ID#'',false)" />'||unistr('\000a')||
 '</li>';
 
 t6:=t6||'<li class="dhtmlMenuItem1"><a href="#LINK#">#TEXT#</a><img src="#IMAGE_PREFIX#themes/theme_22/images/menu-small.gif" alt="Expand" onclick="app_AppMenuMultiOpenBottom2(this,''#LIST_ITEM_ID#'',false)" /></li>';
@@ -10883,12 +10176,12 @@ t3:=t3||'<li class="dhtmlMenuSep"><img src="#IMAGE_PREFIX#themes/theme_13/1px_tr
 
 t4:=t4||'<li><a href="#LINK#" class="dhtmlSubMenuN" onmouseover="dhtml_CloseAllSubMenusL(this)">#TEXT#</a></li>';
 
-t5:=t5||'<div class="dhtmlMenuItem"><a href="#LINK#" id="#LIST_ITEM_ID#"><img src="#IMAGE_PREFIX##IMAGE#" #IMAGE_ATTR#  /></a><img src="#IMAGE_PREFIX#menu/drop_down.png" width="20" height="128" alt="" class="dhtmlMenu" onclick="app_AppMenuMultiOpenBottom3(this,''S#LIST_ITEM_ID#'',''#LIST_ITEM_ID#'',false)" />'||chr(10)||
-'<a href="#LINK#" class="dhtmlBottom">#TEXT#</a>'||chr(10)||
+t5:=t5||'<div class="dhtmlMenuItem"><a href="#LINK#" id="#LIST_ITEM_ID#"><img src="#IMAGE_PREFIX##IMAGE#" #IMAGE_ATTR#  /></a><img src="#IMAGE_PREFIX#menu/drop_down.png" width="20" height="128" alt="" class="dhtmlMenu" onclick="app_AppMenuMultiOpenBottom3(this,''S#LIST_ITEM_ID#'',''#LIST_ITEM_ID#'',false)" />'||unistr('\000a')||
+'<a href="#LINK#" class="dhtmlBottom">#TEXT#</a>'||unistr('\000a')||
 '</div>';
 
-t6:=t6||'<div class="dhtmlMenuItem"><a href="#LINK#" id="#LIST_ITEM_ID#"><img src="#IMAGE_PREFIX##IMAGE#" #IMAGE_ATTR#  /></a><img src="#IMAGE_PREFIX#menu/drop_down.png" width="20" height="128" alt=""  class="dhtmlMenu" onclick="app_AppMenuMultiOpenBottom3(this,''S#LIST_ITEM_ID#'',''#LIST_ITEM_ID#'',false)" />'||chr(10)||
-'<a href="#LINK#" class="dhtmlBottom">#TEXT#</a>'||chr(10)||
+t6:=t6||'<div class="dhtmlMenuItem"><a href="#LINK#" id="#LIST_ITEM_ID#"><img src="#IMAGE_PREFIX##IMAGE#" #IMAGE_ATTR#  /></a><img src="#IMAGE_PREFIX#menu/drop_down.png" width="20" height="128" alt=""  class="dhtmlMenu" onclick="app_AppMenuMultiOpenBottom3(this,''S#LIST_ITEM_ID#'',''#LIST_ITEM_ID#'',false)" />'||unistr('\000a')||
+'<a href="#LINK#" class="dhtmlBottom">#TEXT#</a>'||unistr('\000a')||
 '</div>';
 
 t7:=t7||'<li class="dhtmlSubMenuS"><a href="#LINK#" class="dhtmlSubMenuS" onmouseover="dhtml_MenuOpen(this,''S#LIST_ITEM_ID#'',true,''Left'')"><span style="float:left;">#TEXT#</span><img class="t13MIMG" src="#IMAGE_PREFIX#menu_open_right2.gif" /></a></li>';
@@ -10963,11 +10256,11 @@ wwv_flow_api.create_list_template (
   p_list_template_name=>'Tabbed Navigation List',
   p_theme_id  => 22,
   p_theme_class_id => 7,
-  p_list_template_before_rows=>'<div class="sHorizontalTabs">'||chr(10)||
-'	<div class="sHorizontalTabsInner">'||chr(10)||
+  p_list_template_before_rows=>'<div class="sHorizontalTabs">'||unistr('\000a')||
+'	<div class="sHorizontalTabsInner">'||unistr('\000a')||
 '		<ul>',
-  p_list_template_after_rows=>'		</ul>'||chr(10)||
-'	</div>'||chr(10)||
+  p_list_template_after_rows=>'		</ul>'||unistr('\000a')||
+'	</div>'||unistr('\000a')||
 '</div>',
   p_translate_this_template => 'N',
   p_list_template_comment=>'');
@@ -11001,14 +10294,14 @@ declare
   l_clob8 clob;
   l_length number := 1;
 begin
-t:=t||'<div class="list-item-current">'||chr(10)||
-'  <div class="list-item-image"><img src="#IMAGE_PREFIX##IMAGE#" #IMAGE_ATTR# alt="" / ></div>'||chr(10)||
-'  <div class="list-item-label"><a href="#LINK#" class="current">#TEXT#</a></div>'||chr(10)||
+t:=t||'<div class="list-item-current">'||unistr('\000a')||
+'  <div class="list-item-image"><img src="#IMAGE_PREFIX##IMAGE#" #IMAGE_ATTR# alt="" / ></div>'||unistr('\000a')||
+'  <div class="list-item-label"><a href="#LINK#" class="current">#TEXT#</a></div>'||unistr('\000a')||
 '</div>';
 
-t2:=t2||'<div class="list-item">'||chr(10)||
-'  <div class="list-item-image"><img src="#IMAGE_PREFIX##IMAGE#" #IMAGE_ATTR# alt="" / ></div>'||chr(10)||
-'  <div class="list-item-label"><a href="#LINK#" class="current">#TEXT#</a></div>'||chr(10)||
+t2:=t2||'<div class="list-item">'||unistr('\000a')||
+'  <div class="list-item-image"><img src="#IMAGE_PREFIX##IMAGE#" #IMAGE_ATTR# alt="" / ></div>'||unistr('\000a')||
+'  <div class="list-item-label"><a href="#LINK#" class="current">#TEXT#</a></div>'||unistr('\000a')||
 '</div>';
 
 t3 := null;
@@ -11129,9 +10422,9 @@ wwv_flow_api.create_list_template (
   p_list_template_name=>'Vertical Sidebar List',
   p_theme_id  => 22,
   p_theme_class_id => 19,
-  p_list_template_before_rows=>'<div class="vertical-sidebar-list">'||chr(10)||
+  p_list_template_before_rows=>'<div class="vertical-sidebar-list">'||unistr('\000a')||
 '<ul>',
-  p_list_template_after_rows=>'</ul>'||chr(10)||
+  p_list_template_after_rows=>'</ul>'||unistr('\000a')||
 '</div>',
   p_translate_this_template => 'N',
   p_list_template_comment=>'');
@@ -11374,12 +10667,12 @@ declare
   l_clob8 clob;
   l_length number := 1;
 begin
-t:=t||'    <li class="#LIST_STATUS#">'||chr(10)||
-'      <span>#TEXT#</span>'||chr(10)||
+t:=t||'    <li class="#LIST_STATUS#">'||unistr('\000a')||
+'      <span>#TEXT#</span>'||unistr('\000a')||
 '    </li>';
 
-t2:=t2||'    <li class="#LIST_STATUS#">'||chr(10)||
-'      <span>#TEXT#</span>'||chr(10)||
+t2:=t2||'    <li class="#LIST_STATUS#">'||unistr('\000a')||
+'      <span>#TEXT#</span>'||unistr('\000a')||
 '    </li>';
 
 t3 := null;
@@ -11396,9 +10689,9 @@ wwv_flow_api.create_list_template (
   p_list_template_name=>'Wizard Progress List, Horizontal Train',
   p_theme_id  => 22,
   p_theme_class_id => 17,
-  p_list_template_before_rows=>'<div class="sHorizontalProgressList">'||chr(10)||
+  p_list_template_before_rows=>'<div class="sHorizontalProgressList">'||unistr('\000a')||
 '  <ul>',
-  p_list_template_after_rows=>'  </ul>'||chr(10)||
+  p_list_template_after_rows=>'  </ul>'||unistr('\000a')||
 '</div>',
   p_translate_this_template => 'N',
   p_list_template_comment=>'');
@@ -11890,8 +11183,8 @@ declare
   l_clob8 clob;
   l_length number := 1;
 begin
-t:=t||'<td valign="bottom" class="t15SepL"><img src="#IMAGE_PREFIX#themes/theme_15/tab_list_left_cap.gif" /></td>'||chr(10)||
-'<td class="t15CurrentListTab"><a class="t15CurrentListTab" href="#LINK#">#TEXT#</a></td>'||chr(10)||
+t:=t||'<td valign="bottom" class="t15SepL"><img src="#IMAGE_PREFIX#themes/theme_15/tab_list_left_cap.gif" /></td>'||unistr('\000a')||
+'<td class="t15CurrentListTab"><a class="t15CurrentListTab" href="#LINK#">#TEXT#</a></td>'||unistr('\000a')||
 '<td valign="bottom" class="t15SepR"><img src="#IMAGE_PREFIX#themes/theme_15/tab_list_right_cap.gif" /></td>';
 
 t2:=t2||'<td><a href="#LINK#">#TEXT#</a></td>';
@@ -11996,20 +11289,20 @@ declare
   l_clob8 clob;
   l_length number := 1;
 begin
-t:=t||'<table class="t15Button" cellspacing="0" cellpadding="0" border="0"  summary="">'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="t15L"><img src="#IMAGE_PREFIX#themes/theme_15/button-l.gif" alt="" /></td>'||chr(10)||
-'<td class="t15C"><a href="#LINK#" style="font-weight:bold;">>#TEXT#<</a></td>'||chr(10)||
-'<td class="t15R"><img src="#IMAGE_PREFIX#themes/theme_15/button-r.gif" alt="" /></td>'||chr(10)||
-'</tr>'||chr(10)||
+t:=t||'<table class="t15Button" cellspacing="0" cellpadding="0" border="0"  summary="">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="t15L"><img src="#IMAGE_PREFIX#themes/theme_15/button-l.gif" alt="" /></td>'||unistr('\000a')||
+'<td class="t15C"><a href="#LINK#" style="font-weight:bold;">>#TEXT#<</a></td>'||unistr('\000a')||
+'<td class="t15R"><img src="#IMAGE_PREFIX#themes/theme_15/button-r.gif" alt="" /></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 '</table>';
 
-t2:=t2||'<table class="t15Button" cellspacing="0" cellpadding="0" border="0"  summary="">'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="t15L"><img src="#IMAGE_PREFIX#themes/theme_15/button-l.gif" alt="" /></td>'||chr(10)||
-'<td class="t15C"><a href="#LINK#">#TEXT#</a></td>'||chr(10)||
-'<td class="t15R"><img src="#IMAGE_PREFIX#themes/theme_15/button-r.gif" alt="" /></td>'||chr(10)||
-'</tr>'||chr(10)||
+t2:=t2||'<table class="t15Button" cellspacing="0" cellpadding="0" border="0"  summary="">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="t15L"><img src="#IMAGE_PREFIX#themes/theme_15/button-l.gif" alt="" /></td>'||unistr('\000a')||
+'<td class="t15C"><a href="#LINK#">#TEXT#</a></td>'||unistr('\000a')||
+'<td class="t15R"><img src="#IMAGE_PREFIX#themes/theme_15/button-r.gif" alt="" /></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 '</table>';
 
 t3 := null;
@@ -12060,10 +11353,10 @@ declare
   l_clob8 clob;
   l_length number := 1;
 begin
-t:=t||'<tr><td class="t15Current">#TEXT#</td></tr>'||chr(10)||
+t:=t||'<tr><td class="t15Current">#TEXT#</td></tr>'||unistr('\000a')||
 '<tr><td class="t15CurrentImage"><img src="#IMAGE_PREFIX#arrow_down.gif" width="7" height="6" alt="" /></td></tr>';
 
-t2:=t2||'<tr><td>#TEXT#</td></tr>'||chr(10)||
+t2:=t2||'<tr><td>#TEXT#</td></tr>'||unistr('\000a')||
 '<tr><td class="t15Image"><img src="#IMAGE_PREFIX#arrow_down.gif" width="7" height="6" alt="" /></td></tr>';
 
 t3 := null;
@@ -12081,7 +11374,7 @@ wwv_flow_api.create_list_template (
   p_theme_id  => 15,
   p_theme_class_id => 17,
   p_list_template_before_rows=>'<table class="t15WizardProgressList" cellpadding="0" cellspacing="0" border="0" summary="">',
-  p_list_template_after_rows=>'<tr><td align="center">Done</td></tr>'||chr(10)||
+  p_list_template_after_rows=>'<tr><td align="center">Done</td></tr>'||unistr('\000a')||
 '</table>',
   p_translate_this_template => 'N',
   p_list_template_comment=>'');
@@ -12199,7 +11492,7 @@ wwv_flow_api.create_list_template (
   p_list_template_name=>'Vertical Sidebar List',
   p_theme_id  => 15,
   p_theme_class_id => 19,
-  p_list_template_before_rows=>'<ul class="t15VerticalSidebarList">'||chr(10)||
+  p_list_template_before_rows=>'<ul class="t15VerticalSidebarList">'||unistr('\000a')||
 '',
   p_list_template_after_rows=>'</ul>',
   p_translate_this_template => 'N',
@@ -12240,11 +11533,11 @@ wwv_flow_api.create_row_template (
   p_row_template_condition3=> '',
   p_row_template4=> c4,
   p_row_template_condition4=> '',
-  p_row_template_before_rows=>'<table cellpadding="0" border="0" cellspacing="0" summary="" #REPORT_ATTRIBUTES# id="report_#REGION_STATIC_ID#">#TOP_PAGINATION#<tr>'||chr(10)||
+  p_row_template_before_rows=>'<table cellpadding="0" border="0" cellspacing="0" summary="" #REPORT_ATTRIBUTES# id="report_#REGION_STATIC_ID#">#TOP_PAGINATION#<tr>'||unistr('\000a')||
 '<td><table class="report-borderless" cellpadding="0" border="0" cellspacing="0" summary="">',
-  p_row_template_after_rows =>'</table><div class="CSV">#EXTERNAL_LINK##CSV_LINK#</div></td>'||chr(10)||
-'</tr>'||chr(10)||
-'#PAGINATION#'||chr(10)||
+  p_row_template_after_rows =>'</table><div class="CSV">#EXTERNAL_LINK##CSV_LINK#</div></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'#PAGINATION#'||unistr('\000a')||
 '</table>',
   p_row_template_table_attr =>'',
   p_row_template_type =>'GENERIC_COLUMNS',
@@ -12311,26 +11604,26 @@ wwv_flow_api.create_row_template (
   p_row_template_condition3=> '',
   p_row_template4=> c4,
   p_row_template_condition4=> '',
-  p_row_template_before_rows=>'<table border="0" cellpadding="0" cellspacing="0" #REPORT_ATTRIBUTES# id="report_#REGION_STATIC_ID#" class="report-holder">#TOP_PAGINATION#'||chr(10)||
-'<tr>'||chr(10)||
+  p_row_template_before_rows=>'<table border="0" cellpadding="0" cellspacing="0" #REPORT_ATTRIBUTES# id="report_#REGION_STATIC_ID#" class="report-holder">#TOP_PAGINATION#'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
 '<td><div class="fixed-header-report"><table cellpadding="0" border="0" cellspacing="0" summary="">',
-  p_row_template_after_rows =>'</tbody></table></div><div class="CSV">#EXTERNAL_LINK##CSV_LINK#</div></td>'||chr(10)||
-'</tr>'||chr(10)||
-'#PAGINATION#'||chr(10)||
+  p_row_template_after_rows =>'</tbody></table></div><div class="CSV">#EXTERNAL_LINK##CSV_LINK#</div></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'#PAGINATION#'||unistr('\000a')||
 '</table>',
   p_row_template_table_attr =>'OMIT',
   p_row_template_type =>'GENERIC_COLUMNS',
-  p_before_column_heading=>'<thead>'||chr(10)||
+  p_before_column_heading=>'<thead>'||unistr('\000a')||
 '',
   p_column_heading_template=>'<th#ALIGNMENT# id="#COLUMN_HEADER_NAME#" class="header" #COLUMN_WIDTH#>#COLUMN_HEADER#</th>',
-  p_after_column_heading=>'</thead>'||chr(10)||
-'<tbody>'||chr(10)||
+  p_after_column_heading=>'</thead>'||unistr('\000a')||
+'<tbody>'||unistr('\000a')||
 '',
   p_row_template_display_cond1=>'ODD_ROW_NUMBERS',
   p_row_template_display_cond2=>'0',
   p_row_template_display_cond3=>'0',
   p_row_template_display_cond4=>'ODD_ROW_NUMBERS',
-  p_next_page_template=>'<a href="#LINK#" class="sPaginationNext">#PAGINATION_NEXT#</a>'||chr(10)||
+  p_next_page_template=>'<a href="#LINK#" class="sPaginationNext">#PAGINATION_NEXT#</a>'||unistr('\000a')||
 '',
   p_previous_page_template=>'<a href="#LINK#" class="sPaginationPrev">#PAGINATION_PREVIOUS#</a>',
   p_next_set_template=>'<a href="#LINK#" class="sPaginationNext">#PAGINATION_NEXT_SET#</a>',
@@ -12354,7 +11647,7 @@ begin
 wwv_flow_api.create_row_template_patch (
   p_id => 17342541968409416 + wwv_flow_api.g_id_offset,
   p_row_template_before_first =>'<tr #HIGHLIGHT_ROW#>',
-  p_row_template_after_last =>'</tr>'||chr(10)||
+  p_row_template_after_last =>'</tr>'||unistr('\000a')||
 '');
 exception when others then null;
 end;
@@ -12391,12 +11684,12 @@ wwv_flow_api.create_row_template (
   p_row_template_condition3=> '',
   p_row_template4=> c4,
   p_row_template_condition4=> '',
-  p_row_template_before_rows=>'<table cellpadding="0" border="0" cellspacing="0" summary="" class="horizontal-border" #REPORT_ATTRIBUTES# id="report_#REGION_STATIC_ID#">#TOP_PAGINATION#'||chr(10)||
-'<tr>'||chr(10)||
+  p_row_template_before_rows=>'<table cellpadding="0" border="0" cellspacing="0" summary="" class="horizontal-border" #REPORT_ATTRIBUTES# id="report_#REGION_STATIC_ID#">#TOP_PAGINATION#'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
 '<td><table cellpadding="0" cellspacing="0" border="0" class="report-standard" summary="">',
-  p_row_template_after_rows =>'</table><div class="CSV">#EXTERNAL_LINK##CSV_LINK#</div></td>'||chr(10)||
-'</tr>'||chr(10)||
-'#PAGINATION#'||chr(10)||
+  p_row_template_after_rows =>'</table><div class="CSV">#EXTERNAL_LINK##CSV_LINK#</div></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'#PAGINATION#'||unistr('\000a')||
 '</table>',
   p_row_template_table_attr =>'',
   p_row_template_type =>'GENERIC_COLUMNS',
@@ -12463,11 +11756,11 @@ wwv_flow_api.create_row_template (
   p_row_template_condition3=> '',
   p_row_template4=> c4,
   p_row_template_condition4=> '',
-  p_row_template_before_rows=>'<table cellpadding="0" cellspacing="0" summary="" #REPORT_ATTRIBUTES# id="report_#REGION_STATIC_ID#">'||chr(10)||
-'#TOP_PAGINATION#'||chr(10)||
+  p_row_template_before_rows=>'<table cellpadding="0" cellspacing="0" summary="" #REPORT_ATTRIBUTES# id="report_#REGION_STATIC_ID#">'||unistr('\000a')||
+'#TOP_PAGINATION#'||unistr('\000a')||
 '<tr><td><ul class="t1OneColumnUnorderedList">',
-  p_row_template_after_rows =>'</ul><div class="t1CVS">#EXTERNAL_LINK##CSV_LINK#</div></td></tr>'||chr(10)||
-'#PAGINATION#'||chr(10)||
+  p_row_template_after_rows =>'</ul><div class="t1CVS">#EXTERNAL_LINK##CSV_LINK#</div></td></tr>'||unistr('\000a')||
+'#PAGINATION#'||unistr('\000a')||
 '</table>',
   p_row_template_table_attr =>'OMIT',
   p_row_template_type =>'GENERIC_COLUMNS',
@@ -12516,10 +11809,10 @@ declare
   c3 varchar2(32767) := null;
   c4 varchar2(32767) := null;
 begin
-c1:=c1||'<li>'||chr(10)||
-'<span class="title"><a href="#2#">#1#</a></span>'||chr(10)||
-'<span class="description"><span class="last_modified">#5#</span>#3#</span>'||chr(10)||
-'<span class="type">#4#</span>'||chr(10)||
+c1:=c1||'<li>'||unistr('\000a')||
+'<span class="title"><a href="#2#">#1#</a></span>'||unistr('\000a')||
+'<span class="description"><span class="last_modified">#5#</span>#3#</span>'||unistr('\000a')||
+'<span class="type">#4#</span>'||unistr('\000a')||
 '</li>';
 
 c2 := null;
@@ -12538,7 +11831,7 @@ wwv_flow_api.create_row_template (
   p_row_template4=> c4,
   p_row_template_condition4=> '',
   p_row_template_before_rows=>'<ul class="sSearchResultsReport">',
-  p_row_template_after_rows =>'</ul> '||chr(10)||
+  p_row_template_after_rows =>'</ul> '||unistr('\000a')||
 '#PAGINATION#',
   p_row_template_table_attr =>'',
   p_row_template_type =>'NAMED_COLUMNS',
@@ -12589,12 +11882,12 @@ wwv_flow_api.create_row_template (
   p_row_template_condition3=> '',
   p_row_template4=> c4,
   p_row_template_condition4=> '',
-  p_row_template_before_rows=>'<table cellpadding="0" border="0" cellspacing="0" summary="" #REPORT_ATTRIBUTES# id="report_#REGION_STATIC_ID#">#TOP_PAGINATION#'||chr(10)||
-'<tr>'||chr(10)||
+  p_row_template_before_rows=>'<table cellpadding="0" border="0" cellspacing="0" summary="" #REPORT_ATTRIBUTES# id="report_#REGION_STATIC_ID#">#TOP_PAGINATION#'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
 '<td><table cellpadding="0" border="0" cellspacing="0" summary="" class="report-standard">',
-  p_row_template_after_rows =>'</table><div class="CSV">#EXTERNAL_LINK##CSV_LINK#</div></td>'||chr(10)||
-'</tr>'||chr(10)||
-'#PAGINATION#'||chr(10)||
+  p_row_template_after_rows =>'</table><div class="CSV">#EXTERNAL_LINK##CSV_LINK#</div></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'#PAGINATION#'||unistr('\000a')||
 '</table>',
   p_row_template_table_attr =>'',
   p_row_template_type =>'GENERIC_COLUMNS',
@@ -12663,11 +11956,11 @@ wwv_flow_api.create_row_template (
   p_row_template_condition3=> '',
   p_row_template4=> c4,
   p_row_template_condition4=> '',
-  p_row_template_before_rows=>'<table border="0" cellpadding="0" cellspacing="0" #REPORT_ATTRIBUTES# id="report_#REGION_STATIC_ID#" class="report-holder">#TOP_PAGINATION#<tr><td>'||chr(10)||
+  p_row_template_before_rows=>'<table border="0" cellpadding="0" cellspacing="0" #REPORT_ATTRIBUTES# id="report_#REGION_STATIC_ID#" class="report-holder">#TOP_PAGINATION#<tr><td>'||unistr('\000a')||
 '<table border="0" cellpadding="0" cellspacing="0" class="report-standard-alternatingrowcolors" summary="" >',
-  p_row_template_after_rows =>'</table><div class="CSV">#EXTERNAL_LINK##CSV_LINK#</div></td>'||chr(10)||
-'</tr>'||chr(10)||
-'#PAGINATION#'||chr(10)||
+  p_row_template_after_rows =>'</table><div class="CSV">#EXTERNAL_LINK##CSV_LINK#</div></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'#PAGINATION#'||unistr('\000a')||
 '</table>',
   p_row_template_table_attr =>'OMIT',
   p_row_template_type =>'GENERIC_COLUMNS',
@@ -12697,7 +11990,7 @@ begin
 wwv_flow_api.create_row_template_patch (
   p_id => 17344855160409417 + wwv_flow_api.g_id_offset,
   p_row_template_before_first =>'<tr #HIGHLIGHT_ROW#>',
-  p_row_template_after_last =>'</tr>'||chr(10)||
+  p_row_template_after_last =>'</tr>'||unistr('\000a')||
 '');
 exception when others then null;
 end;
@@ -12717,9 +12010,9 @@ declare
   c3 varchar2(32767) := null;
   c4 varchar2(32767) := null;
 begin
-c1:=c1||'<div class="report-row">'||chr(10)||
-'  <div class="report-col-hdr">#1#</div>'||chr(10)||
-'  <div class="report-col-val">#2#</div>'||chr(10)||
+c1:=c1||'<div class="report-row">'||unistr('\000a')||
+'  <div class="report-col-hdr">#1#</div>'||unistr('\000a')||
+'  <div class="report-col-val">#2#</div>'||unistr('\000a')||
 '</div>';
 
 c2 := null;
@@ -12767,9 +12060,9 @@ declare
   c3 varchar2(32767) := null;
   c4 varchar2(32767) := null;
 begin
-c1:=c1||'<div class="report-row">'||chr(10)||
-'  <div class="report-col-hdr">#COLUMN_HEADER#</div>'||chr(10)||
-'  <div class="report-col-val">#COLUMN_VALUE#</div>'||chr(10)||
+c1:=c1||'<div class="report-row">'||unistr('\000a')||
+'  <div class="report-col-hdr">#COLUMN_HEADER#</div>'||unistr('\000a')||
+'  <div class="report-col-val">#COLUMN_VALUE#</div>'||unistr('\000a')||
 '</div>';
 
 c2 := null;
@@ -12886,11 +12179,11 @@ wwv_flow_api.create_row_template (
   p_row_template4=> c4,
   p_row_template_condition4=> '',
   p_row_template_before_rows=>'<table class="t15standard" summary="Report">',
-  p_row_template_after_rows =>'<tr>'||chr(10)||
-'    <td colspan="99" class="t15afterrows">'||chr(10)||
-'        <span class="left">#EXTERNAL_LINK##CSV_LINK#</span>'||chr(10)||
-'        <table style="float:right;text-align:right;" summary="pagination">#PAGINATION#</table>'||chr(10)||
-'    </td>'||chr(10)||
+  p_row_template_after_rows =>'<tr>'||unistr('\000a')||
+'    <td colspan="99" class="t15afterrows">'||unistr('\000a')||
+'        <span class="left">#EXTERNAL_LINK##CSV_LINK#</span>'||unistr('\000a')||
+'        <table style="float:right;text-align:right;" summary="pagination">#PAGINATION#</table>'||unistr('\000a')||
+'    </td>'||unistr('\000a')||
 '</tr></table>',
   p_row_template_table_attr =>'',
   p_row_template_type =>'GENERIC_COLUMNS',
@@ -12954,9 +12247,9 @@ wwv_flow_api.create_row_template (
   p_row_template_condition3=> '',
   p_row_template4=> c4,
   p_row_template_condition4=> '',
-  p_row_template_before_rows=>'<table cellpadding="0" border="0" cellspacing="0" summary="">#TOP_PAGINATION#'||chr(10)||
+  p_row_template_before_rows=>'<table cellpadding="0" border="0" cellspacing="0" summary="">#TOP_PAGINATION#'||unistr('\000a')||
 '<tr><td><table class="t15borderless" cellpadding="0" border="0" cellspacing="0" summary="">',
-  p_row_template_after_rows =>'#PAGINATION#'||chr(10)||
+  p_row_template_after_rows =>'#PAGINATION#'||unistr('\000a')||
 '</table><span class="left">#EXTERNAL_LINK##CSV_LINK#</span></td></tr></table>',
   p_row_template_table_attr =>'',
   p_row_template_type =>'GENERIC_COLUMNS',
@@ -12970,8 +12263,8 @@ wwv_flow_api.create_row_template (
   p_theme_id  => 15,
   p_theme_class_id => 1,
   p_translate_this_template => 'N',
-  p_row_template_comment=> '.t1reportborderless{ }'||chr(10)||
-'.t1reportborderless .t1reportheader{ }'||chr(10)||
+  p_row_template_comment=> '.t1reportborderless{ }'||unistr('\000a')||
+'.t1reportborderless .t1reportheader{ }'||unistr('\000a')||
 '.t1reportborderless .t1reportdata{ }');
 end;
 null;
@@ -13022,14 +12315,14 @@ wwv_flow_api.create_row_template (
   p_row_template_condition3=> '',
   p_row_template4=> c4,
   p_row_template_condition4=> '',
-  p_row_template_before_rows=>'<table cellpadding="0" border="0" cellspacing="0" summary="">#TOP_PAGINATION#'||chr(10)||
-'<tr>'||chr(10)||
+  p_row_template_before_rows=>'<table cellpadding="0" border="0" cellspacing="0" summary="">#TOP_PAGINATION#'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
 '<td><table cellpadding="0" cellspacing="0" border="0" class="t15horizontalborder" summary="">',
-  p_row_template_after_rows =>'<tr>'||chr(10)||
-'    <td colspan="99" class="t15afterrows">'||chr(10)||
-'        <span class="left">#EXTERNAL_LINK##CSV_LINK#</span>'||chr(10)||
-'        <table style="float:right;text-align:right;" summary="pagination"><tr><td></td></tr>#PAGINATION#</table>'||chr(10)||
-'    </td>'||chr(10)||
+  p_row_template_after_rows =>'<tr>'||unistr('\000a')||
+'    <td colspan="99" class="t15afterrows">'||unistr('\000a')||
+'        <span class="left">#EXTERNAL_LINK##CSV_LINK#</span>'||unistr('\000a')||
+'        <table style="float:right;text-align:right;" summary="pagination"><tr><td></td></tr>#PAGINATION#</table>'||unistr('\000a')||
+'    </td>'||unistr('\000a')||
 '</tr></table></td></tr></table>',
   p_row_template_table_attr =>'',
   p_row_template_type =>'GENERIC_COLUMNS',
@@ -13076,7 +12369,7 @@ declare
   c3 varchar2(32767) := null;
   c4 varchar2(32767) := null;
 begin
-c1:=c1||'<tr><th class="t15header">#COLUMN_HEADER#</th><td class="t15data">#COLUMN_VALUE#</td></tr>'||chr(10)||
+c1:=c1||'<tr><th class="t15header">#COLUMN_HEADER#</th><td class="t15data">#COLUMN_VALUE#</td></tr>'||unistr('\000a')||
 '';
 
 c2 := null;
@@ -13094,8 +12387,8 @@ wwv_flow_api.create_row_template (
   p_row_template_condition3=> '',
   p_row_template4=> c4,
   p_row_template_condition4=> '',
-  p_row_template_before_rows=>'<table cellpadding="0" border="0" cellspacing="0" summary="">'||chr(10)||
-'#TOP_PAGINATION#'||chr(10)||
+  p_row_template_before_rows=>'<table cellpadding="0" border="0" cellspacing="0" summary="">'||unistr('\000a')||
+'#TOP_PAGINATION#'||unistr('\000a')||
 '<tr><td><table cellpadding="0" cellspacing="0" border="0" summary="" class="t15ValueAttributePairs">',
   p_row_template_after_rows =>'</table>#EXTERNAL_LINK#</td></tr>#PAGINATION#</table>',
   p_row_template_table_attr =>'',
@@ -13122,7 +12415,7 @@ begin
 wwv_flow_api.create_row_template_patch (
   p_id => 56536122684997481 + wwv_flow_api.g_id_offset,
   p_row_template_before_first =>'OMIT',
-  p_row_template_after_last =>'<tr><td colspan="2" class="t15seperate"><hr /></td></tr>'||chr(10)||
+  p_row_template_after_last =>'<tr><td colspan="2" class="t15seperate"><hr /></td></tr>'||unistr('\000a')||
 '');
 exception when others then null;
 end;
@@ -13162,12 +12455,12 @@ wwv_flow_api.create_row_template (
   p_row_template4=> c4,
   p_row_template_condition4=> '',
   p_row_template_before_rows=>'<table class="t15standardalternatingrowcolors" cellpadding="0" cellspacing="0" summary="">',
-  p_row_template_after_rows =>'<tr>'||chr(10)||
-'    <td colspan="99" class="t15afterrows">'||chr(10)||
-'        <span class="left">#EXTERNAL_LINK##CSV_LINK#</span>'||chr(10)||
-'        <table style="float:right;text-align:right;" summary="pagination">#PAGINATION#</table>'||chr(10)||
-'    </td>'||chr(10)||
-'</tr>'||chr(10)||
+  p_row_template_after_rows =>'<tr>'||unistr('\000a')||
+'    <td colspan="99" class="t15afterrows">'||unistr('\000a')||
+'        <span class="left">#EXTERNAL_LINK##CSV_LINK#</span>'||unistr('\000a')||
+'        <table style="float:right;text-align:right;" summary="pagination">#PAGINATION#</table>'||unistr('\000a')||
+'    </td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 '</table>',
   p_row_template_table_attr =>'OMIT',
   p_row_template_type =>'GENERIC_COLUMNS',
@@ -13231,11 +12524,11 @@ wwv_flow_api.create_row_template (
   p_row_template_condition3=> '',
   p_row_template4=> c4,
   p_row_template_condition4=> '',
-  p_row_template_before_rows=>'<table cellpadding="0" cellspacing="0" summary="">'||chr(10)||
-'#TOP_PAGINATION#'||chr(10)||
+  p_row_template_before_rows=>'<table cellpadding="0" cellspacing="0" summary="">'||unistr('\000a')||
+'#TOP_PAGINATION#'||unistr('\000a')||
 '<tr><td><ul class="t1OneColumnUnorderedList">',
-  p_row_template_after_rows =>'</ul>#EXTERNAL_LINK##CSV_LINK#</td></tr>'||chr(10)||
-'#PAGINATION#'||chr(10)||
+  p_row_template_after_rows =>'</ul>#EXTERNAL_LINK##CSV_LINK#</td></tr>'||unistr('\000a')||
+'#PAGINATION#'||unistr('\000a')||
 '</table>',
   p_row_template_table_attr =>'OMIT',
   p_row_template_type =>'GENERIC_COLUMNS',
@@ -13298,20 +12591,20 @@ wwv_flow_api.create_row_template (
   p_row_template4=> c4,
   p_row_template_condition4=> '',
   p_row_template_before_rows=>'<div id="report#REGION_ID#"><htmldb:#REGION_ID#><table summary="" border="0" cellpadding="0" border="0"><tr><td colspan="2"><table class="t15standard" summary="" border="0" cellpadding="0" border="0">',
-  p_row_template_after_rows =>'</tr></table></td></tr>'||chr(10)||
-'<tr>'||chr(10)||
-'	<td valign="top">#EXTERNAL_LINK##CSV_LINK#</td>'||chr(10)||
-'	<td valign="top" align="right"><table summary="" align="right">#PAGINATION#</table></td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>'||chr(10)||
-''||chr(10)||
-'<script language=JavaScript type=text/javascript>'||chr(10)||
-'<!--'||chr(10)||
-'init_htmlPPRReport(''#REGION_ID#'');'||chr(10)||
-''||chr(10)||
-'//-->'||chr(10)||
-'</script>'||chr(10)||
-'</htmldb:#REGION_ID#>'||chr(10)||
+  p_row_template_after_rows =>'</tr></table></td></tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'	<td valign="top">#EXTERNAL_LINK##CSV_LINK#</td>'||unistr('\000a')||
+'	<td valign="top" align="right"><table summary="" align="right">#PAGINATION#</table></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
+''||unistr('\000a')||
+'<script language=JavaScript type=text/javascript>'||unistr('\000a')||
+'<!--'||unistr('\000a')||
+'init_htmlPPRReport(''#REGION_ID#'');'||unistr('\000a')||
+''||unistr('\000a')||
+'//-->'||unistr('\000a')||
+'</script>'||unistr('\000a')||
+'</htmldb:#REGION_ID#>'||unistr('\000a')||
 '</div>',
   p_row_template_table_attr =>'',
   p_row_template_type =>'GENERIC_COLUMNS',
@@ -13365,6 +12658,8 @@ wwv_flow_api.create_field_template (
   p_template_name=>'No Label',
   p_template_body1=>'<span class="hidden-label">',
   p_template_body2=>'</span>',
+  p_before_item=>'',
+  p_after_item=>'',
   p_on_error_before_label=>'<div class="t1InlineError">',
   p_on_error_after_label=>'<br/>#ERROR_MESSAGE#</div>',
   p_theme_id  => 22,
@@ -13389,6 +12684,8 @@ wwv_flow_api.create_field_template (
   p_template_name=>'Optional',
   p_template_body1=>'<label for="#CURRENT_ITEM_NAME#" tabindex="999"><span class="optional">',
   p_template_body2=>'</span></label>',
+  p_before_item=>'',
+  p_after_item=>'',
   p_on_error_before_label=>'<div class="t1InlineError">',
   p_on_error_after_label=>'<br/>#ERROR_MESSAGE#</div>',
   p_theme_id  => 22,
@@ -13413,6 +12710,8 @@ wwv_flow_api.create_field_template (
   p_template_name=>'Optional with help',
   p_template_body1=>'<label for="#CURRENT_ITEM_NAME#" tabindex="999"><a class="optional-w-help" href="javascript:popupFieldHelp(''#CURRENT_ITEM_ID#'',''&SESSION.'')" tabindex="999">',
   p_template_body2=>'</a></label>',
+  p_before_item=>'',
+  p_after_item=>'',
   p_on_error_before_label=>'<div class="t1InlineError">',
   p_on_error_after_label=>'<br/>#ERROR_MESSAGE#</div>',
   p_theme_id  => 22,
@@ -13437,6 +12736,8 @@ wwv_flow_api.create_field_template (
   p_template_name=>'Required',
   p_template_body1=>'<label for="#CURRENT_ITEM_NAME#" tabindex="999"><img src="#IMAGE_PREFIX#themes/theme_22/images/required.png" alt="#VALUE_REQUIRED#" tabindex="999" /> <span class="required">',
   p_template_body2=>'</span></label>',
+  p_before_item=>'',
+  p_after_item=>'',
   p_on_error_before_label=>'<div class="t1InlineError">',
   p_on_error_after_label=>'<br/>#ERROR_MESSAGE#</div>',
   p_theme_id  => 22,
@@ -13461,6 +12762,8 @@ wwv_flow_api.create_field_template (
   p_template_name=>'Required with help',
   p_template_body1=>'<label for="#CURRENT_ITEM_NAME#" tabindex="999"><a class="required-w-help" href="javascript:popupFieldHelp(''#CURRENT_ITEM_ID#'',''&SESSION.'')" tabindex="999"><img src="#IMAGE_PREFIX#themes/theme_22/images/required.png" alt="#VALUE_REQUIRED#" tabindex="999" /> ',
   p_template_body2=>'</a></label>',
+  p_before_item=>'',
+  p_after_item=>'',
   p_on_error_before_label=>'<div class="t1InlineError">',
   p_on_error_after_label=>'<br/>#ERROR_MESSAGE#</div>',
   p_theme_id  => 22,
@@ -13485,6 +12788,8 @@ wwv_flow_api.create_field_template (
   p_template_name=>'No Label',
   p_template_body1=>'<span class="t15NoLabel">',
   p_template_body2=>'</span>',
+  p_before_item=>'',
+  p_after_item=>'',
   p_on_error_before_label=>'',
   p_on_error_after_label=>'',
   p_theme_id  => 15,
@@ -13509,6 +12814,8 @@ wwv_flow_api.create_field_template (
   p_template_name=>'Required',
   p_template_body1=>'<label for="#CURRENT_ITEM_NAME#"><img src="#IMAGE_PREFIX#themes/theme_15/requiredicon_status2.gif" alt="" /><span class="t15required">',
   p_template_body2=>'</span></label>',
+  p_before_item=>'',
+  p_after_item=>'',
   p_on_error_before_label=>'',
   p_on_error_after_label=>'',
   p_theme_id  => 15,
@@ -13533,6 +12840,8 @@ wwv_flow_api.create_field_template (
   p_template_name=>'Required Label with Help',
   p_template_body1=>'<label for="#CURRENT_ITEM_NAME#"><img src="#IMAGE_PREFIX#themes/theme_15/requiredicon_status2.gif" alt="" /><a class="t15requiredwithhelp" href="javascript:popupFieldHelp(''#CURRENT_ITEM_ID#'',''&SESSION.'')" tabindex="999">',
   p_template_body2=>'</a></label>',
+  p_before_item=>'',
+  p_after_item=>'',
   p_on_error_before_label=>'',
   p_on_error_after_label=>'',
   p_theme_id  => 15,
@@ -13557,6 +12866,8 @@ wwv_flow_api.create_field_template (
   p_template_name=>'Optional',
   p_template_body1=>'<label for="#CURRENT_ITEM_NAME#"><span class="t15Optional">',
   p_template_body2=>'</span></label>',
+  p_before_item=>'',
+  p_after_item=>'',
   p_on_error_before_label=>'',
   p_on_error_after_label=>'',
   p_theme_id  => 15,
@@ -13581,6 +12892,8 @@ wwv_flow_api.create_field_template (
   p_template_name=>'Optional Label with Help',
   p_template_body1=>'<a class="t15optionalwithhelp" href="javascript:popupFieldHelp(''#CURRENT_ITEM_ID#'',''&SESSION.'')" tabindex="999">',
   p_template_body2=>'</a>',
+  p_before_item=>'',
+  p_after_item=>'',
   p_on_error_before_label=>'',
   p_on_error_after_label=>'',
   p_theme_id  => 15,
@@ -13605,15 +12918,15 @@ wwv_flow_api.create_menu_template (
   p_id=> 17346735300409418 + wwv_flow_api.g_id_offset,
   p_flow_id=> wwv_flow.g_flow_id,
   p_name=>'Breadcrumb Menu',
-  p_before_first=>'<div id="breadcrumb_container">'||chr(10)||
-'	<ul>'||chr(10)||
+  p_before_first=>'<div id="breadcrumb_container">'||unistr('\000a')||
+'	<ul>'||unistr('\000a')||
 '		<li class="open"><span></span></li>',
   p_current_page_option=>'		<li class="active"><a href="#LINK#">#NAME#</a></li>',
   p_non_current_page_option=>'		<li><a href="#LINK#">#NAME#</a></li>',
   p_menu_link_attributes=>'',
   p_between_levels=>'		<li class="sep"><span></span></li>',
-  p_after_last=>'		<li class="close"><span></span></li>'||chr(10)||
-'	</ul>'||chr(10)||
+  p_after_last=>'		<li class="close"><span></span></li>'||unistr('\000a')||
+'	</ul>'||unistr('\000a')||
 '</div>',
   p_max_levels=>12,
   p_start_with_node=>'PARENT_TO_LEAF',
@@ -13728,7 +13041,8 @@ wwv_flow_api.create_popup_lov_template (
   p_popup_icon_attr2=>'',
   p_page_name=>'winlov',
   p_page_title=>'Search Dialog',
-  p_page_html_head=>'<link rel="shortcut icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" media="all"/>',
+  p_page_html_head=>'<link rel="shortcut icon" href="#IMAGE_PREFIX#favicon.ico" type="image/x-icon">  <link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_22/css/theme_4_0.css" type="text/css" media="all"/>'||unistr('\000a')||
+'#THEME_CSS#',
   p_page_body_attr=>'onload="first_field()" class="pop-up-lov"',
   p_before_field_text=>'<div class="t1PopupHead">',
   p_page_heading_text=>'',
@@ -13780,8 +13094,9 @@ wwv_flow_api.create_popup_lov_template (
   p_popup_icon_attr2=>'',
   p_page_name=>'Popup LOV',
   p_page_title=>'Search Dialog',
-  p_page_html_head=>'<link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_15/theme_V2.css" type="text/css" />'||chr(10)||
-'',
+  p_page_html_head=>'<link rel="stylesheet" href="#IMAGE_PREFIX#themes/theme_15/theme_V2.css" type="text/css" />'||unistr('\000a')||
+''||unistr('\000a')||
+'#THEME_CSS#',
   p_page_body_attr=>'onload="first_field()" style="margin:0;"',
   p_before_field_text=>'<div class="t15PopupHead">',
   p_page_heading_text=>'',
@@ -13833,23 +13148,23 @@ wwv_flow_api.create_calendar_template(
   p_cal_template_name=>'Calendar',
   p_translate_this_template=> 'N',
   p_day_of_week_format=> '<th class="DayOfWeek">#IDAY#</th>',
-  p_month_title_format=> '<table cellspacing="0" cellpadding="0" border="0" summary="" class="CalendarHolder"> '||chr(10)||
-' <tr>'||chr(10)||
-'   <td class="MonthTitle">#IMONTH# #YYYY#</td>'||chr(10)||
-' </tr>'||chr(10)||
-' <tr>'||chr(10)||
+  p_month_title_format=> '<table cellspacing="0" cellpadding="0" border="0" summary="" class="CalendarHolder"> '||unistr('\000a')||
+' <tr>'||unistr('\000a')||
+'   <td class="MonthTitle">#IMONTH# #YYYY#</td>'||unistr('\000a')||
+' </tr>'||unistr('\000a')||
+' <tr>'||unistr('\000a')||
 ' <td>',
   p_month_open_format=> '<table border="0" cellpadding="0" cellspacing="0" summary="0" class="Calendar">',
-  p_month_close_format=> '</table></td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>'||chr(10)||
+  p_month_close_format=> '</table></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
 '',
   p_day_title_format=> '<div class="DayTitle">#DD#</div>',
-  p_day_open_format=> '<td class="Day" valign="top">',
+  p_day_open_format=> '<td class="Day" valign="top">#TITLE_FORMAT##DATA#',
   p_day_close_format=> '</td>',
-  p_today_open_format=> '<td valign="top" class="Today">',
+  p_today_open_format=> '<td valign="top" class="Today">#TITLE_FORMAT##DATA#',
   p_weekend_title_format=> '<div class="WeekendDayTitle">#DD#</div>',
-  p_weekend_open_format => '<td valign="top" class="WeekendDay">',
+  p_weekend_open_format => '<td valign="top" class="WeekendDay">#TITLE_FORMAT##DATA#',
   p_weekend_close_format => '</td>',
   p_nonday_title_format => '<div class="NonDayTitle">#DD#</div>',
   p_nonday_open_format => '<td class="NonDay" valign="top">',
@@ -13860,11 +13175,11 @@ wwv_flow_api.create_calendar_template(
   p_daily_title_format => '<table cellspacing="0" cellpadding="0" border="0" summary="" class="t1DayCalendarHolder"> <tr> <td class="t1MonthTitle">#IMONTH# #DD#, #YYYY#</td> </tr> <tr> <td>',
   p_daily_open_format => '<tr>',
   p_daily_close_format => '</tr>',
-  p_weekly_title_format => '<table cellspacing="0" cellpadding="0" border="0" summary="" class="WeekCalendarHolder">'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="MonthTitle" id="test">#WTITLE#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr>'||chr(10)||
+  p_weekly_title_format => '<table cellspacing="0" cellpadding="0" border="0" summary="" class="WeekCalendarHolder">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="MonthTitle" id="test">#WTITLE#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
 '<td>',
   p_weekly_day_of_week_format => '<th class="DayOfWeek">#IDAY#<br>#MM#/#DD#</th>',
   p_weekly_month_open_format => '<table border="0" cellpadding="0" cellspacing="0" summary="0" class="WeekCalendar">',
@@ -13882,7 +13197,7 @@ wwv_flow_api.create_calendar_template(
   p_weekly_hour_open_format => '<tr>',
   p_weekly_hour_close_format => '</tr>',
   p_daily_day_of_week_format => '<th class="DayOfWeek">#IDAY# #DD#/#MM#</th>',
-  p_daily_month_title_format => '<table cellspacing="0" cellpadding="0" border="0" summary="" class="DayCalendarHolder"> <tr> <td class="t1MonthTitle">#IMONTH# #DD#, #YYYY#</td> </tr> <tr> <td>'||chr(10)||
+  p_daily_month_title_format => '<table cellspacing="0" cellpadding="0" border="0" summary="" class="DayCalendarHolder"> <tr> <td class="t1MonthTitle">#IMONTH# #DD#, #YYYY#</td> </tr> <tr> <td>'||unistr('\000a')||
 '',
   p_daily_month_open_format => '<table border="0" cellpadding="2" cellspacing="0" summary="0" class="DayCalendar">',
   p_daily_month_close_format => '</table></td> </tr> </table>',
@@ -13895,17 +13210,17 @@ wwv_flow_api.create_calendar_template(
   p_daily_time_title_format => '#TIME#',
   p_daily_hour_open_format => '<tr>',
   p_daily_hour_close_format => '</tr>',
-  p_cust_month_title_format => '<table cellspacing="0" cellpadding="0" border="0" summary="" class="CalendarHolder"> '||chr(10)||
-' <tr>'||chr(10)||
-'   <td class="MonthTitle">#WTITLE#</td>'||chr(10)||
-' </tr>'||chr(10)||
-' <tr>'||chr(10)||
+  p_cust_month_title_format => '<table cellspacing="0" cellpadding="0" border="0" summary="" class="CalendarHolder"> '||unistr('\000a')||
+' <tr>'||unistr('\000a')||
+'   <td class="MonthTitle">#WTITLE#</td>'||unistr('\000a')||
+' </tr>'||unistr('\000a')||
+' <tr>'||unistr('\000a')||
 ' <td>',
   p_cust_day_of_week_format => '<th class="DayOfWeek">#IDAY#</th>',
   p_cust_month_open_format => '<table border="0" cellpadding="0" cellspacing="0" summary="0" class="Calendar">',
-  p_cust_month_close_format => '</table></td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>'||chr(10)||
+  p_cust_month_close_format => '</table></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
 '',
   p_cust_week_title_format => '',
   p_cust_week_open_format => '<tr>',
@@ -13928,11 +13243,11 @@ wwv_flow_api.create_calendar_template(
   p_cust_time_title_format => '#TIME#',
   p_cust_time_open_format => '<th class="Hour">',
   p_cust_time_close_format => '<br /></th>',
-  p_cust_wk_month_title_format => '<table cellspacing="0" cellpadding="0" border="0" summary="" class="WeekCalendarHolder">'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="MonthTitle" id="test">#WTITLE#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr>'||chr(10)||
+  p_cust_wk_month_title_format => '<table cellspacing="0" cellpadding="0" border="0" summary="" class="WeekCalendarHolder">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="MonthTitle" id="test">#WTITLE#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
 '<td>',
   p_cust_wk_day_of_week_format => '<th class="DayOfWeek">#IDAY#<br>#MM#/#DD#</th>',
   p_cust_wk_month_open_format => '<table border="0" cellpadding="0" cellspacing="0" summary="0" class="WeekCalendar">',
@@ -13951,6 +13266,15 @@ wwv_flow_api.create_calendar_template(
   p_cust_month_day_height_per => '',
   p_cust_week_day_width_pix => '',
   p_cust_week_day_width_per => '14',
+  p_agenda_format => '',
+  p_agenda_past_day_format => '',
+  p_agenda_today_day_format => '',
+  p_agenda_future_day_format => '',
+  p_agenda_past_entry_format => '',
+  p_agenda_today_entry_format => '',
+  p_agenda_future_entry_format => '',
+  p_month_data_format => '#DAYS#',
+  p_month_data_entry_format => '#DATA#',
   p_theme_id  => 22,
   p_theme_class_id => 1,
   p_reference_id=> null);
@@ -13972,23 +13296,23 @@ wwv_flow_api.create_calendar_template(
   p_cal_template_name=>'Calendar, Alternative 1',
   p_translate_this_template=> 'N',
   p_day_of_week_format=> '<th valign="bottom" class="DayOfWeek">#IDAY#</th>',
-  p_month_title_format=> '<table cellspacing="0" cellpadding="0" border="0" summary="" class="CalendarAlternative1Holder"> '||chr(10)||
-' <tr>'||chr(10)||
-'   <td class="MonthTitle">#IMONTH# #YYYY#</td>'||chr(10)||
-' </tr>'||chr(10)||
-' <tr>'||chr(10)||
+  p_month_title_format=> '<table cellspacing="0" cellpadding="0" border="0" summary="" class="CalendarAlternative1Holder"> '||unistr('\000a')||
+' <tr>'||unistr('\000a')||
+'   <td class="MonthTitle">#IMONTH# #YYYY#</td>'||unistr('\000a')||
+' </tr>'||unistr('\000a')||
+' <tr>'||unistr('\000a')||
 ' <td>',
   p_month_open_format=> '<table border="0" cellpadding="0" cellspacing="0" summary="0" class="CalendarAlternative1">',
-  p_month_close_format=> '</table></td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>'||chr(10)||
+  p_month_close_format=> '</table></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
 '',
   p_day_title_format=> '<div class="DayTitle">#DD#</div>',
-  p_day_open_format=> '<td class="Day" valign="top" height="100" height="100">',
+  p_day_open_format=> '<td class="Day" valign="top" height="100" height="100">#TITLE_FORMAT##DATA#',
   p_day_close_format=> '</td>',
-  p_today_open_format=> '<td valign="top" class="Today">',
+  p_today_open_format=> '<td valign="top" class="Today">#TITLE_FORMAT##DATA#',
   p_weekend_title_format=> '<div class="WeekendDayTitle">#DD#</div>',
-  p_weekend_open_format => '<td valign="top" class="WeekendDay">',
+  p_weekend_open_format => '<td valign="top" class="WeekendDay">#TITLE_FORMAT##DATA#',
   p_weekend_close_format => '</td>',
   p_nonday_title_format => '<div class="NonDayTitle">#DD#</div>',
   p_nonday_open_format => '<td class="NonDay" valign="top">',
@@ -13999,11 +13323,11 @@ wwv_flow_api.create_calendar_template(
   p_daily_title_format => '<table cellspacing="0" cellpadding="0" border="0" summary="" class="t1DayCalendarHolder"> <tr> <td class="t1MonthTitle">#IMONTH# #DD#, #YYYY#</td> </tr> <tr> <td>',
   p_daily_open_format => '<tr>',
   p_daily_close_format => '</tr>',
-  p_weekly_title_format => '<table cellspacing="0" cellpadding="0" border="0" summary="" class="WeekCalendarAlternative1Holder">'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="MonthTitle">#WTITLE#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr>'||chr(10)||
+  p_weekly_title_format => '<table cellspacing="0" cellpadding="0" border="0" summary="" class="WeekCalendarAlternative1Holder">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="MonthTitle">#WTITLE#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
 '<td>',
   p_weekly_day_of_week_format => '<th class="DayOfWeek">#IDAY#<br>#MM#/#DD#</th>',
   p_weekly_month_open_format => '<table border="0" cellpadding="0" cellspacing="0" summary="0" class="WeekCalendarAlternative1">',
@@ -14021,7 +13345,7 @@ wwv_flow_api.create_calendar_template(
   p_weekly_hour_open_format => '<tr>',
   p_weekly_hour_close_format => '</tr>',
   p_daily_day_of_week_format => '<th class="DayOfWeek">#IDAY# #DD#/#MM#</th>',
-  p_daily_month_title_format => '<table cellspacing="0" cellpadding="0" border="0" summary="" class="DayCalendarAlternative1Holder"> <tr><td class="MonthTitle">#IMONTH# #DD#, #YYYY#</td></tr><tr><td>'||chr(10)||
+  p_daily_month_title_format => '<table cellspacing="0" cellpadding="0" border="0" summary="" class="DayCalendarAlternative1Holder"> <tr><td class="MonthTitle">#IMONTH# #DD#, #YYYY#</td></tr><tr><td>'||unistr('\000a')||
 '',
   p_daily_month_open_format => '<table border="0" cellpadding="0" cellspacing="0" summary="0" class="DayCalendarAlternative1">',
   p_daily_month_close_format => '</table></td> </tr> </table>',
@@ -14034,17 +13358,17 @@ wwv_flow_api.create_calendar_template(
   p_daily_time_title_format => '#TIME#',
   p_daily_hour_open_format => '<tr>',
   p_daily_hour_close_format => '</tr>',
-  p_cust_month_title_format => '<table cellspacing="0" cellpadding="0" border="0" summary="" class="CalendarAlternative1Holder"> '||chr(10)||
-' <tr>'||chr(10)||
-'   <td class="MonthTitle">#WTITLE#</td>'||chr(10)||
-' </tr>'||chr(10)||
-' <tr>'||chr(10)||
+  p_cust_month_title_format => '<table cellspacing="0" cellpadding="0" border="0" summary="" class="CalendarAlternative1Holder"> '||unistr('\000a')||
+' <tr>'||unistr('\000a')||
+'   <td class="MonthTitle">#WTITLE#</td>'||unistr('\000a')||
+' </tr>'||unistr('\000a')||
+' <tr>'||unistr('\000a')||
 ' <td>',
   p_cust_day_of_week_format => '<th valign="bottom" class="DayOfWeek">#IDAY#</th>',
-  p_cust_month_open_format => '<table border="0" cellpadding="0" cellspacing="4" summary="0" class="CalendarAlternative1">'||chr(10)||
+  p_cust_month_open_format => '<table border="0" cellpadding="0" cellspacing="4" summary="0" class="CalendarAlternative1">'||unistr('\000a')||
 '',
-  p_cust_month_close_format => '</table></td>'||chr(10)||
-'</tr>'||chr(10)||
+  p_cust_month_close_format => '</table></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 '</table>',
   p_cust_week_title_format => '',
   p_cust_week_open_format => '<tr>',
@@ -14067,14 +13391,14 @@ wwv_flow_api.create_calendar_template(
   p_cust_time_title_format => '#TIME#',
   p_cust_time_open_format => '<th class="Hour">',
   p_cust_time_close_format => '<br /></th>',
-  p_cust_wk_month_title_format => '<table cellspacing="4" cellpadding="0" border="0" summary="" class="WeekCalendarAlternative1Holder">'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="MonthTitle" id="test">#WTITLE#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr>'||chr(10)||
+  p_cust_wk_month_title_format => '<table cellspacing="4" cellpadding="0" border="0" summary="" class="WeekCalendarAlternative1Holder">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="MonthTitle" id="test">#WTITLE#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
 '<td>',
   p_cust_wk_day_of_week_format => '<th class="DayOfWeek">#IDAY#<br>#MM#/#DD#</th>',
-  p_cust_wk_month_open_format => '<table border="0" cellpadding="0" cellspacing="4" summary="0" class="WeekCalendarAlternative1">'||chr(10)||
+  p_cust_wk_month_open_format => '<table border="0" cellpadding="0" cellspacing="4" summary="0" class="WeekCalendarAlternative1">'||unistr('\000a')||
 '',
   p_cust_wk_month_close_format => '</table></td></tr></table>',
   p_cust_wk_week_title_format => '',
@@ -14091,6 +13415,15 @@ wwv_flow_api.create_calendar_template(
   p_cust_month_day_height_per => '',
   p_cust_week_day_width_pix => '100',
   p_cust_week_day_width_per => '',
+  p_agenda_format => '',
+  p_agenda_past_day_format => '',
+  p_agenda_today_day_format => '',
+  p_agenda_future_day_format => '',
+  p_agenda_past_entry_format => '',
+  p_agenda_today_entry_format => '',
+  p_agenda_future_entry_format => '',
+  p_month_data_format => '#DAYS#',
+  p_month_data_entry_format => '#DATA#',
   p_theme_id  => 22,
   p_theme_class_id => 2,
   p_reference_id=> null);
@@ -14112,22 +13445,22 @@ wwv_flow_api.create_calendar_template(
   p_cal_template_name=>'Small Calendar',
   p_translate_this_template=> 'N',
   p_day_of_week_format=> '<th class="day-of-week">#DY#</th>',
-  p_month_title_format=> '<table cellspacing="0" cellpadding="0" border="0" summary="" class="small-calendar-holder"> '||chr(10)||
-' <tr>'||chr(10)||
-'   <td class="month-title">#IMONTH# #YYYY#</td>'||chr(10)||
-' </tr>'||chr(10)||
-' <tr>'||chr(10)||
+  p_month_title_format=> '<table cellspacing="0" cellpadding="0" border="0" summary="" class="small-calendar-holder"> '||unistr('\000a')||
+' <tr>'||unistr('\000a')||
+'   <td class="month-title">#IMONTH# #YYYY#</td>'||unistr('\000a')||
+' </tr>'||unistr('\000a')||
+' <tr>'||unistr('\000a')||
 ' <td>',
   p_month_open_format=> '<table border="0" cellpadding="0" cellspacing="0" summary="" class="small-calendar">',
-  p_month_close_format=> '</table></td>'||chr(10)||
-'</tr>'||chr(10)||
+  p_month_close_format=> '</table></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 '</table>',
   p_day_title_format=> '<div class="day-title">#DD#</div>',
-  p_day_open_format=> '<td class="day" valign="top">',
+  p_day_open_format=> '<td class="day" valign="top">#TITLE_FORMAT##DATA#',
   p_day_close_format=> '</td>',
-  p_today_open_format=> '<td valign="top" class="today">',
+  p_today_open_format=> '<td valign="top" class="today">#TITLE_FORMAT##DATA#',
   p_weekend_title_format=> '<div class="weekend-day-title">#DD#</div>',
-  p_weekend_open_format => '<td valign="top" class="weekend-day">',
+  p_weekend_open_format => '<td valign="top" class="weekend-day">#TITLE_FORMAT##DATA#',
   p_weekend_close_format => '</td>',
   p_nonday_title_format => '<div class="non-day-title">#DD#</div>',
   p_nonday_open_format => '<td class="non-day" valign="top">',
@@ -14138,11 +13471,11 @@ wwv_flow_api.create_calendar_template(
   p_daily_title_format => '<table cellspacing="0" cellpadding="0" border="0" summary="" class="t1DayCalendarHolder"> <tr> <td class="t1MonthTitle">#IMONTH# #DD#, #YYYY#</td> </tr> <tr> <td>',
   p_daily_open_format => '<tr>',
   p_daily_close_format => '</tr>',
-  p_weekly_title_format => '<table cellspacing="0" cellpadding="0" border="0" summary="" class="SmallWeekCalendarHolder">'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="MonthTitle" id="test">#WTITLE#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr>'||chr(10)||
+  p_weekly_title_format => '<table cellspacing="0" cellpadding="0" border="0" summary="" class="SmallWeekCalendarHolder">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="MonthTitle" id="test">#WTITLE#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
 '<td>',
   p_weekly_day_of_week_format => '<th class="DayOfWeek">#DY#<br />#MM#/#DD#</th>',
   p_weekly_month_open_format => '<table border="0" cellpadding="0" cellspacing="0" summary="0" class="SmallWeekCalendar">',
@@ -14160,7 +13493,7 @@ wwv_flow_api.create_calendar_template(
   p_weekly_hour_open_format => '<tr>',
   p_weekly_hour_close_format => '</tr>',
   p_daily_day_of_week_format => '<th class="DayOfWeek">#DY# #DD#/#MM#</th>',
-  p_daily_month_title_format => '<table cellspacing="0" cellpadding="0" border="0" summary="" class="SmallDayCalendarHolder"> <tr> <td class="MonthTitle">#IMONTH# #DD#, #YYYY#</td> </tr><tr><td>'||chr(10)||
+  p_daily_month_title_format => '<table cellspacing="0" cellpadding="0" border="0" summary="" class="SmallDayCalendarHolder"> <tr> <td class="MonthTitle">#IMONTH# #DD#, #YYYY#</td> </tr><tr><td>'||unistr('\000a')||
 '',
   p_daily_month_open_format => '<table border="0" cellpadding="0" cellspacing="0" summary="0" class="SmallDayCalendar">',
   p_daily_month_close_format => '</table></td></tr></table>',
@@ -14173,16 +13506,16 @@ wwv_flow_api.create_calendar_template(
   p_daily_time_title_format => '#TIME#',
   p_daily_hour_open_format => '<tr>',
   p_daily_hour_close_format => '</tr>',
-  p_cust_month_title_format => '<table cellspacing="2" cellpadding="0" border="0" summary="" class="small-calendar-holder"> '||chr(10)||
-' <tr>'||chr(10)||
-'   <td class="month-title">#WTITLE#</td>'||chr(10)||
-' </tr>'||chr(10)||
-' <tr>'||chr(10)||
+  p_cust_month_title_format => '<table cellspacing="2" cellpadding="0" border="0" summary="" class="small-calendar-holder"> '||unistr('\000a')||
+' <tr>'||unistr('\000a')||
+'   <td class="month-title">#WTITLE#</td>'||unistr('\000a')||
+' </tr>'||unistr('\000a')||
+' <tr>'||unistr('\000a')||
 ' <td>',
   p_cust_day_of_week_format => '<th class="day-of-week">#DY#</th>',
   p_cust_month_open_format => '<table border="0" cellpadding="0" cellspacing="2" summary="" class="small-calendar">',
-  p_cust_month_close_format => '</table></td>'||chr(10)||
-'</tr>'||chr(10)||
+  p_cust_month_close_format => '</table></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 '</table>',
   p_cust_week_title_format => '',
   p_cust_week_open_format => '<tr>',
@@ -14205,16 +13538,16 @@ wwv_flow_api.create_calendar_template(
   p_cust_time_title_format => '#TIME#',
   p_cust_time_open_format => '<th class="Hour">',
   p_cust_time_close_format => '<br /></th>',
-  p_cust_wk_month_title_format => '<table cellspacing="2" cellpadding="0" border="0" summary="" class="SmallWeekCalendarHolder">'||chr(10)||
-'<tr>'||chr(10)||
-'<td class="MonthTitle" id="test">#WTITLE#</td>'||chr(10)||
-'</tr>'||chr(10)||
-'<tr>'||chr(10)||
+  p_cust_wk_month_title_format => '<table cellspacing="2" cellpadding="0" border="0" summary="" class="SmallWeekCalendarHolder">'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
+'<td class="MonthTitle" id="test">#WTITLE#</td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'<tr>'||unistr('\000a')||
 '<td>',
   p_cust_wk_day_of_week_format => '<th class="DayOfWeek">#DY#<br />#MM#/#DD#</th>',
   p_cust_wk_month_open_format => '<table border="0" cellpadding="0" cellspacing="2" summary="0" class="SmallWeekCalendar">',
-  p_cust_wk_month_close_format => '</table></td>'||chr(10)||
-'</tr>'||chr(10)||
+  p_cust_wk_month_close_format => '</table></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
 '</table>',
   p_cust_wk_week_title_format => '',
   p_cust_wk_week_open_format => '',
@@ -14230,6 +13563,15 @@ wwv_flow_api.create_calendar_template(
   p_cust_month_day_height_per => '14',
   p_cust_week_day_width_pix => '40',
   p_cust_week_day_width_per => '14',
+  p_agenda_format => '',
+  p_agenda_past_day_format => '',
+  p_agenda_today_day_format => '',
+  p_agenda_future_day_format => '',
+  p_agenda_past_entry_format => '',
+  p_agenda_today_entry_format => '',
+  p_agenda_future_entry_format => '',
+  p_month_data_format => '#DAYS#',
+  p_month_data_entry_format => '#DATA#',
   p_theme_id  => 22,
   p_theme_class_id => 3,
   p_reference_id=> null);
@@ -14251,23 +13593,23 @@ wwv_flow_api.create_calendar_template(
   p_cal_template_name=>'Calendar',
   p_translate_this_template=> 'Y',
   p_day_of_week_format=> '<th class="t15DayOfWeek">#IDAY#</th>',
-  p_month_title_format=> '<table cellspacing="0" cellpadding="0" border="0" summary="" class="t15StandardCalHolder"> '||chr(10)||
-' <tr>'||chr(10)||
-'   <td class="t15MonthTitle">#IMONTH# #YYYY#</td>'||chr(10)||
-' </tr>'||chr(10)||
-' <tr>'||chr(10)||
+  p_month_title_format=> '<table cellspacing="0" cellpadding="0" border="0" summary="" class="t15StandardCalHolder"> '||unistr('\000a')||
+' <tr>'||unistr('\000a')||
+'   <td class="t15MonthTitle">#IMONTH# #YYYY#</td>'||unistr('\000a')||
+' </tr>'||unistr('\000a')||
+' <tr>'||unistr('\000a')||
 ' <td>',
   p_month_open_format=> '<table border="0" cellpadding="0" cellspacing="0" summary="0" class="t15StandardCal">',
-  p_month_close_format=> '</table></td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>'||chr(10)||
+  p_month_close_format=> '</table></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
 '',
   p_day_title_format=> '<div class="t15DayTitle">#DD#</div>',
-  p_day_open_format=> '<td class="t15Day" valign="top">',
+  p_day_open_format=> '<td class="t15Day" valign="top">#TITLE_FORMAT##DATA#',
   p_day_close_format=> '</td><!--CAN YOU SEE THIS? #4-->',
-  p_today_open_format=> '<td valign="top" class="t15Today">',
+  p_today_open_format=> '<td valign="top" class="t15Today">#TITLE_FORMAT##DATA#',
   p_weekend_title_format=> '<div class="t15WeekendDayTitle">#DD#</div>',
-  p_weekend_open_format => '<td valign="top" class="t15WeekendDay">',
+  p_weekend_open_format => '<td valign="top" class="t15WeekendDay">#TITLE_FORMAT##DATA#',
   p_weekend_close_format => '</td><!--CAN YOU SEE THIS? #3-->',
   p_nonday_title_format => '<div class="t15NonDayTitle">#DD#</div>',
   p_nonday_open_format => '<td class="t15NonDay" valign="top">',
@@ -14350,6 +13692,15 @@ wwv_flow_api.create_calendar_template(
   p_cust_month_day_height_per => '',
   p_cust_week_day_width_pix => '',
   p_cust_week_day_width_per => '',
+  p_agenda_format => '',
+  p_agenda_past_day_format => '',
+  p_agenda_today_day_format => '',
+  p_agenda_future_day_format => '',
+  p_agenda_past_entry_format => '',
+  p_agenda_today_entry_format => '',
+  p_agenda_future_entry_format => '',
+  p_month_data_format => '#DAYS#',
+  p_month_data_entry_format => '#DATA#',
   p_theme_id  => 15,
   p_theme_class_id => 1,
   p_reference_id=> null);
@@ -14371,23 +13722,23 @@ wwv_flow_api.create_calendar_template(
   p_cal_template_name=>'Calendar, Alternative 1',
   p_translate_this_template=> 'N',
   p_day_of_week_format=> '<th class="t15DayOfWeek">#IDAY#</th>',
-  p_month_title_format=> '<table cellspacing="0" cellpadding="0" border="0" summary="" class="t15CalendarAlternative1Holder"> '||chr(10)||
-' <tr>'||chr(10)||
-'   <td class="t15MonthTitle">#IMONTH# #YYYY#</td>'||chr(10)||
-' </tr>'||chr(10)||
-' <tr>'||chr(10)||
+  p_month_title_format=> '<table cellspacing="0" cellpadding="0" border="0" summary="" class="t15CalendarAlternative1Holder"> '||unistr('\000a')||
+' <tr>'||unistr('\000a')||
+'   <td class="t15MonthTitle">#IMONTH# #YYYY#</td>'||unistr('\000a')||
+' </tr>'||unistr('\000a')||
+' <tr>'||unistr('\000a')||
 ' <td>',
   p_month_open_format=> '<table border="0" cellpadding="0" cellspacing="0" summary="0" class="t15CalendarAlternative1">',
-  p_month_close_format=> '</table></td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>'||chr(10)||
+  p_month_close_format=> '</table></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
 '',
   p_day_title_format=> '<div class="t15DayTitle">#DD#</div>',
-  p_day_open_format=> '<td class="t15Day" valign="top">',
+  p_day_open_format=> '<td class="t15Day" valign="top">#TITLE_FORMAT##DATA#',
   p_day_close_format=> '</td>',
-  p_today_open_format=> '<td valign="top" class="t15Today">',
+  p_today_open_format=> '<td valign="top" class="t15Today">#TITLE_FORMAT##DATA#',
   p_weekend_title_format=> '<div class="t15WeekendDayTitle">#DD#</div>',
-  p_weekend_open_format => '<td valign="top" class="t15WeekendDay">',
+  p_weekend_open_format => '<td valign="top" class="t15WeekendDay">#TITLE_FORMAT##DATA#',
   p_weekend_close_format => '</td>',
   p_nonday_title_format => '<div class="t15NonDayTitle">#DD#</div></td>',
   p_nonday_open_format => '<td class="t15NonDay" valign="top">',
@@ -14470,6 +13821,15 @@ wwv_flow_api.create_calendar_template(
   p_cust_month_day_height_per => '',
   p_cust_week_day_width_pix => '',
   p_cust_week_day_width_per => '',
+  p_agenda_format => '',
+  p_agenda_past_day_format => '',
+  p_agenda_today_day_format => '',
+  p_agenda_future_day_format => '',
+  p_agenda_past_entry_format => '',
+  p_agenda_today_entry_format => '',
+  p_agenda_future_entry_format => '',
+  p_month_data_format => '#DAYS#',
+  p_month_data_entry_format => '#DATA#',
   p_theme_id  => 15,
   p_theme_class_id => 2,
   p_reference_id=> null);
@@ -14491,23 +13851,23 @@ wwv_flow_api.create_calendar_template(
   p_cal_template_name=>'Small Calendar',
   p_translate_this_template=> 'Y',
   p_day_of_week_format=> '',
-  p_month_title_format=> '<table cellspacing="0" cellpadding="0" border="0" summary="" class="t15SmallCalendarHolder"> '||chr(10)||
-' <tr>'||chr(10)||
-'   <td class="t15MonthTitle">#IMONTH# #YYYY#</td>'||chr(10)||
-' </tr>'||chr(10)||
-' <tr>'||chr(10)||
+  p_month_title_format=> '<table cellspacing="0" cellpadding="0" border="0" summary="" class="t15SmallCalendarHolder"> '||unistr('\000a')||
+' <tr>'||unistr('\000a')||
+'   <td class="t15MonthTitle">#IMONTH# #YYYY#</td>'||unistr('\000a')||
+' </tr>'||unistr('\000a')||
+' <tr>'||unistr('\000a')||
 ' <td>',
   p_month_open_format=> '<table border="0" cellpadding="0" cellspacing="0" summary="0" class="t15SmallCalendar">',
-  p_month_close_format=> '</tr></table></td>'||chr(10)||
-'</tr>'||chr(10)||
-'</table>'||chr(10)||
+  p_month_close_format=> '</tr></table></td>'||unistr('\000a')||
+'</tr>'||unistr('\000a')||
+'</table>'||unistr('\000a')||
 '',
   p_day_title_format=> '<div class="t15DayTitle">#DD#</div>',
-  p_day_open_format=> '<td class="t15Day" valign="top">',
+  p_day_open_format=> '<td class="t15Day" valign="top">#TITLE_FORMAT##DATA#',
   p_day_close_format=> '</td>',
-  p_today_open_format=> '<td valign="top" class="t15Today">',
+  p_today_open_format=> '<td valign="top" class="t15Today">#TITLE_FORMAT##DATA#',
   p_weekend_title_format=> '<div class="t15WeekendDayTitle">#DD#</div>',
-  p_weekend_open_format => '<td valign="top" class="t15WeekendDay">',
+  p_weekend_open_format => '<td valign="top" class="t15WeekendDay">#TITLE_FORMAT##DATA#',
   p_weekend_close_format => '</td>',
   p_nonday_title_format => '<div class="t15NonDayTitle">#DD#</div></td>',
   p_nonday_open_format => '<td class="t15NonDay" valign="top">',
@@ -14590,6 +13950,15 @@ wwv_flow_api.create_calendar_template(
   p_cust_month_day_height_per => '',
   p_cust_week_day_width_pix => '',
   p_cust_week_day_width_per => '',
+  p_agenda_format => '',
+  p_agenda_past_day_format => '',
+  p_agenda_today_day_format => '',
+  p_agenda_future_day_format => '',
+  p_agenda_past_entry_format => '',
+  p_agenda_today_entry_format => '',
+  p_agenda_future_entry_format => '',
+  p_month_data_format => '#DAYS#',
+  p_month_data_entry_format => '#DATA#',
   p_theme_id  => 15,
   p_theme_class_id => 3,
   p_reference_id=> null);
@@ -14609,6 +13978,8 @@ wwv_flow_api.create_theme (
   p_flow_id =>wwv_flow.g_flow_id,
   p_theme_id  => 22,
   p_theme_name=>'Bluejay',
+  p_ui_type_name=>'DESKTOP',
+  p_is_locked=>false,
   p_default_page_template=>17323635730409362 + wwv_flow_api.g_id_offset,
   p_error_template=>17322454697409361 + wwv_flow_api.g_id_offset,
   p_printer_friendly_template=>17324253802409363 + wwv_flow_api.g_id_offset,
@@ -14631,6 +14002,10 @@ wwv_flow_api.create_theme (
   p_default_calendar_template=>null + wwv_flow_api.g_id_offset,
   p_default_list_template=>17340532544409415 + wwv_flow_api.g_id_offset,
   p_default_option_label=>17346441206409418 + wwv_flow_api.g_id_offset,
+  p_default_header_template=>null + wwv_flow_api.g_id_offset,
+  p_default_footer_template=>null + wwv_flow_api.g_id_offset,
+  p_default_page_transition=>'NONE',
+  p_default_popup_transition=>'NONE',
   p_default_required_label=>17346662877409418 + wwv_flow_api.g_id_offset);
 end;
 /
@@ -14643,6 +14018,8 @@ wwv_flow_api.create_theme (
   p_flow_id =>wwv_flow.g_flow_id,
   p_theme_id  => 15,
   p_theme_name=>'Light Blue',
+  p_ui_type_name=>'DESKTOP',
+  p_is_locked=>false,
   p_default_page_template=>56531316643997432 + wwv_flow_api.g_id_offset,
   p_error_template=>56531806356997437 + wwv_flow_api.g_id_offset,
   p_printer_friendly_template=>56531202608997432 + wwv_flow_api.g_id_offset,
@@ -14665,11 +14042,35 @@ wwv_flow_api.create_theme (
   p_default_calendar_template=>56537205611997506 + wwv_flow_api.g_id_offset,
   p_default_list_template=>56535302619997473 + wwv_flow_api.g_id_offset,
   p_default_option_label=>56536903519997495 + wwv_flow_api.g_id_offset,
+  p_default_header_template=>null + wwv_flow_api.g_id_offset,
+  p_default_footer_template=>null + wwv_flow_api.g_id_offset,
+  p_default_page_transition=>'NONE',
+  p_default_popup_transition=>'NONE',
   p_default_required_label=>56536705056997495 + wwv_flow_api.g_id_offset);
 end;
 /
  
-prompt  ...build options used by application 121
+prompt  ...theme styles
+--
+ 
+begin
+ 
+null;
+ 
+end;
+/
+
+prompt  ...theme display points
+--
+ 
+begin
+ 
+null;
+ 
+end;
+/
+
+prompt  ...build options
 --
  
 begin
@@ -14694,12 +14095,6 @@ wwv_flow_api.create_build_option (
 end;
 /
 
---application/shared_components/globalization/messages
-prompt  ...messages used by application: 121
---
---application/shared_components/globalization/dyntranslations
-prompt  ...dynamic translations used by application: 121
---
 --application/shared_components/globalization/language
 prompt  ...Language Maps for Application 121
 --
@@ -14711,6 +14106,12 @@ null;
 end;
 /
 
+--application/shared_components/globalization/messages
+prompt  ...text messages
+--
+--application/shared_components/globalization/dyntranslations
+prompt  ...dynamic translations
+--
 prompt  ...Shortcuts
 --
 prompt  ...web services (9iR2 or better)
@@ -14722,162 +14123,82 @@ prompt  ...report layouts
 prompt  ...authentication schemes
 --
 --application/shared_components/security/authentication/application_express
-prompt  ......scheme 56538027943997553
+prompt  ......authentication 56538027943997553
  
 begin
  
-declare
-  s1 varchar2(32767) := null;
-  s2 varchar2(32767) := null;
-  s3 varchar2(32767) := null;
-  s4 varchar2(32767) := null;
-  s5 varchar2(32767) := null;
-begin
-s1 := null;
-s2 := null;
-s3 := null;
-s4:=s4||'-BUILTIN-';
-
-s5 := null;
-wwv_flow_api.create_auth_setup (
-  p_id=> 56538027943997553 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'Application Express',
-  p_description=>'ID-Daten von internem Application Express Account und Anmeldeseite in dieser Anwendung verwenden.',
-  p_page_sentry_function=> s1,
-  p_sess_verify_function=> s2,
-  p_pre_auth_process=> s3,
-  p_auth_function=> s4,
-  p_post_auth_process=> s5,
-  p_invalid_session_page=>'101',
-  p_invalid_session_url=>'',
-  p_cookie_name=>'',
-  p_cookie_path=>'',
-  p_cookie_domain=>'',
-  p_use_secure_cookie_yn=>'',
-  p_ldap_host=>'',
-  p_ldap_port=>'',
-  p_ldap_string=>'',
-  p_attribute_01=>'',
-  p_attribute_02=>'wwv_flow_custom_auth_std.logout?p_this_flow=&APP_ID.&amp;p_next_flow_page_sess=&APP_ID.:1',
-  p_attribute_03=>'',
-  p_attribute_04=>'',
-  p_attribute_05=>'',
-  p_attribute_06=>'',
-  p_attribute_07=>'',
-  p_attribute_08=>'',
-  p_required_patch => null + wwv_flow_api.g_id_offset);
-end;
+wwv_flow_api.create_authentication (
+  p_id => 56538027943997553 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_name => 'Application Express'
+ ,p_scheme_type => 'NATIVE_APEX_ACCOUNTS'
+ ,p_attribute_15 => '56538027943997553'
+ ,p_invalid_session_type => 'URL'
+ ,p_invalid_session_url => 'f?p=&APP_ID.:101:&SESSION.'
+ ,p_logout_url => 'f?p=&APP_ID.:1'
+ ,p_use_secure_cookie_yn => 'N'
+ ,p_comments => 'ID-Daten von internem Application Express Account und Anmeldeseite in dieser Anwendung verwenden.'
+  );
 null;
  
 end;
 /
 
 --application/shared_components/security/authentication/database
-prompt  ......scheme 56538116772997554
+prompt  ......authentication 56538116772997554
  
 begin
  
-declare
-  s1 varchar2(32767) := null;
-  s2 varchar2(32767) := null;
-  s3 varchar2(32767) := null;
-  s4 varchar2(32767) := null;
-  s5 varchar2(32767) := null;
-begin
-s1:=s1||'-DATABASE-';
-
-s2 := null;
-s3 := null;
-s4 := null;
-s5 := null;
-wwv_flow_api.create_auth_setup (
-  p_id=> 56538116772997554 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'DATABASE',
-  p_description=>'Datenbank-Authentifizierung verwenden (Benutzer von DAD identifiziert).',
-  p_page_sentry_function=> s1,
-  p_sess_verify_function=> s2,
-  p_pre_auth_process=> s3,
-  p_auth_function=> s4,
-  p_post_auth_process=> s5,
-  p_invalid_session_page=>'',
-  p_invalid_session_url=>'',
-  p_cookie_name=>'',
-  p_cookie_path=>'',
-  p_cookie_domain=>'',
-  p_use_secure_cookie_yn=>'',
-  p_ldap_host=>'',
-  p_ldap_port=>'',
-  p_ldap_string=>'',
-  p_attribute_01=>'',
-  p_attribute_02=>'',
-  p_attribute_03=>'',
-  p_attribute_04=>'',
-  p_attribute_05=>'',
-  p_attribute_06=>'',
-  p_attribute_07=>'',
-  p_attribute_08=>'',
-  p_required_patch => null + wwv_flow_api.g_id_offset);
-end;
+wwv_flow_api.create_authentication (
+  p_id => 56538116772997554 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_name => 'DATABASE'
+ ,p_scheme_type => 'NATIVE_DAD'
+ ,p_attribute_15 => '56538116772997554'
+ ,p_invalid_session_type => 'LOGIN'
+ ,p_use_secure_cookie_yn => 'N'
+ ,p_comments => 'Datenbank-Authentifizierung verwenden (Benutzer von DAD identifiziert).'
+  );
 null;
  
 end;
 /
 
 --application/shared_components/security/authentication/database_account
-prompt  ......scheme 56538206377997554
+prompt  ......authentication 56538206377997554
  
 begin
  
-declare
-  s1 varchar2(32767) := null;
-  s2 varchar2(32767) := null;
-  s3 varchar2(32767) := null;
-  s4 varchar2(32767) := null;
-  s5 varchar2(32767) := null;
-begin
-s1 := null;
-s2 := null;
-s3 := null;
-s4:=s4||'return false; end;--';
-
-s5 := null;
-wwv_flow_api.create_auth_setup (
-  p_id=> 56538206377997554 + wwv_flow_api.g_id_offset,
-  p_flow_id=> wwv_flow.g_flow_id,
-  p_name=> 'DATABASE ACCOUNT',
-  p_description=>'Verwenden Sie Datenbank-Account-ID-Daten.',
-  p_page_sentry_function=> s1,
-  p_sess_verify_function=> s2,
-  p_pre_auth_process=> s3,
-  p_auth_function=> s4,
-  p_post_auth_process=> s5,
-  p_invalid_session_page=>'101',
-  p_invalid_session_url=>'',
-  p_cookie_name=>'',
-  p_cookie_path=>'',
-  p_cookie_domain=>'',
-  p_use_secure_cookie_yn=>'',
-  p_ldap_host=>'',
-  p_ldap_port=>'',
-  p_ldap_string=>'',
-  p_attribute_01=>'',
-  p_attribute_02=>'wwv_flow_custom_auth_std.logout?p_this_flow=&APP_ID.&amp;p_next_flow_page_sess=&APP_ID.:1',
-  p_attribute_03=>'',
-  p_attribute_04=>'',
-  p_attribute_05=>'',
-  p_attribute_06=>'',
-  p_attribute_07=>'',
-  p_attribute_08=>'',
-  p_required_patch => null + wwv_flow_api.g_id_offset);
+wwv_flow_api.create_authentication (
+  p_id => 56538206377997554 + wwv_flow_api.g_id_offset
+ ,p_flow_id => wwv_flow.g_flow_id
+ ,p_name => 'DATABASE ACCOUNT'
+ ,p_scheme_type => 'NATIVE_DB_ACCOUNTS'
+ ,p_attribute_15 => '56538206377997554'
+ ,p_invalid_session_type => 'URL'
+ ,p_invalid_session_url => 'f?p=&APP_ID.:101:&SESSION.'
+ ,p_logout_url => 'f?p=&APP_ID.:1'
+ ,p_use_secure_cookie_yn => 'N'
+ ,p_comments => 'Verwenden Sie Datenbank-Account-ID-Daten.'
+  );
+null;
+ 
 end;
+/
+
+prompt  ...ui types
+--
+ 
+begin
+ 
 null;
  
 end;
 /
 
 prompt  ...plugins
+--
+prompt  ...data loading
 --
 --application/deployment/definition
 prompt  ...application deployment
@@ -14929,13 +14250,24 @@ null;
 end;
 /
 
+prompt  ...post import process
+ 
+begin
+ 
+wwv_flow_api.post_import_process(p_flow_id => wwv_flow.g_flow_id);
+null;
+ 
+end;
+/
+
 --application/end_environment
 commit;
 commit;
-begin 
-execute immediate 'begin dbms_session.set_nls( param => ''NLS_NUMERIC_CHARACTERS'', value => '''''''' || replace(wwv_flow_api.g_nls_numeric_chars,'''''''','''''''''''') || ''''''''); end;';
+begin
+execute immediate 'begin sys.dbms_session.set_nls( param => ''NLS_NUMERIC_CHARACTERS'', value => '''''''' || replace(wwv_flow_api.g_nls_numeric_chars,'''''''','''''''''''') || ''''''''); end;';
 end;
 /
 set verify on
 set feedback on
+set define on
 prompt  ...done
