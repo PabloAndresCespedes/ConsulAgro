@@ -945,7 +945,6 @@ create or replace package body FINI053 is
 
     l_tipo_mov_filter number;
     l_since_date_filter date;
-    l_error_comodin   varchar2(4000);
     
     l_tmv_cancela     number;
     l_tmv_cancela_two number;
@@ -1292,33 +1291,45 @@ create or replace package body FINI053 is
                  in_empresa      => l_emp_insert,
                  in_user         => in_user
          );
-         
+          
         -- una vez que se cancela el segundo documento, vuelve a consultar todo
         -- y se hace un refresh desde APEX para las listas
-        if l_fin_doc_child is not null then         
-          generate_query(
-           in_fecha_op  => l_fecha_op_insert,
-           in_desde     => l_since_date_filter,
-           in_cliente   => case when l_ind_er = co_emision  then l_cli_or_prov_insert else null end, --> cliente
-           in_proveedor => case when l_ind_er = co_recibido then l_cli_or_prov_insert else null end, --> proveedor
-           in_tipo_mov  => l_tipo_mov_filter,
-           in_mnd       => l_mnd_insert,
-           in_empresa   => l_emp_insert,
-           in_suc       => l_suc_insert,
-           in_user      => in_user,
-           in_ind_er    => l_ind_er,
-           out_error    => l_error_comodin
-          );
-          
-          -- items ocultos en APEX
+        if l_fin_doc_child is not null then
           <<clear_data_selected>>
           case
             when l_ind_er = co_emision then
-               ap.sv(p_item => 'P158_NC_SEQ');
-               ap.sv(p_item => 'P158_FC_SEQ');
-            when l_ind_er = co_recibido then            
-               ap.sv(p_item => 'P158_NCR_SEQ');
-               ap.sv(p_item => 'P158_FCR_SEQ');  
+              <<del_members_emision>>
+              begin
+                APEX_COLLECTION.DELETE_MEMBER(
+                  p_collection_name => co_col_nc_emision,
+                  p_seq             => l_nc_doc_select
+                );
+                  
+                APEX_COLLECTION.DELETE_MEMBER(
+                  p_collection_name => co_col_fc_emision,
+                  p_seq             => l_fc_cre_doc_select
+                );
+              end del_members_emision;
+                
+              ap.sv(p_item => 'P158_NC_SEQ');
+              ap.sv(p_item => 'P158_FC_SEQ');
+                
+            when l_ind_er = co_recibido then
+              <<del_members_recibido>>
+              begin
+                APEX_COLLECTION.DELETE_MEMBER(
+                  p_collection_name => co_col_nc_rec,
+                  p_seq             => l_nc_doc_select 
+                );
+                  
+                APEX_COLLECTION.DELETE_MEMBER(
+                  p_collection_name => co_col_fc_rec,
+                  p_seq             => l_fc_cre_doc_select 
+                );
+              end del_members_recibido;  
+                     
+              ap.sv(p_item => 'P158_NCR_SEQ');
+              ap.sv(p_item => 'P158_FCR_SEQ');  
             else
               raise e_indicador;        
           end case clear_data_selected;
