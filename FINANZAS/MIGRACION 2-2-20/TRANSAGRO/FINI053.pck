@@ -96,6 +96,10 @@ create or replace package FINI053 is
     in_user         varchar2
   );
   
+  -- 01/07/2022 14:36:53 @PabloACespedes \(^-^)/
+  -- trunca todas las colecciones
+  procedure truncate_all_collections;
+  
   -- 22/06/2022 11:08:25 @PabloACespedes \(^-^)/
   -- retorna si el tipo mov. es EMISION o RECEPCION (E or R)
   function get_tipo_mov_er(
@@ -1381,6 +1385,29 @@ create or replace package body FINI053 is
                        in_empresa
                        );
   end add_pago;
+    
+  procedure truncate_all_collections as
+  begin 
+    if apex_collection.collection_exists (p_collection_name => co_col_nc_emision) then
+       apex_collection.truncate_collection ( p_collection_name => co_col_nc_emision );
+    end if;
+
+    if apex_collection.collection_exists (p_collection_name => co_col_fc_emision) then
+       apex_collection.truncate_collection ( p_collection_name => co_col_fc_emision );
+    end if;
+
+    if apex_collection.collection_exists (p_collection_name => co_col_nc_rec) then
+       apex_collection.truncate_collection ( p_collection_name => co_col_nc_rec );
+    end if;
+
+    if apex_collection.collection_exists (p_collection_name => co_col_fc_rec) then
+       apex_collection.truncate_collection ( p_collection_name => co_col_fc_rec );
+    end if;
+
+    if apex_collection.collection_exists (p_collection_name => co_col_filtros) then
+       apex_collection.truncate_collection ( p_collection_name => co_col_filtros );
+    end if;
+  end truncate_all_collections;
   
   function operador_hab_mes_finanzas(
     in_user varchar2,
