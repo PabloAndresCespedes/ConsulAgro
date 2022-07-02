@@ -291,6 +291,29 @@ CREATE OR REPLACE PACKAGE BODY FACI240_P IS
     when no_data_found then
       return 0;
   end get_disp_venta;   
+  --===============================================================================
+  -- 02/07/2022 10:50:21 @PabloACespedes \(^-^)/
+  -- valida si el usuario puede modificar el pedido
+  -- se_agrego en por necesidad, pactado en la reunion
+  -- del 02/07/2022 10:30 AM. FLORIAN
+  function user_modify_unavailability return boolean
+  is
+    l_c number;
+  begin
+   select distinct 1
+   into   l_c
+   from gen_operador_empresa oe
+   inner join gen_operador o on (o.oper_codigo = oe.opem_oper)
+   where oe.opem_empr = ap.v(p_item => 'P_EMPRESA')
+   and   o.oper_login = ap.v(p_item => 'APP_USER')
+   and   nvl(oe.opem_ind_mod_ped_insum, 'N') = 'S';
+  
+   return true;
+    
+  exception
+    when no_data_found then
+      return false;
+  end user_modify_unavailability;
   
   -----------
   procedure val_new_sales_det as
@@ -1041,10 +1064,10 @@ CREATE OR REPLACE PACKAGE BODY FACI240_P IS
       FROM ACO_CONTRATO CO 
      WHERE CO.CON_EMPR       =   AP.V('P_EMPRESA') 
        AND CO.CON_PROVEEDOR  =   AP.V('P48_PED_CLI')
-      /* AND CON_A?O 
+       /*AND CON_A?O 
            ||'-'||
-           CO.CON_NRO        =   V_NRO_CONTRATO*/
-    ;
+           CO.CON_NRO        =   V_NRO_CONTRATO
+    */;
     
     R_CON CUR_CONTRATO%ROWTYPE ; 
     
@@ -2355,7 +2378,9 @@ CREATE OR REPLACE PACKAGE BODY FACI240_P IS
        X_DETA             :=  FP_DETA_TAB       ; 
        
        -- valida Disponibilidad de la empresa
-       val_new_sales_det;
+       if not user_modify_unavailability then
+          val_new_sales_det;
+       end if;
        
        FACI240_D.GUARDAR_NUEVO (X_CAB, X_DETA)  ; 
        PP_CONFIG_REPORTE                        ; 
@@ -2371,7 +2396,9 @@ CREATE OR REPLACE PACKAGE BODY FACI240_P IS
        X_DETA_E           :=  FP_DETA_ELIM_TAB  ; 
        
        -- valida Disponibilidad de la empresa
-       val_new_sales_det;
+       if not user_modify_unavailability then
+          val_new_sales_det;
+       end if;
        
        FACI240_D.APLICAR_CAMBIOS( X_CAB    , 
                                   X_DETA   , 

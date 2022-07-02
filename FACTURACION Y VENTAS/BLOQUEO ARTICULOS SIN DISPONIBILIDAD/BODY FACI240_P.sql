@@ -1,80 +1,4 @@
-CREATE OR REPLACE PACKAGE FACI240_P IS
-  
-  -- CREATED : 11/08/2020 8:44:06
-  -- PURPOSE :
-  
-  SUBTYPE CAB_RT      IS    FACI240_D.CAB_RT          ; 
-  SUBTYPE DETA_RT     IS    FACI240_D.DET_RT          ; 
-  SUBTYPE DETA_TT     IS    FACI240_D.DET_TT          ; 
-  
-  --TYPE DETA_TT IS TABLE OF DETA_RT;
-  
-  FUNCTION FP_IMP_TT_DOCU RETURN NUMBER ;
-  
-  FUNCTION FP_DETA_TAB RETURN DETA_TT ;
-
-  function get_disp_venta(in_art  in  number,
-                          in_emp  in  number := null) return number;
-  
-  -- 02/07/2022 7:37:08 @PabloACespedes \(^-^)/
-  -- Valida la coleccion de APEX si hay disponible dentro de la empresa
-  procedure val_new_sales_det ;
-    
-  procedure validate_disp_venta ;
-    
-  PROCEDURE PP_CARGAR_CUENTAS_CLI ;
-    
-  PROCEDURE PP_CARGAR_DATOS;
-     
-  PROCEDURE PP_VALIDAR_FECHA;
-  
-  PROCEDURE PP_BUSCAR_CLIENTE ;  
-  
-  PROCEDURE PP_BUSCAR_VENDEDOR ; 
-
-  PROCEDURE PP_BUSCAR_TIPO_FA ; 
-  
-  PROCEDURE PP_BUSCAR_CONTRATO_BONO ; 
-    
-  PROCEDURE MOSTRAR_FILA_EDIT; 
-    
-  PROCEDURE PP_BORRAR_ITEM(I_SEQ_ID IN NUMBER);
-  
-  PROCEDURE PP_VALIDAR_CAB     ;
-  
-  PROCEDURE PP_LIMPIAR_AUX     ;
-
-  PROCEDURE PP_BUSCAR_ARTICULO ;
-  
-  PROCEDURE PP_BUSCAR_DEC_MON  ;
-  
-  PROCEDURE PP_BUSCAR_ZAFRA    ; 
-  
-  PROCEDURE PP_BUSCAR_LINEA_DISP ;
-    
-  PROCEDURE PP_VALIDAR_PRECIO  ; 
-  
-  PROCEDURE PP_CALC_TT_AUXI    ; 
-  
-  PROCEDURE PP_ACT_MON_DOCU    ;
-
-  PROCEDURE PP_CONFIG_REP      ;
-        
-  PROCEDURE PP_AGREGAR_DETA    ; 
-  
-  PROCEDURE PP_MODIFICAR_DETA  ; 
-  
-  PROCEDURE PP_ACTU_DETA       ;
-      
-  PROCEDURE GUARDAR_NUEVO      ; 
-  
-  PROCEDURE APLICAR_CAMBIOS    ; 
-
-  PROCEDURE ELIMINAR_PEDIDO    ; 
-    
-END FACI240_P;
-/
-CREATE OR REPLACE PACKAGE BODY FACI240_P IS
+create or replace PACKAGE BODY FACI240_P IS
   --========================================================================  
       X_CAB           CAB_RT  ; 
       X_DETA          DETA_TT ;
@@ -291,6 +215,29 @@ CREATE OR REPLACE PACKAGE BODY FACI240_P IS
     when no_data_found then
       return 0;
   end get_disp_venta;   
+  --===============================================================================
+  -- 02/07/2022 10:50:21 @PabloACespedes \(^-^)/
+  -- valida si el usuario puede modificar el pedido
+  -- se_agrego en por necesidad, pactado en la reunion
+  -- del 02/07/2022 10:30 AM. FLORIAN
+  function user_modify_unavailability return boolean
+  is
+    l_c number;
+  begin
+   select distinct 1
+   into   l_c
+   from gen_operador_empresa oe
+   inner join gen_operador o on (o.oper_codigo = oe.opem_oper)
+   where oe.opem_empr = ap.v(p_item => 'P_EMPRESA')
+   and   o.oper_login = ap.v(p_item => 'APP_USER')
+   and   nvl(oe.opem_ind_mod_ped_insum, 'N') = 'S';
+  
+   return true;
+    
+  exception
+    when no_data_found then
+      return false;
+  end user_modify_unavailability;
   
   -----------
   procedure val_new_sales_det as
@@ -321,10 +268,12 @@ CREATE OR REPLACE PACKAGE BODY FACI240_P IS
   procedure validate_disp_venta as
   l_existencia number;
   begin
-    l_existencia := get_disp_venta(in_art => AP.V( 'P48_ART_CODIGO' ) , in_emp => AP.V( 'P_EMPRESA'));
-    
-    if l_existencia < AP.GETNC('P48_CANT_PED') then
-      raise_application_error(-20001, 'No puede cargar mas de lo disponible para venta. Total Disponible: '||l_existencia);
+    if not user_modify_unavailability then
+        l_existencia := get_disp_venta(in_art => AP.V( 'P48_ART_CODIGO' ) , in_emp => AP.V( 'P_EMPRESA'));
+        
+        if l_existencia < AP.GETNC('P48_CANT_PED') then
+          raise_application_error(-20001, 'No puede cargar mas de lo disponible para venta. Total Disponible: '||l_existencia);
+        end if;
     end if;
   end;
   --======================================================================================        
@@ -1041,9 +990,9 @@ CREATE OR REPLACE PACKAGE BODY FACI240_P IS
       FROM ACO_CONTRATO CO 
      WHERE CO.CON_EMPR       =   AP.V('P_EMPRESA') 
        AND CO.CON_PROVEEDOR  =   AP.V('P48_PED_CLI')
-      /* AND CON_A?O 
+       AND CON_AÑO 
            ||'-'||
-           CO.CON_NRO        =   V_NRO_CONTRATO*/
+           CO.CON_NRO        =   V_NRO_CONTRATO
     ;
     
     R_CON CUR_CONTRATO%ROWTYPE ; 
@@ -2355,7 +2304,9 @@ CREATE OR REPLACE PACKAGE BODY FACI240_P IS
        X_DETA             :=  FP_DETA_TAB       ; 
        
        -- valida Disponibilidad de la empresa
-       val_new_sales_det;
+       if not user_modify_unavailability then
+          val_new_sales_det;
+       end if;
        
        FACI240_D.GUARDAR_NUEVO (X_CAB, X_DETA)  ; 
        PP_CONFIG_REPORTE                        ; 
@@ -2371,7 +2322,9 @@ CREATE OR REPLACE PACKAGE BODY FACI240_P IS
        X_DETA_E           :=  FP_DETA_ELIM_TAB  ; 
        
        -- valida Disponibilidad de la empresa
-       val_new_sales_det;
+       if not user_modify_unavailability then
+          val_new_sales_det;
+       end if;
        
        FACI240_D.APLICAR_CAMBIOS( X_CAB    , 
                                   X_DETA   , 
@@ -2394,4 +2347,3 @@ CREATE OR REPLACE PACKAGE BODY FACI240_P IS
   --======================================================================================  
   
 END FACI240_P ;
-/
