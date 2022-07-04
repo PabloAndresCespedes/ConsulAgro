@@ -1,0 +1,1194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINLIVAVGR_RES" language="groovy" pageWidth="600" pageHeight="845" columnWidth="560" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b3e2f7a0-8eb0-444c-a431-5e1a153e9796">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="P_SESSION" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USUARIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PERIODO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\programacion13\\Documents\\iReport\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT EMPR_RAZON_SOCIAL,
+       SUC_DESC,
+       TMOV_ABREV,
+       TMOV_DESC,
+       CLDO_CODIGO,
+       CLDO_DESC,
+        NVL(DECODE(DOC_CLI,'',DOC_CLI_NOM,CLI_NOM),PROV_RAZON_SOCIAL) RAZON_SOCIAL,
+       NVL(DECODE(DOC_CLI,'',DOC_CLI_RUC,CLI_RUC),PROV_RUC) RUC,
+       PROV_RAZON_SOCIAL,
+       PROV_RUC,
+       DOC_TIPO_MOV,
+       DOC_EMPR,
+       DOC_SUC,
+       TO_CHAR(DOC_FEC_DOC,'DD') DIAS,
+       FEC_DOC,
+       DOC_NRO_DOC,
+       NRO_DOC,
+       DOC_CLAVE,
+       DOC_CLI,
+       DOC_PROV,
+       DOC_NETO_GRAV_LOC,
+       DOC_GRAV_10_LOC,
+       DOC_GRAV_5_LOC,
+       DOC_IVA_LOC,
+       DOC_NETO_EXO_LOC,
+       TOT_RET,
+       DOC_BASE_IMPON_LOC,
+       DOC_IVA_10_LOC,
+       DOC_IVA_5_LOC,
+       NVL(DOC_NETO_EXO_LOC,0) + NVL(DOC_NETO_GRAV_LOC,0) + NVL(DOC_IVA_LOC,0) total,
+        DECODE(CLDO_CODIGO,4,NVL(DOC_NETO_EXO_LOC,0)*-1) EXENTO_NCRE,
+       DECODE(CLDO_CODIGO,4,NVL(DOC_GRAV_10_LOC,0)*-1) GRAV_10_NCRE,
+       DECODE(CLDO_CODIGO,4,NVL(DOC_GRAV_5_LOC,0)*-1) GRAV_5_NCRE,
+       DECODE(CLDO_CODIGO,4,NVL(DOC_IVA_10_LOC,0)*-1) IVA_10_NCRE,
+       DECODE(CLDO_CODIGO,4,NVL(DOC_IVA_5_LOC,0)*-1) IVA_5_NCRE,
+       (DECODE(CLDO_CODIGO,4,NVL(DOC_NETO_EXO_LOC,0)*-1)+
+      DECODE(CLDO_CODIGO,4,(NVL(DOC_NETO_GRAV_LOC,0)*-1)) +
+       DECODE(CLDO_CODIGO,4,(NVL(DOC_IVA_LOC,0)*-1)))total_ncre
+  FROM FINL008_TEMP
+  WHERE SESSION_ID=$P{P_SESSION}
+   AND USUARIOS=$P{P_USUARIO}
+order by DOC_EMPR,DOC_SUC,CLDO_CODIGO,TMOV_DESC]]>
+	</queryString>
+	<field name="EMPR_RAZON_SOCIAL" class="java.lang.String"/>
+	<field name="SUC_DESC" class="java.lang.String"/>
+	<field name="TMOV_ABREV" class="java.lang.String"/>
+	<field name="TMOV_DESC" class="java.lang.String"/>
+	<field name="CLDO_CODIGO" class="java.math.BigDecimal"/>
+	<field name="CLDO_DESC" class="java.lang.String"/>
+	<field name="RAZON_SOCIAL" class="java.lang.String"/>
+	<field name="RUC" class="java.lang.String"/>
+	<field name="PROV_RAZON_SOCIAL" class="java.lang.String"/>
+	<field name="PROV_RUC" class="java.lang.String"/>
+	<field name="DOC_TIPO_MOV" class="java.math.BigDecimal"/>
+	<field name="DOC_EMPR" class="java.math.BigDecimal"/>
+	<field name="DOC_SUC" class="java.math.BigDecimal"/>
+	<field name="DIAS" class="java.lang.String"/>
+	<field name="FEC_DOC" class="java.sql.Timestamp"/>
+	<field name="DOC_NRO_DOC" class="java.math.BigDecimal"/>
+	<field name="NRO_DOC" class="java.math.BigDecimal"/>
+	<field name="DOC_CLAVE" class="java.math.BigDecimal"/>
+	<field name="DOC_CLI" class="java.math.BigDecimal"/>
+	<field name="DOC_PROV" class="java.math.BigDecimal"/>
+	<field name="DOC_NETO_GRAV_LOC" class="java.math.BigDecimal"/>
+	<field name="DOC_GRAV_10_LOC" class="java.math.BigDecimal"/>
+	<field name="DOC_GRAV_5_LOC" class="java.math.BigDecimal"/>
+	<field name="DOC_IVA_LOC" class="java.math.BigDecimal"/>
+	<field name="DOC_NETO_EXO_LOC" class="java.math.BigDecimal"/>
+	<field name="TOT_RET" class="java.math.BigDecimal"/>
+	<field name="DOC_BASE_IMPON_LOC" class="java.math.BigDecimal"/>
+	<field name="DOC_IVA_10_LOC" class="java.math.BigDecimal"/>
+	<field name="DOC_IVA_5_LOC" class="java.math.BigDecimal"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<field name="EXENTO_NCRE" class="java.math.BigDecimal"/>
+	<field name="GRAV_10_NCRE" class="java.math.BigDecimal"/>
+	<field name="GRAV_5_NCRE" class="java.math.BigDecimal"/>
+	<field name="IVA_10_NCRE" class="java.math.BigDecimal"/>
+	<field name="IVA_5_NCRE" class="java.math.BigDecimal"/>
+	<field name="TOTAL_NCRE" class="java.math.BigDecimal"/>
+	<variable name="DOC_GRAV_5_LOC_1" class="java.math.BigDecimal" resetType="Group" resetGroup="CLASE" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_GRAV_5_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_GRAV_5_LOC_2" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_GRAV_5_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_GRAV_5_LOC_3" class="java.math.BigDecimal" resetType="Group" resetGroup="EMPRESA" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_GRAV_5_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_GRAV_10_LOC_1" class="java.math.BigDecimal" resetType="Group" resetGroup="CLASE" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_GRAV_10_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_GRAV_10_LOC_2" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_GRAV_10_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_GRAV_10_LOC_3" class="java.math.BigDecimal" resetType="Group" resetGroup="EMPRESA" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_GRAV_10_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_IVA_5_LOC_1" class="java.math.BigDecimal" resetType="Group" resetGroup="CLASE" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_IVA_5_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_IVA_5_LOC_2" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_IVA_5_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_IVA_5_LOC_3" class="java.math.BigDecimal" resetType="Group" resetGroup="EMPRESA" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_IVA_5_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_IVA_5_LOC_4" class="java.math.BigDecimal" resetType="Group" resetGroup="CLASE" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_IVA_5_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_IVA_10_LOC_1" class="java.math.BigDecimal" resetType="Group" resetGroup="CLASE" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_IVA_10_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_IVA_10_LOC_2" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_IVA_10_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_IVA_10_LOC_3" class="java.math.BigDecimal" resetType="Group" resetGroup="EMPRESA" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_IVA_10_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_NETO_EXO_LOC_1" class="java.math.BigDecimal" resetType="Group" resetGroup="CLASE" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_NETO_EXO_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_NETO_EXO_LOC_2" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_NETO_EXO_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_NETO_EXO_LOC_3" class="java.math.BigDecimal" resetType="Group" resetGroup="EMPRESA" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_NETO_EXO_LOC}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_1" class="java.math.BigDecimal" resetType="Group" resetGroup="CLASE" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_2" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_3" class="java.math.BigDecimal" resetType="Group" resetGroup="EMPRESA" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+	</variable>
+	<variable name="DOC_BASE_IMPON_LOC_1" class="java.math.BigDecimal" resetType="Group" resetGroup="CLASE" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_BASE_IMPON_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_BASE_IMPON_LOC_2" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_BASE_IMPON_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_BASE_IMPON_LOC_3" class="java.math.BigDecimal" resetType="Group" resetGroup="EMPRESA" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_BASE_IMPON_LOC}]]></variableExpression>
+	</variable>
+	<variable name="CLDO_DESC_1" class="java.lang.Integer" resetType="Group" resetGroup="CLASE" calculation="Count">
+		<variableExpression><![CDATA[$F{CLDO_DESC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_GRAV_5_LOC_4" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO_MOVIMIENTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_GRAV_5_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_GRAV_10_LOC_4" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO_MOVIMIENTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_GRAV_10_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_IVA_5_LOC_5" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO_MOVIMIENTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_IVA_5_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_IVA_10_LOC_4" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO_MOVIMIENTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_IVA_10_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_NETO_EXO_LOC_4" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO_MOVIMIENTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_NETO_EXO_LOC}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_4" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO_MOVIMIENTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+	</variable>
+	<variable name="DOC_BASE_IMPON_LOC_4" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO_MOVIMIENTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_BASE_IMPON_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_GRAV_5_LOC_5" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_GRAV_5_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_GRAV_10_LOC_5" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_GRAV_10_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_IVA_5_LOC_6" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_IVA_5_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_IVA_10_LOC_5" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_IVA_10_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_NETO_EXO_LOC_5" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_NETO_EXO_LOC}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_5" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+	</variable>
+	<variable name="DOC_BASE_IMPON_LOC_5" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_BASE_IMPON_LOC}]]></variableExpression>
+	</variable>
+	<variable name="TOT_RET_1" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO_MOVIMIENTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_RET}]]></variableExpression>
+	</variable>
+	<variable name="TOT_RET_2" class="java.math.BigDecimal" resetType="Group" resetGroup="CLASE" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_RET}]]></variableExpression>
+	</variable>
+	<variable name="TOT_RET_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_RET}]]></variableExpression>
+	</variable>
+	<variable name="TOT_RET_4" class="java.math.BigDecimal" resetType="Group" resetGroup="EMPRESA" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_RET}]]></variableExpression>
+	</variable>
+	<variable name="TOT_RET_5" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_RET}]]></variableExpression>
+	</variable>
+	<variable name="DOC_GRAV_5_LOC_6" class="java.math.BigDecimal" resetType="Group" resetGroup="EMPRESA" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_GRAV_5_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_GRAV_5_LOC_7" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_GRAV_5_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_GRAV_5_LOC_8" class="java.math.BigDecimal" resetType="Group" resetGroup="CLASE" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_GRAV_5_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_GRAV_5_LOC_9" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO_MOVIMIENTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_GRAV_5_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_GRAV_10_LOC_6" class="java.math.BigDecimal" resetType="Group" resetGroup="EMPRESA" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_GRAV_10_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_GRAV_10_LOC_7" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_GRAV_10_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_GRAV_10_LOC_8" class="java.math.BigDecimal" resetType="Group" resetGroup="CLASE" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_GRAV_10_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_GRAV_10_LOC_9" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO_MOVIMIENTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_GRAV_10_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_IVA_5_LOC_7" class="java.math.BigDecimal" resetType="Group" resetGroup="EMPRESA" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_IVA_5_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_IVA_5_LOC_8" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_IVA_5_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_IVA_5_LOC_9" class="java.math.BigDecimal" resetType="Group" resetGroup="CLASE" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_IVA_5_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_IVA_5_LOC_10" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO_MOVIMIENTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_IVA_5_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_IVA_10_LOC_6" class="java.math.BigDecimal" resetType="Group" resetGroup="EMPRESA" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_IVA_10_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_IVA_10_LOC_7" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_IVA_10_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_IVA_10_LOC_8" class="java.math.BigDecimal" resetType="Group" resetGroup="CLASE" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_IVA_10_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_IVA_10_LOC_9" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO_MOVIMIENTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_IVA_10_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_NETO_EXO_LOC_6" class="java.math.BigDecimal" resetType="Group" resetGroup="EMPRESA" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_NETO_EXO_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_NETO_EXO_LOC_7" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_NETO_EXO_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_NETO_EXO_LOC_8" class="java.math.BigDecimal" resetType="Group" resetGroup="CLASE" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_NETO_EXO_LOC}]]></variableExpression>
+	</variable>
+	<variable name="DOC_NETO_EXO_LOC_9" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO_MOVIMIENTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{DOC_NETO_EXO_LOC}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_6" class="java.math.BigDecimal" resetType="Group" resetGroup="EMPRESA" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_7" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_8" class="java.math.BigDecimal" resetType="Group" resetGroup="CLASE" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_9" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO_MOVIMIENTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+	</variable>
+	<variable name="TOT_RET_6" class="java.math.BigDecimal" resetType="Group" resetGroup="EMPRESA" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_RET}]]></variableExpression>
+	</variable>
+	<variable name="TOT_RET_7" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_RET}]]></variableExpression>
+	</variable>
+	<variable name="TOT_RET_8" class="java.math.BigDecimal" resetType="Group" resetGroup="CLASE" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_RET}]]></variableExpression>
+	</variable>
+	<variable name="TOT_RET_9" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO_MOVIMIENTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_RET}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_TAGRO_1" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO_MOVIMIENTO" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_TAGRO_2" class="java.math.BigDecimal" resetType="Group" resetGroup="CLASE" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_TAGRO_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_TAGRO_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="GRAV_5_NCRE_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{GRAV_5_NCRE}]]></variableExpression>
+	</variable>
+	<variable name="GRAV_10_NCRE_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{GRAV_10_NCRE}]]></variableExpression>
+	</variable>
+	<variable name="IVA_5_NCRE_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{IVA_5_NCRE}]]></variableExpression>
+	</variable>
+	<variable name="IVA_10_NCRE_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{IVA_10_NCRE}]]></variableExpression>
+	</variable>
+	<variable name="EXENTO_NCRE_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{EXENTO_NCRE}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_NCRE_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL_NCRE}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_NC" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{CLDO_CODIGO} == 4 ?
+$F{DOC_GRAV_5_LOC}:0)]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_NC_GRA_10" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{CLDO_CODIGO} == 4 ?
+$F{DOC_GRAV_10_LOC}:0)]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_NC_IVA_10" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{CLDO_CODIGO} == 4 ?
+$F{DOC_IVA_10_LOC}:0)]]></variableExpression>
+	</variable>
+	<variable name="EXECTO" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{CLDO_CODIGO} == 4 ?
+$F{DOC_NETO_EXO_LOC}:0)]]></variableExpression>
+	</variable>
+	<variable name="TOTALL_NC" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{CLDO_CODIGO} == 4 ?
+$F{TOTAL}:0)]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_NC_IVA_5" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{CLDO_CODIGO} == 4 ?
+$F{DOC_IVA_5_LOC}:0)]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_FAC_GRV_5" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{CLDO_CODIGO} == 1  ?
+$F{DOC_GRAV_5_LOC}:0)]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_FAC_IVA_5" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{CLDO_CODIGO} == 1 ?
+$F{DOC_IVA_5_LOC}:0)]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_FAC_GRV_10" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{CLDO_CODIGO} == 1  ?
+$F{DOC_GRAV_10_LOC}:0)]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_FAC_IVA_10" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{CLDO_CODIGO} == 1 ?
+$F{DOC_IVA_10_LOC}:0)]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_FAC_EXT" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{CLDO_CODIGO} == 1 ?
+$F{DOC_NETO_EXO_LOC}:0)]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_FAC_FAC" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{CLDO_CODIGO} == 1 ?
+$F{TOTAL}:0)]]></variableExpression>
+	</variable>
+	<group name="EMPRESA">
+		<groupExpression><![CDATA[$F{DOC_EMPR}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<staticText>
+					<reportElement x="4" y="2" width="50" height="10" uuid="f5fee006-7613-449f-875e-dd04ceebea89"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Empresa:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="50" y="2" width="105" height="10" uuid="bbc358e0-c09e-4c7e-a56d-43cbfc3d0ecc"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{EMPR_RAZON_SOCIAL}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="SUCURSAL">
+		<groupExpression><![CDATA[$F{DOC_SUC}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<staticText>
+					<reportElement x="4" y="1" width="50" height="10" uuid="8c6708b1-d3f2-4d55-ac3e-b6cd7d3513f2"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Sucursal:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="50" y="0" width="105" height="10" uuid="4c7c0189-b09c-412f-98bb-7319c1db74e8"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SUC_DESC}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="12">
+				<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="162" y="2" width="60" height="10" uuid="e43f8f90-b766-4e36-a2a7-5dec82a490b3"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{DOC_GRAV_5_LOC_7}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="225" y="2" width="60" height="10" uuid="9e981843-3bcc-43df-b570-f2e0b51400f5"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{DOC_IVA_5_LOC_8}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="290" y="2" width="60" height="10" uuid="cdc19a14-82ed-4898-8b0a-bebfa5920fc2"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{DOC_GRAV_10_LOC_7}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="355" y="2" width="60" height="10" uuid="58c0366c-2a80-47e0-8742-9e968427ab23"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{DOC_IVA_10_LOC_7}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="423" y="2" width="60" height="10" uuid="d6cd0bcf-75f5-4ea9-be99-d11ae5479970"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{DOC_NETO_EXO_LOC_7}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="492" y="2" width="60" height="10" uuid="bbdbf29d-51be-46ac-a3c3-10558a734f4e"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTAL_7}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="162" y="1" width="60" height="1" uuid="c020394f-bc0c-4d43-9dd4-09eba684c0e9"/>
+				</line>
+				<staticText>
+					<reportElement x="3" y="2" width="29" height="10" uuid="c2bb3f61-f14f-4d85-a8c1-eaa42f5a667d"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Total:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="34" y="2" width="100" height="10" uuid="ed72f178-6ef3-48d2-bd58-8f740bd6be28"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SUC_DESC}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="225" y="1" width="60" height="1" uuid="d4ca670b-2c1b-4a83-9121-76e094f0eca4"/>
+				</line>
+				<line>
+					<reportElement x="290" y="1" width="60" height="1" uuid="e6ee8b03-f2ae-46cd-a3e6-d05387b90400"/>
+				</line>
+				<line>
+					<reportElement x="355" y="1" width="60" height="1" uuid="bce6e796-1356-4316-aff2-0b60c4b98a2b"/>
+				</line>
+				<line>
+					<reportElement x="423" y="1" width="60" height="1" uuid="e98907d0-2a70-4ab1-94b1-d8af9a682644"/>
+				</line>
+				<line>
+					<reportElement x="492" y="1" width="60" height="1" uuid="6fdd3af2-96f0-41aa-8730-157e4dc7ba6c"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="CLASE">
+		<groupExpression><![CDATA[$F{CLDO_CODIGO}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<staticText>
+					<reportElement x="4" y="1" width="50" height="10" uuid="49f62e26-463a-4ba6-a807-1e05e79ee5d4"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Clase:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="50" y="2" width="105" height="10" uuid="ddf52306-8518-469f-bca2-b0e729ec34f2"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CLDO_DESC}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="12">
+				<textField evaluationTime="Group" evaluationGroup="CLASE" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="162" y="2" width="60" height="10" uuid="ca0c9189-1ba8-4e8b-bd13-dba68b6493aa"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{DOC_GRAV_5_LOC_8}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="CLASE" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="225" y="2" width="60" height="10" uuid="5330c2d3-5f37-495d-9dd7-ee090c16c475"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{DOC_IVA_5_LOC_9}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="CLASE" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="290" y="2" width="60" height="10" uuid="03db08a2-7a65-46bf-8e8f-0cf5bad33a67"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{DOC_GRAV_10_LOC_8}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="CLASE" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="355" y="2" width="60" height="10" uuid="127fe8e9-35a9-480b-b5e2-b00c937ca1ed"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{DOC_IVA_10_LOC_8}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="CLASE" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="423" y="2" width="60" height="10" uuid="bffef5ad-9448-4b13-a65d-ed3e6f07a4d3"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{DOC_NETO_EXO_LOC_8}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="CLASE" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="492" y="2" width="60" height="10" uuid="3a109e1b-1a49-4695-9477-e39fc2f5e423"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTAL_8}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="3" y="2" width="29" height="10" uuid="7b6f46fb-7198-402b-903b-57419ad8fa0b"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Total:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="34" y="2" width="105" height="10" uuid="b6182995-d31a-42f9-a3f2-eb9611b47f34"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CLDO_DESC}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="162" y="1" width="60" height="1" uuid="e2ae26a1-e646-4e35-a3ea-1b478ae5de54"/>
+				</line>
+				<line>
+					<reportElement x="225" y="1" width="60" height="1" uuid="d783f3a4-2260-4aa3-91e0-ec2870a8fc08"/>
+				</line>
+				<line>
+					<reportElement x="290" y="1" width="60" height="1" uuid="3a9faf31-ab0f-448f-ba9d-449ab98a8815"/>
+				</line>
+				<line>
+					<reportElement x="355" y="1" width="60" height="1" uuid="13628f6e-e7a6-4da0-ae12-cb5a4673d2bb"/>
+				</line>
+				<line>
+					<reportElement x="423" y="1" width="60" height="1" uuid="2e1392ce-8ad0-4841-8947-f3bf774985fc"/>
+				</line>
+				<line>
+					<reportElement x="492" y="1" width="60" height="1" uuid="e8b22933-b3e3-4a21-94a2-887e4d7286d3"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="TIPO_MOVIMIENTO">
+		<groupExpression><![CDATA[$F{TMOV_DESC}]]></groupExpression>
+		<groupHeader>
+			<band height="12">
+				<textField>
+					<reportElement x="2" y="2" width="50" height="10" uuid="31196555-97f1-4a5b-a127-9fff97e1fb74"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TMOV_ABREV}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="50" y="2" width="105" height="10" uuid="e5f6de26-5673-47f3-9071-3de116dab770"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TMOV_DESC}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="TIPO_MOVIMIENTO" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="162" y="2" width="60" height="10" uuid="5318b7ae-2be5-4f8c-a37b-97bc54874b29"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{DOC_GRAV_5_LOC_9}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="TIPO_MOVIMIENTO" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="225" y="2" width="60" height="10" uuid="1611e397-23e3-4799-8280-e7328338687f"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{DOC_IVA_5_LOC_10}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="TIPO_MOVIMIENTO" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="290" y="2" width="60" height="10" uuid="7fca5b1a-2e04-4cc9-b118-a2f99dba9428"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{DOC_GRAV_10_LOC_9}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="TIPO_MOVIMIENTO" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="355" y="2" width="60" height="10" uuid="b416f24c-7622-4a0a-93af-dfcf7574d2de"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{DOC_IVA_10_LOC_9}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="TIPO_MOVIMIENTO" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="423" y="2" width="60" height="10" uuid="1e5a368a-c794-4e0c-9156-ca2c9291955e"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{DOC_NETO_EXO_LOC_9}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="TIPO_MOVIMIENTO" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="492" y="2" width="60" height="10" uuid="1366315c-e8bd-4880-8cd9-7d966ce38c8e"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTAL_9}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="65" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="63" y="51" width="100" height="11" uuid="d2a5e4c3-fc5e-4d7b-a3ec-d947d44129c3"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PERIODO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="421" y="3" width="75" height="11" uuid="54ea9954-d7f9-4268-9511-d4526855cabc"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="6" y="3" width="167" height="11" uuid="7aed2942-ce25-4847-b5c0-a357abf5afc9"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_EMPRESA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="519" y="3" width="38" height="11" uuid="41db43bb-dc80-4757-8872-29307aa1a089"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="133" y="15" width="309" height="13" uuid="5f7922db-ae2e-40f9-b99c-4fcd64fadb26"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="496" y="3" width="24" height="11" uuid="7580a715-7fce-4a93-ba28-aa318d581097"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Hoja:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="7" y="29" width="167" height="11" uuid="c2504a1f-9b15-4a2d-b969-805d87e8fe78"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="469" y="15" width="83" height="11" uuid="a8230a37-c7e8-4b3e-8787-92ab901eb4c9"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="11" y="51" width="50" height="11" uuid="9615f1ff-7c55-4b77-8f50-f4c8db28c5ba"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Periodo:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="32" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="20" width="48" height="10" uuid="e63033b1-c437-4f87-9365-332b7de86ca0"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Tipo ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="164" y="20" width="60" height="10" uuid="ccfdcb9e-a852-485a-ad16-ae6df81e6b32"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Gravada 5%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="227" y="20" width="60" height="10" uuid="d0d347a5-8120-4983-8eec-aae0df4e8b34"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Iva 5%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="290" y="20" width="60" height="10" uuid="ad47b892-5347-42f9-8340-814fddf9cb6c"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[ Gravada 10%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="353" y="20" width="60" height="10" uuid="0c4e568a-17cd-4fd1-9ef7-4aa7c90d252f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Iva 10%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="415" y="20" width="60" height="10" uuid="7daa4651-1c4b-4984-ae1e-13aa5e9e7cab"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Exento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="478" y="20" width="60" height="10" uuid="2f65c996-82d3-4711-9c2a-977b26e0d620"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1" y="29" width="559" height="1" uuid="01b56ce4-ca72-4039-a113-8509a13e1c20"/>
+			</line>
+			<staticText>
+				<reportElement x="164" y="7" width="374" height="13" uuid="78a212fe-d81b-41ab-9f0d-6a48a06d94c3"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[_____________________________VALOR VENTAS_____________________________________]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="95" splitType="Stretch">
+			<staticText>
+				<reportElement x="4" y="28" width="68" height="11" uuid="bb3dc616-d3ac-4eff-9a25-598fbb04110a"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Total General:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="162" y="1" width="60" height="1" uuid="f2a5e249-c8a2-47a8-892b-12642a321892"/>
+			</line>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="157" y="28" width="65" height="10" uuid="10819c44-a90b-48aa-8b3d-46e2d0ed722a"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DOC_GRAV_5_LOC_5}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="225" y="28" width="60" height="10" uuid="300571cd-1229-4158-a273-f31a5e1d626c"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DOC_IVA_5_LOC_6}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="290" y="28" width="60" height="10" uuid="c649e7fa-7610-45b6-85e8-4c3de1dc46c8"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DOC_GRAV_10_LOC_5}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="355" y="28" width="60" height="10" uuid="24269eba-9db9-4747-9227-1514f699f3eb"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DOC_IVA_10_LOC_5}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="423" y="28" width="60" height="10" uuid="fb4be4af-5891-4334-b42d-eedbd37b1263"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DOC_NETO_EXO_LOC_5}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="489" y="28" width="63" height="10" uuid="510f16a6-ba55-466b-8b49-b987eca1bfe7"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_5}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="157" y="50" width="65" height="10" uuid="7995a64b-a017-4fbd-b6e6-c22166f1d9f9">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}==2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{GRAV_5_NCRE_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="225" y="50" width="60" height="10" uuid="e1038d74-a6a6-4d40-8b0f-7c13f6378e71">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}==2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{IVA_5_NCRE_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="290" y="50" width="60" height="10" uuid="495ab460-f5c5-4e8b-b414-1b6df4355b6e">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}==2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{GRAV_10_NCRE_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="355" y="50" width="60" height="10" uuid="eb4901df-2433-4f71-8f72-deb5adf43e71">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}==2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{IVA_10_NCRE_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="423" y="50" width="60" height="10" uuid="4571c349-0bce-486b-ae09-906edea71afb">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}==2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{EXENTO_NCRE_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="489" y="50" width="63" height="10" uuid="dfd8d2b8-ff53-4b9b-9987-c6849cd6b268">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}==2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_NCRE_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="157" y="69" width="65" height="10" uuid="f5add549-3f0c-44a9-9283-266530938092">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}==2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DOC_GRAV_5_LOC_5}+$V{GRAV_5_NCRE_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="289" y="69" width="65" height="10" uuid="ee2a6201-00c9-4fdb-a254-3c5368450c12">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}==2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DOC_GRAV_10_LOC_5}+$V{GRAV_10_NCRE_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="224" y="69" width="63" height="10" uuid="5a454e86-5427-44d1-85c7-836e8c70ac06">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}==2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DOC_IVA_5_LOC_6}+$V{IVA_5_NCRE_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="356" y="69" width="60" height="10" uuid="ae09c324-7e4b-4dd9-8786-feef88723a92">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}==2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DOC_IVA_10_LOC_5}+$V{IVA_10_NCRE_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="421" y="69" width="62" height="10" uuid="e7c349b8-c69c-46e8-9c46-4eea7959cf30">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}==2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DOC_NETO_EXO_LOC_5}+$V{EXENTO_NCRE_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="489" y="69" width="63" height="10" uuid="70d13bb9-fc3e-470c-a786-16ca992be0e4">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}==2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_5}+$V{TOTAL_NCRE_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="6" y="50" width="68" height="11" uuid="9c899f92-10a8-47d5-8db3-e0bf614388a9">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}==2]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Total NCRE:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="6" y="69" width="68" height="11" uuid="c0aa1e02-4e99-4127-8f72-b74e8ead057b">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}==2]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Total sin NCRE:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="225" y="1" width="60" height="1" uuid="3bbf87f1-a4c1-4468-8299-dbaff7595c34"/>
+			</line>
+			<line>
+				<reportElement x="290" y="1" width="60" height="1" uuid="b549450c-1c2b-463d-ab09-dd596d02824c"/>
+			</line>
+			<line>
+				<reportElement x="355" y="1" width="60" height="1" uuid="28ead2b7-c278-4abb-94d4-5bf596d516f0"/>
+			</line>
+			<line>
+				<reportElement x="423" y="1" width="60" height="1" uuid="68114dde-0cb2-4cca-8b06-da69c76df537"/>
+			</line>
+			<line>
+				<reportElement x="489" y="1" width="60" height="1" uuid="542f13aa-6dd1-4029-858d-017b0c328700"/>
+			</line>
+			<staticText>
+				<reportElement x="4" y="2" width="68" height="11" uuid="520869c7-f2aa-4d9b-88ab-c2c94f9c622c">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}!=2]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Total Nta Credito:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="6" y="15" width="68" height="11" uuid="2070d0a7-4ea2-4f41-a88c-21db0e12c2bf">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}!=2]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Total Factura :]]></text>
+			</staticText>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="157" y="2" width="65" height="10" uuid="4c8713f6-f43c-4132-b865-e299555ca50a">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}!=2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_NC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="225" y="2" width="60" height="10" uuid="dd60687c-b140-43b2-9456-a7f94d149644">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}!=2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_NC_IVA_5}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="290" y="2" width="60" height="10" uuid="2f53664e-4995-43ae-9808-87fbe79d1248">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}!=2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_NC_GRA_10}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="355" y="2" width="60" height="10" uuid="40a35eda-57f1-482c-a982-f15285ff480b">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}!=2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_NC_IVA_10}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="423" y="2" width="60" height="10" uuid="95bff62d-b508-4a53-a093-2282842d11d4">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}!=2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{EXECTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="489" y="2" width="63" height="10" uuid="c94130a6-6ea0-4c79-a697-4fc8f84693c9">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}!=2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTALL_NC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="157" y="15" width="65" height="10" uuid="e447247d-c946-43a5-8215-1d919fd38c32">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}!=2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_FAC_GRV_5}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="225" y="15" width="60" height="10" uuid="21e3a5fe-0b58-4814-927b-e9d87734b019">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}!=2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_FAC_IVA_5}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="290" y="15" width="60" height="10" uuid="b0bbbcac-6cea-4782-8dbe-d7972017457b">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}!=2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_FAC_GRV_10}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="355" y="15" width="60" height="10" uuid="bd3b81f0-704b-4161-9230-35f6734c485f">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}!=2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_FAC_IVA_10}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="423" y="15" width="60" height="10" uuid="f0289b1a-85d8-42ad-89ec-e1f018ee380c">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}!=2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_FAC_EXT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="489" y="15" width="63" height="10" uuid="33ea5665-6bdd-4beb-92c9-3f658c8249cf">
+					<printWhenExpression><![CDATA[$F{DOC_EMPR}!=2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_FAC_FAC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERL204A" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" uuid="7f12e878-aca0-45bb-b4c5-0cadaef2199a">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_SESSION" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_LOGIN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_MONEDA" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT T.EMPL_LEGAJO LEGAJO,
+       T.NOMBRE NOMBRE,
+       T.FECHA,
+       T.PCON_DESC,
+       T.IMPORTE,
+       T.IMPORTE_LOC,
+       T.PDOC_MON,
+       T.PDDET_CLAVE_FIN,
+       TO_CHAR(T.EMPL_DOC_IDENT,'999G999G999G999G999G999G990')
+       EMPL_DOC_IDENT,
+       T.FECHA_CAB,
+       INITCAP(EXPRESAR_EN_LETRAS.NUMERO_A_LETRAS(IMPORTE)) SALARIO_LETRAS  ,
+        TO_CHAR(T.FECHA_CAB, 'YYYY') ANHO,
+       T.PDOC_CLAVE || '1' CLAVE ,
+     'Transagro S.A'  EMPRESA ,
+      'PGY' MON
+
+  FROM PERL204_TEMP T
+       WHERE T.P_SESSION  = $P!{P_SESSION}
+       AND   T.P_USER  = $P{P_LOGIN}
+       AND EMPRESA  = $P!{P_EMPRESA}
+UNION ALL
+SELECT T.EMPL_LEGAJO LEGAJO,
+       T.NOMBRE NOMBRE,
+       T.FECHA,
+       T.PCON_DESC,
+       T.IMPORTE,
+       T.IMPORTE_LOC,
+       T.PDOC_MON,
+       T.PDDET_CLAVE_FIN,
+       TO_CHAR(T.EMPL_DOC_IDENT,'999G999G999G999G999G999G990')EMPL_DOC_IDENT,
+       T.FECHA_CAB,
+       INITCAP(EXPRESAR_EN_LETRAS.NUMERO_A_LETRAS(IMPORTE)) SALARIO_LETRAS  ,
+        TO_CHAR(T.FECHA_CAB, 'YYYY') ANHO,
+       T.PDOC_CLAVE || '2' CLAVE ,
+        'Transagro S.A'  EMPRESA  ,
+         'PGY' MON
+  FROM PERL204_TEMP T
+       WHERE T.P_SESSION  = $P!{P_SESSION}
+       AND   T.P_USER  = $P{P_LOGIN}
+     AND EMPRESA  = $P!{P_EMPRESA}
+order by NOMBRE , clave]]>
+	</queryString>
+	<field name="LEGAJO" class="java.math.BigDecimal"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="FECHA" class="java.lang.String"/>
+	<field name="PCON_DESC" class="java.lang.String"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<field name="IMPORTE_LOC" class="java.math.BigDecimal"/>
+	<field name="PDOC_MON" class="java.math.BigDecimal"/>
+	<field name="PDDET_CLAVE_FIN" class="java.math.BigDecimal"/>
+	<field name="EMPL_DOC_IDENT" class="java.lang.String"/>
+	<field name="FECHA_CAB" class="java.sql.Timestamp"/>
+	<field name="SALARIO_LETRAS" class="java.lang.String"/>
+	<field name="ANHO" class="java.lang.String"/>
+	<field name="CLAVE" class="java.lang.String"/>
+	<field name="EMPRESA" class="java.lang.String"/>
+	<field name="MON" class="java.lang.String"/>
+	<group name="EMPLEADO">
+		<groupExpression><![CDATA[$F{CLAVE}]]></groupExpression>
+		<groupHeader>
+			<band height="413">
+				<rectangle>
+					<reportElement x="0" y="25" width="555" height="375" uuid="2c108f4a-0b00-46ba-8e3a-c88afdf01d07"/>
+				</rectangle>
+				<staticText>
+					<reportElement x="0" y="29" width="555" height="20" uuid="33db70d3-0587-4079-9e8c-e59928ff69f3"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="9" isBold="true" isUnderline="true"/>
+					</textElement>
+					<text><![CDATA[RECIBO DE AGUINALDO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="6" y="72" width="65" height="13" uuid="a4ff1cca-b17a-4f57-8d5f-b5aa8400192f"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Razón Social :]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="75" y="72" width="414" height="13" uuid="e4342c74-9d1e-4386-8a87-50ec1539682f"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{EMPRESA}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="8" y="86" width="62" height="14" uuid="ec364c1f-7f1a-4a04-9178-5d9686ddbc77"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Funcionario :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="19" y="100" width="50" height="11" uuid="38252161-eea9-4129-b225-13a0dae722c4"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[C.I.N°:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="75" y="85" width="414" height="15" uuid="7100f5f1-beb4-4bcc-97fb-5a21b14276c3"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#.##0" isBlankWhenNull="true">
+					<reportElement x="30" y="100" width="224" height="11" uuid="3d0c6b8c-b305-4114-bc64-5b7ed9d25ac6"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{EMPL_DOC_IDENT}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="14" y="112" width="100" height="20" uuid="a676cdca-3864-4fe6-a20c-3086669e5da3"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="11" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CONCEPTO:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="379" y="112" width="176" height="20" uuid="779fffee-318c-4f1e-84c3-9ecc849d8ba1"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="11" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MONTO]]></text>
+				</staticText>
+				<textField pattern="#,##0">
+					<reportElement x="431" y="140" width="111" height="20" uuid="daf0e836-088b-49a3-8ec3-c51aaec6e7a2"/>
+					<textElement>
+						<font fontName="Arial" size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{IMPORTE_LOC}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="379" y="140" width="52" height="20" uuid="51f6f356-b8fd-4e27-80ce-9c9175863646"/>
+					<textElement>
+						<font fontName="Arial" size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{MON}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="11" y="228" width="519" height="20" uuid="3109ebc9-0334-4937-9f7d-29a40257eee5"/>
+					<textElement>
+						<font fontName="Arial" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Recibí conforme de "+ $F{EMPRESA}+" la liquidación que antecede, con copia y firma del empleador."]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="14" y="271" width="100" height="20" uuid="846da81f-f663-4e45-a24b-64cb4612705a"/>
+					<textElement>
+						<font fontName="Arial" size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Fecha de Pago:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="51" y="364" width="100" height="20" uuid="866bee71-11e6-4b22-b148-a4d16eae703d"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+					<text><![CDATA[Firma del Empleador ]]></text>
+				</staticText>
+				<line>
+					<reportElement x="51" y="363" width="99" height="1" uuid="16c4662c-9049-4ec9-8b51-299d5e7210ea"/>
+					<graphicElement>
+						<pen lineWidth="1.0" lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement x="371" y="364" width="100" height="12" uuid="316698ab-ca36-4738-9bbe-cb8db8e8b78b"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+					<text><![CDATA[Firma del Trabajador]]></text>
+				</staticText>
+				<line>
+					<reportElement x="371" y="363" width="99" height="1" uuid="45f24971-7a9f-4e1e-a9b0-071d56daa117"/>
+					<graphicElement>
+						<pen lineWidth="1.0" lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="98" y="271" width="173" height="20" uuid="36d1cbb9-877b-42f6-975c-dd9072b9d2a4"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA_CAB}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="132" width="555" height="1" uuid="a902f8d8-2ace-4d8c-bab5-17346fadd9a0"/>
+				</line>
+				<line>
+					<reportElement x="0" y="111" width="555" height="1" uuid="ed8f7d41-16a6-47a5-a7bd-1b5836b245ae"/>
+				</line>
+				<line>
+					<reportElement x="373" y="111" width="1" height="56" uuid="aea5a463-0fc9-42d7-be48-9e582bcb219d"/>
+				</line>
+				<line>
+					<reportElement x="0" y="218" width="555" height="1" uuid="65a87e1c-f528-47f1-80ad-e8dca1e6319f"/>
+				</line>
+				<line>
+					<reportElement x="0" y="167" width="555" height="1" uuid="af812021-75f3-4a27-896a-276e8da09504"/>
+				</line>
+				<line>
+					<reportElement x="0" y="261" width="555" height="1" uuid="b122cc73-de41-42cc-a298-abebe169f9b7"/>
+				</line>
+				<image>
+					<reportElement x="3" y="29" width="78" height="43" uuid="22d500a8-4ac6-4d41-861e-6b7fbde78ff0"/>
+					<imageExpression><![CDATA["ttagro.jpeg"]]></imageExpression>
+				</image>
+				<textField>
+					<reportElement x="8" y="140" width="263" height="20" uuid="38471685-6298-4d36-9416-c6e681849b21"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Aguinaldo correspondiente al año "+ $F{ANHO}]]></textFieldExpression>
+				</textField>
+				<image>
+					<reportElement x="42" y="301" width="122" height="62" uuid="f9f3ec75-2349-49cf-ad5b-3308af79de27"/>
+					<imageExpression><![CDATA["FIRMA_CH_TAGRO.jpg"]]></imageExpression>
+				</image>
+				<textField>
+					<reportElement x="8" y="175" width="522" height="20" uuid="d56e19b0-2b4a-4fdc-be2f-b25f3b3f9d30"/>
+					<textFieldExpression><![CDATA["Son "+ $F{MON}+": "+ $F{SALARIO_LETRAS}+"."]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+</jasperReport>

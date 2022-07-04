@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINI201_REC" language="groovy" pageWidth="421" pageHeight="595" columnWidth="421" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="866ae391-dd0e-4dfb-9b1e-5283aed109f5">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="ireport.background.image.properties" value="true,true,0.25,606,-400,0,0,640,1008"/>
+	<style name="table_TH" mode="Opaque" backcolor="#A9A9A9">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#CCCCCC">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#FFEFEF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="P_CLAVE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_IND_COPIA" class="java.lang.String"/>
+	<parameter name="P_EMPR_RAZON_SOCIAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_scta_nombre" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_MONTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="p_localidad" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select doc_nro_doc,
+       doc_fec_doc,
+       doc_neto_exen_mon,
+       mon_simbolo,
+       mon_desc,
+       nvl(fin.doc_cli_ruc, '.') ruc,
+       fin.doc_obs,
+       doc_mon,
+      initcap($P{p_localidad})||', '
+      ||lpad(to_char(doc_fec_doc,'DD'),3,' ')||' de '
+      ||initcap(rtrim(to_char(doc_fec_doc,'month','nls_date_language=spanish')))||' del '
+      ||lpad(to_char(doc_fec_doc,'YYYY'),4,' ') cf_fecha_doc,
+       general.fp_conv_nro_txt(v_numero => $P{P_MONTO},
+                                     v_moneda => doc_mON)cf_cuerpo
+  from fin_documento fin, gen_moneda
+ where mon_codigo = doc_mon
+   and mon_empr = doc_empr
+   and doc_empr = $P{P_EMPRESA}
+   and FIN.DOC_CLAVE = $P{P_CLAVE}
+UNION ALL
+  select doc_nro_doc,
+       doc_fec_doc,
+       doc_neto_exen_mon,
+       mon_simbolo,
+       mon_desc,
+       nvl(fin.doc_cli_ruc, '.') ruc,
+       fin.doc_obs,
+       doc_mon,
+      initcap($P{p_localidad})||', '
+      ||lpad(to_char(doc_fec_doc,'DD'),3,' ')||' de '
+      ||initcap(rtrim(to_char(doc_fec_doc,'month','nls_date_language=spanish')))||' del '
+      ||lpad(to_char(doc_fec_doc,'YYYY'),4,' ') cf_fecha_doc,
+       general.fp_conv_nro_txt(v_numero => $P{P_MONTO},
+                                     v_moneda => doc_mON)cf_cuerpo
+  from fin_documento_tmp fin, gen_moneda
+ where mon_codigo = doc_mon
+   and mon_empr = doc_empr
+   and doc_empr = $P{P_EMPRESA}
+   and FIN.DOC_CLAVE = $P{P_CLAVE}]]>
+	</queryString>
+	<field name="DOC_NRO_DOC" class="java.math.BigDecimal"/>
+	<field name="DOC_FEC_DOC" class="java.sql.Timestamp"/>
+	<field name="DOC_NETO_EXEN_MON" class="java.math.BigDecimal"/>
+	<field name="MON_SIMBOLO" class="java.lang.String"/>
+	<field name="MON_DESC" class="java.lang.String"/>
+	<field name="RUC" class="java.lang.String"/>
+	<field name="DOC_OBS" class="java.lang.String"/>
+	<field name="DOC_MON" class="java.math.BigDecimal"/>
+	<field name="CF_FECHA_DOC" class="java.lang.String"/>
+	<field name="CF_CUERPO" class="java.lang.String"/>
+	<group name="comprobante" isStartNewPage="true" footerPosition="StackAtBottom" keepTogether="true">
+		<groupExpression><![CDATA[$F{DOC_NRO_DOC}]]></groupExpression>
+		<groupHeader>
+			<band height="212">
+				<rectangle>
+					<reportElement x="2" y="0" width="418" height="212" uuid="c6c49d9d-d3ab-4626-934d-189b390612fd"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</rectangle>
+				<staticText>
+					<reportElement x="13" y="18" width="391" height="17" uuid="2d3e063d-9468-4619-a7e6-24250406b8ea"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[RECIBO DE DINERO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="13" y="92" width="39" height="10" uuid="edf8be53-45ec-45e2-ab9e-2e2816f77864"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Recibí de: ]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="52" y="92" width="234" height="10" uuid="969fa110-098b-4194-bfaa-15ed07a3f0ef"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{P_EMPR_RAZON_SOCIAL}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="13" y="67" width="78" height="10" uuid="f98c93d5-b9fc-4a5d-8074-4f11bfdf6a81"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Nro de Comprobante]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="91" y="67" width="100" height="10" uuid="5ccfddee-4597-401e-803e-46e8b1ce5504"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DOC_NRO_DOC}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="294" y="67" width="26" height="10" uuid="b4b8d0d2-1965-4f16-9116-25f31fc0a8d8"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{MON_SIMBOLO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="320" y="67" width="84" height="10" uuid="e8fadf2a-dfa0-4b3a-a714-c1c9301dc358"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{P_MONTO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="13" y="80" width="391" height="10" uuid="ca0d1c77-d3af-401d-95da-236e9663db28"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CF_FECHA_DOC}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="320" y="92" width="84" height="10" uuid="d85f3d30-61e3-476d-996d-087ecc81a447"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{RUC}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="294" y="92" width="26" height="10" uuid="4e8c0647-60a1-43ff-8664-1d7da24aa57a"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[RUC :]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="13" y="103" width="391" height="20" uuid="f2a0bd50-3525-4368-b718-3f452c807671"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CF_CUERPO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="13" y="125" width="59" height="10" uuid="4f66dd68-092c-408e-8ab1-2cdbbdbde67d"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[En concepto de ]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="73" y="126" width="331" height="24" uuid="b98be3a7-d115-4efb-9a24-10ddbb794f91"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DOC_OBS}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="257" y="176" width="147" height="1" uuid="a5219231-0b41-44ef-8ca1-ed74c9948d40"/>
+					<graphicElement>
+						<pen lineWidth="0.5" lineStyle="Dashed"/>
+					</graphicElement>
+				</line>
+				<textField>
+					<reportElement x="257" y="178" width="147" height="25" uuid="41a2245f-f9cc-494e-999f-7e3ddacfa4ea"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{P_scta_nombre}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<group name="clave">
+		<groupExpression><![CDATA[$P{P_CLAVE}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+	</group>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+</jasperReport>

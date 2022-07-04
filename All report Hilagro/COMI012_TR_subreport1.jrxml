@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="COMI012_TR_subreport1" language="groovy" pageWidth="555" pageHeight="700" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="1be279d4-04c1-4aba-8dac-346d75c1164f">
+	<property name="ireport.zoom" value="5.0"/>
+	<property name="ireport.x" value="12"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_CLAVE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select t.orcom_fec_emis,
+       t.orcom_prov,
+       p.prov_razon_social,
+       t.orcom_prov_vendedor,
+       t.orcom_prov_vend_tel,
+       d.orcomdet_item,
+       nvl(a.art_codigo_fabrica, a.art_codigo) art_codigo,
+       a.art_desc,
+       d.orcomdet_cant,
+       d.orcomdet_precio_unit,
+       t.orcom_nro,
+       d.orcomdet_cant * d.orcomdet_precio_unit importe,
+       t.orcom_mon,
+       m.mon_simbolo,
+       orcomdet_codigo,
+       orcom_responsable,
+       (select v.arch_contenido
+                  from gen_archivo v, adcs.stk_art_documento d
+                 where v.arch_empr = d.sad_empr
+                   and v.arch_clave = d.sad_clave_archivo
+                   and d.sad_art_codigo = a.art_codigo
+                   and d.sad_empr = art_empr) ARCHIVO,
+       sm.marc_desc
+  from COM_ORDEN_COMPRA     t,
+       fin_proveedor        p,
+       com_orden_compra_det d,
+       stk_articulo         a,
+       gen_moneda m,
+       stk_marca sm
+ where t.orcom_nro = $P{P_CLAVE}
+   and t.orcom_empr = $P{P_EMPRESA}
+   and t.orcom_prov = p.prov_codigo
+   and t.orcom_empr = p.prov_empr
+   and d.orcomdet_nro = t.orcom_nro
+   and d.orcomdet_empr = t.orcom_empr
+   and d.orcomdet_art = a.art_codigo
+   and d.orcomdet_empr = a.art_empr
+
+   and a.art_marca = sm.marc_codigo
+   and a.art_empr = sm.marc_empr
+
+   and m.mon_codigo = orcom_mon
+   and m.mon_empr = orcom_empr]]>
+	</queryString>
+	<field name="ORCOM_FEC_EMIS" class="java.sql.Timestamp"/>
+	<field name="ORCOM_PROV" class="java.math.BigDecimal"/>
+	<field name="PROV_RAZON_SOCIAL" class="java.lang.String"/>
+	<field name="ORCOM_PROV_VENDEDOR" class="java.lang.String"/>
+	<field name="ORCOM_PROV_VEND_TEL" class="java.lang.String"/>
+	<field name="ORCOMDET_ITEM" class="java.math.BigDecimal"/>
+	<field name="ART_CODIGO" class="java.lang.String"/>
+	<field name="ART_DESC" class="java.lang.String"/>
+	<field name="ORCOMDET_CANT" class="java.math.BigDecimal"/>
+	<field name="ORCOMDET_PRECIO_UNIT" class="java.math.BigDecimal"/>
+	<field name="ORCOM_NRO" class="java.math.BigDecimal"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<field name="ORCOM_MON" class="java.math.BigDecimal"/>
+	<field name="MON_SIMBOLO" class="java.lang.String"/>
+	<field name="ORCOMDET_CODIGO" class="java.math.BigDecimal"/>
+	<field name="ORCOM_RESPONSABLE" class="java.math.BigDecimal"/>
+	<field name="ARCHIVO" class="java.io.InputStream"/>
+	<field name="MARC_DESC" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="15" splitType="Stretch">
+			<staticText>
+				<reportElement x="25" y="3" width="61" height="10" uuid="4f34cea3-770b-4f35-a83c-b1e0ba7b2921"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Imagen]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="139" y="3" width="141" height="10" uuid="f049ff19-abd2-4664-b6b1-53e27b8d8136"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Articulo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="3" width="20" height="10" uuid="b6471a5d-6e73-4e1c-91d3-46052531d0c3"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[N°]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="351" y="3" width="40" height="10" uuid="0f8c0401-e43a-459b-b9b2-c149d9406c54"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Cantidades]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="3" width="50" height="10" uuid="56252f1b-b03d-4413-9af3-ea49eb1f9d58"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Precio Uni.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="396" y="3" width="40" height="10" uuid="995e89ad-6c82-4418-81d0-c70724767534"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Codigo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="493" y="3" width="55" height="10" uuid="3d4ae43b-445c-47ff-b59e-57d6dd5f7f27"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+			<line>
+				<reportElement x="2" y="13" width="550" height="1" uuid="3fee5ed4-3c37-43fa-8d97-c9f9855c966d"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="2" y="0" width="550" height="1" uuid="ad4f572c-90a4-43f4-9fe2-d813e3438b9f"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="87" y="3" width="50" height="10" uuid="1dd3ba79-d17b-4466-8aba-d0e90ac859c1"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Codigo Fabricante]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="282" y="3" width="66" height="10" uuid="ae623603-bfec-44e0-b7e1-6d3309c281c9"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Marca]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="26" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="3" y="1" width="20" height="7" uuid="b1d9a4aa-2f34-43ae-84eb-3047cc539078"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORCOMDET_ITEM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="396" y="1" width="40" height="7" uuid="e1622110-fd9d-40cf-8485-aac950753347"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORCOMDET_CODIGO}]]></textFieldExpression>
+			</textField>
+			<image hAlign="Center">
+				<reportElement x="24" y="0" width="62" height="25" uuid="15161f9e-79f5-4168-aa63-98174692dc23"/>
+				<imageExpression><![CDATA[$F{ARCHIVO}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="351" y="1" width="40" height="7" uuid="e44241ef-2b54-4886-97b9-20170b39552f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORCOMDET_CANT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="440" y="1" width="50" height="7" uuid="34e72b3c-bd34-418d-a77f-366d105dea8f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORCOMDET_PRECIO_UNIT}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{ORCOM_MON}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="139" y="1" width="141" height="7" uuid="799279b4-da2c-4d79-bf0a-61c03a35627d"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ART_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="493" y="1" width="55" height="7" uuid="c70740db-8d91-46d9-b2ba-0ca818c2856b"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{ORCOM_MON}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<line>
+				<reportElement x="492" y="-15" width="1" height="40" uuid="b2322017-1f8e-4544-bf27-2a0e2ceadb82"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="437" y="-15" width="1" height="40" uuid="a883a0b8-6171-40a0-91db-ea409f3627c1"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="394" y="-15" width="1" height="40" uuid="9b06e7b1-cd95-4aa5-b4d2-e85eacfeb86a"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="348" y="-15" width="1" height="40" uuid="f76a916d-13e3-4515-b1b7-379cd6a9cc6f"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="86" y="-15" width="1" height="40" uuid="243fa299-2542-4c87-9578-89e5f9fbc724"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="23" y="-15" width="1" height="40" uuid="26269498-7ef3-4590-93a4-0675f62b5c55"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="2" y="-15" width="1" height="40" uuid="e2886d2f-e6cf-4610-af28-1764d613d0b2"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="551" y="-15" width="1" height="40" uuid="a0eabccc-6c43-40b4-bd60-67ac0de064f4"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="281" y="-15" width="1" height="40" uuid="de62cb6c-e21c-4986-bc3e-2ab59110ad6f"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="138" y="-14" width="1" height="39" uuid="2ce6926d-e960-47ab-a9e0-57bac2bcd17f"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="87" y="0" width="50" height="8" uuid="30c1c6c7-34f2-4943-98d9-1923eadb1b81"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ART_CODIGO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="282" y="1" width="66" height="7" uuid="d8b89011-b112-4e3b-a838-abdf9467e08c"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MARC_DESC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch">
+			<line>
+				<reportElement x="2" y="-1" width="550" height="1" uuid="3ab2e5b6-cb2e-429d-b6c6-3ce44c0c3f54"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,732 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERL011_B" language="groovy" pageWidth="2000" pageHeight="842" columnWidth="1960" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cb29c0f7-0e22-4d60-a3fa-48b21d4492f4">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="177"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<subDataset name="CROSS" uuid="dd97182c-3447-42a4-a9c6-53ead06b8870">
+		<parameter name="P_SESSION_ID" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_SUCURSAL" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT SUCURSAL,
+       PCON_ORDEN,
+       CONCEPTO,
+       NOMBRE,
+       IMPORTE,
+       PDOC_FEC,
+       COTIZACION,
+       NVL(IMPORTE/ COTIZACION,0) IMP_USD
+
+  FROM PERL011_B_TEMP
+WHERE SESSION_ID = $P{P_SESSION_ID}
+  AND EMPR = $P{P_EMPRESA}
+  AND SUCURSAL= $P{P_SUCURSAL}]]>
+		</queryString>
+		<field name="SUCURSAL" class="java.lang.String"/>
+		<field name="PCON_ORDEN" class="java.math.BigDecimal"/>
+		<field name="CONCEPTO" class="java.lang.String"/>
+		<field name="NOMBRE" class="java.lang.String"/>
+		<field name="IMPORTE" class="java.math.BigDecimal"/>
+		<field name="PDOC_FEC" class="java.sql.Timestamp"/>
+		<field name="COTIZACION" class="java.math.BigDecimal"/>
+		<field name="IMP_USD" class="java.math.BigDecimal"/>
+	</subDataset>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SESSION_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DEPARTAMENTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESDE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_HASTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCU" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCU_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USUARIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT SUCURSAL,
+       PCON_ORDEN,
+       CONCEPTO,
+       NOMBRE,
+       IMPORTE,
+       PDOC_FEC,
+       COTIZACION,
+       NVL(IMPORTE/COTIZACION,0) IMP_USD,
+       PERL011.CF_TOTAL_COMBFORMULA   (CONCEPTO1 => CONCEPTO ,
+                                       IMPORTE   => IMPORTE  )TOTAL_COMB,
+       PERL011.CF_IPS_OBREROFORMULA   (CONCEPTO1 => CONCEPTO ,
+                                       IMPORTE   => IMPORTE  )IPS_OBRERO,
+       PERL011.CF_ADELANTOMASFORMULA  (CONCEPTO1 => CONCEPTO ,
+                                       IMPORTE   => IMPORTE  )ADELANTOMAS,
+       PERL011.CF_ADELANTOMENFORMULA  (CONCEPTO1 => CONCEPTO ,
+                                       IMPORTE   => IMPORTE  )ADELANTOMEN,
+       PERL011.CF_VACACIONESFORMULA   (CONCEPTO1 => CONCEPTO ,
+                                       IMPORTE   => IMPORTE  )VACACIONES,
+       PERL011.CF_PRESTAMOMENFORMULA  (CONCEPTO1 => CONCEPTO ,
+                                       IMPORTE   => IMPORTE  )PRESTAMOMEN,
+       PERL011.CF_BONIFICACIONFORMULA (CONCEPTO1 => CONCEPTO ,
+                                       IMPORTE   => IMPORTE  )BONIFICACION,
+       PERL011.CF_PRESTAMOMASFORMULA  (CONCEPTO1 => CONCEPTO ,
+                                       IMPORTE   => IMPORTE  )PRESTAMOMAS,
+       PERL011.CF_HORAFORMULA         (CONCEPTO1 => CONCEPTO ,
+                                       IMPORTE   => IMPORTE  )HORA,
+       PERL011.CF_PLUSFORMULA         (CONCEPTO1 => CONCEPTO ,
+                                       IMPORTE   => IMPORTE  )PLUS,
+       PERL011.CF_LICENCIASFORMULA    (CONCEPTO1 => CONCEPTO ,
+                                       IMPORTE   => IMPORTE  )LICENCIAS,
+       PERL011.CF_PREAVISOFORMULA     (CONCEPTO1 => CONCEPTO ,
+                                       IMPORTE   => IMPORTE  )PREAVISO,
+       PERL011.CF_INDMNIZACIONFORMULA (CONCEPTO1 => CONCEPTO ,
+                                       IMPORTE   => IMPORTE  )INDMNIZACION,
+       PERL011.CF_AGUINALDOFORMULA    (CONCEPTO1 => CONCEPTO ,
+                                       IMPORTE   => IMPORTE  )AGUINALDO,
+       PERL011.CF_SALARIOSFORMULA     (CONCEPTO1 => CONCEPTO ,
+                                       IMPORTE   => IMPORTE  )SALARIOS
+  FROM PERL011_B_TEMP
+ WHERE SESSION_ID = $P{P_SESSION_ID}
+   AND EMPR = $P{P_EMPRESA}
+ORDER BY SUCURSAL]]>
+	</queryString>
+	<field name="SUCURSAL" class="java.lang.String"/>
+	<field name="PCON_ORDEN" class="java.math.BigDecimal"/>
+	<field name="CONCEPTO" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<field name="PDOC_FEC" class="java.sql.Timestamp"/>
+	<field name="COTIZACION" class="java.math.BigDecimal"/>
+	<field name="IMP_USD" class="java.math.BigDecimal"/>
+	<field name="TOTAL_COMB" class="java.math.BigDecimal"/>
+	<field name="IPS_OBRERO" class="java.math.BigDecimal"/>
+	<field name="ADELANTOMAS" class="java.math.BigDecimal"/>
+	<field name="ADELANTOMEN" class="java.math.BigDecimal"/>
+	<field name="VACACIONES" class="java.math.BigDecimal"/>
+	<field name="PRESTAMOMEN" class="java.math.BigDecimal"/>
+	<field name="BONIFICACION" class="java.math.BigDecimal"/>
+	<field name="PRESTAMOMAS" class="java.math.BigDecimal"/>
+	<field name="HORA" class="java.math.BigDecimal"/>
+	<field name="PLUS" class="java.math.BigDecimal"/>
+	<field name="LICENCIAS" class="java.math.BigDecimal"/>
+	<field name="PREAVISO" class="java.math.BigDecimal"/>
+	<field name="INDMNIZACION" class="java.math.BigDecimal"/>
+	<field name="AGUINALDO" class="java.math.BigDecimal"/>
+	<field name="SALARIOS" class="java.math.BigDecimal"/>
+	<variable name="IMPORTE_1" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<variable name="IMP_USD_1" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMP_USD}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<variable name="IMP_USD_2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMP_USD}]]></variableExpression>
+	</variable>
+	<variable name="SALARIOS_1" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{SALARIOS}]]></variableExpression>
+	</variable>
+	<variable name="BONIFICACION_1" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{BONIFICACION}]]></variableExpression>
+	</variable>
+	<variable name="PLUS_1" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{PLUS}]]></variableExpression>
+	</variable>
+	<variable name="HORA_1" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{HORA}]]></variableExpression>
+	</variable>
+	<variable name="ADELANTOMAS_1" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{ADELANTOMAS}]]></variableExpression>
+	</variable>
+	<variable name="ADELANTOMEN_1" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{ADELANTOMEN}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_COMB_1" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL_COMB}]]></variableExpression>
+	</variable>
+	<variable name="VACACIONES_1" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{VACACIONES}]]></variableExpression>
+	</variable>
+	<variable name="IPS_OBRERO_1" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{IPS_OBRERO}]]></variableExpression>
+	</variable>
+	<variable name="PRESTAMOMAS_1" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{PRESTAMOMAS}]]></variableExpression>
+	</variable>
+	<variable name="PRESTAMOMEN_1" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{PRESTAMOMEN}]]></variableExpression>
+	</variable>
+	<variable name="PREAVISO_1" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{PREAVISO}]]></variableExpression>
+	</variable>
+	<variable name="INDMNIZACION_1" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{INDMNIZACION}]]></variableExpression>
+	</variable>
+	<variable name="LICENCIAS_1" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{LICENCIAS}]]></variableExpression>
+	</variable>
+	<variable name="AGUINALDO_1" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{AGUINALDO}]]></variableExpression>
+	</variable>
+	<group name="SUCURSAL">
+		<groupExpression><![CDATA[$F{SUCURSAL}]]></groupExpression>
+		<groupHeader>
+			<band height="60">
+				<staticText>
+					<reportElement x="23" y="11" width="34" height="11" uuid="37ec415d-a435-4959-b501-7e2223b13d8f"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Sucursal:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="57" y="11" width="265" height="11" uuid="94f27949-e8bd-42d4-a223-c03daa188d75"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{P_SUCU_DESC}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="1" y="1" width="1959" height="1" uuid="3f05f7bb-d578-4208-86c7-9d85eade6178"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<crosstab>
+					<reportElement x="5" y="22" width="1955" height="35" uuid="d903c33a-c0c1-44c7-b480-2d2c4d0e41d6"/>
+					<crosstabDataset>
+						<dataset>
+							<datasetRun subDataset="CROSS" uuid="0d085d8a-6415-43e5-9356-04ed7e22e3b5">
+								<datasetParameter name="P_SESSION_ID">
+									<datasetParameterExpression><![CDATA[$P{P_SESSION_ID}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="P_EMPRESA">
+									<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="P_SUCURSAL">
+									<datasetParameterExpression><![CDATA[$F{SUCURSAL}]]></datasetParameterExpression>
+								</datasetParameter>
+							</datasetRun>
+						</dataset>
+					</crosstabDataset>
+					<rowGroup name="NOMBRE" width="221" totalPosition="End">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{NOMBRE}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#BFE1FF" mode="Transparent">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textField isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="221" height="13" uuid="09446d05-0886-462f-92c6-608cd33416e1"/>
+									<textElement>
+										<font fontName="Arial" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{NOMBRE}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents backcolor="#E6F3FF" mode="Transparent">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+							</cellContents>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<columnGroup name="CONCEPTO" height="19" totalPosition="End">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{CONCEPTO}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+							<cellContents backcolor="#BFE1FF" mode="Transparent">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textField isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="97" height="18" uuid="a20be6fd-3640-4a13-b537-572f9d97632e"/>
+									<textElement textAlignment="Right">
+										<font fontName="Arial" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{CONCEPTO}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabColumnHeader>
+						<crosstabTotalColumnHeader>
+							<cellContents backcolor="#E6F3FF" mode="Transparent">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<staticText>
+									<reportElement x="0" y="0" width="63" height="18" uuid="5d801c26-5ed2-46a7-b552-31238f3267fb"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Arial" size="8"/>
+									</textElement>
+									<text><![CDATA[GS]]></text>
+								</staticText>
+								<staticText>
+									<reportElement style="Crosstab Data Text" x="73" y="0" width="61" height="18" uuid="cd80c4b4-9adb-4975-b19c-99da7428c950"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Arial" size="8"/>
+									</textElement>
+									<text><![CDATA[US]]></text>
+								</staticText>
+							</cellContents>
+						</crosstabTotalColumnHeader>
+					</columnGroup>
+					<measure name="IMPORTEMeasure" class="java.lang.Integer" calculation="Sum">
+						<measureExpression><![CDATA[$F{IMPORTE}]]></measureExpression>
+					</measure>
+					<measure name="measure1" class="java.math.BigDecimal" calculation="Sum">
+						<measureExpression><![CDATA[$F{IMP_USD}]]></measureExpression>
+					</measure>
+					<crosstabCell width="97" height="13">
+						<cellContents>
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField pattern="#,##0" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="97" height="13" uuid="bd9dc3dc-bb63-47c3-8167-dddee131a3f8"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{IMPORTEMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="97" height="0" rowTotalGroup="NOMBRE">
+						<cellContents backcolor="#E6F3FF" mode="Transparent">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="134" height="13" columnTotalGroup="CONCEPTO">
+						<cellContents backcolor="#E6F3FF" mode="Transparent">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField pattern="#,##0" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="63" height="13" uuid="50bf1b52-0fa2-4cd9-b780-78a7760cf21b"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{IMPORTEMeasure}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="73" y="0" width="61" height="13" uuid="798f4d6e-3c93-415f-b217-264a213d7ca3"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{measure1}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="134" height="0" rowTotalGroup="NOMBRE" columnTotalGroup="CONCEPTO">
+						<cellContents backcolor="#E6F3FF" mode="Transparent">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+				</crosstab>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="11">
+				<staticText>
+					<reportElement x="7" y="0" width="72" height="11" uuid="748fda0f-c458-4ead-adc0-db1c951a0a8a"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Total Sucursal:]]></text>
+				</staticText>
+				<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="93" y="0" width="97" height="11" uuid="e10e71ed-4b5f-42bb-a750-27a271456fef"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{IMPORTE_1}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement x="191" y="0" width="100" height="11" uuid="fef8da0f-4bd6-4b50-bddf-94d5f517d07f"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{IMP_USD_1}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="7" y="68" width="69" height="11" uuid="1b2b5835-7732-4474-8862-666a5f4606eb"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Fecha desde:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="259" y="68" width="51" height="11" uuid="0c95bd4c-a613-49a8-a12b-ecc5f699f899"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[hasta:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="464" y="68" width="74" height="11" uuid="b92bc2d8-4996-412a-9981-a38e82547ea6"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Departamento:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="4" y="4" width="100" height="20" uuid="9723d15b-34e5-4b84-b41c-b98c8a72e427"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_EMPRESA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="5" y="25" width="100" height="20" uuid="016f3632-3a0d-47a3-80ab-e1acca05d7fd"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SUCU_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="76" y="68" width="131" height="11" uuid="cc09aa9c-c956-41ef-b182-27f232d97e71"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESDE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="310" y="68" width="132" height="11" uuid="69abd0ac-d3b5-4ee5-bdfe-bd1f3dc51b78"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_HASTA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="538" y="68" width="122" height="11" uuid="87fb0304-3089-41ae-b7c4-820c59c0ef2e"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DEPARTAMENTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="310" y="37" width="195" height="20" uuid="c75224c9-5d49-4903-9e7f-6349742a01b1"/>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="291" y="34" width="19" height="20" uuid="6e122a2c-06fa-47af-9389-7f1ca39e4173"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[-]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="123" y="37" width="168" height="20" uuid="19b6493c-3599-4934-8665-2f927d93c535"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$P{P_DESC_EMPRESA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="280" splitType="Stretch">
+			<staticText>
+				<reportElement x="13" y="199" width="63" height="10" uuid="e60c67e0-20b3-4e86-8554-a868a1f4d282"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Total General:]]></text>
+			</staticText>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="93" y="199" width="97" height="10" backcolor="#CCCCCC" uuid="eba9373b-e117-488b-8529-5ab0b34b0d04"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{IMPORTE_2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="191" y="199" width="100" height="10" backcolor="#CCCCCC" uuid="87c4438c-b93e-43ef-8264-8e0f76ee4829"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{IMP_USD_2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="293" y="199" width="44" height="10" uuid="fbfd1955-e821-464f-bad0-79afc5b14ef6"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[US]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="12" width="63" height="10" uuid="5e429ce0-abc7-4c75-a0bc-062aabf1fbf1"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Salarios :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="22" width="63" height="10" uuid="046a41d0-d04c-4906-ab9a-159bf6cdcbd4"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Boni. Familiar :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="32" width="63" height="10" uuid="8a4e5a00-3ce2-462f-9cfd-0450dc9f4c68"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Plus Salarial :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="42" width="63" height="10" uuid="8eff1ac1-c0b4-4867-b868-99e7bbce9a44"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Horas Extras :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="52" width="63" height="10" uuid="183906b2-ef74-45b7-ae9d-4da715c9a941"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Adelantos() :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="62" width="63" height="10" uuid="9fc716df-4d21-444e-917d-571496724fb1"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Adelantos(-) :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="72" width="63" height="12" uuid="b92186ba-f13f-4908-9854-863c162ddfbe"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Combustible(-) :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="84" width="63" height="10" uuid="e8200847-bb55-4dd5-8dd5-9298633c8e02"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Vacaciones :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="94" width="63" height="10" uuid="c50b41dc-67da-4681-8e08-5a7b1ec0ae7a"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[IPS aporte :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="104" width="63" height="11" uuid="7a07cc97-7d51-4c58-ac33-a3334954a163"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Prestamos() :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="115" width="63" height="10" uuid="29b4f629-aba2-4731-8e7f-ae66ddecd4e7"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Prestamos(-) :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="125" width="63" height="10" uuid="db0ce9f1-5abc-4627-8975-f42237864229"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Preaviso :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="135" width="63" height="12" uuid="a5c53361-b9c3-43a8-bdd3-053fae3b22b5"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Indemnizacion :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="147" width="63" height="10" uuid="4108d638-4ac1-4172-a568-2a2c9116af92"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Licencias :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="157" width="63" height="11" uuid="32412cc8-7f82-40dd-bc3c-475cd3467f91"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Aguinaldos :]]></text>
+			</staticText>
+			<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="71" y="12" width="101" height="10" uuid="6ef32434-1209-4996-99af-6e4ee66cfb1f"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SALARIOS_1}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="71" y="22" width="101" height="10" uuid="d2cfc8e2-7a3e-4f31-a587-d56b190690a9"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{BONIFICACION_1}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="71" y="32" width="101" height="10" uuid="318c0414-4240-43b1-a03b-aaf05791b8f6"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PLUS_1}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="71" y="42" width="101" height="10" uuid="ebdc4b20-cc1f-4566-8f0a-ba5bb3c8b48a"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{HORA_1}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="71" y="52" width="101" height="10" uuid="3bd2a53a-d84a-47f6-bcd6-5b4c856df7a2"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{ADELANTOMAS_1}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="71" y="62" width="101" height="10" uuid="70c64690-6543-4334-901f-1ceeea6da9ca"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{ADELANTOMEN_1}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="71" y="72" width="101" height="12" uuid="35d679ad-e9a4-4514-bee6-6a7d3df4e277"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_COMB_1}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="71" y="84" width="101" height="10" uuid="a340515a-d900-46ab-b537-59ecfd058bb2"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{VACACIONES_1}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="71" y="94" width="101" height="10" uuid="224fb758-1ee9-4b04-935a-a5ed5b27e608"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{IPS_OBRERO_1}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="71" y="104" width="101" height="11" uuid="2a2b447d-9f9e-47b7-9c24-03bb86785d26"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PRESTAMOMAS_1}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="71" y="115" width="101" height="10" uuid="98c15767-9faf-4fa8-b66f-bb8828ee3391"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PRESTAMOMEN_1}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="71" y="125" width="101" height="10" uuid="0ec89e40-b8a1-4672-a36d-fc411ae600a0"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PREAVISO_1}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="71" y="135" width="101" height="12" uuid="e0c18063-5516-422d-ae06-6a59d542f45f"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{INDMNIZACION_1}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="71" y="147" width="101" height="10" uuid="fe07edc9-2b6b-4065-a492-4aee260a240f"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{LICENCIAS_1}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="SUCURSAL" pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="71" y="157" width="101" height="11" uuid="ae8dbfec-383b-4c05-89df-f5fba63e8acf"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{AGUINALDO_1}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="1960" height="1" uuid="5537de36-5784-4d52-8ea9-2709770a6324"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

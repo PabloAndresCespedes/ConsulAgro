@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="prueeeba" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="dccd045c-3ab3-4bec-b46a-bc34785aed7d">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="p_empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="p_fec_doc" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FECHA_GRAB" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_DOC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT CTA_BCO,
+       CUENTA_BANCARIA,
+       SUC_CODIGO||' - '||DES_SUCURSAL SUCURSAL,
+       MONEDA_dES,
+       OPER_LOGIN,
+       NOMBRE,
+       OPER_COD,
+       ARQ_CODIGO,
+       FEC_DOCUMENTO,
+       nvl(CHEQUES,0) CHEQUES,
+       nvl(DEPOSITOS,0) DEPOSITOS,
+       nvl(TRANS_PENDIENTES,0) TRANS_PENDIENTES,
+       nvl(COMPR_PENDIENTES,0) COMPR_PENDIENTES,
+       nvl(RETE_PENDIENTES,0) RETE_PENDIENTES,
+       nvl(MONT_MONEDA,0) MONT_MONEDA,
+       nvl((CHEQUES+DEPOSITOS+TRANS_PENDIENTES+COMPR_PENDIENTES+RETE_PENDIENTES+MONT_MONEDA),0) TOTAL,
+       nvl(ARQ_SISTEMA,0)ARQ_SISTEMA , nvl(((CHEQUES+DEPOSITOS+TRANS_PENDIENTES+COMPR_PENDIENTES+RETE_PENDIENTES+MONT_MONEDA)-ARQ_SISTEMA),0) DIFERENCIA,
+       FEC_GRAB,
+       HORA,
+       CTA_MON,
+       SUC_CODIGO
+       FROM (
+        SELECT A.ARQ_CAJA ARQ_BCO,
+               A.ARQ_CODIGO ARQ_CODIGO,
+               A.ARQ_OPERADOR ARQ_OPERADOR,
+               A.ARQ_FECHA_DOC FEC_DOCUMENTO,
+               A.ARQ_MONEDA ARQ_MONEDA,
+               (SELECT NVL(SUM(ACDET_MONTO_GS), 0)
+                  FROM FIN_ARQUEO_CAJA_DET_COMPROB
+                 WHERE ACDET_TIPO = 1
+                   AND ACDET_EMPR = A.ARQ_EMPR
+                   AND ACDET_ARQUEO = A.ARQ_CODIGO) CHEQUES,
+               (SELECT NVL(SUM(ACDET_MONTO_GS), 0)
+                  FROM FIN_ARQUEO_CAJA_DET_COMPROB
+                 WHERE ACDET_TIPO = 2
+                   AND ACDET_EMPR = A.ARQ_EMPR
+                   AND ACDET_ARQUEO = A.ARQ_CODIGO) DEPOSITOS,
+               (SELECT NVL(SUM(ACDET_MONTO_GS), 0)
+                  FROM FIN_ARQUEO_CAJA_DET_COMPROB
+                 WHERE ACDET_TIPO = 3
+                   AND ACDET_EMPR = A.ARQ_EMPR
+                   AND ACDET_ARQUEO = A.ARQ_CODIGO) TRANS_PENDIENTES,
+               (SELECT NVL(SUM(ACDET_MONTO_GS), 0)
+                  FROM FIN_ARQUEO_CAJA_DET_COMPROB
+                 WHERE ACDET_TIPO = 4
+                   AND ACDET_EMPR = A.ARQ_EMPR
+                   AND ACDET_ARQUEO = A.ARQ_CODIGO) COMPR_PENDIENTES,
+               (SELECT NVL(SUM(ACDET_MONTO_GS), 0)
+                  FROM FIN_ARQUEO_CAJA_DET_COMPROB
+                 WHERE ACDET_TIPO = 5
+                   AND ACDET_EMPR = A.ARQ_EMPR
+                   AND ACDET_ARQUEO = A.ARQ_CODIGO) RETE_PENDIENTES,
+               (SELECT NVL(SUM(NVL(ARNDET_CANT, 0) * CA.BILLETE_VALOR), 0) MONT_MONEDA
+                  FROM FIN_ARQUEO_CAJA_DET_BILLETE CB, FIN_ARQUEO_BILLETE CA
+                 WHERE CB.ARNDET_BILLETE = CA.BILLETE_CODIGO
+                   AND CB.ARNDET_EMPR = CA.BILLETE_EMPR
+                   AND CA.BILLETE_MONEDA = A.ARQ_MONEDA
+                   AND CB.ARNDET_CODIGO = A.ARQ_CODIGO
+                   AND CB.ARNDET_EMPR = A.ARQ_EMPR) MONT_MONEDA,
+               A.ARQ_SISTEMA_GS ARQ_SISTEMA,
+               TRUNC(A.ARQ_FECHA_GRAB) FEC_GRAB,
+               TO_CHAR(A.ARQ_FECHA_GRAB, 'hh24:mi:ss')HORA,
+               ARQ_EMPR
+
+          FROM FIN_ARQUEO_CAJA A
+         WHERE A.ARQ_EMPR = 1
+           AND A.ARQ_CODIGO IN (SELECT MAX(ARQ_CODIGO)
+                                  FROM FIN_ARQUEO_CAJA
+                                  WHERE ARQ_EMPR =1
+                                    AND (ARQ_FECHA_DOC = '23/12/2019')
+                                  GROUP BY ARQ_OPERADOR, ARQ_CAJA)) ARQ,
+         (SELECT
+               A.OP_CTA_CTA_CODIGO CTA_BCO,
+               C.CTA_CODIGO||' - '||C.CTA_DESC CUENTA_BANCARIA,
+               decode(M.SUC_CODIGO,null,'1',M.SUC_CODIGO) SUC_CODIGO,
+               decode(M.SUC_CODIGO,null,'CASA CENTRAL',M.SUC_DESC) DES_SUCURSAL,
+               N.MON_CODIGO||' - '|| N.MON_DESC MONEDA_DES,
+               B.OPER_LOGIN OPER_LOGIN,
+               B.OPER_NOMBRE NOMBRE,
+               B.OPER_CODIGO OPER_COD,
+               A.OP_CTA_EMPR EMPRESA,
+               CTA_MON
+          FROM FIN_CUENTA_BANCARIA C,   FIN_OPER_CTA_BCO A, GEN_OPERADOR B, GEN_SUCURSAL M, GEN_MONEDA N
+         WHERE A.OP_CTA_CTA_CODIGO = C.CTA_CODIGO
+           AND A.OP_CTA_EMPR = C.CTA_EMPR
+           AND A.OP_CTA_OPER = B.OPER_CODIGO
+           AND A.OP_CTA_EMPR = B.OPER_EMPR
+           AND C.CTA_EMPR = M.SUC_EMPR(+)
+           AND C.CTA_SUC = M.SUC_CODIGO(+)
+           AND C.CTA_MON = N.MON_CODIGO
+           AND C.CTA_EMPR = N.MON_EMPR
+           AND A.OP_CTA_ARQUEO = 'S'
+           AND A.OP_CTA_EMPR =1) BCO
+       WHERE BCO.CTA_BCO   = ARQ.ARQ_BCO (+)
+         AND BCO.EMPRESA   = ARQ.ARQ_EMPR (+)
+         AND BCO.OPER_LOGIN = ARQ.ARQ_OPERADOR (+)
+        ORDER BY CTA_MON, SUC_CODIGO, OPER_LOGIN, CTA_BCO]]>
+	</queryString>
+	<field name="CTA_BCO" class="java.math.BigDecimal"/>
+	<field name="CUENTA_BANCARIA" class="java.lang.String"/>
+	<field name="SUCURSAL" class="java.lang.String"/>
+	<field name="MONEDA_DES" class="java.lang.String"/>
+	<field name="OPER_LOGIN" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="OPER_COD" class="java.math.BigDecimal"/>
+	<field name="ARQ_CODIGO" class="java.math.BigDecimal"/>
+	<field name="FEC_DOCUMENTO" class="java.sql.Timestamp"/>
+	<field name="CHEQUES" class="java.math.BigDecimal"/>
+	<field name="DEPOSITOS" class="java.math.BigDecimal"/>
+	<field name="TRANS_PENDIENTES" class="java.math.BigDecimal"/>
+	<field name="COMPR_PENDIENTES" class="java.math.BigDecimal"/>
+	<field name="RETE_PENDIENTES" class="java.math.BigDecimal"/>
+	<field name="MONT_MONEDA" class="java.math.BigDecimal"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<field name="ARQ_SISTEMA" class="java.math.BigDecimal"/>
+	<field name="DIFERENCIA" class="java.math.BigDecimal"/>
+	<field name="FEC_GRAB" class="java.sql.Timestamp"/>
+	<field name="HORA" class="java.lang.String"/>
+	<field name="CTA_MON" class="java.math.BigDecimal"/>
+	<field name="SUC_CODIGO" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERI088_CH_AD" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="37724b61-b58c-4716-8378-f1408f434f35">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_CONT_EMPL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_TIPO_CONTRATO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLAVE_POST" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLAVE_SOL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CIUDAD_EMPR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_CONT_LETRAS_1" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_CONT_LETRAS_2" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_GEN_GEN_NOMBRE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CI_EMPLEADOR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CI_EMPLEADO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_CONT" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CARGO_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT CASE
+         WHEN PP.DOCPOS_EMPR = 1 THEN
+          PP.DOCPOS_NOMBRE || ' ' || PP.DOCPOS_APELLIDO
+         ELSE
+          INITCAP(PP.DOCPOS_NOMBRE || ' ' || PP.DOCPOS_APELLIDO)
+       END NOMBRE_POSTULANTE,
+       DECODE(PP.DOCPOS_SEXO, 'M', 'Masculino', 'F', 'Femenino') SEXO,
+       CASE
+         WHEN PP.DOCPOS_SEXO = 'M' THEN
+          'el sr. '
+         ELSE
+          'la sra. '
+       END TRATAMIENTO_POSTULANTE,
+       CASE
+         WHEN PP.DOCPOS_SEXO = 'M' THEN
+          CASE
+            WHEN PP.DOCPOS_ESTADO_CIV = 'C' THEN
+             'Casado'
+            ELSE
+             'Soltero'
+          END
+         ELSE
+          CASE
+            WHEN PP.DOCPOS_ESTADO_CIV = 'C' THEN
+             'Casada'
+            ELSE
+             'Soltera'
+          END
+       END ESTADO_CIVIL,
+       CASE
+         WHEN PP.DOCPOS_EMPR = 1 THEN
+          GP.PROF_DESC
+         ELSE
+          INITCAP(GP.PROF_DESC)
+       END PROFESION,
+       GPA.PAIS_NACIONALIDAD,
+       CASE
+         WHEN PP.DOCPOS_EMPR = 1 THEN
+          PP.DOCPOS_DOMICILIO
+         ELSE
+          INITCAP(FZ.ZONA_DESC)
+       END DOMICILIO,
+       CASE
+         WHEN PP.DOCPOS_EMPR = 1 THEN
+          PP.DOCPOS_DOMICILIO
+         ELSE
+          INITCAP(FZ.ZONA_DESC)
+       END ZONA_DESC,
+       PP.DOCPOS_CEDULA_IDEN,
+       DECODE($P{P_TIPO_CONTRATO}, 'IN', null, O.CONSEL_PLAZO) CONSEL_PLAZO,
+       O.CONSEL_HORARIO
+  FROM PER_POSTULANTE_CARGO PP, GEN_PROFESION GP, GEN_PAIS GPA, FAC_ZONA FZ, PER_CONTRATO_PROC_SEL O
+ WHERE PP.DOCPOS_EMPR =$P{P_EMPRESA}
+   AND PP.DOCPOS_CLAVE =$P{P_CLAVE_POST}
+   AND PP.DOCPOS_EMPR = GPA.PAIS_EMPR(+)
+   AND PP.DOCPOS_NACI = GPA.PAIS_CODIGO(+)
+   AND PP.DOCPOS_EMPR = GP.PROF_EMPR(+)
+   AND PP.DOCPOS_PROF = GP.PROF_CODIGO(+)
+   AND PP.DOCPOS_EMPR = FZ.ZONA_EMPR(+)
+   AND PP.DOCPOS_ZONA = FZ.ZONA_CODIGO(+)
+   AND O.CONSEL_POSTUL = $P{P_CLAVE_POST}
+   AND O.CONSEL_EMPR = PP.DOCPOS_EMPR
+   AND O.CONSEL_SOLI = $P{P_CLAVE_SOL}
+   union
+ SELECT C.EMPL_NOMBRE||' '||C.EMPL_APE NOMBRE,
+        decode(c.empl_sexo,'M', 'Masculino', 'F', 'Femenino')sexo,
+        CASE
+         WHEN empl_sexo = 'M' THEN
+          'el sr. '
+         ELSE
+          'la sra. '
+       END TRATAMIENTO_POSTULANTE,
+     CASE
+         WHEN empl_sexo = 'M' THEN
+          CASE
+            WHEN c.empl_est_civil = 'C' THEN
+             'Casado'
+            ELSE
+             'Soltero'
+          END
+         ELSE
+          CASE
+            WHEN c.empl_est_civil = 'C' THEN
+             'Casada'
+            ELSE
+             'Soltera'
+          END
+       END ESTADO_CIVIL,
+       CASE
+         WHEN a.pcon_empr = 1 THEN
+           P.PROF_DESC
+         ELSE
+          INITCAP(P.PROF_DESC)
+       END PROFESION,
+       S.PAIS_NACIONALIDAD,
+
+       CASE
+         WHEN pcon_empr = 1 THEN
+         A.PCON_DIRECCION
+         ELSE
+          INITCAP(A.PCON_DIRECCION)
+       END DOMICILIO,
+
+       CASE
+         WHEN pcon_empr = 1 THEN
+         A.PCON_DIRECCION
+         ELSE
+          INITCAP(A.PCON_DIRECCION)
+       END ZONA_DESC,
+       A.PCON_CI,
+       DECODE($P{P_TIPO_CONTRATO}, 'IN', null, A.PCON_PLAZO),
+       A.PCON_HORARIO
+    FROM PER_CONT_SIN_PROSELC A, PER_EMPLEADO C, GEN_PROFESION P, GEN_PAIS S
+     WHERE A.PCON_LEGAJO = C.EMPL_LEGAJO
+     AND A.PCON_EMPR = C.EMPL_EMPRESA
+     AND C.EMPL_NACIONALIDAD = S.PAIS_CODIGO(+)
+     AND C.EMPL_EMPRESA = S.PAIS_EMPR(+)
+     AND C.EMPL_PROF = P.PROF_CODIGO(+)
+     AND C.EMPL_EMPRESA = P.PROF_EMPR(+)
+     AND A.PCON_EMPR = $P{P_EMPRESA}
+     AND A.PCON_CODIGO =$P{P_CONT_EMPL}]]>
+	</queryString>
+	<field name="NOMBRE_POSTULANTE" class="java.lang.String"/>
+	<field name="SEXO" class="java.lang.String"/>
+	<field name="TRATAMIENTO_POSTULANTE" class="java.lang.String"/>
+	<field name="ESTADO_CIVIL" class="java.lang.String"/>
+	<field name="PROFESION" class="java.lang.String"/>
+	<field name="PAIS_NACIONALIDAD" class="java.lang.String"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="ZONA_DESC" class="java.lang.String"/>
+	<field name="DOCPOS_CEDULA_IDEN" class="java.math.BigDecimal"/>
+	<field name="CONSEL_PLAZO" class="java.lang.String"/>
+	<field name="CONSEL_HORARIO" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="7" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="44" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="24" y="23" width="517" height="20" uuid="90c0db28-8efe-4b75-aa3b-6833f34782c6"/>
+				<textElement textAlignment="Justified">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["En la ciudad de Dr. Juan E. Estigarribia, a los " + $P{P_FECHA_CONT_LETRAS_1} + " del año " + $P{P_FECHA_CONT_LETRAS_2} +  ", por una parte la empresa HILAGRO S.A, con domicilio en Ruta PY02 Km 214 de esta ciudad representado por el Sr. " +$P{P_GEN_GEN_NOMBRE}+ " con numero de cédula  " + $P{P_CI_EMPLEADOR} + "  en su carácter de Gerente General de la empresa denominado en adelante “EL EMPLEADOR”, y por otra " +$F{TRATAMIENTO_POSTULANTE}+$F{NOMBRE_POSTULANTE}+ " con cedula de identidad No " + $P{P_CI_EMPLEADO} + ",de estado civil " + $F{ESTADO_CIVIL}+ ", de sexo " + $F{SEXO} + ",  de profesión u oficio " + $F{PROFESION} + ", de nacionalidad " + $F{PAIS_NACIONALIDAD} + ", domiciliado en " + $F{DOMICILIO}+ ", denominado “EL EMPLEADO” o “EL TRABAJADOR”, y en conjunto LAS PARTES y manifiestan que:-"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="20" forecolor="#FF0000" uuid="4459f710-68af-4080-ae35-c51f8a30acae"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ADENDA AL CONTRATO INDIVIDUAL DE TRABAJO]]></text>
+			</staticText>
+		</band>
+		<band height="50">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="24" y="0" width="517" height="50" uuid="84c83846-9ce4-46d3-8415-7d1d14931eed"/>
+				<textElement textAlignment="Justified">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["I.- Las PARTES han suscripto un CONTRATO INDIVIDUAL DE TRABAJO en fecha "+$P{P_FECHA_CONT}+" que los vincula el cual se encuentra plenamente vigente, desempeñándose el TRABAJADOR como " +$P{P_CARGO_DESC}+ " de la empresa, no obstante, resulta necesario precisar las condiciones en que el EMPLEADO debe prestar sus servicios durante el tiempo en que conduce algún vehículo, de la naturaleza y tipo que fuere, de propiedad o a cargo del EMPLEADOR, así como la obligación del TRABAJADOR, en razón de que el mismo es responsable del manejo de valores y sumas de dinero propiedad del EMPLEADOR. \n\n"+
+"Por tanto, las PARTES convienen en celebrar la presente ADENDA que formará parte integrante del CONTRATO INDIVIDUAL DE TRABAJO, conforme a las siguientes cláusulas: \n\n"+
+"1.- Durante el tiempo en que el TRABAJADOR preste sus servicios como " +$P{P_CARGO_DESC}+ "  utilizando los vehículos de propiedad o a cargo de la EMPRESA, se obliga a: \n\n"+
+"1.1. No transportar acompañantes sin contar con la debida autorización escrita del Jefe de Transporte de la EMPRESA; \n\n"+
+"1.2. No transportar ninguna encomienda de carácter personal o de terceros sin contar con la autorización escrita del Jefe de Transporte de la EMPRESA; \n\n"+
+"1.3. No exceder la velocidad de 90 km por hora en el manejo del camión. \n\n"+
+"1.4. No transportar y/o ingerir bebidas alcohólicas, drogas y/o estupefacientes, sea de la clase o naturaleza que fuere. -\n\n"+
+"1.5. Cumplir a cabalidad con todas y cada una de las normas de tránsito. –\n\n"+
+"2. EL TRABAJADOR se compromete a asumir las multas que le impongan las autoridades de tránsito por cometer infracciones a las normas o reglas establecidas. Igualmente es responsable por la pérdida o robo de herramientas o accesorios del vehículo, por descuido o negligencia. -\n\n"+
+"También es responsable por los daños materiales que cause por negligencia o imprudencia al vehículo que le es asignado. \n\n"+
+"3.- El TRABAJADOR se obliga a prestar exclusivamente sus servicios a la Empresa, obligándose también a acatar sus indicaciones e instrucciones. Por ello cumplirá sus tareas en los horarios (diurnos, nocturnos o mixtos) que el EMPLEADOR establezca de conformidad con las exigencias del servicio a cargo del Trabajador. -\n\n"+
+"4. El TRABAJADOR, si la EMPRESA lo dispone podrá ser sometido a la prueba de alcoholemia, revisión de bolsos, carteras, paquetes y vehículos. \n"
+]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="19" splitType="Prevent">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="24" y="0" width="517" height="19" uuid="9e1c852c-5066-4da5-b8da-24b40b02ef90"/>
+				<textElement textAlignment="Justified">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["5.- EL TRABAJADOR es responsable de la integridad y del correcto resguardo de las sumas de dinero y mercaderías que se encuentran bajo su manejo, guarda y custodia, y como tal responderá por el valor económico de los faltantes de dinero. A fin de hacer efectiva dicha responsabilidad, EL TRABAJADOR participará, en forma directa de los arqueos y auditorías realizadas en que se detecten dichos faltantes y con su firma avalará el resultado que arroja el mencionado resultado.  \n\n"+
+"6.-Atendiendo a la función de (" +$P{P_CARGO_DESC}+ ", encargado de realizar cobranzas) desempeñada por El TRABAJADOR en la empresa, ambas partes reconocen que el mismo es responsable de la buena utilización, guarda y custodia de las sumas de dinero y valores que maneja, y en este sentido, EL TRABAJADOR propone y el EMPLEADOR ACEPTA que en caso de presentarse alguno de los hechos o supuestos mencionados o faltantes de sumas de dinero en las rendiciones del TRABAJADOR o situación similar que implique una pérdida económica para el EMPLEADOR, a fin de saldar la deuda contraída por el TRABAJADOR en ese caso, será descontado de su salario mensual el equivalente de hasta el 30% (Treinta por ciento) del salario mensual, hasta cubrir en su totalidad el monto correspondiente.- \n\n"+
+"Se deja expresa constancia, que con la presente adenda se da cumplimiento a lo regulado por el Código del Trabajo sobre el particular, y que todo lo aquí acordado, se ajusta en su totalidad a lo previsto en el Art. 242 y concordantes del Código del Trabajo vigente. - \n\n"+
+"7. EL TRABAJADOR se compromete a mantener limpio el interior y exterior del vehículo, recomendándole un lavado diario. -\n\n"+
+"8. El vehículo asignado es para uso de la Empresa, bajo la responsabilidad del usuario a cuyo cargo haya sido entregado, en caso de relevo deberá realizar el check list tanto el chofer que recibe el camión, como el chofer quien entrega el camión. \n\n"+
+"9. EL TRABAJADOR se obliga a cumplir con los servicios de mantenimiento a través del taller que sea asignado por la Empresa. El incumplimiento de esta disposición será considerado FALTA GRAVE. -\n\n"+
+"10.  EN CASO DE ACCIDENTES Y/O ROBO: El TRABAJADOR deberá poner en conocimiento de inmediato sobre el accidente al Encargado de Transporte. \n\n"+
+"11. En caso de incumplimiento de las obligaciones indicadas precedentemente, el  TRABAJADOR asumirá personalmente las consecuencias civiles y penales que dicho incumplimiento acarree tanto al EMPLEADOR, sus respresentates, y/o terceros, y  facultará al EMPLEADOR a disponer el despido del TRABAJADOR con justa causa, salvo que disponga aplicar otra sancion en sustitución de aquella.- \n\n"+
+"12. Las demás clàusulas del Contrato de Trabajo suscripto en fecha " + $P{P_FECHA_CONT}+ " entre las partes y que no fueron modificadas por el presente documento, permanecen invariables. \n\n"+
+"En prueba de conformidad, previa lectura y ratificación, suscriben las partes en dos ejemplares de un mismo tenor y a un solo efecto, en el lugar y fecha arriba indicados\n"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="75" splitType="Stretch">
+			<line>
+				<reportElement x="21" y="24" width="140" height="1" uuid="c1660704-77db-4ce2-83e6-ec4049a451b4"/>
+			</line>
+			<line>
+				<reportElement x="375" y="24" width="140" height="1" uuid="e7160eea-77c8-4744-b49d-67f8d573be0a"/>
+			</line>
+			<staticText>
+				<reportElement x="21" y="25" width="140" height="20" uuid="31147782-3c1e-4b7b-bef2-67ca60d5413a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[EMPLEADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="375" y="25" width="140" height="20" uuid="0aeb3d23-ab72-4c32-bbc5-69dd9088026f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[TRABAJADOR]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

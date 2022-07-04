@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="prueba2" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="78dd21b9-8276-4492-8180-ba192d290770">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[SELECT CTA_BCO,
+       CUENTA_BANCARIA,
+       SUC_CODIGO||' - '||DES_SUCURSAL SUCURSAL,
+       MONEDA_dES,
+       OPER_LOGIN,
+       NOMBRE,
+       OPER_COD,
+       ARQ_CODIGO, FEC_GRAB,
+       HORA,
+       CTA_MON,
+       SUC_CODIGO
+       FROM (
+        SELECT A.ARQ_CAJA ARQ_BCO,
+               A.ARQ_CODIGO ARQ_CODIGO,
+               A.ARQ_OPERADOR ARQ_OPERADOR,
+               A.ARQ_FECHA_DOC FEC_DOCUMENTO,
+               A.ARQ_MONEDA ARQ_MONEDA,
+
+               A.ARQ_SISTEMA_GS ARQ_SISTEMA,
+               TRUNC(A.ARQ_FECHA_GRAB) FEC_GRAB,
+               TO_CHAR(A.ARQ_FECHA_GRAB, 'hh24:mi:ss')HORA,
+               ARQ_EMPR
+
+          FROM FIN_ARQUEO_CAJA A
+         WHERE A.ARQ_EMPR = 1
+           AND A.ARQ_CODIGO IN (SELECT MAX(ARQ_CODIGO)
+                                  FROM FIN_ARQUEO_CAJA
+                                  WHERE ARQ_EMPR =1
+ 			    AND to_char(ARQ_FECHA_DOC) = to_char('18/12/2019')
+                                    GROUP BY ARQ_OPERADOR, ARQ_CAJA)) ARQ,
+         (SELECT
+               A.OP_CTA_CTA_CODIGO CTA_BCO,
+               C.CTA_CODIGO||' - '||C.CTA_DESC CUENTA_BANCARIA,
+               decode(M.SUC_CODIGO,null,'1',M.SUC_CODIGO) SUC_CODIGO,
+               decode(M.SUC_CODIGO,null,'CASA CENTRAL',M.SUC_DESC) DES_SUCURSAL,
+               N.MON_CODIGO||' - '|| N.MON_DESC MONEDA_DES,
+               B.OPER_LOGIN OPER_LOGIN,
+               B.OPER_NOMBRE NOMBRE,
+               B.OPER_CODIGO OPER_COD,
+               A.OP_CTA_EMPR EMPRESA,
+               CTA_MON
+          FROM FIN_CUENTA_BANCARIA C,   FIN_OPER_CTA_BCO A, GEN_OPERADOR B, GEN_SUCURSAL M, GEN_MONEDA N
+         WHERE A.OP_CTA_CTA_CODIGO = C.CTA_CODIGO
+           AND A.OP_CTA_EMPR = C.CTA_EMPR
+           AND A.OP_CTA_OPER = B.OPER_CODIGO
+           AND A.OP_CTA_EMPR = B.OPER_EMPR
+           AND C.CTA_EMPR = M.SUC_EMPR(+)
+           AND C.CTA_SUC = M.SUC_CODIGO(+)
+           AND C.CTA_MON = N.MON_CODIGO
+           AND C.CTA_EMPR = N.MON_EMPR
+           AND A.OP_CTA_ARQUEO = 'S'
+           AND A.OP_CTA_EMPR =1) BCO
+       WHERE BCO.CTA_BCO   = ARQ.ARQ_BCO (+)
+         AND BCO.EMPRESA   = ARQ.ARQ_EMPR (+)
+         AND BCO.OPER_LOGIN = ARQ.ARQ_OPERADOR (+)
+        ORDER BY CTA_MON, SUC_CODIGO, OPER_LOGIN, CTA_BCO]]>
+	</queryString>
+	<field name="CTA_BCO" class="java.math.BigDecimal"/>
+	<field name="CUENTA_BANCARIA" class="java.lang.String"/>
+	<field name="SUCURSAL" class="java.lang.String"/>
+	<field name="MONEDA_DES" class="java.lang.String"/>
+	<field name="OPER_LOGIN" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="OPER_COD" class="java.math.BigDecimal"/>
+	<field name="ARQ_CODIGO" class="java.math.BigDecimal"/>
+	<field name="FEC_GRAB" class="java.sql.Timestamp"/>
+	<field name="HORA" class="java.lang.String"/>
+	<field name="CTA_MON" class="java.math.BigDecimal"/>
+	<field name="SUC_CODIGO" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement x="74" y="2" width="100" height="20" uuid="f574a148-9478-4603-87af-a5cb9ea20c76"/>
+				<text><![CDATA[NOMBRE]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<textField>
+				<reportElement x="74" y="29" width="100" height="20" uuid="e3cd20b0-ba24-41e1-b5f7-7c1edea0db2c"/>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

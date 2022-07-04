@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FIN_NOTA_DE_CREDITO_ANULADOS_POR_MES" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3963cf2c-f6e1-475a-a362-c7fd6b609aa2">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[SELECT
+  K.FINTA_RETIRADO_POR AS RETIRADO,
+  K.FINTA_ENTR_LOGIN   AS ENTREGADO,
+  K.FINTA_NRO_DESDE    AS DESDE,
+  K.FINTA_NRO_HASTA    AS HASTA,
+  K.FINTA_TALONARIO    AS TALONARIO,
+  K.FINTA_FECHA_RETIRO AS FECHA,
+  K.FINTA_DEVO_FECHA   AS e,
+  K.FINTA_DEVO_LOGIN   AS ENCARGADO
+
+FROM  FIN_TALONARIO_ENTREGA K, FIN_TALONARIO_ANULADO L
+WHERE K.FINTA_FECHA_RETIRO >= (SELECT TRUNC(SYSDATE,'MM') FROM DUAL)
+  AND K.FINTA_FECHA_RETIRO <= (SELECT LAST_DAY(TRUNC(SYSDATE))FROM DUAL)
+  AND K.FINTA_TIPO_MOV = 16
+  AND K.FINTA_CLAVE = L.FINTALANU_FINTA_CLAVE
+ORDER BY K.FINTA_FECHA_RETIRO]]>
+	</queryString>
+	<field name="RETIRADO" class="java.lang.String"/>
+	<field name="ENTREGADO" class="java.lang.String"/>
+	<field name="DESDE" class="java.math.BigDecimal"/>
+	<field name="HASTA" class="java.math.BigDecimal"/>
+	<field name="TALONARIO" class="java.math.BigDecimal"/>
+	<field name="FECHA" class="java.sql.Timestamp"/>
+	<field name="E" class="java.sql.Timestamp"/>
+	<field name="ENCARGADO" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="61" y="0" width="447" height="20" uuid="ddd66a7b-2f4e-4d53-9e4c-25471e74ed92"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE NOTAS DE CRÉDITOS ANULADOS]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="39" y="0" width="61" height="20" uuid="6c75d641-86ad-42b2-9227-731b79c45465"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ENCARGADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="0" width="61" height="20" uuid="b2dd0707-cc6f-47da-9139-1609b7fe4f12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DEVOLUCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="161" y="0" width="61" height="20" uuid="463f1f55-084b-440d-8159-0b60bea65a59"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="222" y="0" width="61" height="20" uuid="897f798b-ad20-4af5-955e-392738aab02b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TALONARIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="283" y="0" width="61" height="20" uuid="ff3dcf3f-54e8-4e06-92cb-b3bc730e7c7e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HASTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="344" y="0" width="61" height="20" uuid="37cc93b0-98ac-4a63-bdd7-736a526d1057"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESDE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="405" y="0" width="61" height="20" uuid="4e6422e4-8897-4a87-aa51-ec5f9faa33fa"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ENTREGADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="466" y="0" width="61" height="20" uuid="43161566-3e2d-470a-9287-971bf36a1f48"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RETIRADO]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="39" y="0" width="61" height="20" uuid="24065f7c-63dd-4526-8be0-d7408a147e6b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ENCARGADO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="161" y="0" width="61" height="20" uuid="37cb01c9-8f03-429a-a02b-708fb8290778"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="222" y="0" width="61" height="20" uuid="78d109b2-5ac2-4b5a-9fdb-c5bdb712ed49"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TALONARIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="283" y="0" width="61" height="20" uuid="a994b174-9bba-421a-950f-6af48ab1989e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HASTA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="344" y="0" width="61" height="20" uuid="e837b0c9-2cc0-4fa5-acd9-9130f01461ad"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESDE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="405" y="0" width="61" height="20" uuid="7d44972e-e112-41c4-8ce1-aeb0a43dc392"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ENTREGADO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="466" y="0" width="61" height="20" uuid="705ac260-60d5-4b44-a9bf-48c9065218a5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RETIRADO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="0" width="61" height="20" uuid="e4adc160-7da1-41eb-8a5a-f7b41567840b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{E}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="COML005_Orden_Compra_Sub" language="groovy" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="097bc691-54f1-4604-88b2-2639575ae07b">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String"/>
+	<parameter name="P_ORDEN_COD" class="java.lang.String"/>
+	<parameter name="P_NRO_RECEP" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT S.OCOMD_CANTIDAD NRO_ITEM,
+       DECODE(S.OCOMD_ART,NULL,S.OCOMD_OBS,SA.ART_DESC) DES,
+       ((S.OCOMD_EXEN_MON + S.OCOMD_GRAV_MON + S.OCOMD_IVA_MON) / S.OCOMD_CANTIDAD) PREC_UNI,
+       S.OCOMD_EXEN_MON EXENTA,
+       DECODE(S.OCOMD_PORC_IVA,5,S.OCOMD_IVA_MON + S.OCOMD_GRAV_MON,0) IVA_5,
+       DECODE(S.OCOMD_PORC_IVA,10,S.OCOMD_IVA_MON  + S.OCOMD_GRAV_MON,0) IVA_10
+  FROM STK_ORDEN_COMPRA_DET S, STK_ARTICULO SA
+ WHERE S.OCOMD_EMPR = $P{P_EMPRESA}
+   AND S.OCOMD_CLAVE_OCOM = $P{P_ORDEN_COD}
+   AND S.OCOMD_EMPR = SA.ART_EMPR (+)
+   AND S.OCOMD_ART = SA.ART_CODIGO (+)]]>
+	</queryString>
+	<field name="NRO_ITEM" class="java.math.BigDecimal"/>
+	<field name="DES" class="java.lang.String"/>
+	<field name="PREC_UNI" class="java.math.BigDecimal"/>
+	<field name="EXENTA" class="java.math.BigDecimal"/>
+	<field name="IVA_5" class="java.math.BigDecimal"/>
+	<field name="IVA_10" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="16">
+			<textField>
+				<reportElement x="53" y="1" width="169" height="14" uuid="8d038f6e-4c8e-404a-8e08-3bb4fcd1a293"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DES}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="215" y="1" width="78" height="14" uuid="214ba682-8f93-4969-9de6-b0c42f9d0103"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PREC_UNI}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="298" y="1" width="69" height="14" uuid="8ea7b1c9-208a-4d0b-9749-590f76da9609"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EXENTA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="359" y="2" width="69" height="13" uuid="53795f86-c681-4cf1-9a9e-7edc5f460cc6"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IVA_5}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="0" y="1" width="49" height="13" uuid="af621bd1-ebcb-4955-baea-26b3c2056380"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_ITEM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="431" y="2" width="65" height="13" uuid="280ffec7-095e-43d6-a634-756ade3c2685"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IVA_10}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

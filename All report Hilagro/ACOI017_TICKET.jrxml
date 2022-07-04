@@ -1,0 +1,713 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ACOI017_TICKET" language="groovy" pageWidth="425" pageHeight="700" columnWidth="385" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="10" uuid="f9b650e2-f697-4d30-afa9-f6b4c8717015">
+	<property name="ireport.zoom" value="1.3310000000000004"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="logo" uuid="bc8e6029-e920-493e-8d83-00f41283709a">
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select EMPR_LOGO logo from gen_empresa WHERE EMPR_CODIGO = $P{P_EMPRESA}]]>
+		</queryString>
+		<field name="LOGO" class="java.io.InputStream"/>
+	</subDataset>
+	<subDataset name="analisis" uuid="a0b4e2dd-8510-4835-aaec-1dd5da238acd">
+		<parameter name="P_CLAVE" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[SELECT distinct CAL_CODIGO,
+             CAL_DESC,
+             NVL(PRAN_PUNTAJE,0) PRAN_PUNTAJE,
+             NVL(PRAN_PORC_DESCUENTO,0) Porcentaje,
+                   decode(PRAN_IND_SUMA_RESTA, 'R', round((nvl(G.Prbr_Unid_Bruto, 0)-nvl(g.prbr_unid_tara, 0)) * (NVL(PRAN_PORC_DESCUENTO,0) / 100)), 0) Dcto,
+                   decode(PRAN_IND_SUMA_RESTA, 'S', round((nvl(G.Prbr_Unid_Bruto, 0)-nvl(g.prbr_unid_tara, 0)) * (NVL(PRAN_PORC_DESCUENTO,0) / 100)), 0) Bonif
+        FROM ACO_PRODUCTO,
+             ACO_PROD_TABLA,
+             ACO_CALIFICACION,
+             ACO_PROD_TABLA_OPER,
+             ACO_PROD_ENT_SAL G,
+             (SELECT *
+                FROM ACO_PROD_ANALISIS_ENTSAL
+               WHERE ACO_PROD_ANALISIS_ENTSAL.PRAN_CLAVE_TICKET = $P{P_CLAVE} AND PRAN_EMPR = 1) ACO_PROD_ANALISIS
+       WHERE ACO_PRODUCTO.PROD_CLAVE = ACO_PROD_TABLA.PRTA_CLAVE_PROD
+         AND ACO_PROD_TABLA.PRTA_CALIF = ACO_CALIFICACION.CAL_CODIGO
+         AND ACO_PROD_TABLA.PRTA_CALIF = ACO_PROD_ANALISIS.PRAN_TABLA(+)
+     ---AND PROD_CODIGO = 66
+         AND PROD_EMPR = PRTA_EMPR
+         AND CAL_EMPR = PRTA_EMPR
+         AND PROD_EMPR = 1
+        AND ACO_CALIFICACION.CAL_CODIGO = APTO_TABLA(+)
+         AND CAL_EMPR = APTO_EMPR(+)
+         and g.prbr_producto = prod_clave
+         and g.prbr_empr = prod_empr
+         and ACO_PROD_ANALISIS.PRAN_CLAVE_TICKET = prbr_clave_ticket
+         and prbr_clave_ticket = $P{P_CLAVE}
+
+union
+
+         SELECT null,
+
+             'Total',
+            null,
+            null,
+        sum( decode(PRAN_IND_SUMA_RESTA, 'R', round((nvl(G.Prbr_Unid_Bruto, 0)-nvl(g.prbr_unid_tara, 0)) * (NVL(PRAN_PORC_DESCUENTO,0) / 100)), 0) ) total_dcto,
+        sum( decode(PRAN_IND_SUMA_RESTA, 'S', round((nvl(G.Prbr_Unid_Bruto, 0)-nvl(g.prbr_unid_tara, 0)) * (NVL(PRAN_PORC_DESCUENTO,0) / 100)), 0) ) total_bonif
+        FROM ACO_PRODUCTO,
+             ACO_PROD_TABLA,
+             ACO_CALIFICACION,
+             ACO_PROD_TABLA_OPER,
+             ACO_PROD_ENT_SAL G,
+             (SELECT *
+                FROM ACO_PROD_ANALISIS_ENTSAL
+               WHERE ACO_PROD_ANALISIS_ENTSAL.PRAN_CLAVE_TICKET = $P{P_CLAVE} AND PRAN_EMPR = 1) ACO_PROD_ANALISIS
+       WHERE ACO_PRODUCTO.PROD_CLAVE = ACO_PROD_TABLA.PRTA_CLAVE_PROD
+         AND ACO_PROD_TABLA.PRTA_CALIF = ACO_CALIFICACION.CAL_CODIGO
+         AND ACO_PROD_TABLA.PRTA_CALIF = ACO_PROD_ANALISIS.PRAN_TABLA(+)
+     ---AND PROD_CODIGO = 66
+         AND PROD_EMPR = PRTA_EMPR
+         AND CAL_EMPR = PRTA_EMPR
+         AND PROD_EMPR = 1
+        AND ACO_CALIFICACION.CAL_CODIGO = APTO_TABLA(+)
+         AND CAL_EMPR = APTO_EMPR(+)
+         and g.prbr_producto = prod_clave
+         and g.prbr_empr = prod_empr
+         and ACO_PROD_ANALISIS.PRAN_CLAVE_TICKET = prbr_clave_ticket
+         and prbr_clave_ticket = $P{P_CLAVE}
+order by 1]]>
+		</queryString>
+		<field name="CAL_CODIGO" class="java.math.BigDecimal"/>
+		<field name="CAL_DESC" class="java.lang.String"/>
+		<field name="PRAN_PUNTAJE" class="java.math.BigDecimal"/>
+		<field name="PORCENTAJE" class="java.math.BigDecimal"/>
+		<field name="DCTO" class="java.math.BigDecimal"/>
+		<field name="BONIF" class="java.math.BigDecimal"/>
+	</subDataset>
+	<parameter name="P_CLAVE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SESSION_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT GEN_EMPRESA.EMPR_RAZON_SOCIAL || '-' || SUC_DESC EMPR_RAZON_SOCIAL,
+       GEN_EMPRESA.EMPR_DIR,
+       GEN_EMPRESA.EMPR_TEL,
+       ACO_PROD_ENT_SAL.PRBR_NRO_TICKET,
+       FIN_CLIENTE.CLI_NOM,
+       ACO_PRODUCTO.PROD_DESC,
+       ACO_PROD_ENT_SAL.PRBR_FEC_PESAJE,
+       ACO_PROD_ENT_SAL.PRBR_NOM_CONDUCTOR,
+       ACO_PROD_ENT_SAL.PRBR_NRO_CHAPA,
+       ACO_PROD_ENT_SAL.PRBR_CARRETA_CHAPA,
+       ACO_PROD_ENT_SAL.PRBR_OBS,
+       ACO_PROD_ENT_SAL.PRBR_UNID_BRUTO ,
+       ACO_PROD_ENT_SAL.PRBR_UNID_TARA,
+       ACO_PROD_ENT_SAL.PRBR_UNID_NETO NETO,
+       ACO_PROD_ENT_SAL.PRBR_UNID_NETO ,
+       ACO_PROD_ANALISIS_ENTSAL.CAL_CODIGO,
+       ACO_PROD_ANALISIS_ENTSAL.CAL_DESC,
+       ROUND((NVL(PRBR_UNID_BRUTO, 0) - NVL(PRBR_UNID_TARA, 0)) *
+             NVL(PRAN_PORC_DESCUENTO, 0) / 100,
+             0) CANT_DESC,
+       ACO_PROD_ANALISIS_ENTSAL.PRAN_PUNTAJE,
+       ACO_PROD_ANALISIS_ENTSAL.PRAN_PORC_DESCUENTO,
+       ACO_PROD_ANALISIS_ENTSAL.PRAN_IND_SUMA_RESTA,
+       ACO_PROD_ENT_SAL.PRBR_HORA_ENTRADA,
+       ACO_PROD_ENT_SAL.PRBR_HORA_SALIDA,
+       ACO_PROD_ENT_SAL.PRBR_LOGIN PRBR_USER
+  FROM ACO_PROD_ENT_SAL,
+       ACO_PRODUCTO,
+       (SELECT *
+          FROM ACO_PROD_ANALISIS_ENTSAL, ACO_CALIFICACION
+         WHERE ACO_CALIFICACION.CAL_EMPR = 2
+           AND ACO_CALIFICACION.CAL_CODIGO =
+               ACO_PROD_ANALISIS_ENTSAL.PRAN_TABLA
+           AND ACO_CALIFICACION.CAL_EMPR =
+               ACO_PROD_ANALISIS_ENTSAL.PRAN_EMPR) ACO_PROD_ANALISIS_ENTSAL,
+       GEN_EMPRESA,
+       FIN_CLIENTE,
+       GEN_SUCURSAL
+
+ WHERE ACO_PRODUCTO.PROD_EMPR = $P{P_EMPRESA}
+
+   AND ACO_PRODUCTO.PROD_CLAVE = ACO_PROD_ENT_SAL.PRBR_PRODUCTO
+   AND ACO_PRODUCTO.PROD_EMPR = ACO_PROD_ENT_SAL.PRBR_EMPR
+
+   AND ACO_PROD_ENT_SAL.PRBR_CLAVE_TICKET =
+       ACO_PROD_ANALISIS_ENTSAL.PRAN_CLAVE_TICKET(+)
+   AND GEN_EMPRESA.EMPR_CODIGO = ACO_PRODUCTO.PROD_EMPR
+
+   AND FIN_CLIENTE.CLI_CODIGO(+) = ACO_PROD_ENT_SAL.PRBR_CLIENTE
+   AND FIN_CLIENTE.CLI_EMPR(+) = ACO_PROD_ENT_SAL.PRBR_EMPR
+
+   AND PRBR_SUC = SUC_CODIGO
+   AND PRBR_EMPR = SUC_EMPR
+
+   AND ACO_PROD_ENT_SAL.PRBR_CLAVE_TICKET IN $P{P_CLAVE}]]>
+	</queryString>
+	<field name="EMPR_RAZON_SOCIAL" class="java.lang.String"/>
+	<field name="EMPR_DIR" class="java.lang.String"/>
+	<field name="EMPR_TEL" class="java.lang.String"/>
+	<field name="PRBR_NRO_TICKET" class="java.math.BigDecimal"/>
+	<field name="CLI_NOM" class="java.lang.String"/>
+	<field name="PROD_DESC" class="java.lang.String"/>
+	<field name="PRBR_FEC_PESAJE" class="java.sql.Timestamp"/>
+	<field name="PRBR_NOM_CONDUCTOR" class="java.lang.String"/>
+	<field name="PRBR_NRO_CHAPA" class="java.lang.String"/>
+	<field name="PRBR_CARRETA_CHAPA" class="java.lang.String"/>
+	<field name="PRBR_OBS" class="java.lang.String"/>
+	<field name="PRBR_UNID_BRUTO" class="java.math.BigDecimal"/>
+	<field name="PRBR_UNID_TARA" class="java.math.BigDecimal"/>
+	<field name="NETO" class="java.math.BigDecimal"/>
+	<field name="PRBR_UNID_NETO" class="java.math.BigDecimal"/>
+	<field name="CAL_CODIGO" class="java.math.BigDecimal"/>
+	<field name="CAL_DESC" class="java.lang.String"/>
+	<field name="CANT_DESC" class="java.math.BigDecimal"/>
+	<field name="PRAN_PUNTAJE" class="java.math.BigDecimal"/>
+	<field name="PRAN_PORC_DESCUENTO" class="java.math.BigDecimal"/>
+	<field name="PRAN_IND_SUMA_RESTA" class="java.lang.String"/>
+	<field name="PRBR_HORA_ENTRADA" class="java.sql.Timestamp"/>
+	<field name="PRBR_HORA_SALIDA" class="java.sql.Timestamp"/>
+	<field name="PRBR_USER" class="java.lang.String"/>
+	<background>
+		<band splitType="Immediate"/>
+	</background>
+	<title>
+		<band height="565" splitType="Immediate">
+			<rectangle>
+				<reportElement x="2" y="105" width="380" height="447" uuid="3545ad42-fd18-4682-965d-d5db4c9574d4"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="2" y="3" width="380" height="101" uuid="7f82cf82-b6dd-43c5-82f6-986d7477289c"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</rectangle>
+			<componentElement>
+				<reportElement key="table 2" stretchType="RelativeToBandHeight" x="3" y="7" width="105" height="28" uuid="0e3155ac-1b2b-4e11-8e25-2ed6c56f3ba2"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="logo" uuid="4f774fe5-8aff-491c-aafd-6e71ab391caa">
+						<datasetParameter name="P_EMPRESA">
+							<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="0" uuid="f3388900-bd60-4fd5-aba2-dd813d15cc7b">
+						<jr:detailCell height="59" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="16" uuid="8b535497-c14d-4428-a1d9-b29e5cc361d4">
+						<jr:columnFooter height="30" rowSpan="1"/>
+						<jr:detailCell height="59" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="160" uuid="ae0af59b-f8d1-48b0-8c13-20ab335073e9">
+						<jr:columnFooter height="30" rowSpan="1"/>
+						<jr:detailCell height="59" rowSpan="1">
+							<image scaleImage="RetainShape" hAlign="Left">
+								<reportElement x="0" y="0" width="160" height="59" uuid="973cc93c-a006-4d77-ad58-995f8a09b550"/>
+								<imageExpression><![CDATA[$F{LOGO}]]></imageExpression>
+							</image>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="0" uuid="d0c665fe-74ab-486e-9b04-dc498bf9a9ce">
+						<jr:columnFooter height="30" rowSpan="1"/>
+						<jr:detailCell height="59" rowSpan="1"/>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<staticText>
+				<reportElement x="6" y="70" width="102" height="34" uuid="32a67900-47ef-484c-8f60-2d4b346fa515"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Planta Idustrial:
+Ruta Internacional Nº7 km 214
+J.E. Estigarribia (Campo9)
+Caaguazú - Paraguay
+Tel/Fax (02528)222815(R.A.)
+ventas@hilagro.com.py
+www.hilagro.com.py]]></text>
+			</staticText>
+			<line>
+				<reportElement x="272" y="4" width="1" height="100" uuid="9eecc7b0-18dc-4627-ad98-8e5d3e1da68f"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="274" y="6" width="106" height="10" uuid="05626572-e189-438f-9f7a-a5cbf24e8ac0"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[R.U.C.: 80024300-5]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="272" y="23" width="110" height="21" uuid="3cf5dd4d-7ad2-4832-9581-271abe1a9f38"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TICKET TRASLADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="278" y="63" width="18" height="15" uuid="89485766-2507-4fe1-a6b2-db9fb22edf86"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[N°]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="108" width="85" height="12" uuid="7757d5cd-6171-4495-999e-ea10464c7226"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cliente :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="155" width="85" height="12" uuid="b98928e0-f0aa-474c-9123-1727ea9d2468"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Conductor:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="179" width="85" height="12" uuid="1ede67e2-fab2-476b-93fc-f25eca3c08c9"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Observacion:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="191" width="85" height="12" uuid="675c1e4c-2800-4597-b059-9cd943c706e4"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="204" width="85" height="12" uuid="62201320-6730-4cde-8a32-74c43fdd2f61"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Chapa:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="178" y="205" width="100" height="12" uuid="8b210def-af11-4335-bb78-c0682cab9ea3"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Chapa Carreta:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="93" y="132" width="214" height="12" uuid="704f9b26-d602-4dba-8b30-e712640d14ff"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROD_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="93" y="155" width="214" height="12" uuid="479cd8a8-b5c0-42f5-a63c-77e82f892b34"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRBR_NOM_CONDUCTOR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="93" y="180" width="272" height="12" uuid="dfa0cbf8-0860-4d7f-90ba-e6bf37958efc"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRBR_OBS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="93" y="193" width="139" height="12" uuid="99a97c23-6740-40c7-ada8-3212f52e7e95"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRBR_FEC_PESAJE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="93" y="205" width="85" height="12" uuid="27a303fa-9881-4511-8461-b9342de30ad0"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRBR_NRO_CHAPA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="278" y="205" width="87" height="12" uuid="521aec73-4ed5-42be-a50e-beff5a38d6d0"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRBR_CARRETA_CHAPA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="33" y="237" width="85" height="14" uuid="81036afa-b38b-4e35-bce2-6fba74785994"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Peso Bruto:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="33" y="251" width="85" height="14" uuid="c20fe08c-4075-4a4e-a150-42b90151b799"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Peso Tara:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="33" y="265" width="85" height="14" uuid="04f70ebb-f370-4243-85ef-47c62c8429fe"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Peso Neto:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="164" y="237" width="15" height="14" uuid="721892b2-a7ef-4cbb-b0d2-1a24447fbe6d"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Kg.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="163" y="265" width="15" height="14" uuid="8efa6eb8-6db8-4512-974b-de38c7159df6"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Kg.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="163" y="251" width="15" height="14" uuid="6f83a28e-2823-4ed4-8b44-5ecefec5d5f8"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Kg.]]></text>
+			</staticText>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="122" y="237" width="53" height="14" uuid="a97e60fd-02d0-4a93-aecc-700f4eaafa57"/>
+				<textFieldExpression><![CDATA[$F{PRBR_UNID_BRUTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="122" y="251" width="53" height="14" uuid="d838f3e3-25e7-4e99-80c1-308a43c93604"/>
+				<textFieldExpression><![CDATA[$F{PRBR_UNID_TARA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="122" y="265" width="53" height="14" uuid="2618a0b2-d7f5-4d80-80e5-c4d48a9f60dd"/>
+				<textFieldExpression><![CDATA[$F{NETO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="184" y="235" width="59" height="14" uuid="5fb16c59-bec0-4423-a3ea-79ef463f6253"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Entrada:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="184" y="249" width="59" height="14" uuid="ca30cd7c-ee70-47f4-a299-f2889035f0d5"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Salida:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="243" y="235" width="135" height="14" uuid="0bdafdb6-a91f-452f-b0d1-21c6d8322d57"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRBR_HORA_ENTRADA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="243" y="249" width="135" height="14" uuid="550fe76a-c018-45a5-9a71-f5a735887c4e"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRBR_HORA_SALIDA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="297" y="63" width="83" height="15" uuid="1ff49846-c978-43a5-8de2-e2a0560e7968"/>
+				<textElement>
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRBR_NRO_TICKET}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="274" y="40" width="100" height="20" uuid="14f7c822-73cf-41e6-bc9f-1e5e7dcfb228"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{PRBR_USER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="33" y="456" width="124" height="14" uuid="2d32a0d8-475d-41ea-860e-5c5ade827639"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Kg. Stock:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="33" y="470" width="124" height="14" uuid="73c6c120-6623-42d0-a59b-4bfb21f1cf88"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Kg. a Liquidar:]]></text>
+			</staticText>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="170" y="455" width="63" height="14" uuid="0879bffe-ca95-4174-9a68-6a91d340d3e4"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{PRBR_UNID_NETO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="171" y="471" width="62" height="14" uuid="000d866f-278f-43ce-8b98-d4a6bd96c84f"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{PRBR_UNID_NETO}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="171" y="471" width="62" height="1" uuid="8359e887-e8ec-4a2d-83ff-20f25d828485"/>
+			</line>
+			<line>
+				<reportElement x="171" y="486" width="62" height="1" uuid="6a541dde-99ef-4729-a762-b02d5866f12d"/>
+			</line>
+			<componentElement>
+				<reportElement key="table 3" style="table 3" x="14" y="284" width="360" height="50" uuid="4dfe447a-dcbe-4177-8eab-e430c9146cd3"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="analisis" uuid="de198290-987d-45d6-b47f-61c85d81e5a7">
+						<datasetParameter name="P_CLAVE">
+							<datasetParameterExpression><![CDATA[$P{P_CLAVE}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="90" uuid="2bf342d8-5013-43bb-8312-17cb4161e897">
+						<jr:columnHeader style="table 1" height="18" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="14" uuid="9b844f5c-4898-4795-9780-cf6b07736955"/>
+								<text><![CDATA[ANALISIS]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 3_TD" height="16" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="90" height="13" uuid="2374b9a5-d4e2-44ef-a187-e29ff29779fd"/>
+								<textFieldExpression><![CDATA[$F{CAL_DESC}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="63" uuid="39a87d67-5684-4a6b-88c5-34b692561ef9">
+						<jr:columnHeader style="table 1" height="18" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="58" height="14" uuid="76300b3b-103b-4140-b408-24451c5e569f"/>
+								<text><![CDATA[GRADO]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 3_TD" height="16" rowSpan="1">
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement x="6" y="2" width="52" height="13" uuid="80555258-129e-466a-9baa-ffdf4a587721"/>
+								<textElement textAlignment="Right"/>
+								<textFieldExpression><![CDATA[$F{PRAN_PUNTAJE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="64" uuid="54dcab08-6b5f-4171-946b-712c448df3c3">
+						<jr:columnHeader style="table 1" height="18" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="64" height="16" uuid="9d91c38a-7815-4067-a2c0-77a458578f69"/>
+								<text><![CDATA[% DESC]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 3_TD" height="16" rowSpan="1">
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement x="0" y="2" width="50" height="13" uuid="48fbf605-e364-4d2a-8b29-a3266847c68e"/>
+								<textElement textAlignment="Right"/>
+								<textFieldExpression><![CDATA[$F{PORCENTAJE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="62" uuid="6f6d4764-e0fb-4744-ae95-52f98e560b70">
+						<jr:columnHeader style="table 1" height="18" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="2" width="62" height="16" uuid="f436e744-47c9-444c-a1ad-955560476d7f"/>
+								<textElement>
+									<font size="9"/>
+								</textElement>
+								<text><![CDATA[DESCUENTO]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter height="0" rowSpan="1"/>
+						<jr:detailCell style="table 3_TD" height="16" rowSpan="1">
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement x="0" y="2" width="56" height="13" uuid="871a5ef8-5385-4c59-af42-110044f5bf6b"/>
+								<textElement textAlignment="Right"/>
+								<textFieldExpression><![CDATA[$F{DCTO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="71" uuid="2eedee42-bf81-4087-968e-3691b63c73b0">
+						<jr:columnHeader style="table 1" height="18" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="2" width="71" height="14" uuid="092dbd30-dc79-4db2-9608-a645657e41f1"/>
+								<textElement>
+									<font size="9"/>
+								</textElement>
+								<text><![CDATA[BONIFICACION]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter height="0" rowSpan="1"/>
+						<jr:detailCell style="table 3_TD" height="16" rowSpan="1">
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="71" height="15" uuid="8893de7d-884d-4d42-bdee-7352c2be8d98"/>
+								<textElement textAlignment="Right"/>
+								<textFieldExpression><![CDATA[$F{BONIF}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<line>
+				<reportElement x="20" y="538" width="135" height="1" uuid="da167539-79cd-4b10-a413-0c5c7ec69c2e"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="34" y="540" width="84" height="10" uuid="663945c8-341e-4559-ba53-32f55021479e"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[ENCARGADO BASCULA]]></text>
+			</staticText>
+			<line>
+				<reportElement x="184" y="537" width="156" height="1" uuid="8dbdae2b-8511-46ca-a5a2-2d92f378c724"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="195" y="540" width="145" height="10" uuid="4016254f-2586-449d-b01b-e1c3f2d1ecdc"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[CHOFER]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="132" width="85" height="12" uuid="d89f96bd-5817-4391-92f5-97706ff23aaa"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Producto:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="93" y="108" width="214" height="12" uuid="df8aeaa3-905b-4b69-bf56-77b201f8cf17"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CLI_NOM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="109" y="5" width="164" height="97" uuid="1d0e381d-1387-4d16-8ea8-53e38e9f7eef"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Suc.Asunción: Avda Defensores del Chaco Nº 815
+Fdo. de la Mora - Paraguay - Tel/Fax(021)502786/525288
+asuventas@hilagro.com.py
+Suc.Loma Plata: Avda 3 de Noviembre Nº 1130
+Loma Plata Chaco- Paraguay Tel/Fax (0492)253 422
+lomaplata@hilagro.com.py
+Suc.Concepción: Paseo Universitario Nº 446
+Tel/Fax (0331)242577
+adm_c@hilagro.com.py
+Concepción-Paraguay
+Suc. Sta. Rosa: Ruta N° 3 Gral. Elizardo Aquino  km 327  TelFax: (0433) 240 204
+santarosa@hilagro.com.py
+Santa Rosa del Aguaray - Paraguay]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band splitType="Immediate"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Immediate"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Prevent"/>
+	</pageFooter>
+</jasperReport>

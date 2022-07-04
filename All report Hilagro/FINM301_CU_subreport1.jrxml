@@ -1,0 +1,877 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINM301_CU_subreport1" language="groovy" pageWidth="700" pageHeight="802" columnWidth="700" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="eabae152-637d-4eb5-a8b2-4291b7f33856">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="ARTICULO" uuid="9592a9c9-2672-43d2-ab69-77bfba56e520">
+		<parameter name="P_CLAVE" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_SESSION_ID" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT A.ART_DESC,
+       T.DETA_CANT,
+       NVL((T.DETA_IMP_NETO_MON+T.DETA_IVA_MON)/DETA_CANT,0)PRECIO,
+       NVL(T.DETA_IMP_NETO_MON+T.DETA_IVA_MON,0)TOTAL,
+DETA_CLAVE_DOC,
+DOC_CLAVE
+FROM STK_DOCUMENTO_DET T, STK_ARTICULO A, FIN_DOCUMENTO C
+WHERE T.DETA_ART = A.ART_CODIGO
+AND T.DETA_EMPR = A.ART_EMPR
+AND C.DOC_CLAVE_STK = T.DETA_CLAVE_DOC
+AND C.DOC_EMPR = T.DETA_EMPR
+AND DOC_CLAVE  = $P{P_CLAVE}
+AND T.DETA_EMPR = 2]]>
+		</queryString>
+		<field name="ART_DESC" class="java.lang.String"/>
+		<field name="DETA_CANT" class="java.math.BigDecimal"/>
+		<field name="PRECIO" class="java.math.BigDecimal"/>
+		<field name="TOTAL" class="java.math.BigDecimal"/>
+		<field name="DETA_CLAVE_DOC" class="java.math.BigDecimal"/>
+		<field name="DOC_CLAVE" class="java.math.BigDecimal"/>
+	</subDataset>
+	<parameter name="P_SESSION_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CHK_INTERES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CHK_ART_DETALLE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CHECK_VTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CHECK_RESU" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_TIPO_MOV" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_EMIS" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT distinct G.COMP_IND_PAG_CO,
+       G.COMP_FEC_VTO,
+       G.COMP_CATEG_NOM,
+       G.COMP_FECHA,
+       G.COMP_LIN_NEG_COD,
+       G.COMP_CLAVE,
+       G.COMP_NUMERO,
+       G.COMP_TM_COD,
+       G.COMP_TM_NOM,
+       G.COMP_MON_COD,
+       G.COMP_MON_SIMB,
+       G.COMP_MON_DEC,
+       G.COMP_SALDO_CUO,
+       to_number(decode((DECODE(G.COMP_IND_PAG_CO,'P',-1,1) * COMP_SALDO_CUO_GS),0,null,(DECODE(G.COMP_IND_PAG_CO,'P',-1,1) * COMP_SALDO_CUO_GS))) COMP_SALDO_CUO_GS,
+       to_number(decode((DECODE(G.COMP_IND_PAG_CO,'P',-1,1) * COMP_SALDO_CUO_US),0,null,(DECODE(G.COMP_IND_PAG_CO,'P',-1,1) * COMP_SALDO_CUO_US))) COMP_SALDO_CUO_US,
+       G.COMP_PORC_INT,
+       G.COMP_TIPO_FEC_INT,
+       G.COMP_DIAS_INT,
+       G.COMP_INTM,
+       COMP_INTM_GS ,
+       COMP_INTM_US,
+       G.COMP_INTM_CONS_US,
+       G.COMP_OBS,
+       G.COMP_CUO_IMP_MON,
+       G.SESSION_ID,
+       G.COMP_SALDO_CUO_CONS_US,
+       G.COMP_GRUPO_NOM,
+       G.COMP_EMPR,
+       to_number(decode((DECODE(G.COMP_IND_PAG_CO,'P',-1,1) * ROUND(NVL(COMP_SALDO_CUO_GS, 0) + NVL(CF_INT_GS, 0), 0)),0,null,(DECODE(G.COMP_IND_PAG_CO,'P',-1,1) * ROUND(NVL(COMP_SALDO_CUO_GS, 0) + NVL(CF_INT_GS, 0), 0)))) CF_SUM_IMP_CUO_GS,
+       to_number(decode((DECODE(G.COMP_IND_PAG_CO,'P',-1,1) * ROUND(NVL(COMP_SALDO_CUO_US, 0) + NVL(CF_INT_US, 0), 2)),0,null,(DECODE(G.COMP_IND_PAG_CO,'P',-1,1) * ROUND(NVL(COMP_SALDO_CUO_US, 0) + NVL(CF_INT_US, 0), 2)))) CF_SUM_IMP_CUO_US,
+       to_number(decode((DECODE(G.COMP_IND_PAG_CO,'P',-1,1) * CF_INT_GS),0,null,(DECODE(G.COMP_IND_PAG_CO,'P',-1,1) * CF_INT_GS))) CF_INT_GS,
+       to_number(decode((DECODE(G.COMP_IND_PAG_CO,'P',-1,1) * CF_INT_US),0,null,(DECODE(G.COMP_IND_PAG_CO,'P',-1,1) * CF_INT_US))) CF_INT_US,
+       DECODE($P{P_FECHA_EMIS},'S',G.COMP_FECHA,COMP_FEC_VTO) FECHA,
+(CASE
+    WHEN COMP_TM_COD IN (1,2,18,17,16) THEN
+     1
+    ELSE
+     2 END
+) ORD
+  FROM (SELECT FC.COMP_IND_PAG_CO,
+               FC.COMP_FEC_VTO,
+               FC.COMP_CATEG_NOM,
+               FC.COMP_FECHA,
+               FC.COMP_LIN_NEG_COD,
+               FC.COMP_CLAVE,
+               FC.COMP_NUMERO,
+               FC.COMP_TM_COD,
+               FC.COMP_TM_NOM,
+               FC.COMP_MON_COD,
+               FC.COMP_MON_SIMB,
+               FC.COMP_MON_DEC,
+               FC.COMP_SALDO_CUO,
+               FC.COMP_SALDO_CUO_GS,
+               FC.COMP_SALDO_CUO_US,
+               FC.COMP_PORC_INT,
+               FC.COMP_TIPO_FEC_INT,
+               FC.COMP_DIAS_INT,
+               FC.COMP_INTM,
+               FC.COMP_INTM_GS,
+               FC.COMP_INTM_US,
+               FC.COMP_INTM_CONS_US,
+               FC.COMP_OBS,
+               FC.COMP_CUO_IMP_MON,
+               FC.SESSION_ID,
+               FC.COMP_SALDO_CUO_CONS_US,
+               FC.COMP_GRUPO_NOM,
+               FC.COMP_EMPR,
+               NVL(DECODE(NVL($P{P_CHK_INTERES}, 'N'), 'S', COMP_INTM_GS, 0),
+                   0) CF_INT_GS,
+               NVL(DECODE(NVL($P{P_CHK_INTERES}, 'N'), 'S', COMP_INTM_US, 0),
+                   0) CF_INT_US,
+               M.TMOV_IND_DBCR_CTA
+          FROM FIN_FINC223_COMP FC, GEN_TIPO_MOV M
+         WHERE SESSION_ID = $P{P_SESSION_ID}
+            AND FC.COMP_TM_COD = M.TMOV_CODIGO
+           AND M.TMOV_EMPR = 2) G
+      ORDER BY ORD,COMP_FEC_VTO,G.COMP_FECHA,decode($P{P_TIPO_MOV},'S',COMP_TM_NOM,NULL), DECODE($P{P_FECHA_EMIS},'S',G.COMP_FECHA,COMP_FEC_VTO), G.COMP_MON_SIMB, COMP_CUO_IMP_MON]]>
+	</queryString>
+	<field name="COMP_IND_PAG_CO" class="java.lang.String"/>
+	<field name="COMP_FEC_VTO" class="java.sql.Timestamp"/>
+	<field name="COMP_CATEG_NOM" class="java.lang.String"/>
+	<field name="COMP_FECHA" class="java.sql.Timestamp"/>
+	<field name="COMP_LIN_NEG_COD" class="java.math.BigDecimal"/>
+	<field name="COMP_CLAVE" class="java.math.BigDecimal"/>
+	<field name="COMP_NUMERO" class="java.math.BigDecimal"/>
+	<field name="COMP_TM_COD" class="java.math.BigDecimal"/>
+	<field name="COMP_TM_NOM" class="java.lang.String"/>
+	<field name="COMP_MON_COD" class="java.math.BigDecimal"/>
+	<field name="COMP_MON_SIMB" class="java.lang.String"/>
+	<field name="COMP_MON_DEC" class="java.math.BigDecimal"/>
+	<field name="COMP_SALDO_CUO" class="java.math.BigDecimal"/>
+	<field name="COMP_SALDO_CUO_GS" class="java.math.BigDecimal"/>
+	<field name="COMP_SALDO_CUO_US" class="java.math.BigDecimal"/>
+	<field name="COMP_PORC_INT" class="java.math.BigDecimal"/>
+	<field name="COMP_TIPO_FEC_INT" class="java.lang.String"/>
+	<field name="COMP_DIAS_INT" class="java.math.BigDecimal"/>
+	<field name="COMP_INTM" class="java.math.BigDecimal"/>
+	<field name="COMP_INTM_GS" class="java.math.BigDecimal"/>
+	<field name="COMP_INTM_US" class="java.math.BigDecimal"/>
+	<field name="COMP_INTM_CONS_US" class="java.math.BigDecimal"/>
+	<field name="COMP_OBS" class="java.lang.String"/>
+	<field name="COMP_CUO_IMP_MON" class="java.math.BigDecimal"/>
+	<field name="SESSION_ID" class="java.math.BigDecimal"/>
+	<field name="COMP_SALDO_CUO_CONS_US" class="java.math.BigDecimal"/>
+	<field name="COMP_GRUPO_NOM" class="java.lang.String"/>
+	<field name="COMP_EMPR" class="java.math.BigDecimal"/>
+	<field name="CF_SUM_IMP_CUO_GS" class="java.math.BigDecimal"/>
+	<field name="CF_SUM_IMP_CUO_US" class="java.math.BigDecimal"/>
+	<field name="CF_INT_GS" class="java.math.BigDecimal"/>
+	<field name="CF_INT_US" class="java.math.BigDecimal"/>
+	<field name="FECHA" class="java.sql.Timestamp"/>
+	<field name="ORD" class="java.math.BigDecimal"/>
+	<variable name="COMP_SALDO_CUO_GS_1" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO MOV" incrementType="Group" incrementGroup="MONEDA" calculation="Sum">
+		<variableExpression><![CDATA[$F{COMP_SALDO_CUO_GS}]]></variableExpression>
+	</variable>
+	<variable name="COMP_INTM_GS_1" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO MOV" incrementType="Group" incrementGroup="MONEDA" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_INT_GS}]]></variableExpression>
+	</variable>
+	<variable name="CF_SUM_IMP_CUO_GS_1" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO MOV" incrementType="Group" incrementGroup="MONEDA" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_SUM_IMP_CUO_GS}]]></variableExpression>
+	</variable>
+	<variable name="COMP_SALDO_CUO_US_1" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO MOV" incrementType="Group" incrementGroup="MONEDA" calculation="Sum">
+		<variableExpression><![CDATA[$F{COMP_SALDO_CUO_US}]]></variableExpression>
+	</variable>
+	<variable name="COMP_INTM_US_1" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO MOV" incrementType="Group" incrementGroup="MONEDA" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_INT_US}]]></variableExpression>
+	</variable>
+	<variable name="CF_SUM_IMP_CUO_US_1" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO MOV" incrementType="Group" incrementGroup="MONEDA" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_SUM_IMP_CUO_US}]]></variableExpression>
+	</variable>
+	<variable name="CF_SUM_IMP_CUO_GS_2" class="java.math.BigDecimal" resetType="Group" resetGroup="VTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_SUM_IMP_CUO_GS}]]></variableExpression>
+	</variable>
+	<variable name="COMP_CUO_IMP_MON_1" class="java.math.BigDecimal" resetType="Group" resetGroup="VTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{COMP_CUO_IMP_MON}]]></variableExpression>
+	</variable>
+	<variable name="COMP_SALDO_CUO_GS_2" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO MOV" calculation="Sum">
+		<variableExpression><![CDATA[$F{COMP_SALDO_CUO_GS}]]></variableExpression>
+	</variable>
+	<variable name="CF_INT_GS_1" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO MOV" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_INT_GS}]]></variableExpression>
+	</variable>
+	<variable name="CF_SUM_IMP_CUO_GS_3" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO MOV" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_SUM_IMP_CUO_GS}]]></variableExpression>
+	</variable>
+	<variable name="COMP_SALDO_CUO_US_2" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO MOV" calculation="Sum">
+		<variableExpression><![CDATA[$F{COMP_SALDO_CUO_US}]]></variableExpression>
+	</variable>
+	<variable name="CF_INT_US_1" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO MOV" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_INT_US}]]></variableExpression>
+	</variable>
+	<variable name="CF_SUM_IMP_CUO_US_2" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO MOV" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_SUM_IMP_CUO_US}]]></variableExpression>
+	</variable>
+	<variable name="COMP_SALDO_CUO_GS_3" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{COMP_SALDO_CUO_GS}]]></variableExpression>
+	</variable>
+	<variable name="CF_INT_GS_2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_INT_GS}]]></variableExpression>
+	</variable>
+	<variable name="CF_SUM_IMP_CUO_GS_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_SUM_IMP_CUO_GS}]]></variableExpression>
+	</variable>
+	<variable name="COMP_SALDO_CUO_US_3" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{COMP_SALDO_CUO_US}]]></variableExpression>
+	</variable>
+	<variable name="CF_INT_US_2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_INT_US}]]></variableExpression>
+	</variable>
+	<variable name="CF_SUM_IMP_CUO_US_3" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_SUM_IMP_CUO_US}]]></variableExpression>
+	</variable>
+	<group name="TIPO MOV" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{COMP_TM_NOM}]]></groupExpression>
+		<groupHeader>
+			<band>
+				<printWhenExpression><![CDATA[$P{P_TIPO_MOV} == 'S']]></printWhenExpression>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="9">
+				<printWhenExpression><![CDATA[$P{P_TIPO_MOV} == 'S']]></printWhenExpression>
+				<rectangle>
+					<reportElement x="372" y="0" width="146" height="9" backcolor="#E7E7E7" uuid="d4dee208-9047-47db-9c04-ed296b229f40"/>
+					<graphicElement>
+						<pen lineWidth="0.25" lineColor="#DCDCDC"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle>
+					<reportElement x="526" y="0" width="152" height="9" backcolor="#E7E7E7" uuid="56f40b5c-555e-4d62-a55e-8d3862be10c9"/>
+					<graphicElement>
+						<pen lineWidth="0.25" lineColor="#DCDCDC"/>
+					</graphicElement>
+				</rectangle>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="372" y="0" width="46" height="9" uuid="178f8f2e-acf0-44c3-856e-995900a2c060"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="false" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{COMP_SALDO_CUO_GS_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="423" y="0" width="41" height="9" uuid="a0a3ddf8-3bc7-43ec-a156-52ab75344853"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="false" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CF_INT_GS_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="468" y="0" width="45" height="9" uuid="a678da5b-ffa9-4991-b302-a441dfdd4f6f"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="false" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CF_SUM_IMP_CUO_GS_3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="539" y="0" width="41" height="9" uuid="f3b40bd2-2634-48d9-b6e9-6f8434a82f9e"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="false" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{COMP_SALDO_CUO_US_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="583" y="0" width="42" height="9" uuid="edbec887-1147-42d9-a3ef-b4ee3d7f92c8"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="false" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CF_INT_US_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="629" y="0" width="47" height="9" uuid="59e0172b-cde0-47c4-aec5-d6e8e76841d3"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="false" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CF_SUM_IMP_CUO_US_2}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="319" y="0" width="50" height="9" uuid="e2a7a062-2b02-403d-898b-3d88035edd50"/>
+					<textElement>
+						<font fontName="Arial" size="7" isBold="false" isUnderline="true"/>
+					</textElement>
+					<text><![CDATA[TOTALES:]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="VTO" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{FECHA}]]></groupExpression>
+		<groupHeader>
+			<band height="9">
+				<printWhenExpression><![CDATA[$P{P_CHECK_VTO} == 'S']]></printWhenExpression>
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement x="102" y="0" width="100" height="9" uuid="8a715534-aec8-4dda-928b-c95af67b75fe"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{COMP_FEC_VTO}]]></textFieldExpression>
+				</textField>
+				<rectangle>
+					<reportElement mode="Opaque" x="19" y="0" width="591" height="9" backcolor="#F5F5F5" uuid="e83acc21-1c17-45a7-bedf-101696e09d71"/>
+					<graphicElement>
+						<pen lineWidth="0.25" lineColor="#E9E9E9"/>
+					</graphicElement>
+				</rectangle>
+				<staticText>
+					<reportElement x="22" y="0" width="76" height="9" uuid="10d7ee62-41ac-4a72-bc97-74d9c5f1ad1b"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<text><![CDATA[Fecha Vencimiento:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="10">
+				<printWhenExpression><![CDATA[$P{P_CHECK_VTO} == 'S']]></printWhenExpression>
+				<staticText>
+					<reportElement x="319" y="1" width="50" height="9" uuid="d7ea8bb0-5e9f-471f-8512-1c2c25c8e9b4"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<text><![CDATA[TOTALES :]]></text>
+				</staticText>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement mode="Opaque" x="373" y="1" width="45" height="9" uuid="41eb2b8e-14af-426c-91eb-7a3019b961dd"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{COMP_SALDO_CUO_GS_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="423" y="1" width="41" height="9" uuid="c34e1c3b-23c3-41c1-bd9f-546eda04e6e1"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{COMP_INTM_GS_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="468" y="1" width="45" height="9" uuid="91d0b4c6-e788-4b62-b0be-c7ae2a27ad4e"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CF_SUM_IMP_CUO_GS_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="539" y="1" width="41" height="9" uuid="76e33701-cb70-473c-a0f3-f68fb883bcba"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{COMP_SALDO_CUO_US_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="583" y="1" width="42" height="9" uuid="b5e5c179-9c55-4a35-90f5-7b6cda6e37ae"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{COMP_INTM_US_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="629" y="1" width="47" height="9" uuid="931ff02c-8a51-495f-994e-9df1d6477d90"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CF_SUM_IMP_CUO_US_1}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="372" y="0" width="322" height="1" forecolor="#CCCCCC" uuid="dbdee82b-b9d7-45f0-9cd2-46bc438e997a"/>
+					<graphicElement>
+						<pen lineWidth="0.25"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="517" y="1" width="1" height="9" uuid="5e85b3e5-6535-4212-8c2a-280046697ffc"/>
+					<graphicElement>
+						<pen lineWidth="0.25"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="526" y="1" width="1" height="9" uuid="5a88d197-030d-434f-90b9-a257040d339f"/>
+					<graphicElement>
+						<pen lineWidth="0.25"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="677" y="1" width="1" height="9" uuid="4f020177-2a0a-48c1-80c0-44f01394edda"/>
+					<graphicElement>
+						<pen lineWidth="0.25"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="372" y="1" width="1" height="9" uuid="4776a12e-3b2d-431b-927e-f046c6f13ad0"/>
+					<graphicElement>
+						<pen lineWidth="0.25"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="MONEDA">
+		<groupExpression><![CDATA[$F{COMP_MON_SIMB}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="IMPORTE1">
+		<groupExpression><![CDATA[$F{COMP_CUO_IMP_MON}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="COMPROBANTE">
+		<groupExpression><![CDATA[$F{COMP_CLAVE}]]></groupExpression>
+		<groupFooter>
+			<band height="11">
+				<printWhenExpression><![CDATA[$P{P_CHK_ART_DETALLE} == 'S']]></printWhenExpression>
+				<componentElement>
+					<reportElement key="table 1" x="4" y="0" width="576" height="11" uuid="632657e2-5f0b-4b06-a1ee-3d0bd422f47d"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="ARTICULO" uuid="eb099b93-0fd9-493f-96e3-e599e326eabd">
+							<datasetParameter name="P_CLAVE">
+								<datasetParameterExpression><![CDATA[$F{COMP_CLAVE}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_SESSION_ID">
+								<datasetParameterExpression><![CDATA[$P{P_SESSION_ID}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:column width="271" uuid="ec58dc85-5ac1-4b9c-82b5-ed9e5ebd04a7">
+							<jr:detailCell height="9" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement x="41" y="0" width="230" height="9" uuid="3a449de3-f191-4418-a105-93e92a8533f2"/>
+									<textElement>
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{ART_DESC}]]></textFieldExpression>
+								</textField>
+								<staticText>
+									<reportElement x="0" y="0" width="41" height="9" isRemoveLineWhenBlank="true" uuid="5c655676-4f30-4fb4-ba01-4b3fb8be059e"/>
+									<textElement>
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<text><![CDATA[Articulo:]]></text>
+								</staticText>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="100" uuid="3b93b28e-7207-4524-912f-f927271849a2">
+							<jr:detailCell height="9" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="33" height="9" uuid="1faa86f4-0e2d-4b63-a5ea-c9dfd476d3cc"/>
+									<textElement>
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<text><![CDATA[Cantidad:]]></text>
+								</staticText>
+								<textField isBlankWhenNull="true">
+									<reportElement x="33" y="0" width="67" height="9" uuid="5a540755-48b3-461a-beca-aec3ea959c6d"/>
+									<textElement>
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{DETA_CANT}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="90" uuid="8da032f2-034e-4ffc-91dd-7baf245519cc">
+							<jr:detailCell height="9" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="35" height="9" uuid="87c0f2b5-9f27-45ac-acf8-4177c3624b5b"/>
+									<textElement>
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<text><![CDATA[Precio:]]></text>
+								</staticText>
+								<textField isBlankWhenNull="true">
+									<reportElement x="35" y="0" width="55" height="9" uuid="9ec0df65-ebed-47f0-a962-1a86a1622aca"/>
+									<textElement>
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{PRECIO}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="80" uuid="56225e3d-79d0-445e-aa98-3f060a078c40">
+							<jr:detailCell height="9" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="27" height="9" uuid="f39e313e-9dc2-478d-ae5b-c286178a5c5f"/>
+									<textElement>
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<text><![CDATA[Total:]]></text>
+								</staticText>
+								<textField isBlankWhenNull="true">
+									<reportElement x="27" y="0" width="53" height="9" uuid="749d4b9e-ac36-4446-b81c-41627107bd87"/>
+									<textElement>
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="11" splitType="Stretch">
+			<rectangle>
+				<reportElement x="372" y="0" width="146" height="10" uuid="3e6eb71c-b56d-4c29-a9b8-516e0fcda777"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="526" y="0" width="151" height="10" uuid="7753deca-a0bf-4568-aa02-c514e2a225bb"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="1" y="2" width="40" height="9" uuid="72c3dad1-5805-400c-ab34-b12dfcb5b9f8"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[TipoDoc.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="103" y="2" width="60" height="9" uuid="3d43e191-c0cd-41eb-94cb-245ae809f206"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Nro Documento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="167" y="2" width="50" height="9" uuid="880bba16-c1af-4b5e-abe9-7573711e6cd3"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Fecha Emision]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="302" y="2" width="55" height="9" uuid="93012c98-fd4e-46e6-9bfd-ca98f43e1290"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Importe C]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="372" y="2" width="45" height="9" uuid="fb89202b-e093-4a72-a324-0e2edd079646"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Saldo Gs.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="422" y="2" width="42" height="9" uuid="b3586c78-26b4-4ecd-af00-2006705e23da"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Interés Gs.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="539" y="2" width="41" height="9" uuid="d07f9908-45f6-4924-8a39-63bcdb9a7c46"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Saldo Us.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="582" y="2" width="45" height="9" uuid="c76c4e0a-1c53-49d1-a1fb-6bccb6846ccf"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Interés Us.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="629" y="2" width="47" height="9" uuid="80ce2b0c-e992-4843-9579-52fbc879b1f9"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Saldo + Int Us.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="468" y="2" width="45" height="9" uuid="a207f7ab-b117-48cb-b62f-e7b3d226cb77"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Saldo+Int Gs.]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1" y="10" width="591" height="1" forecolor="#CCCCCC" uuid="08424692-3ef2-4c54-be0c-77421540d0cb"/>
+			</line>
+			<staticText>
+				<reportElement x="51" y="1" width="44" height="9" uuid="18029632-9349-4f42-ace2-e2b52cad1659"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Categoria]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="226" y="1" width="50" height="9" uuid="e5b21253-e2c7-47fe-b16c-281c10520fd0">
+					<printWhenExpression><![CDATA[$P{P_CHECK_VTO} != 'S']]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Vencimiento]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="9" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="103" y="0" width="61" height="9" uuid="af6ea60f-e938-4226-afb9-fc0db17c60bf"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMP_NUMERO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="167" y="0" width="50" height="9" uuid="022cb9c3-17ed-4a2a-be1f-5c703a633db8"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMP_FECHA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="282" y="0" width="50" height="9" uuid="44b56a7b-9fe6-4a27-9142-be032dcde5a1"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMP_CUO_IMP_MON}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{COMP_MON_COD}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="336" y="0" width="30" height="9" uuid="9aaf04f9-3487-410d-a584-80fe748d4eec"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMP_MON_SIMB}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="373" y="0" width="45" height="9" uuid="08728d47-9c9e-486c-84c5-e71c29d2f3b1"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMP_SALDO_CUO_GS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="423" y="0" width="41" height="9" uuid="b441f4e1-5b62-4967-a941-26a3e439f135"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_INT_GS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="539" y="0" width="41" height="9" uuid="b1b8f0a8-6b88-4ce3-ba02-aba1b8a670ea"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMP_SALDO_CUO_US}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="583" y="0" width="42" height="9" uuid="835d5a6f-6383-46b4-ac7a-701027a42cc2"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_INT_US}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="468" y="0" width="45" height="9" uuid="a08203a1-4f22-4c4c-9897-33ce943a5a81"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_SUM_IMP_CUO_GS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="629" y="0" width="47" height="9" uuid="b9f20cbe-37da-4d68-b63b-18165dcdd50b"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_SUM_IMP_CUO_US}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="49" y="0" width="46" height="9" uuid="d055cc3c-bdfb-4354-a8d9-6d71ceba9774"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMP_CATEG_NOM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="226" y="0" width="50" height="9" uuid="6d414304-27a1-48c1-91e8-a24d99912934">
+					<printWhenExpression><![CDATA[$P{P_CHECK_VTO} != 'S']]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMP_FEC_VTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2" y="0" width="40" height="9" uuid="d725368b-e443-4d58-8355-346a1101774a"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMP_TM_NOM}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="517" y="0" width="1" height="9" uuid="27c50140-5f1c-466c-bd2a-fe32d0ad120e"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="525" y="0" width="1" height="9" uuid="0f9d8ce7-f911-4228-82d1-62b8755862b2"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="677" y="0" width="1" height="9" uuid="c92a62d5-ab00-4747-aabe-b6d0ac28cef0"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="372" y="0" width="1" height="9" uuid="df7e6173-d613-423d-836c-634824b0f758"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="14" splitType="Stretch">
+			<rectangle>
+				<reportElement x="372" y="0" width="146" height="14" backcolor="#E7E7E7" uuid="18281bd9-2ece-4003-b6bd-40f06ae4085b"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineColor="#DCDCDC"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="526" y="0" width="152" height="14" backcolor="#E7E7E7" uuid="1dfe9e46-2eb4-452e-a33e-9471e945f4af"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineColor="#DCDCDC"/>
+				</graphicElement>
+			</rectangle>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="372" y="0" width="46" height="14" uuid="e554a36f-85d7-4d59-bee6-9c4f47a629d7"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{COMP_SALDO_CUO_GS_3}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="423" y="0" width="41" height="14" uuid="25bf5399-39a2-4757-abe7-e22072826701"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{CF_INT_GS_2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="468" y="0" width="45" height="14" uuid="549fe09a-7e22-4856-97ef-9b58255461f8"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{CF_SUM_IMP_CUO_GS_4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="539" y="0" width="40" height="14" uuid="7e64dc39-2e12-481b-8087-32fe6e45ddc8"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{COMP_SALDO_CUO_US_3}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="583" y="0" width="42" height="14" uuid="238aac11-fd8c-45e2-9643-f3dcc856a528"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{CF_INT_US_2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="629" y="0" width="47" height="14" uuid="f96743fb-77c5-4236-afa9-ff98ac20d07e"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{CF_SUM_IMP_CUO_US_3}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="313" y="0" width="55" height="13" uuid="4c3ce4cf-77a4-4af0-9657-ab6680899fb9"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL GRAL:]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

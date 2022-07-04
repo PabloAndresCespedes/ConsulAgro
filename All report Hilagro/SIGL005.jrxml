@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SIGL005" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="de6969db-422b-4de8-b78b-20093c5fc14a">
+	<property name="ireport.zoom" value="5.559917313492271"/>
+	<property name="ireport.x" value="2160"/>
+	<property name="ireport.y" value="181"/>
+	<parameter name="F_DESDE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="F_HASTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CLAVE_CIERRE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CLAVE_CIERRE_RESU" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT --ASI_NRO NRO_ASIENTO,
+       CTAC_NRO NRO_CTA_CONTABLE,
+       CTAC_DESC DESCRIPCION_CTA_CONTABLE,
+       SUM(DECODE(ASID_IND_DB_CR, 'D', ASID_IMPORTE, 0)) DEBITO,
+       SUM(DECODE(ASID_IND_DB_CR, 'C', ASID_IMPORTE, 0)) CREDITO,
+       CASE
+         WHEN SUM(DECODE(ASID_IND_DB_CR, 'D', ASID_IMPORTE, 0)) -
+              SUM(DECODE(ASID_IND_DB_CR, 'C', ASID_IMPORTE, 0)) > 0 THEN
+          ABS(SUM(DECODE(ASID_IND_DB_CR, 'D', ASID_IMPORTE, 0)) -
+              SUM(DECODE(ASID_IND_DB_CR, 'C', ASID_IMPORTE, 0)))
+         ELSE
+          0
+       END SALDO_DEBITO,
+
+       CASE
+         WHEN SUM(DECODE(ASID_IND_DB_CR, 'D', ASID_IMPORTE, 0)) -
+              SUM(DECODE(ASID_IND_DB_CR, 'C', ASID_IMPORTE, 0)) <= 0 THEN
+          ABS(SUM(DECODE(ASID_IND_DB_CR, 'D', ASID_IMPORTE, 0)) -
+              SUM(DECODE(ASID_IND_DB_CR, 'C', ASID_IMPORTE, 0)))
+         ELSE
+          0
+       END SALDO_CREDITO,
+    to_char(asi_fec,'YYYY') anho
+  FROM
+   CNT_CUENTA, CNT_ASIENTO, CNT_ASIENTO_DET
+ WHERE ASI_CLAVE = ASID_CLAVE_ASI
+   AND ASI_EMPR=ASID_EMPR
+   AND ASID_CLAVE_CTACO = CTAC_CLAVE
+    AND ASI_EMPR = CTAC_EMPR
+    AND ASI_FEC BETWEEN TO_DATE($P{F_DESDE},'DD/MM/YYYY') AND TO_DATE($P{F_HASTA},'DD/MM/YYYY')
+   AND ASI_EMPR = $P{P_EMPRESA}
+   AND ASI_CLAVE NOT IN (nvl($P{CLAVE_CIERRE},0),nvl($P{CLAVE_CIERRE_RESU},0))
+   GROUP BY --ASI_NRO,
+   CTAC_NRO,CTAC_DESC,to_char(asi_fec,'YYYY')]]>
+	</queryString>
+	<field name="NRO_CTA_CONTABLE" class="java.math.BigDecimal"/>
+	<field name="DESCRIPCION_CTA_CONTABLE" class="java.lang.String"/>
+	<field name="DEBITO" class="java.math.BigDecimal"/>
+	<field name="CREDITO" class="java.math.BigDecimal"/>
+	<field name="SALDO_DEBITO" class="java.math.BigDecimal"/>
+	<field name="SALDO_CREDITO" class="java.math.BigDecimal"/>
+	<field name="ANHO" class="java.lang.String"/>
+	<variable name="SALDO_DEBITO_1" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{SALDO_DEBITO}]]></variableExpression>
+	</variable>
+	<variable name="SALDO_CREDITO_1" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{SALDO_CREDITO}]]></variableExpression>
+	</variable>
+	<variable name="DEBITO_1" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{DEBITO}]]></variableExpression>
+	</variable>
+	<variable name="CREDITO_1" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{CREDITO}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="40" splitType="Stretch">
+			<staticText>
+				<reportElement x="159" y="0" width="209" height="20" uuid="5b8e76b1-82fb-4d45-a938-0608f8e9b96f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Balances de Sumas y Saldos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="500" y="0" width="55" height="12" uuid="347a5739-5448-4e2f-9045-5ffc18bdedc0"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SIGL005]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="434" y="12" width="80" height="11" uuid="185cbb29-33ec-49fd-9566-f6f423191b6a"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="514" y="12" width="40" height="11" uuid="bd671533-64c6-4b53-bd90-5d984efef584"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="28" width="555" height="1" uuid="6327253f-6fe0-459e-ae5b-0b517db3a45f"/>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="5" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="62" height="20" uuid="91737ff6-bd15-48f8-ab4e-64fab529196d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro. Contable]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="62" y="0" width="150" height="20" uuid="6971addb-25a5-4be7-9ccc-9a977f9e3e90"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cta. Contable]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="212" y="0" width="92" height="20" uuid="e3156269-9549-427a-b7fd-2c75b9632a84"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Credito]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="304" y="0" width="80" height="20" uuid="31dd026a-07ec-4385-9810-14d82f54f308"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Debito]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="368" y="0" width="105" height="20" uuid="c4ec137b-e610-48d2-b371-847b7154503f"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saldo Debito]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="460" y="0" width="92" height="20" uuid="de630deb-2661-41ed-bdb1-742dca9a5ff2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saldo Credito]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="15" width="555" height="1" uuid="9a009102-ecc0-48fc-ba94-36ec2ef63ad5"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="11" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="62" height="11" uuid="b442d3ea-6e26-4695-ae47-b754b992f92d"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_CTA_CONTABLE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="62" y="0" width="150" height="11" uuid="f4e8c27c-5d9d-4794-98d5-79c7bca867d0"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRIPCION_CTA_CONTABLE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="212" y="0" width="92" height="11" uuid="2c83cd87-84f3-448b-9b98-8853a4aa7547"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CREDITO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="304" y="0" width="80" height="11" uuid="988e166f-041e-4b29-9ee1-79fb203ee230"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DEBITO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="384" y="0" width="89" height="11" uuid="5e794116-ed3c-4750-9799-51e41861ad93"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SALDO_DEBITO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="473" y="0" width="77" height="11" uuid="0431a1c4-9f25-49a1-b753-2a35d270b526"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SALDO_CREDITO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="9" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="1" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="0" width="555" height="1" uuid="1e472565-b4e3-490b-9843-4b1d7b76abda"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch">
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="384" y="0" width="100" height="11" uuid="4995354c-c398-48c3-bc29-a1dd882b2c22"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SALDO_DEBITO_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="484" y="0" width="71" height="11" uuid="64abed7c-0c70-4c17-bd25-98974e73efc7"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SALDO_CREDITO_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="304" y="0" width="80" height="11" uuid="33d5245b-4ad8-4257-b72e-7f8596019402"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DEBITO_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="212" y="0" width="92" height="11" uuid="beae343c-2344-4972-8b9a-593dd549d25e"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{CREDITO_1}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="555" height="1" uuid="6db45c9c-fb7b-497a-8d1f-b362ab176a8f"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

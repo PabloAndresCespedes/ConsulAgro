@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SUB_REPORT_FINL277" language="groovy" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="20" bottomMargin="20" uuid="23dbec11-a544-4756-99d2-752615f0b73f">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_TIPO_MOV" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLIENTE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROVEEDOR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_INICIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_FIN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NRO_DOC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT ADOC_TIPO_MOV,
+       TMOV_DESC,
+       ADOC_FEC_DOC,
+       ADOC_NRO_DOC,
+       ADOC_CLI,
+       ADOC_CLI_NOM,
+       ADOC_PROV,
+       PROV_RAZON_SOCIAL,
+       (ADOC_NETO_EXEN_LOC + ADOC_NETO_GRAV_LOC + ADOC_IVA_LOC) IMPORTE
+  FROM FIN_AUD_DOCUMENTO, GEN_TIPO_MOV, FIN_PROVEEDOR
+ WHERE ADOC_TIPO_MOV = TMOV_CODIGO(+)
+   AND ADOC_EMPR = TMOV_EMPR(+)
+   AND ADOC_PROV = PROV_CODIGO(+)
+   AND ADOC_EMPR = PROV_EMPR(+)
+   AND ADOC_EMPR = $P!{P_EMPRESA}
+ AND (ADOC_TIPO_MOV = $P!{P_TIPO_MOV} OR $P!{P_TIPO_MOV} IS NULL )
+          AND (ADOC_CLI = $P!{P_CLIENTE} OR $P!{P_CLIENTE} IS NULL )
+           AND (ADOC_PROV = $P!{P_PROVEEDOR} OR $P!{P_PROVEEDOR} IS NULL )
+          AND ADOC_FEC_ANUL   BETWEEN TO_DATE($P!{P_FECHA_INICIO},'DD/MM/YYYY') AND TO_DATE($P!{P_FECHA_FIN},'DD/MM/YYYY')
+          AND    (ADOC_NRO_DOC = $P!{P_NRO_DOC} OR $P!{P_NRO_DOC}  IS NULL)]]>
+	</queryString>
+	<field name="ADOC_TIPO_MOV" class="java.math.BigDecimal"/>
+	<field name="TMOV_DESC" class="java.lang.String"/>
+	<field name="ADOC_FEC_DOC" class="java.sql.Timestamp"/>
+	<field name="ADOC_NRO_DOC" class="java.math.BigDecimal"/>
+	<field name="ADOC_CLI" class="java.math.BigDecimal"/>
+	<field name="ADOC_CLI_NOM" class="java.lang.String"/>
+	<field name="ADOC_PROV" class="java.math.BigDecimal"/>
+	<field name="PROV_RAZON_SOCIAL" class="java.lang.String"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<group name="TIPO_MOV">
+		<groupHeader>
+			<band height="11">
+				<textField>
+					<reportElement x="64" y="-1" width="18" height="12" uuid="f8f95a56-07cd-4205-8d3d-aad04cc1b049"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ADOC_TIPO_MOV}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="12" y="-1" width="46" height="12" uuid="8f3f9ed8-e36f-4fa9-9383-58e2666bd0d8"/>
+					<textElement>
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Tipo Mov.  :]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="84" y="-1" width="136" height="12" uuid="2a7b1785-dd34-4893-a042-8e88240b1288"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TMOV_DESC}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="DETALLE_DOC">
+		<groupExpression><![CDATA[$P{P_NRO_DOC}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="11" splitType="Stretch">
+			<staticText>
+				<reportElement x="12" y="0" width="105" height="11" uuid="8b84eece-5c52-440c-867e-c6a351d5f465"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Documentos Anulados]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="17" splitType="Stretch">
+			<staticText>
+				<reportElement x="13" y="0" width="100" height="11" uuid="df8f3aef-8422-4158-a79d-98eb417c2d26"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="136" y="0" width="100" height="11" uuid="6c459906-e61d-44fc-9544-6884f9347241"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Comprob]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="252" y="0" width="100" height="11" uuid="e3155e3b-2cd2-43f2-89e1-fb2530b74173"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Prov/Cliente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="429" y="0" width="100" height="11" uuid="e6e68ba0-eeba-4f9f-ad26-1181caec02a1"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+			<line>
+				<reportElement x="8" y="15" width="543" height="1" uuid="a5ee9995-dc80-44b3-92ca-f25771739e2a"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="11" splitType="Stretch">
+			<textField>
+				<reportElement x="251" y="1" width="166" height="10" uuid="1ec1201d-da5d-40b5-b6af-abdfedacd013"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ADOC_PROV}  != null ? $F{PROV_RAZON_SOCIAL} : $F{ADOC_CLI_NOM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="133" y="0" width="87" height="11" uuid="5f9c808a-b4e7-49a8-85dc-eb8ae6c141bd"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ADOC_NRO_DOC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="12" y="0" width="100" height="11" uuid="3ddda384-8a5b-4f0b-b7cd-5c18205a696d"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ADOC_FEC_DOC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="427" y="1" width="100" height="10" uuid="12ae21c5-b90c-42df-aee7-aa9df1ec38f9"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

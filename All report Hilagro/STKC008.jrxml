@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="STKC008" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="41357ff5-42ba-4909-ba1c-9efd30185a4f">
+	<property name="ireport.zoom" value="2.9230756500000066"/>
+	<property name="ireport.x" value="630"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_ARTICULO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PERIODO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_TIPO_PERIODO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT ARDE_SUC,
+       SUC_DESC,
+       ARDE_DEP,
+       DEP_DESC,
+       ARDE_CANT_INI,
+       ARDE_CANT_ENT,
+       ARDE_CANT_SAL,
+       ARDE_CANT_ACT
+  FROM STK_ARTICULO_DEPOSITO_HIST, STK_DEPOSITO,GEN_SUCURSAL
+ WHERE ARDE_EMPR = DEP_EMPR
+   AND ARDE_SUC = DEP_SUC
+   AND ARDE_SUC=SUC_CODIGO
+   AND ARDE_EMPR=SUC_EMPR
+   AND ARDE_DEP = DEP_CODIGO
+   AND ARDE_ART = $P{P_ARTICULO}
+   AND ARDE_PERIODO = $P{P_PERIODO}
+   AND ARDE_EMPR = $P{P_EMPRESA}
+   AND 'HISTORICO' = $P{P_TIPO_PERIODO}
+
+UNION ALL
+
+SELECT ARDE_SUC,
+       SUC_DESC,
+       ARDE_DEP,
+       DEP_DESC,
+       ARDE_CANT_INI,
+       ARDE_CANT_ENT,
+       ARDE_CANT_SAL,
+       ARDE_CANT_ACT
+  FROM STK_ARTICULO_DEPOSITO, STK_DEPOSITO,GEN_SUCURSAL
+ WHERE ARDE_EMPR = DEP_EMPR
+   AND ARDE_SUC = DEP_SUC
+   AND ARDE_SUC=SUC_CODIGO
+   AND ARDE_EMPR=SUC_EMPR
+   AND ARDE_DEP = DEP_CODIGO
+   AND ARDE_ART = $P{P_ARTICULO}
+   AND ARDE_EMPR = $P{P_EMPRESA}
+   AND 'ACTUAL' = $P{P_TIPO_PERIODO}
+ ORDER BY ARDE_SUC, ARDE_DEP]]>
+	</queryString>
+	<field name="ARDE_SUC" class="java.math.BigDecimal"/>
+	<field name="SUC_DESC" class="java.lang.String"/>
+	<field name="ARDE_DEP" class="java.math.BigDecimal"/>
+	<field name="DEP_DESC" class="java.lang.String"/>
+	<field name="ARDE_CANT_INI" class="java.math.BigDecimal"/>
+	<field name="ARDE_CANT_ENT" class="java.math.BigDecimal"/>
+	<field name="ARDE_CANT_SAL" class="java.math.BigDecimal"/>
+	<field name="ARDE_CANT_ACT" class="java.math.BigDecimal"/>
+	<variable name="ARDE_CANT_ACT_1" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{ARDE_CANT_ACT}]]></variableExpression>
+	</variable>
+	<variable name="ARDE_CANT_SAL_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{ARDE_CANT_SAL}]]></variableExpression>
+	</variable>
+	<variable name="ARDE_CANT_ENT_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{ARDE_CANT_ENT}]]></variableExpression>
+	</variable>
+	<variable name="ARDE_CANT_INI_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{ARDE_CANT_INI}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="26" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="243" height="26" uuid="a3a0c047-d766-4b89-9aa7-1082cced76c5"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Resumen por Articulo con Costos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="519" y="0" width="48" height="12" uuid="9cc65011-eb2f-4aac-bc89-79a63820bd4b"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[STKC008]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="411" y="12" width="125" height="12" uuid="ba321e45-bea7-46c2-8b5d-4fdb05d90708"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="536" y="12" width="19" height="12" uuid="a958d4ba-a8a0-4a4d-b977-df06dd1f91cf"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="1" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="4" y="0" width="69" height="10" uuid="4f2d7372-0baa-4641-a933-70f4be8ab3f5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sucursal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="103" y="0" width="69" height="10" uuid="dae811d4-c9dd-4d00-a628-4462cb873edf"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Deposito]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="243" y="0" width="69" height="10" uuid="327afc1a-eda6-44cc-98f6-a4c0f7de4d15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cnt. Inicial]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="312" y="0" width="69" height="10" uuid="dc43cdba-e9fc-4d99-825e-a8f1e5f4b977"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cnt. Entrada]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="381" y="0" width="69" height="10" uuid="d39c52dd-a952-481f-b246-38e980b41ff9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cnt. Salida]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="467" y="0" width="69" height="10" uuid="bff3a4ee-ade6-45f0-98f2-af0ec2bde779"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cnt. Actual]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="0" width="551" height="1" uuid="42ea3279-e8a2-4167-93bf-d99dd3a35334"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="4" y="0" width="101" height="10" uuid="6a3e4c50-5829-44dc-962e-28a9932b9561"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SUC_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="105" y="0" width="11" height="10" uuid="7858a34e-2c8c-4f0e-b213-b48923b53613"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ARDE_DEP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="116" y="0" width="127" height="10" uuid="737a37ce-e6a7-4087-940e-fc06b7cd8c68"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DEP_DESC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="243" y="0" width="69" height="10" uuid="17f61032-c355-4db2-b0a5-100b932f639c"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ARDE_CANT_INI}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="312" y="0" width="69" height="10" uuid="44583156-1fae-44bf-a74b-cafdfccb9aa6"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ARDE_CANT_ENT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="381" y="0" width="69" height="10" uuid="9691b741-a6ad-4988-b65e-d48521cad6d2"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ARDE_CANT_SAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="467" y="0" width="69" height="10" uuid="8be00d64-ea7a-450f-85f9-1d43e3445562"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ARDE_CANT_ACT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="12" splitType="Stretch">
+			<textField pattern="#,##0.00">
+				<reportElement x="467" y="0" width="69" height="12" uuid="314bf4ef-adf9-458f-8d13-488e376a3edb"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{ARDE_CANT_ACT_1}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="16" y="0" width="551" height="1" uuid="40adb311-c3ee-4a10-b2e8-dc508fc8d813"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<textField pattern="#,##0.00">
+				<reportElement x="381" y="0" width="69" height="12" uuid="a35d580d-27b1-48a7-a777-1a6863826a5a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{ARDE_CANT_SAL_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="312" y="0" width="69" height="12" uuid="27b7e9f8-8ea0-4e57-81f9-8d03d7993bb3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{ARDE_CANT_ENT_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="243" y="0" width="69" height="12" uuid="fadc4298-ddba-4bb6-aacc-b4c96ebe9133"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{ARDE_CANT_INI_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

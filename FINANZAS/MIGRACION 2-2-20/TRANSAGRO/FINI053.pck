@@ -1,6 +1,6 @@
 create or replace package FINI053 is
 
-  -- Author  : PROGRAMACION7
+  -- Author  : @PabloACespedes
   -- Created : 22/06/2022 10:07:31
   -- Purpose : Cancelacion de documentos
   
@@ -21,9 +21,7 @@ create or replace package FINI053 is
       - NOTAS DEBITOS RECIBIDAS
       - NOTA DE CREDITO RECIBIDAS
       - ADELANTOS RECIBIDAS
-  */
   
-  /*
     Author  : @PabloACespedes \(^-^)/
     Created : 22/06/2022 10:24:35
     retorna tipos movimientos de cancelacion de recibo, se basa
@@ -142,6 +140,7 @@ create or replace package FINI053 is
 end FINI053;
 /
 create or replace package body FINI053 is
+  -- CONSTANTES
   co_col_nc_emision constant varchar2(10 char) := 'NC_EMISION';
   co_col_fc_emision constant varchar2(10 char) := 'FC_EMISION';
   co_col_nc_rec     constant varchar2(11 char) := 'NC_RECIBIDO';
@@ -153,7 +152,7 @@ create or replace package body FINI053 is
   co_recibido constant varchar2(1 char) := 'R';
     
 
-  
+  -- PROCEDURES
   procedure get_tipo_mov_cancel(
     in_empresa                  in  number,
     out_recibo_nc_emitido       out number,
@@ -648,7 +647,10 @@ create or replace package body FINI053 is
            l_doc_tipo_mov    apex_application_global.vc_arr2;
            l_fecha_operacion apex_application_global.vc_arr2;
            l_moneda          apex_application_global.vc_arr2;
+           
+           l_sql varchar2(4000);
         begin
+          /*
           select fd.doc_nro_doc,
                    fd.doc_fec_doc,
                    fd.doc_suc,
@@ -695,9 +697,9 @@ create or replace package body FINI053 is
             and
             (
                 (
-                 fd.doc_tipo_mov in (l_nc_emitida, l_nc_emi_ajuste)
-                 and 
                  in_tipo_mov = l_recibo_nc_emitido
+                 and                
+                 fd.doc_tipo_mov in (l_nc_emitida, l_nc_emi_ajuste)
                 )
                 or
                 (
@@ -706,7 +708,70 @@ create or replace package body FINI053 is
                  fd.doc_tipo_mov = l_adelanto_cli
                 )
             );
+            */
+            l_sql := '
+            select fd.doc_nro_doc,
+                   fd.doc_fec_doc,
+                   fd.doc_suc,
+                   fc.cuo_fec_vto,
+                   fc.cuo_imp_mon,
+                   fc.cuo_saldo_mon,
+                   fc.cuo_saldo_loc,
+                   fc.cuo_clave_doc,
+                   fd.doc_mon,
+                   gm.mon_dec_imp,
+                   gm.mon_dec_tasa,
+                   gm.mon_simbolo,
+                   gm.mon_tasa_vta,
+                   fd.doc_clave_scli,
+                   fd.doc_tipo_mov,
+                   '''||to_char(in_fecha_op, 'dd/mm/yyyy')||''',
+                   '||in_mnd||'
+                   from fin_documento fd
+                   inner join fin_cuota fc on (fc.cuo_clave_doc = fd.doc_clave and fc.cuo_empr = fd.doc_empr)
+                   inner join table(fini053.get_client_holding(in_holding => '||in_holding||', in_empresa => '||in_empresa||')) cl on (cl.id = fd.doc_cli)
+                   inner join gen_moneda gm on (gm.mon_codigo = fd.doc_mon and gm.mon_empr = fd.doc_empr)
+                   where cl.id is not null
+                   and fd.doc_mon = '||in_mnd||'
+                   and fd.doc_empr = '||in_empresa||'
+                   and (trunc(fd.doc_fec_doc) between to_date('''||to_char(in_desde, 'dd/mm/yyyy')||''', ''dd/mm/yyyy'') and to_date('''||to_char(in_fecha_op, 'dd/mm/yyyy')||''', ''dd/mm/yyyy''))
+                   and fc.cuo_saldo_mon > 0
+                   '|| case 
+                        when in_tipo_mov = l_recibo_nc_emitido then
+                           'and fd.doc_tipo_mov in ('||nvl(l_nc_emitida, -1)||', '||nvl(l_nc_emi_ajuste, -1)||')' 
+                        when in_tipo_mov  = l_recibo_adel_cli_emitido then 
+                           'and fd.doc_tipo_mov = '||l_adelanto_cli
+                        else 
+                            ''
+                        end ;
+             
+            <<add_reg_query>>
+            declare
+              id_name constant varchar2(23 char) := 'CANCEL_DOCUMENT_HOLDING';
+            begin
+              delete from x where x.otro = id_name;                         
+              insert into x(campo1, otro) values(l_sql, id_name);
+            end add_reg_query;
             
+            execute immediate l_sql
+            bulk collect into l_doc_nro,
+                               l_fecha_doc,
+                               l_doc_suc,
+                               l_cuo_fec_vto,
+                               l_cuo_imp_mon,
+                               l_cuo_saldo_mon,
+                               l_cuo_saldo_loc,
+                               l_cuo_clave_doc,
+                               l_doc_mon,
+                               l_mon_dec_imp,
+                               l_mon_dec_tasa,
+                               l_mon_simbolo,
+                               l_mon_tasa_vta,
+                               l_doc_clave_scli,
+                               l_doc_tipo_mov,
+                               l_fecha_operacion,
+                               l_moneda;
+                       
             if l_doc_nro.count > 0 then
               apex_collection.add_members(
                 p_collection_name => co_col_nc_emision,
@@ -1296,8 +1361,7 @@ create or replace package body FINI053 is
                  in_user         => in_user
          );
           
-        -- una vez que se cancela el segundo documento, vuelve a consultar todo
-        -- y se hace un refresh desde APEX para las listas
+        -- una vez que se cancela el segundo documento, elimina las secuencias
         if l_fin_doc_child is not null then
           <<clear_data_selected>>
           case
@@ -1409,6 +1473,7 @@ create or replace package body FINI053 is
     end if;
   end truncate_all_collections;
   
+  -- FUNCTIONS:
   function operador_hab_mes_finanzas(
     in_user varchar2,
     in_emp  number
@@ -1537,7 +1602,7 @@ create or replace package body FINI053 is
                               in_importe_loc,
                               0,
                               0,
-                              2, --> doc operador generico, ya esta en depecado
+                              2, --> doc operador generico, ya esta deprecado
                               in_user,
                               current_date,
                               'FIN',

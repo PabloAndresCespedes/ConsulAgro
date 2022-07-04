@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERL004_FACTURAS" language="groovy" pageWidth="1020" pageHeight="623" orientation="Landscape" columnWidth="1020" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="82755081-d9a5-4367-8cf2-0c9ac5eb3004">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_SESSION" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_LOGIN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\PRO4\\Desktop\\TRABAJOS2021\\20210319_perl004_ahora\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT T.P_LEGAJO, T.P_TIPO
+FROM PERL004_FAC_TEMP T
+WHERE T.P_SESSION = $P{P_SESSION}
+AND T.P_USUARIO=$P{P_LOGIN}
+AND T.P_LEGAJO IS NOT NULL]]>
+	</queryString>
+	<field name="P_LEGAJO" class="java.math.BigDecimal"/>
+	<field name="P_TIPO" class="java.lang.String"/>
+	<group name="FAC_ARTICULO">
+		<groupExpression><![CDATA[$F{P_LEGAJO}]]></groupExpression>
+		<groupHeader>
+			<band height="623">
+				<printWhenExpression><![CDATA[$F{P_TIPO}=='A']]></printWhenExpression>
+				<subreport>
+					<reportElement x="0" y="0" width="392" height="15" uuid="2114d1fb-e04b-4006-9f1f-1a30a533fbd5"/>
+					<subreportParameter name="P_LOGIN">
+						<subreportParameterExpression><![CDATA[$P{P_LOGIN}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_IND_COPIA"/>
+					<subreportParameter name="P_CLIENTE"/>
+					<subreportParameter name="P_EMPRESA">
+						<subreportParameterExpression><![CDATA[1]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_LEGAJO">
+						<subreportParameterExpression><![CDATA[$F{P_LEGAJO}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_CLAVE"/>
+					<subreportParameter name="P_SESSION">
+						<subreportParameterExpression><![CDATA[$P{P_SESSION}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "PERL004_FACP008.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="FAC_CONCEPTO">
+		<groupExpression><![CDATA[$F{P_LEGAJO}]]></groupExpression>
+		<groupHeader>
+			<band height="90" splitType="Prevent">
+				<printWhenExpression><![CDATA[$F{P_TIPO}=='B']]></printWhenExpression>
+				<subreport>
+					<reportElement x="0" y="0" width="399" height="15" uuid="fbc57cd5-e368-434e-b865-5eff235d6b4d"/>
+					<subreportParameter name="P_LOGIN">
+						<subreportParameterExpression><![CDATA[$P{P_LOGIN}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_IND_COPIA"/>
+					<subreportParameter name="P_EMPRESA">
+						<subreportParameterExpression><![CDATA[1]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_LEGAJO">
+						<subreportParameterExpression><![CDATA[$F{P_LEGAJO}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_CLAVE"/>
+					<subreportParameter name="P_SESSION">
+						<subreportParameterExpression><![CDATA[$P{P_SESSION}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "PERL004_FACP008_G.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+</jasperReport>

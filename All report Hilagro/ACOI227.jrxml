@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ACOI227" pageWidth="595" pageHeight="842" columnWidth="570" leftMargin="15" rightMargin="10" topMargin="15" bottomMargin="0" uuid="d621745e-8a5b-475d-a233-0a1324ab93f8">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="ireport.jasperserver.url" value="http://is01.inthegra-app.com.ar:8090/jasperserver/"/>
+	<property name="ireport.jasperserver.user" value="nsequera"/>
+	<property name="ireport.jasperserver.reportUnit" value="/reports/Hilagro/ACOI227"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Hilagro"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="ireport.jasperserver.report.resource" value="/reports/Hilagro/ACOI227_files/main_jrxml"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="288"/>
+	<subDataset name="credito" uuid="59f532f8-d4e4-4b47-a3ce-6aad3341840e">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Hilagro"/>
+		<parameter name="CLAVE_CR" class="java.lang.String"/>
+		<parameter name="P_EMPRESA_CR" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[select d.doc_nro doc_nro_cr,
+       d.doc_fec doc_fec_cr,
+       d.doc_zafra doc_zafra_cr,
+       p.prod_codigo prod_codigo_cr,
+       p.prod_desc prod_desc_cr,
+       'CREDITO' CREDITO,
+       pna.pna_codigo || '-' || pna.pna_nombre Persona_cr,
+       pna.pna_ruc_dv ruc_cr,
+       d.doc_unid_neto Total_cr,
+       d.doc_obs obs_cr,
+        d.doc_clave
+  from aco_documento d, aco_producto p, fin_persona pna
+ where d.doc_producto = p.prod_clave
+   and d.doc_empr = p.prod_empr
+   and d.doc_empr = pna.pna_empr
+   and d.doc_empr =  $P{P_EMPRESA_CR}
+   and doc_prov=pna.pna_codigo
+   and d.doc_clave =  $P{CLAVE_CR} --1105470101]]>
+		</queryString>
+		<field name="DOC_NRO_CR" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="DOC_NRO_CR"/>
+		</field>
+		<field name="DOC_FEC_CR" class="java.sql.Timestamp">
+			<property name="com.jaspersoft.studio.field.label" value="DOC_FEC_CR"/>
+		</field>
+		<field name="DOC_ZAFRA_CR" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="DOC_ZAFRA_CR"/>
+		</field>
+		<field name="PROD_CODIGO_CR" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="PROD_CODIGO_CR"/>
+		</field>
+		<field name="PROD_DESC_CR" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="PROD_DESC_CR"/>
+		</field>
+		<field name="CREDITO" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="CREDITO"/>
+		</field>
+		<field name="PERSONA_CR" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="PERSONA_CR"/>
+		</field>
+		<field name="RUC_CR" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="RUC_CR"/>
+		</field>
+		<field name="TOTAL_CR" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="TOTAL_CR"/>
+		</field>
+		<field name="OBS_CR" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="OBS_CR"/>
+		</field>
+		<field name="DOC_CLAVE" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="DOC_CLAVE"/>
+		</field>
+	</subDataset>
+	<subDataset name="logo" uuid="eece14cf-52d6-4979-aa28-4608a00239ed">
+		<parameter name="P_EMPRESA" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[select EMPR_LOGO logo
+from gen_empresa
+WHERE EMPR_CODIGO =$P{P_EMPRESA}]]>
+		</queryString>
+		<field name="LOGO" class="java.io.InputStream"/>
+	</subDataset>
+	<parameter name="P_CLAVE_CR" class="java.lang.String"/>
+	<parameter name="P_CLAVE_DB" class="java.lang.String"/>
+	<parameter name="P_SUCURSAL" class="java.lang.String"/>
+	<parameter name="P_EMPRESA" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[--DEBITO
+WITH DEBITO AS
+ (SELECT D.DOC_NRO DOC_NRO_DB,
+         D.DOC_FEC DOC_FEC_DB,
+         D.DOC_CLAVE DOC_CLAVE_DB,
+         D.DOC_ZAFRA DOC_ZAFRA_DB,
+         P.PROD_CODIGO PROD_CODIGO_DB,
+         P.PROD_DESC PROD_DESC_DB,
+         'DEBITO' DEBITO,
+         PNA.PNA_CODIGO || '-' || PNA.PNA_NOMBRE PERSONA_DB,
+         PNA.PNA_RUC_DV RUC_DB,
+         D.DOC_UNID_NETO TOTAL_DB,
+         D.DOC_OBS OBS_DB,
+         D.DOC_EMPR,
+         $P{P_SUCURSAL} || ',   ' || TO_CHAR(D.DOC_FEC, 'DD') || ' de ' ||
+         RTRIM(TO_CHAR(D.DOC_FEC, 'MONTH', 'nls_date_language=spanish')) ||
+         ' de ' || TO_CHAR(D.DOC_FEC, 'YYYY') FECHA_LOCALIDAD,
+         LTRIM(TO_CHAR(D.DOC_UNID_NETO,
+                       '999G999G999G999G990D00',
+                       'NLS_NUMERIC_CHARACTERS = '',.''')) TOTAL_DB_DESC
+
+    FROM ACO_DOCUMENTO D, ACO_PRODUCTO P, FIN_PERSONA PNA
+   WHERE D.DOC_PRODUCTO = P.PROD_CLAVE
+     AND D.DOC_EMPR = P.PROD_EMPR
+     AND D.DOC_EMPR = PNA.PNA_EMPR
+     AND D.DOC_EMPR = $P{P_EMPRESA}
+     AND NVL(DOC_PROV, DOC_CLIENTE) = PNA.PNA_CODIGO
+     AND D.DOC_CLAVE = $P{P_CLAVE_DB})
+--CREDITO
+SELECT DEB.DOC_NRO_DB,
+       DEB.DOC_CLAVE_DB,
+       D.DOC_CLAVE DOC_CLAVE_CR,
+       DEB.DOC_FEC_DB,
+       DEB.DOC_ZAFRA_DB,
+       DEB.PROD_CODIGO_DB,
+       DEB.PROD_DESC_DB,
+       DEB.DEBITO,
+       DEB.PERSONA_DB,
+       DEB.RUC_DB,
+       DEB.TOTAL_DB,
+       DEB.OBS_DB,
+       DEB.FECHA_LOCALIDAD,
+       DEB.TOTAL_DB_DESC,
+       D.DOC_NRO DOC_NRO_CR,
+       D.DOC_FEC DOC_FEC_CR,
+       D.DOC_ZAFRA DOC_ZAFRA_CR,
+       P.PROD_CODIGO PROD_CODIGO_CR,
+       P.PROD_DESC PROD_DESC_CR,
+       'CREDITO' CREDITO,
+       PNA.PNA_CODIGO || '-' || PNA.PNA_NOMBRE PERSONA_CR,
+       PNA.PNA_RUC_DV RUC_CR,
+       D.DOC_UNID_NETO TOTAL_CR,
+       D.DOC_OBS OBS_CR
+  FROM ACO_DOCUMENTO D, ACO_PRODUCTO P, FIN_PERSONA PNA, DEBITO DEB
+ WHERE D.DOC_PRODUCTO = P.PROD_CLAVE
+   AND D.DOC_EMPR = P.PROD_EMPR
+   AND D.DOC_EMPR = PNA.PNA_EMPR
+   AND D.DOC_EMPR = $P{P_EMPRESA}
+
+   AND D.DOC_CLAVE_PADRE = DEB.DOC_CLAVE_DB
+   AND DEB.DOC_EMPR = P.PROD_EMPR
+   AND DEB.DOC_EMPR = PNA.PNA_EMPR
+   AND DEB.DOC_EMPR = $P{P_EMPRESA}
+   AND NVL(DOC_PROV, DOC_CLIENTE) = PNA.PNA_CODIGO
+   AND D.DOC_CLAVE = NVL($P{P_CLAVE_CR}, DOC_CLAVE)]]>
+	</queryString>
+	<field name="DOC_NRO_DB" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="DOC_NRO_DB"/>
+	</field>
+	<field name="DOC_CLAVE_DB" class="java.lang.String"/>
+	<field name="DOC_CLAVE_CR" class="java.lang.String"/>
+	<field name="DOC_FEC_DB" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="DOC_FEC_DB"/>
+	</field>
+	<field name="DOC_ZAFRA_DB" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="DOC_ZAFRA_DB"/>
+	</field>
+	<field name="PROD_CODIGO_DB" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="PROD_CODIGO_DB"/>
+	</field>
+	<field name="PROD_DESC_DB" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="PROD_DESC_DB"/>
+	</field>
+	<field name="DEBITO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="DEBITO"/>
+	</field>
+	<field name="PERSONA_DB" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="PERSONA_DB"/>
+	</field>
+	<field name="RUC_DB" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="RUC_DB"/>
+	</field>
+	<field name="TOTAL_DB" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="TOTAL_DB"/>
+	</field>
+	<field name="OBS_DB" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="OBS_DB"/>
+	</field>
+	<field name="FECHA_LOCALIDAD" class="java.lang.String"/>
+	<field name="TOTAL_DB_DESC" class="java.lang.String"/>
+	<field name="DOC_NRO_CR" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="DOC_NRO_CR"/>
+	</field>
+	<field name="DOC_FEC_CR" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="DOC_FEC_CR"/>
+	</field>
+	<field name="DOC_ZAFRA_CR" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="DOC_ZAFRA_CR"/>
+	</field>
+	<field name="PROD_CODIGO_CR" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="PROD_CODIGO_CR"/>
+	</field>
+	<field name="PROD_DESC_CR" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="PROD_DESC_CR"/>
+	</field>
+	<field name="CREDITO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CREDITO"/>
+	</field>
+	<field name="PERSONA_CR" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="PERSONA_CR"/>
+	</field>
+	<field name="RUC_CR" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="RUC_CR"/>
+	</field>
+	<field name="TOTAL_CR" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="TOTAL_CR"/>
+	</field>
+	<field name="OBS_CR" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="OBS_CR"/>
+	</field>
+	<variable name="CS_FECHA" class="java.sql.Date" calculation="Highest">
+		<variableExpression><![CDATA[$F{DOC_FEC_DB}]]></variableExpression>
+	</variable>
+	<background>
+		<band height="827" splitType="Stretch">
+			<rectangle>
+				<reportElement x="1" y="0" width="555" height="813" uuid="eed96f4c-026b-4291-86d9-bdd221476840"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</rectangle>
+		</band>
+	</background>
+	<title>
+		<band height="127">
+			<frame>
+				<reportElement x="23" y="0" width="533" height="122" uuid="8c4338b6-3dc1-444e-851a-054a7da16094"/>
+				<staticText>
+					<reportElement x="39" y="51" width="374" height="21" uuid="cf070e82-60fe-4fe0-9610-d068bda81daf"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Casa Central: Calle 1era. Línea J. Eulogio Estigarribia - Tel(0528) 222995 - Caaguazu - Paraguay
+transagro@transagro.com.py]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="15" y="77" width="80" height="45" uuid="1196815e-db0f-44fc-a6da-1243e0e6e9b7"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="5"/>
+					</textElement>
+					<text><![CDATA[Suc Nº 1
+Transporte
+R.I. Nº 7 Km 214 J. Eulogio Estigarribia
+Tel: (0528) 222 257 | (0985) 490 020
+Caaguazú - Paraguay]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="104" y="77" width="80" height="45" uuid="098018d7-4a91-47bf-8a4f-303b82ce7f54"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="5"/>
+					</textElement>
+					<text><![CDATA[Suc Nº 2
+Centro de Acopio
+Colonia Tres Palmas - Raul A. Oviedo
+Tel: (0983) 530 944 | (0528) 222 257
+Caaguazú - Paraguay]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="192" y="77" width="80" height="45" uuid="848b115e-b77a-48f5-9b9c-c0ceb3342808"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="5"/>
+					</textElement>
+					<text><![CDATA[Suc Nº 3
+Centro de Acopio
+Colonia Cedro Ty - Nueva Toledo
+Tel: (0983) 990 649 | (0528) 222 257
+Caaguazú - Paraguay]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="279" y="77" width="80" height="45" uuid="7c19a7b4-a3e6-4b1b-85bf-2ea20b747f0f"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="5"/>
+					</textElement>
+					<text><![CDATA[Suc Nº 4
+Centro de Acopio
+Taruma - Yhu
+Tel: (0981) 404 882 | (0528) 222 257
+Caaguazú - Paraguay]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="370" y="77" width="80" height="45" uuid="87ff535b-0227-4eb1-8fe4-0495e5bb79d8"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="5"/>
+					</textElement>
+					<text><![CDATA[Suc Nº 5
+Centro de Acopio
+Casilla 2 - Raúl Arsenio Oviedo
+Tel: (0986) 401 667 | (0528) 222 257
+Caaguazú - Paraguay]]></text>
+				</staticText>
+				<componentElement>
+					<reportElement key="table 2" x="19" y="2" width="183" height="38" uuid="b7e25718-c0d7-46c2-83d5-34cc3e257aa8"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="logo" uuid="6345fd62-3b8f-4a68-9480-a137828c4ca3">
+							<datasetParameter name="P_EMPRESA">
+								<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+							</datasetParameter>
+						</datasetRun>
+						<jr:column width="120" uuid="65d97534-6a7c-4e98-a712-8ccca8e08c9d">
+							<jr:detailCell height="49" rowSpan="1">
+								<image hAlign="Center">
+									<reportElement x="0" y="0" width="120" height="49" uuid="674756e5-5968-49a0-97da-d424d65004e5"/>
+									<imageExpression><![CDATA[$F{LOGO}]]></imageExpression>
+								</image>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+				<staticText>
+					<reportElement x="212" y="9" width="147" height="40" uuid="88b7158d-3b6a-4b71-abab-87ece5c05d7c"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[COMPRA Y VENTA DE
+Insumos Agricolas  Granos en General
+SERVICIOS DE TRANSPORTES
+ACOPIO DE GRANOS]]></text>
+				</staticText>
+			</frame>
+			<line>
+				<reportElement x="0" y="122" width="550" height="1" uuid="1f915499-165d-4e2d-bf1b-ab012bde99e5"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="126" width="550" height="1" uuid="534e4f2e-0381-4671-8c0c-3835a1f9071d"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+		</band>
+	</title>
+	<detail>
+		<band height="299" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+			<frame>
+				<reportElement x="9" y="0" width="548" height="299" uuid="00072d14-3db1-4756-aad1-3808c043900d"/>
+				<staticText>
+					<reportElement x="18" y="7" width="92" height="78" uuid="5586ecbc-94b2-4527-9334-1928d08ee642"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Señores.
+
+Transagro S.A.
+
+Presente]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="76" y="85" width="424" height="18" uuid="42a412f0-4049-4e5a-baa0-a970e9fd36dc">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA_LOCALIDAD}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="76" y="123" width="424" height="73" uuid="3b13d602-92fd-45cb-a248-94386f8f0e49"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["       Por la presente autorizamos la transferencia de "+$F{TOTAL_DB_DESC}+" Kg. de "+$F{PROD_DESC_DB}+" zafra "+$F{DOC_ZAFRA_DB}+" que se encuentran almacenadas a nombre de "+$F{PERSONA_DB}+" en el silo TRANSAGRO"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="76" y="206" width="424" height="55" uuid="f868682a-7c43-4f04-85d0-cdb454bdd0b3"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["     En consecuencia la mercadería pasa a pertenecer a "+$F{PERSONA_CR}+" desde la fecha y en adelante podrá disponer libremente de la misma para lo que fuere necesario."]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="77" y="273" width="424" height="20" uuid="e3adb02b-e202-40b1-a871-b46b91245f91"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["       Sin otro particular, atentamente."]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="60">
+			<textField isBlankWhenNull="true">
+				<reportElement x="359" y="2" width="168" height="20" uuid="d24a2c5e-57cf-46e8-87b0-bc47895f838d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PERSONA_DB}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="60">
+			<subreport>
+				<reportElement x="2" y="7" width="555" height="50" uuid="71b5d607-4328-4476-904b-92f6df6fae82"/>
+				<subreportParameter name="P_EMPRESA">
+					<subreportParameterExpression><![CDATA[$P{P_EMPRESA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_CLAVE_DB">
+					<subreportParameterExpression><![CDATA[$F{DOC_CLAVE_DB}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_CLAVE_CR">
+					<subreportParameterExpression><![CDATA[$F{DOC_CLAVE_CR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_SUCURSAL">
+					<subreportParameterExpression><![CDATA[$P{P_SUCURSAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "ACOI227_DET.jasper"]]></subreportExpression>
+			</subreport>
+			<break>
+				<reportElement x="0" y="2" width="100" height="1" uuid="7cacd1af-add6-4274-96a1-f3f910b62b62"/>
+			</break>
+		</band>
+	</summary>
+</jasperReport>

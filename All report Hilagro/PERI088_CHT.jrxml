@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERI088_CHT" language="javascript" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="28" bottomMargin="28" uuid="3fe5d50e-21ca-4eaf-b283-7b38dc65a6c3">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="141"/>
+	<property name="ireport.y" value="48"/>
+	<parameter name="P_CIUDAD_EMPR" class="java.lang.String"/>
+	<parameter name="P_DEPART_EMPR" class="java.lang.String"/>
+	<parameter name="P_REPUB_EMPR" class="java.lang.String"/>
+	<parameter name="P_FECHA_CONT_LETRAS_1" class="java.lang.String"/>
+	<parameter name="P_GEN_GEN_NOMBRE" class="java.lang.String"/>
+	<parameter name="P_NOMBRE_EMPRESA" class="java.lang.String"/>
+	<parameter name="P_GEN_GEN_DOMIC" class="java.lang.String"/>
+	<parameter name="P_SR_NOMBRE_POSTUL" class="java.lang.String"/>
+	<parameter name="P_EDAD_POSTUL" class="java.lang.String"/>
+	<parameter name="P_GENERO_POSTUL" class="java.lang.String"/>
+	<parameter name="P_ESTADO_CIVIL_POSTUL" class="java.lang.String"/>
+	<parameter name="P_PROFESION_POSTUL" class="java.lang.String"/>
+	<parameter name="P_NACINALIDAD_POSTUL" class="java.lang.String"/>
+	<parameter name="P_DIR_POSTUL" class="java.lang.String"/>
+	<parameter name="P_AREA_CARGO" class="java.lang.String"/>
+	<parameter name="P_CARGO_DESC" class="java.lang.String"/>
+	<parameter name="P_FORMA_PAGO" class="java.lang.String"/>
+	<parameter name="P_REMUN_CONVENIDA" class="java.lang.String"/>
+	<parameter name="P_PLAZO_CONTRATO_1" class="java.lang.String"/>
+	<parameter name="P_DURACION_DIVISION" class="java.lang.String"/>
+	<parameter name="P_CLAUSULA_ESPECIAL" class="java.lang.String"/>
+	<parameter name="P_NOMBRE_EMPLEADO" class="java.lang.String"/>
+	<parameter name="P_NOMBRE_EMPLEADOR" class="java.lang.String"/>
+	<parameter name="P_CI_EMPLEADO" class="java.lang.String"/>
+	<parameter name="P_CI_EMPLEADOR" class="java.lang.String"/>
+	<parameter name="P_FECHA_CONT_LETRAS_2" class="java.lang.String"/>
+	<parameter name="P_PLAZO_CONTRATO_2" class="java.lang.String"/>
+	<parameter name="P_PLAZO_CONTRATO_3" class="java.lang.String"/>
+	<parameter name="P_CLAVE_POST" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2554]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CONT_EMPL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_HS_ENTRADA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_HS_SALIDA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_HS_ENT_SAB" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_HS_SAL_SAB" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_TIPO_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_HORARIO" class="java.lang.String"/>
+	<parameter name="P_CLAVE_SOL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[592]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_TIPO_CONTRATO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_INGRESO_POST" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT CASE
+         WHEN PP.DOCPOS_EMPR = 1 THEN
+          PP.DOCPOS_NOMBRE || ' ' || PP.DOCPOS_APELLIDO
+         ELSE
+          INITCAP(PP.DOCPOS_NOMBRE || ' ' || PP.DOCPOS_APELLIDO)
+       END NOMBRE_POSTULANTE,
+       DECODE(PP.DOCPOS_SEXO, 'M', 'Masculino', 'F', 'Femenino') SEXO,
+       CASE
+         WHEN PP.DOCPOS_SEXO = 'M' THEN
+          'el sr. '
+         ELSE
+          'la sra. '
+       END TRATAMIENTO_POSTULANTE,
+       CASE
+         WHEN PP.DOCPOS_SEXO = 'M' THEN
+          CASE
+            WHEN PP.DOCPOS_ESTADO_CIV = 'C' THEN
+             'Casado'
+            ELSE
+             'Soltero'
+          END
+         ELSE
+          CASE
+            WHEN PP.DOCPOS_ESTADO_CIV = 'C' THEN
+             'Casada'
+            ELSE
+             'Soltera'
+          END
+       END ESTADO_CIVIL,
+       CASE
+         WHEN PP.DOCPOS_EMPR = 1 THEN
+          GP.PROF_DESC
+         ELSE
+          INITCAP(GP.PROF_DESC)
+       END PROFESION,
+       GPA.PAIS_NACIONALIDAD,
+       CASE
+         WHEN PP.DOCPOS_EMPR = 1 THEN
+          PP.DOCPOS_DOMICILIO
+         ELSE
+          INITCAP(FZ.ZONA_DESC)
+       END DOMICILIO,
+       CASE
+         WHEN PP.DOCPOS_EMPR = 1 THEN
+          PP.DOCPOS_DOMICILIO
+         ELSE
+          INITCAP(FZ.ZONA_DESC)
+       END ZONA_DESC,
+       PP.DOCPOS_CEDULA_IDEN,
+       DECODE($P{P_TIPO_CONTRATO}, 'IN', null, O.CONSEL_PLAZO) CONSEL_PLAZO,
+       O.CONSEL_HORARIO
+  FROM PER_POSTULANTE_CARGO PP, GEN_PROFESION GP, GEN_PAIS GPA, FAC_ZONA FZ, PER_CONTRATO_PROC_SEL O
+ WHERE PP.DOCPOS_EMPR =$P{P_EMPRESA}
+   AND PP.DOCPOS_CLAVE =$P{P_CLAVE_POST}
+   AND PP.DOCPOS_EMPR = GPA.PAIS_EMPR(+)
+   AND PP.DOCPOS_NACI = GPA.PAIS_CODIGO(+)
+   AND PP.DOCPOS_EMPR = GP.PROF_EMPR(+)
+   AND PP.DOCPOS_PROF = GP.PROF_CODIGO(+)
+   AND PP.DOCPOS_EMPR = FZ.ZONA_EMPR(+)
+   AND PP.DOCPOS_ZONA = FZ.ZONA_CODIGO(+)
+   AND O.CONSEL_POSTUL = $P{P_CLAVE_POST}
+   AND O.CONSEL_EMPR = PP.DOCPOS_EMPR
+   AND O.CONSEL_SOLI = $P{P_CLAVE_SOL}
+   union
+ SELECT C.EMPL_NOMBRE||' '||C.EMPL_APE NOMBRE,
+        decode(c.empl_sexo,'M', 'Masculino', 'F', 'Femenino')sexo,
+        CASE
+         WHEN empl_sexo = 'M' THEN
+          'el sr. '
+         ELSE
+          'la sra. '
+       END TRATAMIENTO_POSTULANTE,
+     CASE
+         WHEN empl_sexo = 'M' THEN
+          CASE
+            WHEN c.empl_est_civil = 'C' THEN
+             'Casado'
+            ELSE
+             'Soltero'
+          END
+         ELSE
+          CASE
+            WHEN c.empl_est_civil = 'C' THEN
+             'Casada'
+            ELSE
+             'Soltera'
+          END
+       END ESTADO_CIVIL,
+       CASE
+         WHEN a.pcon_empr = 1 THEN
+           P.PROF_DESC
+         ELSE
+          INITCAP(P.PROF_DESC)
+       END PROFESION,
+       S.PAIS_NACIONALIDAD,
+
+       CASE
+         WHEN pcon_empr = 1 THEN
+         A.PCON_DIRECCION
+         ELSE
+          INITCAP(A.PCON_DIRECCION)
+       END DOMICILIO,
+
+       CASE
+         WHEN pcon_empr = 1 THEN
+         A.PCON_DIRECCION
+         ELSE
+          INITCAP(A.PCON_DIRECCION)
+       END ZONA_DESC,
+       A.PCON_CI,
+       DECODE($P{P_TIPO_CONTRATO}, 'IN', null, A.PCON_PLAZO),
+       A.PCON_HORARIO
+    FROM PER_CONT_SIN_PROSELC A, PER_EMPLEADO C, GEN_PROFESION P, GEN_PAIS S
+     WHERE A.PCON_LEGAJO = C.EMPL_LEGAJO
+     AND A.PCON_EMPR = C.EMPL_EMPRESA
+     AND C.EMPL_NACIONALIDAD = S.PAIS_CODIGO(+)
+     AND C.EMPL_EMPRESA = S.PAIS_EMPR(+)
+     AND C.EMPL_PROF = P.PROF_CODIGO(+)
+     AND C.EMPL_EMPRESA = P.PROF_EMPR(+)
+     AND A.PCON_EMPR = $P{P_EMPRESA}
+     AND A.PCON_CODIGO =$P{P_CONT_EMPL}]]>
+	</queryString>
+	<field name="NOMBRE_POSTULANTE" class="java.lang.String"/>
+	<field name="SEXO" class="java.lang.String"/>
+	<field name="TRATAMIENTO_POSTULANTE" class="java.lang.String"/>
+	<field name="ESTADO_CIVIL" class="java.lang.String"/>
+	<field name="PROFESION" class="java.lang.String"/>
+	<field name="PAIS_NACIONALIDAD" class="java.lang.String"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="ZONA_DESC" class="java.lang.String"/>
+	<field name="DOCPOS_CEDULA_IDEN" class="java.math.BigDecimal"/>
+	<field name="CONSEL_PLAZO" class="java.lang.String"/>
+	<field name="CONSEL_HORARIO" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="20" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="62" splitType="Stretch">
+			<staticText>
+				<reportElement x="159" y="11" width="260" height="20" forecolor="#000000" uuid="ce5a3c3e-02d8-4ae9-aa0a-74bdf812f5e6"/>
+				<textElement>
+					<font size="12" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[CONTRATO INDIVIDUAL DE TRABAJO]]></text>
+			</staticText>
+		</band>
+		<band height="37">
+			<staticText>
+				<reportElement x="41" y="1" width="486" height="16" uuid="3a14b89a-9d09-479b-82c9-9656ef961930"/>
+				<textElement>
+					<font size="12" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[PRIMERA: MODALIDADES. -]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="41" y="21" width="486" height="16" uuid="5101dc55-807a-4982-aa40-5f5b884eea66"/>
+				<textElement textAlignment="Justified">
+					<font size="12"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["1.1.- Clase de Trabajo: El Empleado se desempeñará como de la Empresa y realizará en general todo lo relacionado a la actividad mencionada, y así como todas aquellas tareas conexas directa o indirectamente con la función desempeñada y todo lo establecido en los instructivos de trabajo, e instrucciones que le fueren efectuadas, y/o Anexos que se efectúen al presente Contrato y/o instructivos que se le indiquen en sus labores. La descripción en tales instructivos es meramente enunciativa y no limitativa en un régimen de polivalencia de funciones. –\n\n"+
+"1.2.- Lugar de la Prestación: En el local de la Empresa, tanto en Juan E. Estigarribia o en las sucursales que se habiliten en otras ciudades del país. El cambio de las mismas es atribución exclusiva de la Empresa. -\n\n"+
+"1.3.- Queda convenido entre las partes, que las funciones, nombramientos o traslados serán comunicados por nota, ya que por razones de mejor servicio y por la naturaleza de la actividad, La Empresa podrá asignar, nombrar y trasladar al Trabajador, para asumir otras funciones complementarias y/o diferentes relacionadas a la actividad y al giro comercial del Empleador. - \n"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="37">
+			<staticText>
+				<reportElement x="41" y="1" width="486" height="16" uuid="0fb3cb69-75b0-40a6-84c9-df3da58a6f2c"/>
+				<textElement textAlignment="Left">
+					<font size="12" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[SEGUNDA: FORMA DE CONTRATO. -]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="41" y="17" width="486" height="16" uuid="8407a031-45e0-47e7-8ff2-e4feb1a74dac"/>
+				<textElement textAlignment="Justified">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FORMA_PAGO}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="37" splitType="Prevent">
+			<staticText>
+				<reportElement x="41" y="1" width="486" height="16" uuid="ce26a7bc-74d0-4419-aaf2-e191b46dfb5b"/>
+				<textElement>
+					<font size="12" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[TERCERA: REMUNERACION CONVENIDA. –]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="41" y="21" width="486" height="16" uuid="f2be1709-561e-4feb-ae9c-68a362d90dc2"/>
+				<textElement textAlignment="Justified">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_REMUN_CONVENIDA}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="37">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="41" y="21" width="486" height="16" uuid="803b7fa4-05ce-4e80-beed-d23e604ce1bd"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Este contrato es por tiempo indefinido. -\n\n"+
+"Fecha inicio de las labores: " +$P{P_FEC_INGRESO_POST}+"\n"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="41" y="1" width="486" height="16" uuid="a90d9ec0-6f1d-4bb2-aa78-0951e48b575f"/>
+				<textElement>
+					<font size="12" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[CUARTA: PLAZO DE CONTRATO. -]]></text>
+			</staticText>
+		</band>
+		<band height="37" splitType="Prevent">
+			<staticText>
+				<reportElement x="41" y="2" width="486" height="16" uuid="d4079663-4fb5-4db4-9211-ac5e68709f04"/>
+				<textElement>
+					<font size="12" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[QUINTA: DURACIÓN DE LA JORNADA y DIVISION DE LA JORNADA. –]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="41" y="21" width="486" height="16" uuid="aab048e4-2497-4828-959d-bd356cafabfb"/>
+				<textElement textAlignment="Justified">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["5.1.- El horario de trabajo se regirá conforme lo estipula el Art. 205 del Código del Trabajo, considerando la naturaleza de la actividad contratada y lo convenido con el empleado. - \n\n"+
+"5.2.- El horario podrá ser modificado en función a la época del año y a las necesidades del servicio. \n\n"+
+"Cualquier cambio, sino hubiere una emergencia, será comunicado con anticipación de 48 horas por lo menos y el horario será anunciado en avisos bien visibles. -\n\n"+
+"5.3.- El descanso semanal será preferentemente los domingos, o un día en la semana hábil conforme al giro comercial de la Empresa o por acuerdo de Partes, cuando se trata de un viaje de duración superior a 6 días. Corresponderá igualmente el descanso en los días feriados establecidos. \n\n"+
+"5.4.- Las partes acuerdan, que en caso de trabajar días domingos, será compensado con un día hábil de la semana siguiente. -\n\n"+
+"5.5.- Queda convenido conforme sus funciones que el trabajador deberá preparar su hoja de ruta, de tal manera a adecuarse a la duración de la jornada del Art. 205 C.T., teniendo en cuenta los descansos intermedios. -\n"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="37">
+			<staticText>
+				<reportElement x="41" y="1" width="486" height="16" uuid="d2919dec-9d84-4367-92af-2996b3809ec2"/>
+				<textElement>
+					<font size="12" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[SEXTA: CLAUSULAS ESPECIALES: -]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="41" y="21" width="486" height="16" uuid="2c1191fe-58ed-4086-a2f0-141b4e6050c8"/>
+				<textElement textAlignment="Justified">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["6.1.- EL TRABAJADOR se compromete a comunicar a EL EMPLEADOR, por escrito o cualquier medio fehaciente, el cambio o traslado de su domicilio. Mientras este no se registre serán válidas todas las comunicaciones dirigidas al domicilio denunciado, con todos los efectos legales. -\n\n"+
+"6.2.- EL TRABAJADOR se obliga a cumplir, no solo a lo que literalmente estipula este contrato, sino a todo aquello inherente a la naturaleza del cargo que desempeña, las instrucciones y órdenes que se le impartan sobre ejecución de sus labores. -\n\n"+
+"6.3.- EL TRABAJADOR debe ser cortés con los superiores, compañeros, y clientes o terceros. No debe usar vocabulario soez, hacer referencias despectivas y burlas a la persona o familiares del compañero de trabajo, protagonizar o incitar a discusiones violentas, riñas o peleas entre compañeros, dentro de las instalaciones de la empresa. El incumplimiento de esta disposición será pasible de sanción disciplinaria o causal de despido con justa causa. -\n\n"+
+"6.4.- EL TRABAJADOR deberá recibir y firmar el contrato de trabajo, instructivos, circulares, comunicados, notificaciones y documentos que la EMPRESA le presente, relacionados a sus funciones o por disposiciones legales, así como presentar las documentaciones personales y constancias que hacen a su profesión u oficio, las veces que EL EMPLEADOR así lo requiriese. -\n\n"+
+"6.5.- Queda terminantemente prohibido usar los medios de transporte, cualesquiera sea el vehículo, así como los de comunicación propiedad de la empresa para fines particulares sin autorización expresa del superior. La transgresión a esta disposición será pasible de sanción disciplinaria o despido con justa causa, conforme la gravedad del caso. \n\n"+
+"6.6.- El trabajador deberá guardar la mayor reserva sobre costos, precios, nómina de clientes, productos, proveedores, y en general todo lo relacionado con la actividad de la Empresa. La violación de ésta norma es particularmente grave y podrá ser causal de terminación con justa causa (Art. 81 inc. h del Código de Trabajo). \n\n"+
+"6.7.- Se pacta la exclusividad de la prestación (Art. 22 del Código de Trabajo). \n\n"+
+"6.8.- Se compromete el trabajador a cumplir las órdenes e instrucciones que se le impartan sobre el modo de ejecución de los trabajos. \n\n"+
+"6.9.- En el manejo de vehículos de la Empresa, se compromete a observar las siguientes reglas: \n\n"+
+"6.9.1.- La utilización de los vehículos requerirá autorización escrita previa de los directores propietarios o las personas designadas al efecto por los mismos. Dichos vehículos solo podrán ser utilizados para la ejecución de labores que guardan relación con la empresa. Salvo expresa autorización de los directores propietarios, los mismos no podrán ser utilizados con otra finalidad, y en ningún caso podrán ser entregados a terceros no autorizados por la empresa para su conducción. \n\n"+
+"6.9.2.- Queda terminantemente prohibido transportar en los vehículos de la empresa cualquier tipo de animales al igual que personas ajenas a la empresa. Tampoco podrán ser transportados valores, muebles o útiles de la compañía que no estén expresamente autorizados. \n\n"+
+"6.9.3.- Queda expresamente comunicado al trabajador, que la responsabilidad en la utilización de los vehículos recae personalmente sobre ellos. Los responderán por las averías mecánicas, rayaduras, raspados, etc. que puedan surgir durante su utilización, debiendo comunicarlas inmediatamente a quien corresponda a los efectos legales, dado que los vehículos se encuentran asegurados. \n\n"+
+"6.9.4.- Los vehículos cuentan con todas las documentaciones exigidas para la circulación, siendo obligación del trabajador la tenencia y portación de los mismos. Queda igualmente obligado a contar con las documentaciones personales habilitantes para conducir (Registro de conducir, Cédula de Identidad, permisos correspondientes, etc.), debiendo los mismos estar al día en el pago de impuestos y tasas. \n\n"+
+"6.9.5.- El trabajador queda expresamente advertido de que en caso de multas por infracciones a las leyes y normas de tránsito, las responsabilidades serán personales y exclusivas del mismo. \n\n"+
+"6.9.6.- El trabajador se hace responsable de todos los daños causados por negligencia, imprudencia, impericia, o falta grave o cualquier otro daño que cause al vehículo o a terceras personas o bienes de terceros, que a más de ser causal de despido justificado prevista en el inc. f del art. 81 del Código Laboral, darán derecho al propietario de reclamar la reparación de los daños y perjuicios causados cuando no fueren cubiertos por el seguro. Así mismo el trabajador es civilmente responsable de eventuales daños y perjuicios, en su carácter de tenedor del vehículo de conformidad a lo dispuesto en el art. 1.833 y sgts. del Código Civil Paraguayo. \n\n"+
+"6.9.7.- El trabajador debe dar cuenta a la Unidad Policial más próxima de todo accidente de tránsito, robo, hurto o cualquier daño que sufra el vehículo, en que intervengan directa o indirectamente con el mismo; igualmente deberá dar aviso su jefe inmediato por el medio más rápido en caso de cualquier irregularidad que tenga el vehículo. \n\n"+
+"6.9.8.- El trabajador se compromete a conducir con prudencia y respetar las leyes de tránsito, que declara conocer. \n\n"+
+"6.10.- El Trabajador deberá cumplir con el viaje o recorrido programado en su itinerario, manejando a una velocidad prudencial que no sobrepase los límites de velocidad establecidos por las municipalidades en cuyo trayecto pase con la unidad vehicular de la Empresa. La modificación del itinerario, así como el hecho de detenerse en lugares no autorizados, será considerada falta grave. \n\n"+
+"6.11.- Podrá ser trasladado de Departamentos, Secciones, puestos o funciones siempre que no constituya menoscabo a su dignidad o a su salario. \n\n"+
+"6.12.- Queda terminantemente prohibido ingresar productos o mercaderías, así como trasladar de un lugar a otro o fuera del local de trabajo, las mercaderías, productos, herramientas, equipos, etc. propiedad de la Empresa, de no mediar orden del superior, la violación de esta norma es particularmente grave y podrá ser causal de despido con justa causa. \n\n"+
+"6.13.- Se autoriza a la Empresa, tanto al ingreso como al egreso, al registro de bolsos, el vehículo y en oportunidades de la vestimenta, con el fin de evitar sospechas, atendiendo que el personal que efectúe la verificación debe hacerlo respetando la dignidad y decoro necesarios. \n\n"+
+"6.14.- El Trabajador se compromete a no utilizar boletas, facturas o cualquier comprobante oficial sin ajustarse a los usos propios, su uso salvo prueba en contrario será considerado fraude. Además de las sanciones, que puede ser el despido con justa causa, se convierte en responsable solidario ante el Ministerio de Hacienda. \n\n"+
+"6.15.- Queda terminantemente prohibido vender, enajenar o regalar el equipo, elementos de seguridad y ropa de trabajo que sean proporcionados por la empresa para ser usados en el desempeño de sus funciones. \n\n"+
+"6.16.- El trabajador es responsable de llevar la unidad a su cargo al mantenimiento en los talleres donde la Empresa expresamente le indique. Asimismo, el trabajador debe mantener limpia y debidamente engrasada a la unidad, llevando en forma periódica o cuando se lo necesite al correspondiente lavado y engrase. \n\n"+
+"6.17.- El trabajador se compromete a ser cortés con la clientela, no pudiendo discutir ni faltar al respeto a los clientes o a sus representantes. \n\n"+
+"6.18.- Las partes convienen que no será considerada hora extraordinaria, si no fuese solicitada previamente por escrito por el trabajador antes de su realización, y debidamente autorizada por el representante de la Empresa debidamente autorizado al efecto. \n\n"+
+"6.19.- El trabajador reconoce que queda prohibido, cargar o alzar en la unidad a su cargo o la que le fuere asignada, paquetes, bultos o encomiendas de terceras personas extrañas, o propias, o fuera de los fines que le son asignados, salvo una autorización en forma expresa de representantes de la Empresa. Esta cláusula por seguridad es importante, por lo que su incumplimiento podrá ser causal de despido con justa causa. \n\n"+
+"6.20.- Bajo ningún concepto la unidad de transporte que le fuera asignada, puede ser utilizado para otros fines que los que la Empresa decida, y por tanto cuando el mismo esté en el interior del país, se lo debe depositar en el local de la Empresa preparado para salir, vale decir con mantenimiento hecho y en buenas condiciones. \n\n"+
+"6.21.- El trabajador deberá controlar diariamente el nivel de los fluidos del vehículo (aceite, agua, fluidos de embrague, radiador, frenos). \n\n"+
+"6.22.- Queda convenido entre las partes, que la Empresa puede rotar al Empleado de acuerdo a la mejor operatividad de la Empresa. \n\n"+
+"6.23.- Las partes acuerdan, que por imagen empresarial y seguridad, los Empleados antes de la salida del lugar de trabajo, podrán ser requeridos a la exhibición de bultos, bolsones, carteras, etc., debiendo acceder a tal requerimiento.\n"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="37" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement x="41" y="21" width="486" height="16" isPrintWhenDetailOverflows="true" uuid="7e572031-175c-41c9-9fd9-435b52046a53"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
+					<font size="12" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["7.1. Las cuestiones controversiales que puedan emerger con motivo del cumplimiento del presente contrato y que no puedan ser resueltas de común acuerdo entre las partes, serán sometidas a la jurisdicción y competencia de los Juzgados y Tribunales de la ciudad de Asunción, Capital de la República del Paraguay, declarándose prorrogada cualquier otra jurisdicción que pudiera corresponder. -----------------------------------------\n\n"+
+"En prueba de conformidad, previa lectura y ratificación del contenido, firman las partes en dos ejemplares de un mismo tenor y a un solo efecto. \n"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="41" y="1" width="486" height="16" uuid="62157c4e-0b38-4f79-8c0c-5495c76b43ef"/>
+				<textElement>
+					<font size="12" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[SEPTIMA: JURISDICCION Y COMPETENCIA]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="5" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="127" splitType="Stretch">
+			<staticText>
+				<reportElement x="41" y="3" width="218" height="20" uuid="9cabe6db-e833-4009-a934-80b7c2048705"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[...................................................................]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="55" y="67" width="192" height="20" uuid="c761df24-7841-4e14-b388-339196054967"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[EMPLEADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="325" y="3" width="220" height="20" uuid="45d9b286-a04a-4ef8-8ba4-56d712e7e27f"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[....................................................................]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="335" y="67" width="198" height="20" uuid="9743fddd-b116-4054-b00b-88c44dfbadfd"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[EMPLEADOR]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="55" y="27" width="192" height="20" uuid="087c558d-9281-4748-89d1-eda79cd268b7"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_POSTULANTE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="335" y="27" width="198" height="20" uuid="cbaa372b-3a77-492d-b5a5-3e02818b8b86"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_NOMBRE_EMPLEADOR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="55" y="47" width="192" height="20" uuid="7ebaa07d-034a-4e3b-a1b2-e9728c73b18d"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["C.I. N°   " + $P{P_CI_EMPLEADO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="335" y="47" width="198" height="20" uuid="28e7f7e6-e7d1-4fe1-9c3f-254f74664c34"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["C.I. N°   " + $P{P_CI_EMPLEADOR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

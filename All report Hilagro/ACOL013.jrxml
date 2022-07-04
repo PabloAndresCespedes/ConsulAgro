@@ -1,0 +1,2454 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ACOL013" language="groovy" pageWidth="1020" pageHeight="612" orientation="Landscape" columnWidth="980" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e0404ea0-8917-429e-9954-500e4a5a98bf">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="353"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USUARIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[ADCS]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_EMPRESA" class="java.lang.String"/>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String"/>
+	<parameter name="P_PROGRAMA" class="java.lang.String"/>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String"/>
+	<parameter name="P_WHERE" class="java.lang.String">
+		<defaultValueExpression><![CDATA["AND EMPR = EMPR"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_WHERE2" class="java.lang.String">
+		<defaultValueExpression><![CDATA["AND 1 = 1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_DESDE" class="java.lang.String"/>
+	<parameter name="P_FEC_HASTA" class="java.lang.String"/>
+	<parameter name="P_ZAFRA" class="java.lang.String"/>
+	<parameter name="P_SUCURSAL" class="java.lang.String"/>
+	<parameter name="P_PRODUCTO" class="java.lang.String"/>
+	<parameter name="P_PROVEEDOR" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT FEC_PESAJE FEC_PESAJE,
+       NRO_TICKET,
+       DOC_OPERACION,
+       CHAPA,
+       BRUTO,
+       CODIGO_PROD,
+       DESC_PROD,
+       PROV,
+       PROV_DESC,
+       PUNT_COL1,
+       DCTO_COL1,
+       PUNT_COL2,
+       DCTO_COL2,
+       PUNT_COL3,
+       DCTO_COL3,
+       PUNT_COL4,
+       DCTO_COL4,
+       PUNT_COL5,
+       DCTO_COL5,
+       PUNT_COL6,
+       DCTO_COL6,
+       PUNT_COL7,
+       DCTO_COL7,
+       PUNT_COL8,
+       DCTO_COL8,
+       CONT_PUNT_HUM,
+       CONT_PORC_HUM,
+       CONT_PUNT_CUEXT,
+       CONT_PORC_CUEX,
+       CONT_PUNT_PH,
+       CONT_PORC_PH,
+       CONT_PUNT_CALCI,
+       CONT_PORC_CALCI,
+       CONT_PUNT_AVER,
+       CONT_PORC_AVER,
+       CONT_PUNT_OTROS,
+       CONT_PORC_OTROS,
+       CONT_PUNT_BROT,
+       CONT_PORC_BROT,
+       NETO,
+       BONIF,
+       TARA,
+       KG_DTO1,
+       KG_DTO2,
+       KG_DTO3,
+       KG_DTO4,
+       KG_DTO5,
+       KG_DTO6,
+       CASE
+         WHEN DOC_OPERACION IN ('CON', 'CRP') THEN
+          CASE
+            WHEN NVL(BRUTO, 0) = 0 THEN
+             0
+            ELSE
+             NVL(BRUTO, 0) - NVL(NETO, 0)
+          END
+         ELSE
+          CASE
+            WHEN NVL(BRUTO, 0) = 0 THEN
+             0
+            ELSE
+             (NVL(BRUTO, 0) - NVL(NETO, 0)) * (-1)
+          END
+       END TARA_REAL,
+       CASE
+         WHEN DOC_OPERACION IN ('CON', 'CRP') THEN
+          ROUND(NETO + NVL(BONIF, 0) -
+                NVL((KG_DTO1 + KG_DTO2 + KG_DTO3 + KG_DTO4 + KG_DTO5 +
+                    KG_DTO6 + KG_DTO7),
+                    0))
+         WHEN DOC_OPERACION IN ('LVR', 'DBP') THEN
+          ROUND(NETO + NVL(BONIF, 0) -
+                NVL((KG_DTO1 + KG_DTO2 + KG_DTO3 + KG_DTO4 + KG_DTO5 +
+                    KG_DTO6 + KG_DTO7),
+                    0)) * (-1)
+         ELSE
+          0
+       END TOT_NETO_REAL,
+       CASE
+         WHEN DOC_OPERACION IN ('CON', 'CRP') THEN
+          NETO
+         WHEN DOC_OPERACION IN ('LVR', 'DBP') THEN
+          NETO * (-1)
+         ELSE
+          1
+       END NETO_REAL,
+       CASE
+         WHEN DOC_OPERACION IN ('CON', 'CRP') THEN
+          CASE
+            WHEN NVL(BRUTO, 0) = 0 THEN
+             NETO
+            ELSE
+             NVL(BRUTO, 0)
+          END
+         WHEN DOC_OPERACION IN ('DBP', 'LVR') THEN
+          CASE
+            WHEN NVL(BRUTO, 0) = 0 THEN
+             NETO * (-1)
+            ELSE
+             NVL(BRUTO, 0) * (-1)
+          END
+         ELSE
+          1
+       END BRUTO_REAL,
+       KG_DTO7,
+       (KG_DTO1 + KG_DTO2 + KG_DTO3 + KG_DTO4 + KG_DTO5 + KG_DTO6 + KG_DTO7) TOT_DCTO,
+       ROUND(CASE
+               WHEN NVL((KG_DTO1 + KG_DTO2 + KG_DTO3 + KG_DTO4 + KG_DTO5 + KG_DTO6 +
+                        KG_DTO7),
+                        0) = 0 THEN
+                0
+               ELSE
+                CASE
+                  WHEN NVL(NETO, 0) = 0 THEN
+                   0
+                  ELSE
+                   ((KG_DTO1 + KG_DTO2 + KG_DTO3 + KG_DTO4 + KG_DTO5 + KG_DTO6 +
+                   KG_DTO7) / NVL(NETO, 1) * 100)
+                END
+             END,
+             2) PORC_DCTO,
+       ROUND(NETO + NVL(BONIF, 0) -
+             NVL((KG_DTO1 + KG_DTO2 + KG_DTO3 + KG_DTO4 + KG_DTO5 + KG_DTO6 +
+                 KG_DTO7),
+                 0)) TOT_NETO,
+       SUCURSAL,
+       SUC_DESC
+  FROM (SELECT FEC_PESAJE FEC_PESAJE,
+               DOC_NRO NRO_TICKET,
+               DOC_OPERACION,
+               CHAPA,
+               BRUTO,
+               NETO,
+               CODIGO_PROD,
+               DESC_PROD,
+               PROV,
+               PROV_DESC,
+               PUNT_COL1,
+               DCTO_COL1,
+               PUNT_COL2,
+               DCTO_COL2,
+               PUNT_COL3,
+               DCTO_COL3,
+               PUNT_COL4,
+               DCTO_COL4,
+               PUNT_COL5,
+               DCTO_COL5,
+               PUNT_COL6,
+               DCTO_COL6,
+               PUNT_COL7,
+               DCTO_COL7,
+               PUNT_COL8,
+               DCTO_COL8,
+               CONT_PUNT_HUM,
+               CONT_PORC_HUM,
+               CONT_PUNT_CUEXT,
+               CONT_PORC_CUEX,
+               CONT_PUNT_PH,
+               CONT_PORC_PH,
+               CONT_PUNT_CALCI,
+               CONT_PORC_CALCI,
+               CONT_PUNT_AVER,
+               CONT_PORC_AVER,
+               CONT_PUNT_OTROS,
+               CONT_PORC_OTROS,
+               CONT_PUNT_BROT,
+               CONT_PORC_BROT,
+               BONIF,
+               CASE
+                 WHEN NVL(BRUTO, 0) = 0 THEN
+                  0
+                 ELSE
+                  NVL(BRUTO, 0) - NVL(NETO, 0)
+               END TARA,
+               CASE
+                 WHEN DCTO_COL1 <> 0 THEN
+                  ROUND(NETO * (DCTO_COL1 / 100))
+                 ELSE
+                  0
+               END KG_DTO1,
+               CASE
+                 WHEN DCTO_COL2 <> 0 THEN
+                  ROUND(NETO * (DCTO_COL2 / 100))
+                 ELSE
+                  0
+               END KG_DTO2,
+               CASE
+                 WHEN DCTO_COL3 <> 0 THEN
+                  ROUND(NETO * (DCTO_COL3 / 100))
+                 ELSE
+                  0
+               END KG_DTO3,
+               CASE
+                 WHEN DCTO_COL4 <> 0 THEN
+                  ROUND(NETO * (DCTO_COL4 / 100))
+                 ELSE
+                  0
+               END KG_DTO4,
+               CASE
+                 WHEN DCTO_COL5 <> 0 THEN
+                  ROUND(NETO * (DCTO_COL5 / 100))
+                 ELSE
+                  0
+               END KG_DTO5,
+               CASE
+                 WHEN DCTO_COL6 <> 0 THEN
+                  ROUND(NETO * (DCTO_COL6 / 100))
+                 ELSE
+                  0
+               END KG_DTO6,
+               CASE
+                 WHEN DCTO_COL7 <> 0 THEN
+                  ROUND(NETO * (DCTO_COL7 / 100))
+                 ELSE
+                  0
+               END KG_DTO7,
+               NVL(DOC_SUC, 1) SUCURSAL,
+               SUC_DESC
+          FROM ACO_PROD_TABLA_AUX     A,
+               ACO_DOCUMENTO          B,
+               GEN_SUCURSAL,
+               ACO_PROD_BRUTO         P,
+               ACO_PRODBRUTO_CONTRATO
+         WHERE DOC_CLAVE_TICKET = NRO_TICKET
+           AND NVL(DOC_SUC, 1) = SUC_CODIGO
+
+           AND DOC_OPERACION <> 'SPP'
+           AND EMPR = DOC_EMPR
+
+           AND DOC_EMPR = SUC_EMPR
+           AND EMPR = DOC_EMPR
+
+           AND DOC_EMPR =  $P!{P_EMPRESA}
+           $P!{P_WHERE}
+
+           AND DOC_OPERACION <> 'TEN'
+           AND DOC_CLAVE_TICKET = PRBR_CLAVE_TICKET
+           AND DOC_EMPR = PRBR_EMPR
+
+           AND PRBR_CLAVE_TICKET = CON_CLAVE_TICKET(+)
+           AND PRBR_EMPR = CON_CLAVE_EMPR(+)
+
+        UNION ALL
+        SELECT DOC_FEC FEC_PESAJE,
+               DOC_NRO NRO_TICKET,
+               DOC_OPERACION,
+               DOC_NRO_CHAPA CHAPA,
+               DOC_UNID_BRUTO BRUTO,
+               DOC_UNID_NETO NETO,
+               PROD_CODIGO CODIGO_PROD,
+               PROD_DESC DESC_PROD,
+               PROV_CODIGO PROV,
+               PROV_RAZON_SOCIAL PROV_DESC,
+               0 PUNT_COL1,
+               0 DCTO_COL1,
+               0 PUNT_COL2,
+               0 DCTO_COL2,
+               0 PUNT_COL3,
+               0 DCTO_COL3,
+               0 PUNT_COL4,
+               0 DCTO_COL4,
+               0 PUNT_COL5,
+               0 DCTO_COL5,
+               0 PUNT_COL6,
+               0 DCTO_COL6,
+               0 PUNT_COL7,
+               0 DCTO_COL7,
+               0 PUNT_COL8,
+               0 DCTO_COL8,
+               0 CONT_PUNT_HUM,
+               0 CONT_PORC_HUM,
+               0 CONT_PUNT_CUEXT,
+               0 CONT_PORC_CUEX,
+               0 CONT_PUNT_PH,
+               0 CONT_PORC_PH,
+               0 CONT_PUNT_CALCI,
+               0 CONT_PORC_CALCI,
+               0 CONT_PUNT_AVER,
+               0 CONT_PORC_AVER,
+               0 CONT_PUNT_OTROS,
+               0 CONT_PORC_OTROS,
+               0 CONT_PUNT_BROT,
+               0 CONT_PORC_BROT,
+               0 BONIF,
+               CASE
+                 WHEN NVL(DOC_UNID_BRUTO, 0) = 0 THEN
+                  0
+                 ELSE
+                  NVL(DOC_UNID_BRUTO, 0) - NVL(DOC_UNID_NETO, 0)
+               END TARA,
+               CASE
+                 WHEN 0 <> 0 THEN
+                  ROUND(DOC_UNID_NETO * (0 / 100))
+                 ELSE
+                  0
+               END KG_DTO1,
+               CASE
+                 WHEN 0 <> 0 THEN
+                  ROUND(DOC_UNID_NETO * (0 / 100))
+                 ELSE
+                  0
+               END KG_DTO2,
+               CASE
+                 WHEN 0 <> 0 THEN
+                  ROUND(DOC_UNID_NETO * (0 / 100))
+                 ELSE
+                  0
+               END KG_DTO3,
+               CASE
+                 WHEN 0 <> 0 THEN
+                  ROUND(DOC_UNID_NETO * (0 / 100))
+                 ELSE
+                  0
+               END KG_DTO4,
+               CASE
+                 WHEN 0 <> 0 THEN
+                  ROUND(DOC_UNID_NETO * (0 / 100))
+                 ELSE
+                  0
+               END KG_DTO5,
+               CASE
+                 WHEN 0 <> 0 THEN
+                  ROUND(DOC_UNID_NETO * (0 / 100))
+                 ELSE
+                  0
+               END KG_DTO6,
+               CASE
+                 WHEN 0 <> 0 THEN
+                  ROUND(DOC_UNID_NETO * (0 / 100))
+                 ELSE
+                  0
+               END KG_DTO7,
+               NVL(DOC_SUC, 1) SUCURSAL,
+               SUC_DESC
+          FROM ACO_DOCUMENTO,
+               ACO_PRODUCTO,
+               FIN_PROVEEDOR,
+               GEN_SUCURSAL,
+               ACO_PROD_BRUTO P,
+               ACO_PRODBRUTO_CONTRATO
+         WHERE DOC_PRODUCTO = PROD_CLAVE
+           AND DOC_EMPR = PROD_EMPR
+
+           AND DOC_PROV = PROV_CODIGO
+           AND DOC_EMPR = PROV_EMPR
+
+           AND DOC_OPERACION IN ('DBP', 'CRP', 'LVR')
+           AND NVL(DOC_SUC, 1) = SUC_CODIGO
+           AND DOC_EMPR = SUC_EMPR
+           AND DOC_CLAVE_TICKET = PRBR_CLAVE_TICKET
+           AND DOC_EMPR = PRBR_EMPR
+
+           AND PRBR_CLAVE_TICKET = CON_CLAVE_TICKET
+           AND PRBR_EMPR = CON_CLAVE_EMPR
+
+           $P!{P_WHERE2}
+           AND DOC_EMPR =  $P!{P_EMPRESA})
+ ORDER BY SUCURSAL, CODIGO_PROD, PROV_DESC, FEC_PESAJE, NRO_TICKET]]>
+	</queryString>
+	<field name="FEC_PESAJE" class="java.sql.Timestamp"/>
+	<field name="NRO_TICKET" class="java.math.BigDecimal"/>
+	<field name="DOC_OPERACION" class="java.lang.String"/>
+	<field name="CHAPA" class="java.lang.String"/>
+	<field name="BRUTO" class="java.math.BigDecimal"/>
+	<field name="CODIGO_PROD" class="java.math.BigDecimal"/>
+	<field name="DESC_PROD" class="java.lang.String"/>
+	<field name="PROV" class="java.math.BigDecimal"/>
+	<field name="PROV_DESC" class="java.lang.String"/>
+	<field name="PUNT_COL1" class="java.math.BigDecimal"/>
+	<field name="DCTO_COL1" class="java.math.BigDecimal"/>
+	<field name="PUNT_COL2" class="java.math.BigDecimal"/>
+	<field name="DCTO_COL2" class="java.math.BigDecimal"/>
+	<field name="PUNT_COL3" class="java.math.BigDecimal"/>
+	<field name="DCTO_COL3" class="java.math.BigDecimal"/>
+	<field name="PUNT_COL4" class="java.math.BigDecimal"/>
+	<field name="DCTO_COL4" class="java.math.BigDecimal"/>
+	<field name="PUNT_COL5" class="java.math.BigDecimal"/>
+	<field name="DCTO_COL5" class="java.math.BigDecimal"/>
+	<field name="PUNT_COL6" class="java.math.BigDecimal"/>
+	<field name="DCTO_COL6" class="java.math.BigDecimal"/>
+	<field name="PUNT_COL7" class="java.math.BigDecimal"/>
+	<field name="DCTO_COL7" class="java.math.BigDecimal"/>
+	<field name="PUNT_COL8" class="java.math.BigDecimal"/>
+	<field name="DCTO_COL8" class="java.math.BigDecimal"/>
+	<field name="CONT_PUNT_HUM" class="java.math.BigDecimal"/>
+	<field name="CONT_PORC_HUM" class="java.math.BigDecimal"/>
+	<field name="CONT_PUNT_CUEXT" class="java.math.BigDecimal"/>
+	<field name="CONT_PORC_CUEX" class="java.math.BigDecimal"/>
+	<field name="CONT_PUNT_PH" class="java.math.BigDecimal"/>
+	<field name="CONT_PORC_PH" class="java.math.BigDecimal"/>
+	<field name="CONT_PUNT_CALCI" class="java.math.BigDecimal"/>
+	<field name="CONT_PORC_CALCI" class="java.math.BigDecimal"/>
+	<field name="CONT_PUNT_AVER" class="java.math.BigDecimal"/>
+	<field name="CONT_PORC_AVER" class="java.math.BigDecimal"/>
+	<field name="CONT_PUNT_OTROS" class="java.math.BigDecimal"/>
+	<field name="CONT_PORC_OTROS" class="java.math.BigDecimal"/>
+	<field name="CONT_PUNT_BROT" class="java.math.BigDecimal"/>
+	<field name="CONT_PORC_BROT" class="java.math.BigDecimal"/>
+	<field name="NETO" class="java.math.BigDecimal"/>
+	<field name="BONIF" class="java.math.BigDecimal"/>
+	<field name="TARA" class="java.math.BigDecimal"/>
+	<field name="KG_DTO1" class="java.math.BigDecimal"/>
+	<field name="KG_DTO2" class="java.math.BigDecimal"/>
+	<field name="KG_DTO3" class="java.math.BigDecimal"/>
+	<field name="KG_DTO4" class="java.math.BigDecimal"/>
+	<field name="KG_DTO5" class="java.math.BigDecimal"/>
+	<field name="KG_DTO6" class="java.math.BigDecimal"/>
+	<field name="TARA_REAL" class="java.math.BigDecimal"/>
+	<field name="TOT_NETO_REAL" class="java.math.BigDecimal"/>
+	<field name="NETO_REAL" class="java.math.BigDecimal"/>
+	<field name="BRUTO_REAL" class="java.math.BigDecimal"/>
+	<field name="KG_DTO7" class="java.math.BigDecimal"/>
+	<field name="TOT_DCTO" class="java.math.BigDecimal"/>
+	<field name="PORC_DCTO" class="java.math.BigDecimal"/>
+	<field name="TOT_NETO" class="java.math.BigDecimal"/>
+	<field name="SUCURSAL" class="java.math.BigDecimal"/>
+	<field name="SUC_DESC" class="java.lang.String"/>
+	<variable name="BONIF_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{BONIF}]]></variableExpression>
+	</variable>
+	<variable name="TOT_DCTO_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_DCTO}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO5_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO5}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO6_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO6}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO3_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO3}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO7_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO7}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO4_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO4}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO2_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO2}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO1_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO1}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL1_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*($F{PUNT_COL1}/100)]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL1_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL1}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL2_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*($F{PUNT_COL2}/100)]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL2_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL2}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL3_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*($F{PUNT_COL3}/100)]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL3_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL3}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL4_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*($F{PUNT_COL4}/100)]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL4_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL4}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL5_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*($F{PUNT_COL5}/100)]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL5_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL5}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL6_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*($F{PUNT_COL6}/100)]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL6_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL6}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL7_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*($F{PUNT_COL7}/100)]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL7_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL7}]]></variableExpression>
+	</variable>
+	<variable name="PORC_DCTO_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{PORC_DCTO}]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL1_2" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Average">
+		<variableExpression><![CDATA[$F{DCTO_COL1}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL1_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*($F{PUNT_COL1}/100)]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL1_3" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL1}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL2_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*($F{PUNT_COL2}/100)]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL2_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL2}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL3_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*($F{PUNT_COL3}/100)]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL3_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL3}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL4_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*($F{PUNT_COL4}/100)]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL4_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL4}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL5_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*($F{PUNT_COL5}/100)]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL5_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL5}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL6_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*($F{PUNT_COL6}/100)]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL6_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL6}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL7_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*($F{PUNT_COL7}/100)]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL7_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL7}]]></variableExpression>
+	</variable>
+	<variable name="TOT_DCTO_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_DCTO}]]></variableExpression>
+	</variable>
+	<variable name="BONIF_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{BONIF}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL1_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*($F{PUNT_COL1}/100)]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL1_4" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL1}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL2_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*($F{PUNT_COL2}/100)]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL2_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL2}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL3_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*($F{PUNT_COL3}/100)]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL3_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL3}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL4_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*($F{PUNT_COL4}/100)]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL4_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL4}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL5_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*($F{PUNT_COL5}/100)]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL5_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL5}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL6_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*($F{PUNT_COL6}/100)]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL6_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL6}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL7_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*($F{PUNT_COL7}/100)]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL7_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL7}]]></variableExpression>
+	</variable>
+	<variable name="BRUTO_REAL_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{BRUTO_REAL}]]></variableExpression>
+	</variable>
+	<variable name="BRUTO_REAL_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{BRUTO_REAL}]]></variableExpression>
+	</variable>
+	<variable name="BRUTO_REAL_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{BRUTO_REAL}]]></variableExpression>
+	</variable>
+	<variable name="TOT_NETO_REAL_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_NETO_REAL}]]></variableExpression>
+	</variable>
+	<variable name="TOT_NETO_REAL_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_NETO_REAL}]]></variableExpression>
+	</variable>
+	<variable name="TOT_NETO_REAL_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_NETO_REAL}]]></variableExpression>
+	</variable>
+	<variable name="NETO_REAL_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO_REAL}]]></variableExpression>
+	</variable>
+	<variable name="NETO_REAL_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO_REAL}]]></variableExpression>
+	</variable>
+	<variable name="NETO_REAL_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO_REAL}]]></variableExpression>
+	</variable>
+	<variable name="TARA_REAL_1" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{TARA_REAL}]]></variableExpression>
+	</variable>
+	<variable name="TARA_REAL_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{TARA_REAL}]]></variableExpression>
+	</variable>
+	<variable name="TARA_REAL_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{TARA_REAL}]]></variableExpression>
+	</variable>
+	<variable name="TOT_NETO_REAL_4" class="java.math.BigDecimal" resetType="Group" resetGroup="proveedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_NETO_REAL}]]></variableExpression>
+	</variable>
+	<variable name="TOT_NETO_REAL_5" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_NETO_REAL}]]></variableExpression>
+	</variable>
+	<variable name="TOT_NETO_REAL_6" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_NETO_REAL}]]></variableExpression>
+	</variable>
+	<variable name="BONIF_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{BONIF}]]></variableExpression>
+	</variable>
+	<variable name="TOT_DCTO_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_DCTO}]]></variableExpression>
+	</variable>
+	<variable name="TOT_DCTO_4" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_DCTO}]]></variableExpression>
+	</variable>
+	<variable name="TOT_DCTO_5" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_DCTO}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO5_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO5}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO5_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO5}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO6_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO6}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO6_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO6}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO3_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO3}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO3_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO3}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO7_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO7}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO7_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO7}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO4_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO4}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO4_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO4}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO2_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO2}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO2_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO2}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO1_2" class="java.math.BigDecimal" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO1}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO1_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO1}]]></variableExpression>
+	</variable>
+	<variable name="BRUTO_REAL_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{BRUTO_REAL}]]></variableExpression>
+	</variable>
+	<variable name="TARA_REAL_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TARA_REAL}]]></variableExpression>
+	</variable>
+	<variable name="NETO_REAL_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO_REAL}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL1_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*$F{PUNT_COL1}/100]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL1_5" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL1}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO1_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO1}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL2_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*$F{PUNT_COL2}/100]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL2_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL2}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO2_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO2}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL4_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*$F{PUNT_COL4}/100]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL4_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL4}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO4_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO4}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL7_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*$F{PUNT_COL7}/100]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL7_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL7}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO7_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO7}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL3_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*$F{PUNT_COL3}/100]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL3_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL3}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO3_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO3}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL6_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*$F{PUNT_COL6}/100]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL6_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL6}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO6_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO6}]]></variableExpression>
+	</variable>
+	<variable name="PUNT_COL5_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{NETO}*$F{PUNT_COL5}/100]]></variableExpression>
+	</variable>
+	<variable name="DCTO_COL5_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DCTO_COL5}]]></variableExpression>
+	</variable>
+	<variable name="KG_DTO5_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{KG_DTO5}]]></variableExpression>
+	</variable>
+	<variable name="TOT_DCTO_6" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_DCTO}]]></variableExpression>
+	</variable>
+	<variable name="BONIF_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{BONIF}]]></variableExpression>
+	</variable>
+	<variable name="TOT_NETO_REAL_7" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_NETO_REAL}]]></variableExpression>
+	</variable>
+	<group name="SUCURSAL" isStartNewColumn="true" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{SUCURSAL}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<textField isBlankWhenNull="true">
+					<reportElement x="75" y="4" width="30" height="10" uuid="220c9344-ee65-4c4a-a355-26d0b8491f8c"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SUCURSAL}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="107" y="4" width="127" height="10" uuid="608f60a6-14a6-465c-a6d9-8850653f8f3d"/>
+					<textElement>
+						<font fontName="Arial" size="8" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SUC_DESC}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="20" y="3" width="55" height="10" uuid="c9c3bbf5-9b6a-4fec-a3a3-f04c1a3e4006"/>
+					<textElement>
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Sucursal:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="18">
+				<line>
+					<reportElement x="135" y="6" width="842" height="1" uuid="8173c4c8-aa1c-4fc8-b537-795e4f125d62"/>
+				</line>
+				<staticText>
+					<reportElement x="47" y="6" width="75" height="10" uuid="d1ba36e4-29a3-43e3-87c3-76aeb460f659"/>
+					<textElement>
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total sucursal  ...]]></text>
+				</staticText>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="238" y="7" width="24" height="9" backcolor="#CCCCCC" uuid="a72f49c3-feb0-4e18-95e6-b9d681338591"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PUNT_COL1_3}/$V{NETO_REAL_3}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="262" y="7" width="24" height="9" backcolor="#CCCCCC" uuid="add7d890-f48d-459c-a749-faf40c82d4f3"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{DCTO_COL1_4}/$V{NETO_REAL_3}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="321" y="7" width="24" height="9" uuid="713fa60f-e165-4748-940b-2f4922749639"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PUNT_COL2_3}/$V{NETO_REAL_3}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="345" y="7" width="24" height="9" uuid="bbe2b997-7981-4db7-be93-13b51dcaaf18"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{DCTO_COL2_3}/$V{NETO_REAL_3}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="569" y="7" width="24" height="9" backcolor="#CCCCCC" uuid="566cccd0-10f7-4b6b-9eb3-07e73c92027f"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PUNT_COL3_3}/$V{NETO_REAL_3}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="593" y="7" width="24" height="9" backcolor="#CCCCCC" uuid="9406e16c-4afc-4635-93a5-78effa6f3c9b"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{DCTO_COL3_3}/$V{NETO_REAL_3}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="404" y="7" width="24" height="9" backcolor="#CCCCCC" uuid="6f69872c-7894-40b5-a899-e772671980f9"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PUNT_COL4_3}/$V{NETO_REAL_3}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="428" y="7" width="24" height="9" backcolor="#CCCCCC" uuid="22dd7182-506c-41b3-85c2-a9b4a4eea4b7"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{DCTO_COL4_3}/$V{NETO_REAL_3}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="735" y="7" width="24" height="9" backcolor="#CCCCCC" uuid="50b61764-d8fa-406e-98ca-d09e1fe67792"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PUNT_COL5_3}/$V{NETO_REAL_3}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="759" y="7" width="24" height="9" backcolor="#CCCCCC" uuid="17716bbf-f4b9-47b6-a75e-156338ea92df"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{DCTO_COL5_3}/$V{NETO_REAL_3}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="652" y="7" width="24" height="9" uuid="db550353-2747-46b4-b4a2-43ad9a58d0ce"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PUNT_COL6_3}/$V{NETO_REAL_3}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="676" y="7" width="24" height="9" uuid="260a5f55-60ac-456d-99e4-05e51a4b72d5"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{DCTO_COL6_3}/$V{NETO_REAL_3}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="486" y="7" width="24" height="9" uuid="6239387f-d524-4f6c-bd41-9ae7753fcc7f"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PUNT_COL7_3}/$V{NETO_REAL_3}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="510" y="7" width="24" height="9" uuid="48007a82-3ed2-4066-99ef-501afff864f7"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{DCTO_COL7_3}/$V{NETO_REAL_3}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="119" y="7" width="40" height="9" uuid="10d375d1-90a1-4935-a05e-02e83f333da5">
+						<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($V{BRUTO_REAL_3}< 0 ? "#B40404":"#000000")]]></propertyExpression>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{BRUTO_REAL_3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="195" y="7" width="40" height="9" uuid="18c93fbc-8145-4c6d-bf27-04220f26689c">
+						<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($V{NETO_REAL_3}< 0 ? "#B40404":"#000000")]]></propertyExpression>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{NETO_REAL_3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="158" y="7" width="40" height="9" uuid="ab3ce6fa-1e1d-431b-b79d-a73ea8253fcb">
+						<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($V{TARA_REAL_3}< 0 ? "#B40404":"#000000")]]></propertyExpression>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TARA_REAL_3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="920" y="7" width="56" height="9" uuid="dbc67678-c3f4-4a1d-9d44-aff974c963de">
+						<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($V{TOT_NETO_REAL_6}< 0 ? "#B40404":"#000000")]]></propertyExpression>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_NETO_REAL_6}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement mode="Opaque" x="882" y="7" width="35" height="9" backcolor="#CCCCCC" uuid="2393ab7f-ef71-4042-aa87-4a06f6a19e31"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{BONIF_3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="818" y="7" width="36" height="9" uuid="ae3d352e-914e-4b3a-9f75-22580e100614">
+						<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($V{TOT_DCTO_3}< 0 ? "#B40404":"#000000")]]></propertyExpression>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_DCTO_3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="854" y="7" width="24" height="9" uuid="29f87ead-43ff-42a4-a91b-ebbcd19acf11"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{TOT_DCTO_5}/$V{NETO_REAL_3}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement mode="Opaque" x="783" y="7" width="30" height="9" backcolor="#CCCCCC" uuid="77dab57f-4db0-44f6-b6a2-ae35567bd32e"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{KG_DTO5_3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="700" y="7" width="30" height="9" uuid="76469c3f-c887-404b-be29-1a6bf79ea127"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{KG_DTO6_3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement mode="Opaque" x="617" y="7" width="30" height="9" backcolor="#CCCCCC" uuid="cc32bd13-78a6-4b45-b5f1-781946321269"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{KG_DTO3_3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="534" y="7" width="30" height="9" uuid="1537ddbf-534a-4831-b399-7ef67e666312"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{KG_DTO7_3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement mode="Opaque" x="452" y="7" width="30" height="9" backcolor="#CCCCCC" uuid="c7ff49c0-3ab1-421f-8e62-161277b1de73"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{KG_DTO4_3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="369" y="7" width="30" height="9" uuid="13d55c6a-50ce-4e5a-9346-87912200ba70"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{KG_DTO2_3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement mode="Opaque" x="286" y="7" width="30" height="9" backcolor="#CCCCCC" uuid="3bf3d2f3-0fc3-4495-9873-d19cabc94caf"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{KG_DTO1_3}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="producto" isStartNewColumn="true" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{CODIGO_PROD}]]></groupExpression>
+		<groupHeader>
+			<band height="12">
+				<textField isBlankWhenNull="true">
+					<reportElement x="86" y="1" width="32" height="10" uuid="163d56fd-de3a-4939-b895-891e4d589cdb"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CODIGO_PROD}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="120" y="1" width="113" height="10" uuid="3e52e77c-c8c6-46ec-9b5a-b11eba26eaea"/>
+					<textElement>
+						<font fontName="Arial" size="8" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESC_PROD}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="31" y="0" width="55" height="10" uuid="fb10dcfd-4c3b-48b3-be08-c2bb92f51499"/>
+					<textElement>
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Producto:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<line>
+					<reportElement x="135" y="6" width="842" height="1" uuid="4b03c6d4-979b-469a-9fcd-a5af209eae80"/>
+				</line>
+				<staticText>
+					<reportElement x="47" y="6" width="75" height="10" uuid="80aedb9c-5795-4fd5-a4b0-5fb78a539390"/>
+					<textElement>
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total producto  ...]]></text>
+				</staticText>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="238" y="7" width="24" height="9" backcolor="#CCCCCC" uuid="948d2817-abeb-4e7a-b8c8-2f4228457464"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PUNT_COL1_2}/$V{NETO_REAL_2} *100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="262" y="7" width="24" height="9" backcolor="#CCCCCC" uuid="bc535462-7dcd-4515-8b2d-dd7edb846f5d"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{DCTO_COL1_2}/$V{NETO_REAL_2}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="321" y="7" width="24" height="9" uuid="93eca20f-a1b4-4267-8140-849f6b8a6664"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PUNT_COL2_2}/$V{NETO_REAL_2}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="345" y="7" width="24" height="9" uuid="b1c85c29-da81-4baa-be22-19a786c185e2"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{DCTO_COL2_2}/$V{NETO_REAL_2}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="569" y="7" width="24" height="9" backcolor="#CCCCCC" uuid="9f95e3e4-1122-489a-bf22-10fdc4dee69c"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PUNT_COL3_2}/$V{NETO_REAL_2} *100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="593" y="7" width="24" height="9" backcolor="#CCCCCC" uuid="17dc6ec9-eb7f-49f3-899a-e8a33fa7f909"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{DCTO_COL3_2}/$V{NETO_REAL_2}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="404" y="7" width="24" height="9" backcolor="#CCCCCC" uuid="9b2e41c8-4d83-4739-b6bd-0708655b88c8"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PUNT_COL4_2}/$V{NETO_REAL_2} *100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="428" y="7" width="24" height="9" backcolor="#CCCCCC" uuid="a6ffd5c5-f97f-4663-b18e-fd15bc4eca0f"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{DCTO_COL4_2}/$V{NETO_REAL_2}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="735" y="7" width="24" height="9" backcolor="#CCCCCC" uuid="53688cc7-7f4b-4f1a-b1d6-2c5bc90481ba"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PUNT_COL5_2}/$V{NETO_REAL_2}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="759" y="7" width="24" height="9" backcolor="#CCCCCC" uuid="2bbd993f-cfd5-486d-8118-5a6447180017"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{DCTO_COL5_2}/$V{NETO_REAL_2}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="676" y="7" width="24" height="9" uuid="df522033-ed34-4569-a3f7-1baa01503ef5"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{DCTO_COL6_2}/$V{NETO_REAL_2}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="652" y="7" width="24" height="9" uuid="1eb61d8c-33fc-4920-b9bc-5df42c3c64bd"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PUNT_COL6_2}/$V{NETO_REAL_2}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="486" y="7" width="24" height="9" uuid="736369c9-96f3-4f4a-bade-5bece806228c"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PUNT_COL7_2}/$V{NETO_REAL_2}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="510" y="7" width="24" height="9" uuid="56ebf145-2d9e-4e58-b9c4-8fb34338a57f"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{DCTO_COL7_2}/$V{NETO_REAL_2}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="818" y="7" width="36" height="9" uuid="d0612dea-c98a-45f4-bd9c-bb935bccfe0a">
+						<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($V{TOT_DCTO_2} < 0 ? "#B40404":"#000000")]]></propertyExpression>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_DCTO_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement mode="Opaque" x="882" y="7" width="35" height="9" backcolor="#CCCCCC" uuid="aab4b7e0-6aa0-4dcd-a055-f359e12328fd"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{BONIF_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="119" y="7" width="40" height="9" uuid="4ec84ca5-02f4-4d81-8567-09779d2d96c1">
+						<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($V{BRUTO_REAL_2} < 0 ? "#B40404":"#000000")]]></propertyExpression>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{BRUTO_REAL_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="195" y="7" width="40" height="9" uuid="7b52f011-312c-46db-a5f2-59748fb8c976">
+						<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($V{NETO_REAL_2}< 0 ? "#B40404":"#000000")]]></propertyExpression>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{NETO_REAL_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="158" y="7" width="40" height="9" uuid="0546700f-bf96-4688-a558-3ce4f4c920f6">
+						<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($V{TARA_REAL_2}< 0? "#B40404":"#000000")]]></propertyExpression>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TARA_REAL_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="920" y="7" width="56" height="9" uuid="55e174ae-2b9d-4bc8-b6a7-44a6e2589efc">
+						<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($V{TOT_NETO_REAL_5} < 0 ? "#B40404":"#000000")]]></propertyExpression>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_NETO_REAL_5}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="854" y="7" width="24" height="9" uuid="ad679b47-151f-4399-b152-2a388cac1350"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{TOT_DCTO_4}/$V{NETO_REAL_2}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement mode="Opaque" x="783" y="7" width="30" height="9" backcolor="#CCCCCC" uuid="62011b28-be6e-43b0-9361-a4c4c74f26eb"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{KG_DTO5_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="700" y="7" width="30" height="9" uuid="4cc10692-e575-47ac-aa72-78e67f120737"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{KG_DTO6_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement mode="Opaque" x="617" y="7" width="30" height="9" backcolor="#CCCCCC" uuid="0aa85628-28ee-42eb-bc62-111fa02b2a67"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{KG_DTO3_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="534" y="7" width="30" height="9" uuid="b15b6c1f-20ab-46f5-a30a-4af13e8f9b72"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{KG_DTO7_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement mode="Opaque" x="452" y="7" width="30" height="9" backcolor="#CCCCCC" uuid="3854d24d-a7b4-4c67-a286-f043a4b1527c"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{KG_DTO4_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="369" y="7" width="30" height="9" uuid="b1adecfc-01e6-479c-b912-2125bf7fd742"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{KG_DTO2_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement mode="Opaque" x="286" y="7" width="30" height="9" backcolor="#CCCCCC" uuid="3d08c4c4-3252-4a9b-90cf-35610efd7f3c"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{KG_DTO1_2}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="proveedor" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{PROV}]]></groupExpression>
+		<groupHeader>
+			<band height="13">
+				<textField isBlankWhenNull="true">
+					<reportElement x="92" y="1" width="37" height="12" uuid="20a19f17-f790-43b1-a1a1-91b9f4fb214b"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PROV}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="131" y="1" width="131" height="12" uuid="2fbcad24-8f99-4771-aa2b-0499177e8fd8"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PROV_DESC}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="36" y="1" width="55" height="10" uuid="49c28801-d33f-43ee-af27-2ab21bac8343"/>
+					<textElement>
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Proveedor:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<line>
+					<reportElement x="135" y="5" width="842" height="1" uuid="1c39ba1a-e8ed-4859-97ad-1a9abc916c8e"/>
+				</line>
+				<textField pattern="#,##0">
+					<reportElement mode="Opaque" x="882" y="6" width="35" height="9" backcolor="#CCCCCC" uuid="01afd8fa-ff1d-4c93-9e56-8daa398c842c"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{BONIF_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="818" y="6" width="36" height="9" uuid="68b28be3-11ad-4907-a791-33cfe0d99b4c">
+						<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($V{TOT_DCTO_1} < 0 ? "#B40404":"#000000")]]></propertyExpression>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_DCTO_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="854" y="6" width="24" height="9" uuid="4c338db5-ef1d-4638-a691-974918f04a40"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{TOT_DCTO_1}/$V{NETO_REAL_1}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement mode="Opaque" x="783" y="6" width="30" height="9" backcolor="#CCCCCC" uuid="334f9e58-15c5-4c23-883f-ef5d4a305bb4"/>
+					<textElement textAlignment="Right">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{KG_DTO5_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="759" y="6" width="24" height="9" backcolor="#CCCCCC" uuid="be8cefcd-3f52-41f9-9723-2f0a890a27c8"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{KG_DTO5_1}/$V{NETO_REAL_1}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="735" y="6" width="24" height="9" backcolor="#CCCCCC" uuid="0ca20d10-1919-4ea6-a4a4-9a2c85249931"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PUNT_COL5_1}/ $V{NETO_REAL_1}* 100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="700" y="6" width="30" height="9" uuid="496779cf-2dbb-4135-b76e-2d1144a85e84"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{KG_DTO6_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="676" y="6" width="24" height="9" uuid="8a6c922d-ef76-483f-9822-9c6f46a7bf39"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{KG_DTO6_1}/$V{NETO_REAL_1}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="652" y="6" width="24" height="9" uuid="560be964-1915-40b5-9379-deb27886f70b"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PUNT_COL6_1}/ $V{NETO_REAL_1}* 100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement mode="Opaque" x="617" y="6" width="30" height="9" backcolor="#CCCCCC" uuid="317835e2-cebc-4343-b83c-a33760f76a59"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{KG_DTO3_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="593" y="6" width="24" height="9" backcolor="#CCCCCC" uuid="368eac5f-56df-43ec-bbf0-21030d61389e"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{KG_DTO3_1}/$V{NETO_REAL_1}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="569" y="6" width="24" height="9" backcolor="#CCCCCC" uuid="23db18d1-4a05-44f2-a7fb-8ff45c773f55"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PUNT_COL3_1}/ $V{NETO_REAL_1}* 100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="534" y="6" width="30" height="9" uuid="668c02f9-bb24-46f0-bbf8-8086edb2959c"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{KG_DTO7_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="510" y="6" width="24" height="9" uuid="14bf40cb-9190-4bb3-9ea7-d8eebc20eea2"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{KG_DTO7_1}/$V{NETO_REAL_1}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="486" y="6" width="24" height="9" uuid="da4281f2-8b6c-462c-94d8-924abe21fc36"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PUNT_COL7_1}/$V{NETO_REAL_1}* 100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement mode="Opaque" x="452" y="6" width="30" height="9" backcolor="#CCCCCC" uuid="9e9377bc-7bde-417b-a2db-04ae1f510069"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{KG_DTO4_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="428" y="6" width="24" height="9" backcolor="#CCCCCC" uuid="941175f6-371a-4bb7-b7ba-ce6b6c28c829"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{KG_DTO4_1}/$V{NETO_REAL_1}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="404" y="6" width="24" height="9" backcolor="#CCCCCC" uuid="eacc71f3-9bf1-4b6e-9e25-2e9e5f5b6261"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PUNT_COL4_1} /$V{NETO_REAL_1}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="369" y="6" width="30" height="9" uuid="e80d8bb0-793c-48aa-b4f0-d2293c1ad70e"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{KG_DTO2_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="345" y="6" width="24" height="9" uuid="a11d1370-2115-47c0-a9a9-1c0d4b4fde68"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{KG_DTO2_1}/$V{NETO_REAL_1}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="321" y="6" width="24" height="9" uuid="23bd3fd8-82bb-470b-aa81-9c38f7abfd4c"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PUNT_COL2_1}/ $V{NETO_REAL_1}* 100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement mode="Opaque" x="286" y="6" width="30" height="9" backcolor="#CCCCCC" uuid="8b58240a-b9f9-4f58-a696-499a6494ef8d"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{KG_DTO1_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="238" y="6" width="24" height="9" backcolor="#CCCCCC" uuid="f0c91793-5492-4d9f-adfa-f167e67d9fd7"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PUNT_COL1_1} / $V{NETO_REAL_1}* 100)]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="47" y="5" width="75" height="10" uuid="e83da4f9-61b6-4981-9d73-097bfaa97767"/>
+					<textElement>
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total proveedor ...]]></text>
+				</staticText>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="262" y="6" width="24" height="9" backcolor="#CCCCCC" uuid="ea29e4ec-5c8d-4bf1-b51d-6fabfec28aa5"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{KG_DTO1_1}/$V{NETO_REAL_1}*100)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="122" y="6" width="37" height="9" uuid="7187436f-8724-4abe-b818-6d27f2576e0a">
+						<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($V{BRUTO_REAL_1}< 0 ? "#B40404":"#000000")]]></propertyExpression>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{BRUTO_REAL_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="195" y="6" width="40" height="9" forecolor="#000000" uuid="cfc8c2c5-9845-47b5-9ecd-e7e58ed2aca0">
+						<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($V{NETO_REAL_1}< 0 ? "#B40404":"#000000")]]></propertyExpression>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{NETO_REAL_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="158" y="6" width="40" height="9" uuid="0f5c85e8-a199-41bf-8691-5dd77c1cada3">
+						<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($V{TARA_REAL_1} < 0 ? "#B40404":"#000000")]]></propertyExpression>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TARA_REAL_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="920" y="6" width="56" height="9" uuid="9a1bdcc8-3427-4416-be89-4d455771eb96">
+						<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($V{TOT_NETO_REAL_4}< 0 ? "#B40404":"#000000")]]></propertyExpression>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_NETO_REAL_4}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="78" splitType="Stretch">
+			<rectangle>
+				<reportElement x="1" y="33" width="968" height="44" uuid="ea23f688-afb9-49b7-9eb5-eeab1c7715c0"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="296" y="0" width="377" height="24" isPrintWhenDetailOverflows="true" uuid="4326a19a-b0f1-48e1-81f8-bbc47b7415b3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="898" y="-1" width="29" height="12" isPrintWhenDetailOverflows="true" uuid="7cd69a45-b925-47a4-a3c3-5f0504920381"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Hoja:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="929" y="-1" width="37" height="13" isPrintWhenDetailOverflows="true" uuid="a8dd9f6d-e70e-4bb9-9fd7-e95a2bb2d342"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="873" y="12" width="92" height="13" isPrintWhenDetailOverflows="true" uuid="ff44faf2-5195-4dd6-81eb-7874a963f52f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="786" y="-1" width="100" height="13" isPrintWhenDetailOverflows="true" uuid="2020ea58-1d12-44d0-afc0-d3b2b31363c5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="13" width="126" height="13" isPrintWhenDetailOverflows="true" uuid="ac63e942-085b-4bf5-9de5-160cc2fef72d"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="145" height="13" isPrintWhenDetailOverflows="true" uuid="98e7e171-124b-47a5-9fbf-d7c5bb3dfba7"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_EMPRESA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="793" y="12" width="76" height="13" uuid="edfbb72d-e156-4908-acc9-abfb9f142b0e"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="88" y="34" width="80" height="12" uuid="40610e53-8663-4820-a22b-9c2ee1aa9986"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FEC_DESDE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="223" y="34" width="80" height="12" uuid="5542482e-a048-4061-9ca7-6106c5f87c15"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FEC_HASTA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="505" y="34" width="100" height="12" uuid="18fb4052-26b7-40b7-b291-72ccacbbebfe"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="366" y="34" width="60" height="12" uuid="63ecef91-aa3a-49ca-b7de-cd6c7951ac2b"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_ZAFRA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="88" y="47" width="150" height="12" uuid="c86e570c-08c7-44eb-a2b1-08cd1b1f8e3f"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PRODUCTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="88" y="62" width="150" height="12" uuid="a81db969-8bf1-4bcf-ab84-180d308027c4"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROVEEDOR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="34" width="83" height="12" uuid="27242a2d-99c1-42b8-81ef-8aee1210f3b4"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha desde:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="173" y="34" width="46" height="12" uuid="72e89f16-f213-4646-9b47-3c9010de99c4"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hasta: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="315" y="34" width="50" height="12" uuid="b9697287-bbc8-4d45-945e-2d74b724028f"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Zafra: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="444" y="34" width="60" height="12" uuid="298f725b-0fd7-40bd-80f9-d5961cdc9428"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sucursal:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="47" width="70" height="12" uuid="59154745-b8a3-48a7-85e5-b3284d9d99ad"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Producto: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="62" width="70" height="12" uuid="3b49cd84-b9ce-4668-9798-e322c7debdab"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Proveedor: ]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="28" splitType="Stretch">
+			<staticText>
+				<reportElement x="1" y="14" width="34" height="10" uuid="355e68ea-9ed4-481c-b817-3ed7f4ea7fc4"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="35" y="14" width="35" height="10" uuid="52f8a95f-c20e-40a8-9c5f-6f5a297a71f9"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ticket]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="97" y="14" width="30" height="10" uuid="9832bdb5-52d5-45e8-8d41-ea329de2ca38"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Chapa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="127" y="14" width="32" height="10" uuid="57d3c375-77fa-4b64-a028-2dadedee58fa"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Bruto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="238" y="14" width="24" height="10" backcolor="#CCCCCC" uuid="8f85b1cf-bb59-4134-81c0-dedbc4d88872"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ptos.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="203" y="14" width="32" height="10" uuid="53bba4ca-1cc6-4c4d-bcf7-eb108fcb9533"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Neto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="262" y="14" width="24" height="10" backcolor="#CCCCCC" uuid="0a1de094-4658-4478-8188-0b816d3b8438"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="239" y="2" width="78" height="10" backcolor="#CCCCCC" uuid="7c6b8253-2693-48ca-919e-62100f39b1e1"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HUMEDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="314" y="2" width="95" height="10" uuid="cfd2384b-db8f-4a4a-87c6-a43935c85d91"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CUERPOS EXTRAÑOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="499" y="2" width="50" height="10" uuid="30908cd4-9c3a-4301-a209-3c7aed67c92d"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[BROTADOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="570" y="2" width="78" height="10" backcolor="#CCCCCC" uuid="bcc7d2e3-359d-4d1e-8fa4-84597f63a107"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PESO HECTOL.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="652" y="2" width="78" height="10" uuid="28d9d4b9-cbe5-4911-bb10-b2aea2031205"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[GRANOS VERDES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="736" y="2" width="78" height="10" backcolor="#CCCCCC" uuid="d08d764c-a563-47cb-92be-3eb56fd0dce1"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AVERIADOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="818" y="14" width="36" height="10" uuid="5233a387-7561-4a11-a82d-0b6759acc120"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tot Dcto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="854" y="14" width="24" height="10" uuid="d76f4027-eed6-43cb-9f1b-db3b2606611c"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="879" y="14" width="42" height="10" backcolor="#CCCCCC" uuid="3624a4d7-8e05-46bf-a1fd-2569c5f08519"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tot. Bonif.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="923" y="14" width="50" height="10" uuid="a54695f3-0dc9-49c4-b790-665b6f531f3d"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tot. Neto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="14" width="27" height="10" uuid="52a2d630-037d-4e33-b0da-27b1c06dba16"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Oper.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="166" y="14" width="32" height="10" uuid="bd45ddbc-e04a-4513-a005-57adfb10dd8b"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tara]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="286" y="14" width="30" height="10" backcolor="#CCCCCC" uuid="e7ec0cf3-ec4b-43da-9dc1-604c8d06d110"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dto Kg.]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1" y="26" width="976" height="1" uuid="7fb7f6a6-1a77-418c-9afc-d4eb7f00e722"/>
+			</line>
+			<staticText>
+				<reportElement x="321" y="14" width="24" height="10" uuid="39560795-49bb-4baf-8b0e-12b24819758c"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ptos.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="345" y="14" width="24" height="10" uuid="b06a093f-74be-43fe-87d1-914161438dac"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="369" y="14" width="30" height="10" uuid="662ae5d1-fc6e-44bb-baab-1900526833f2"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dto Kg.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="404" y="14" width="24" height="10" backcolor="#CCCCCC" uuid="12ae5378-b444-4fbc-abbf-c2625ba838a3"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ptos.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="428" y="14" width="24" height="10" backcolor="#CCCCCC" uuid="a90efe8c-e37a-406e-8c8a-318067e81b94"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="452" y="14" width="30" height="10" backcolor="#CCCCCC" uuid="04b9ef73-94b0-4d02-a525-23bd200906a6"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dto Kg.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="486" y="14" width="24" height="10" uuid="65119c22-fb24-4098-a832-aff12c5b5ed6"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ptos.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="510" y="14" width="24" height="10" uuid="b3376df9-4225-4c97-9f77-ee49e015e9bc"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="534" y="14" width="30" height="10" uuid="c55a2701-73d4-4997-8207-4c0645df3ec9"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dto Kg.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="405" y="2" width="78" height="10" backcolor="#CCCCCC" uuid="a8f1a0cd-40d6-45c9-8316-193a7a5b010c"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TRIG/CHUSO/QUEBRA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="569" y="14" width="24" height="10" backcolor="#CCCCCC" uuid="f6a76681-55e6-456d-9215-a41604f61b77"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ptos.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="593" y="14" width="24" height="10" backcolor="#CCCCCC" uuid="388b1343-8d0c-4b1e-a8ec-67d7bda76351"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="617" y="14" width="30" height="10" backcolor="#CCCCCC" uuid="592ca60f-1f25-4fb2-a16b-54e98843b30e"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dto Kg.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="652" y="14" width="24" height="10" uuid="7f261560-00d0-452d-910b-179f0aae3402"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ptos.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="676" y="14" width="24" height="10" uuid="606d3ec5-9a41-4842-949c-add02e1d80f4"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="700" y="14" width="30" height="10" uuid="5e375202-2aed-4ee6-bc30-018cab69300d"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dto Kg.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="735" y="14" width="24" height="10" backcolor="#CCCCCC" uuid="369f5a0d-827d-4f2d-8116-869ee9e42758"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ptos.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="759" y="14" width="24" height="10" backcolor="#CCCCCC" uuid="7c72fa03-8285-4687-a3f8-8aaead81386d"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="783" y="14" width="30" height="10" backcolor="#CCCCCC" uuid="db428fef-50d2-4291-b4ce-3839e48c3af4"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dto Kg.]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="9" splitType="Stretch">
+			<textField>
+				<reportElement x="35" y="0" width="35" height="9" uuid="d12d3855-784c-45ca-a5cb-a49a65fd77bb"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_TICKET}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="486" y="0" width="24" height="9" uuid="c0ec58f1-2d09-4d1e-8a43-15ee421ff7d4"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PUNT_COL7}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="97" y="0" width="30" height="9" uuid="c1e22fe8-1b24-4c5f-9dc3-7ab26dec1d63"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CHAPA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="238" y="0" width="24" height="9" backcolor="#CCCCCC" uuid="4de2b6d6-3fb4-432c-84a6-537b6caac126"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PUNT_COL1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="404" y="0" width="24" height="9" backcolor="#CCCCCC" uuid="86787911-1ab7-4505-a80d-91a6d6401b2f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PUNT_COL4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="203" y="0" width="32" height="9" uuid="fde8418d-622b-4036-a02c-fb4929ec6b58">
+					<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($F{NETO_REAL} < 0 ? "#B40404":"#000000")]]></propertyExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NETO_REAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="593" y="0" width="24" height="9" backcolor="#CCCCCC" uuid="544ac86b-2fa2-46dd-835f-dab18cb64b61"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DCTO_COL3}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="569" y="0" width="24" height="9" backcolor="#CCCCCC" uuid="9673fcea-5b88-4dfd-bedf-9785048fd407"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PUNT_COL3}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="735" y="0" width="24" height="9" backcolor="#CCCCCC" uuid="d854d34f-16e6-4c7b-b34e-9b6a1d2d00ae"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PUNT_COL5}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="345" y="0" width="24" height="9" uuid="847f5223-9111-490f-87ed-c1d6f273a442"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DCTO_COL2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="262" y="0" width="24" height="9" backcolor="#CCCCCC" uuid="3a043130-5e43-40be-8520-fc67de819b03"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DCTO_COL1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="652" y="0" width="24" height="9" uuid="bae50154-149f-4051-a3f0-17d9ef21ef59"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PUNT_COL6}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="510" y="0" width="24" height="9" uuid="0fb7e904-2890-4582-bb64-bc53833c659a"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DCTO_COL7}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="127" y="0" width="32" height="9" uuid="6ee39b80-9606-45ec-9197-a29225ae410a">
+					<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($F{BRUTO_REAL}< 0 ? "#B40404":"#000000")]]></propertyExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BRUTO_REAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="321" y="0" width="24" height="9" uuid="3cab10ab-bc4a-4f22-8b33-6e0b51e99e3f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PUNT_COL2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="428" y="0" width="24" height="9" backcolor="#CCCCCC" uuid="e3b21e19-6b35-460f-9566-9f3fc0965bf4"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DCTO_COL4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="676" y="0" width="24" height="9" uuid="7f84cf08-3729-45c9-bef5-e73d00292add"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DCTO_COL6}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="759" y="0" width="24" height="9" backcolor="#CCCCCC" uuid="23dfbd34-16bd-435e-b9e6-9a64fbcad61c"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DCTO_COL5}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="70" y="0" width="27" height="9" uuid="e6d28760-e4ea-4e0e-ba5a-bef07dd4df11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOC_OPERACION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="166" y="0" width="32" height="9" uuid="330d4a63-13dd-4861-982d-4ef76c0e4c4d">
+					<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($F{TARA_REAL}< 0 ? "#B40404":"#000000")]]></propertyExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TARA_REAL}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="235" y="0" width="1" height="9" uuid="ec9eced2-c2f0-479d-84cf-eb1f4a02645c"/>
+			</line>
+			<textField pattern="#,##0">
+				<reportElement mode="Opaque" x="286" y="0" width="30" height="9" backcolor="#CCCCCC" uuid="961b96d7-b95a-456c-89e9-6c8a8d0836d9"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{KG_DTO1}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="318" y="0" width="1" height="9" uuid="28f7855d-eb4a-46e6-bcb6-daaea0d96532"/>
+			</line>
+			<line>
+				<reportElement x="401" y="0" width="1" height="9" uuid="b3468238-88ce-4972-ad75-d8d55bfd619c"/>
+			</line>
+			<line>
+				<reportElement x="483" y="0" width="1" height="9" uuid="0c536937-4e82-4e59-b330-3e3fdc65aa10"/>
+			</line>
+			<line>
+				<reportElement x="566" y="0" width="1" height="9" uuid="15021b97-9be2-47df-9bee-f1f2cbb61776"/>
+			</line>
+			<line>
+				<reportElement x="649" y="0" width="1" height="9" uuid="2e1da1d6-b97d-4789-b2f1-e8af1134be06"/>
+			</line>
+			<line>
+				<reportElement x="732" y="0" width="1" height="9" uuid="c12f8a6d-fa6c-4f73-8c2f-d36ba007b7ad"/>
+			</line>
+			<textField pattern="#,##0">
+				<reportElement x="369" y="0" width="30" height="9" uuid="577afb7d-d764-453c-8eda-de33998a9d6e"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{KG_DTO2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Opaque" x="452" y="0" width="30" height="9" backcolor="#CCCCCC" uuid="6f5d3f31-5c87-4c40-87a4-66cb9ca70384"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{KG_DTO4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="534" y="0" width="30" height="9" uuid="7bceea4a-6e42-4618-84ea-bc9970324a12"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{KG_DTO7}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Opaque" x="617" y="0" width="30" height="9" backcolor="#CCCCCC" uuid="855d0620-fdeb-4378-a28c-203d0795e28b"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{KG_DTO3}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="700" y="0" width="30" height="9" uuid="ef74b7a7-e032-4c94-8c7b-d32eba7c0afb"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{KG_DTO6}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Opaque" x="783" y="0" width="30" height="9" backcolor="#CCCCCC" uuid="04db849b-f6d1-40d0-bbe0-5d56b6b6d82f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{KG_DTO5}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="815" y="0" width="1" height="9" uuid="3a8255a4-aeab-48f7-9a02-9ff14f04982a"/>
+			</line>
+			<textField pattern="#,##0">
+				<reportElement x="818" y="0" width="36" height="9" uuid="2dc1075e-ad7b-476b-82d1-0818926641cd">
+					<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($F{TOT_DCTO}< 0 ? "#B40404":"#000000")]]></propertyExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOT_DCTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="854" y="0" width="24" height="9" backcolor="#FFFFFF" uuid="d79566d2-d655-418b-a5c0-2ac71aa0946c"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PORC_DCTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Opaque" x="882" y="0" width="35" height="9" backcolor="#CCCCCC" uuid="aaedb59d-d752-41bb-98f0-d421f9861050"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BONIF}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="920" y="0" width="56" height="9" backcolor="#FFFFFF" uuid="5f28d701-22c5-4d88-87c9-6c4141b6708f">
+					<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($F{TOT_NETO_REAL} < 0 ? "#B40404":"#000000")]]></propertyExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOT_NETO_REAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yy">
+				<reportElement x="1" y="0" width="34" height="9" uuid="1b0814d8-3882-45f8-9be2-daef10bf55bd"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FEC_PESAJE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="54" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="41" width="100" height="13" uuid="58949cc4-0eda-4e6f-8ef2-214d6bab4714"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Fin del listado.]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement x="119" y="8" width="40" height="9" uuid="380a92e3-2b12-4484-aafa-542f9609dc86">
+					<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($V{BRUTO_REAL_4}< 0? "#B40404":"#000000")]]></propertyExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{BRUTO_REAL_4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="158" y="8" width="40" height="9" uuid="af5d0c1b-0789-421b-9b55-2def002dec5b">
+					<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($V{TARA_REAL_4}< 0 ? "#B40404":"#000000")]]></propertyExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TARA_REAL_4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="195" y="8" width="40" height="9" uuid="73d3a96a-9aff-4678-a2f7-f94cdaeac9ee">
+					<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($V{NETO_REAL_4}< 0 ? "#B40404":"#000000")]]></propertyExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{NETO_REAL_4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="238" y="8" width="24" height="9" backcolor="#CCCCCC" uuid="a5ec7aea-5841-4eba-854a-703107f34e21"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PUNT_COL1_4}/$V{NETO_REAL_4}*100]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="262" y="8" width="24" height="9" backcolor="#CCCCCC" uuid="087400b4-13c8-48c1-aa3c-30a30c347562"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DCTO_COL1_5}/$V{NETO_REAL_4}*100]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Opaque" x="286" y="8" width="30" height="9" backcolor="#CCCCCC" uuid="3be0a5ee-86b7-4c8a-ba6d-6483777843e6"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{KG_DTO1_4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="321" y="8" width="24" height="9" uuid="fdd852e8-0550-4b4b-ac38-86a9275985c2"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PUNT_COL2_4}/$V{NETO_REAL_4}*100]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="345" y="8" width="24" height="9" uuid="6bc73e47-20f8-4f22-af39-3802f3c5cbe5"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DCTO_COL2_4}/$V{NETO_REAL_4}*100]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="369" y="8" width="30" height="9" uuid="eeec5e8f-d78b-4ee9-8c65-fc19070fcb7f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{KG_DTO2_4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="404" y="8" width="24" height="9" backcolor="#CCCCCC" uuid="034d26d9-04ea-47e0-820d-81f3dbbbdd8b"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PUNT_COL4_4}/$V{NETO_REAL_4}*100]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="428" y="8" width="24" height="9" backcolor="#CCCCCC" uuid="76eec1ac-6fd5-409e-aa4e-f28884b01e84"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DCTO_COL4_4}/$V{NETO_REAL_4}*100]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Opaque" x="452" y="8" width="30" height="9" backcolor="#CCCCCC" uuid="37cbe262-a10a-4007-9632-b5ea99f8fa02"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{KG_DTO4_4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="486" y="8" width="24" height="9" uuid="2e8d267c-c27c-420f-ac19-b902cc255c4f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PUNT_COL7_4}/$V{NETO_REAL_4}*100]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="510" y="8" width="24" height="9" uuid="0b2935b8-18b1-4088-8cd6-478d3820c9a9"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DCTO_COL7_4}/$V{NETO_REAL_4}*100]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="534" y="8" width="30" height="9" uuid="9d1fd5a5-45d2-4d07-ae2d-f4a37961499c"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{KG_DTO7_4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="569" y="8" width="24" height="9" backcolor="#CCCCCC" uuid="96a0578b-3634-481d-a701-c8b674ea656b"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PUNT_COL3_4}/$V{NETO_REAL_4}*100]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="593" y="8" width="24" height="9" backcolor="#CCCCCC" uuid="26a72c1b-939b-45dc-bc1e-109eb777b75b"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DCTO_COL3_4}/$V{NETO_REAL_4}*100]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Opaque" x="617" y="8" width="30" height="9" backcolor="#CCCCCC" uuid="502ba88b-832b-4bf4-865c-79e0f7dec0a0"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{KG_DTO3_4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="652" y="8" width="24" height="9" uuid="d1feaccb-dc3b-425f-bde9-20365d6af88c"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PUNT_COL6_4}/$V{NETO_REAL_4}*100]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="676" y="8" width="24" height="9" uuid="5dfb6001-6227-41b0-8cf4-ceab846612fc"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DCTO_COL6_4}/$V{NETO_REAL_4}*100]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="700" y="8" width="30" height="9" uuid="fcee69a0-5cfa-42c4-96d8-32b5be6f680f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{KG_DTO6_4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="735" y="8" width="24" height="9" backcolor="#CCCCCC" uuid="bed092dc-bc2d-45c7-9d29-bbdd3cad929e"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PUNT_COL5_4}/$V{NETO_REAL_4}*100]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="759" y="8" width="24" height="9" backcolor="#CCCCCC" uuid="48e36b87-e435-45b3-a8fe-d64addac24ae"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DCTO_COL5_4}/$V{NETO_REAL_4}*100]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Opaque" x="783" y="8" width="30" height="9" backcolor="#CCCCCC" uuid="bfc0564c-5b43-463b-9d0c-0da9c5ae4e03"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{KG_DTO5_4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="818" y="8" width="36" height="9" uuid="800b6ab6-5afe-4ec5-bf9a-2de4b66ca68f">
+					<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($V{TOT_DCTO_6} < 0 ? "#B40404":"#000000")]]></propertyExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOT_DCTO_6}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="920" y="8" width="56" height="9" uuid="cd535200-9541-47eb-a270-bcea0e68557d">
+					<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[($V{TOT_NETO_REAL_7} < 0 ? "#B40404":"#000000")]]></propertyExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOT_NETO_REAL_7}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Opaque" x="882" y="8" width="35" height="9" backcolor="#CCCCCC" uuid="092a7dd6-a151-46bb-be56-d3f77f43ff70"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{BONIF_4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="854" y="8" width="24" height="9" uuid="fdef1e97-e94f-402f-a1cb-e7ee2b8c082e"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOT_DCTO_6}/$V{NETO_REAL_4}*100]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="45" y="7" width="75" height="10" uuid="6e9ac09f-f77b-4faa-b843-46f1fe97aaa4"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total general  ...]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

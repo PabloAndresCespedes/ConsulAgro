@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="1368" pageHeight="595" orientation="Landscape" columnWidth="1328" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="30fcbd9a-3c7c-4a65-a4c6-ad20165eac94">
+	<property name="ireport.zoom" value="0.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<parameter name="P_SESSION" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\user\\Documents\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT T_PDOC_EMPLEADO,
+       T_EMPL_NOMBRE,
+       T_EMPL_SUCURSAL,
+       T_SUC_DESC,
+       T_PDOC_DEPARTAMENTO,
+       T_DPTO_DESC,
+       T_PDDET_CLAVE_CONCEPTO,
+       T_PCON_DESC,
+       T_EMPL_FORMA_PAGO,
+       T_FORMA_DESC,
+       T_PCON_IND_DBCR,
+       T_PCON_IND_AGUINALDO,
+       T_PCON_IND_IPS,
+       T_EMPL_SITUACION,
+       T_PDOC_PERIODO,
+       T_PDOC_FEC,
+       CASE  WHEN T_PCON_IND_DBCR='C' THEN T_PDDET_IMP
+             WHEN T_PCON_IND_DBCR='D' THEN - T_PDDET_IMP
+             ELSE NULL
+       END IMPORTE,
+       T_P_LOGIN,
+       T_P_EMPRESA
+  FROM C_PERL200_TEMP
+ WHERE T_P_SESSION = $P!{P_SESSION}
+order by T_SUC_DESC, T_EMPL_NOMBRE]]>
+	</queryString>
+	<field name="T_PDOC_EMPLEADO" class="java.math.BigDecimal"/>
+	<field name="T_EMPL_NOMBRE" class="java.lang.String"/>
+	<field name="T_EMPL_SUCURSAL" class="java.math.BigDecimal"/>
+	<field name="T_SUC_DESC" class="java.lang.String"/>
+	<field name="T_PDOC_DEPARTAMENTO" class="java.math.BigDecimal"/>
+	<field name="T_DPTO_DESC" class="java.lang.String"/>
+	<field name="T_PDDET_CLAVE_CONCEPTO" class="java.math.BigDecimal"/>
+	<field name="T_PCON_DESC" class="java.lang.String"/>
+	<field name="T_EMPL_FORMA_PAGO" class="java.math.BigDecimal"/>
+	<field name="T_FORMA_DESC" class="java.lang.String"/>
+	<field name="T_PCON_IND_DBCR" class="java.lang.String"/>
+	<field name="T_PCON_IND_AGUINALDO" class="java.lang.String"/>
+	<field name="T_PCON_IND_IPS" class="java.lang.String"/>
+	<field name="T_EMPL_SITUACION" class="java.lang.String"/>
+	<field name="T_PDOC_PERIODO" class="java.math.BigDecimal"/>
+	<field name="T_PDOC_FEC" class="java.sql.Timestamp"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<field name="T_P_LOGIN" class="java.lang.String"/>
+	<field name="T_P_EMPRESA" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="70" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="1181" y="40" width="117" height="16" uuid="3841a535-88c3-4b77-a769-514e6f826168"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="3" y="10" width="87" height="27" uuid="0a21027c-b5db-4e33-885a-5443d2a49a39"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HILAGRO SA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="402" y="40" width="555" height="17" uuid="dd04f176-d3a5-4576-bd25-f4309c887e5b"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PLANILLA SALARIAL]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="1241" y="10" width="33" height="27" uuid="b14e8214-daa0-448f-bab9-06dac61d5cfd"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1173" y="10" width="68" height="16" uuid="d167fff5-e294-464e-a3a6-e8bd27b8d5ca"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PAGINA:]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<summary>
+		<band height="104" splitType="Stretch">
+			<crosstab>
+				<reportElement x="3" y="13" width="1325" height="91" backcolor="#FFFFFF" uuid="d8b324c7-48c5-4f35-814c-0b9a7f656066"/>
+				<rowGroup name="T_EMPL_NOMBRE" width="146" totalPosition="End">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{T_EMPL_NOMBRE}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="146" height="25" uuid="30b07fb6-0668-4b59-925c-c06e0083cbc7"/>
+								<textElement textAlignment="Left" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{T_EMPL_NOMBRE}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="70" height="25" backcolor="#FFFFFF" uuid="907b5a65-0000-4030-8e7c-c7e7d5be24ea"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Total T_EMPL_NOMBRE]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="T_PCON_DESC" height="29" totalPosition="End">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{T_PCON_DESC}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="42" height="29" uuid="72be8694-be6f-4d83-a358-cec0d2e5d636"/>
+								<textElement verticalAlignment="Middle">
+									<font size="6" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{T_PCON_DESC}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="59" height="29" uuid="4be876ae-ab5c-439a-8e99-b487c7b89a7b"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="6" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Total Personal]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="IMPORTEMeasure" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{IMPORTE}]]></measureExpression>
+				</measure>
+				<crosstabCell width="44" height="25">
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="42" height="25" uuid="f2fbe8c0-06c1-4320-9a1e-60a4f03164b1"/>
+							<textElement textAlignment="Right">
+								<font size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{IMPORTEMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="44" height="25" rowTotalGroup="T_EMPL_NOMBRE">
+					<cellContents backcolor="#FFFFFF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="42" height="25" uuid="3a29c8b9-366c-4334-a149-bd0bceda3a72"/>
+							<textElement textAlignment="Right"/>
+							<textFieldExpression><![CDATA[$V{IMPORTEMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="60" height="25" columnTotalGroup="T_PCON_DESC">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="59" height="25" backcolor="#FFFFFF" uuid="6c2e5664-6454-4bad-b355-35e0a2e5b440"/>
+							<textElement textAlignment="Right">
+								<font size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{IMPORTEMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="60" height="25" rowTotalGroup="T_EMPL_NOMBRE" columnTotalGroup="T_PCON_DESC">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="59" height="25" uuid="5d73db3f-8d19-4d0a-adeb-c64dd0bfb533"/>
+							<textElement textAlignment="Right"/>
+							<textFieldExpression><![CDATA[$V{IMPORTEMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+		</band>
+	</summary>
+</jasperReport>

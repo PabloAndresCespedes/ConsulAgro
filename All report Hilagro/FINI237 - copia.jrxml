@@ -1,0 +1,1014 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINI237" language="groovy" columnCount="2" pageWidth="595" pageHeight="421" orientation="Landscape" columnWidth="264" columnSpacing="40" leftMargin="10" rightMargin="17" topMargin="11" bottomMargin="14" uuid="6e831bc2-f068-41d0-b6a2-24eacd48e8d6">
+	<property name="ireport.zoom" value="1.0263162364614133"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="96"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<subDataset name="LOGO" uuid="71f7f4de-112b-47f2-af1f-d4b86fc13172">
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT EMPR_LOGO LOGO
+FROM GEN_EMPRESA
+WHERE EMPR_CODIGO = $P{P_EMPRESA}]]>
+		</queryString>
+		<field name="LOGO" class="java.io.InputStream"/>
+	</subDataset>
+	<subDataset name="CONVERTIR_NRO" uuid="905df216-3a81-4605-aaea-ca4180b312a8">
+		<parameter name="P_CLIENTE" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_RECIBO" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_IMP_GEN" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_MONEDA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT X.*,SUBSTR(MONTO, 1, 65) PRIMER, SUBSTR(MONTO, 66) SEGUNDO
+  FROM (SELECT TO_CHAR($P{P_MONEDA}) MONEDA,
+               TO_CHAR($P{P_CLIENTE}) CLIENTE,
+               TO_CHAR(RPAD(GENERAL.FP_CONV_NRO_TXT($P{P_IMP_GEN}, $P{P_MONEDA}),
+                    196,
+                    '-')) MONTO
+          FROM DUAL) X]]>
+		</queryString>
+		<field name="MONEDA" class="java.lang.String"/>
+		<field name="CLIENTE" class="java.lang.String"/>
+		<field name="MONTO" class="java.lang.String"/>
+		<field name="PRIMER" class="java.lang.String"/>
+		<field name="SEGUNDO" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NRO_REC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FORMATO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT R.DOC_NETO_EXEN_MON IMPORTE_RECIBO,
+       TO_CHAR(M.MON_CODIGO) MON_CODIGO,
+       M.MON_SIMBOLO,
+       DECODE(R.DOC_NRO_DOC,NULL,NULL,(SUBSTR('00' || R.DOC_NRO_DOC, 0, 3) || '-' ||
+       SUBSTR(R.DOC_NRO_DOC, 2, 3) || '-' || SUBSTR(R.DOC_NRO_DOC, 5, 7))) NRO_RECIBO,
+       C.CLI_NOM,
+       C.CLI_RUC,
+       TO_CHAR(F.DOC_NRO_DOC) NRO_FACTURA,
+       UP.PAG_IMP_MON IMPORTE_COBRO_CUOTA,
+       (SUM(UP.PAG_IMP_MON)OVER(PARTITION BY C.CLI_NOM)) IMPORTE_GEN,
+       MON_DEC_IMP,
+       S.SUC_DIR || ' , ' || TO_CHAR(R.DOC_FEC_DOC, 'DD') || ' de ' ||
+       RTRIM(TO_CHAR(R.DOC_FEC_DOC, 'MONTH', ' NLS_DATE_LANGUAGE = SPANISH')) || ' de ' ||
+       TO_CHAR(R.DOC_FEC_DOC, 'YYYY') || '.' FECHA_RECIBO,
+       SUC.SUC_ABREV
+
+
+  FROM FIN_DOCUMENTO   R,
+       FIN_UNION_PAGO  UP,
+       FIN_UNION_CUOTA UC,
+       FIN_DOCUMENTO   F,
+       FIN_CLIENTE     C,
+       GEN_MONEDA      M,
+       GEN_SUCURSAL    S,
+       PER_EMPLEADO    E,
+       GEN_SUCURSAL    SUC
+ WHERE R.DOC_EMPR = $P{P_EMPRESA}
+
+   AND R.DOC_CLAVE = UP.PAG_CLAVE_PAGO
+   AND R.DOC_EMPR = UP.PAG_EMPR
+
+   AND UP.PAG_CLAVE_DOC = UC.CUO_CLAVE_DOC
+   AND UP.PAG_EMPR = UC.CUO_EMPR
+
+   AND UP.PAG_FEC_VTO = UC.CUO_FEC_VTO
+   AND UP.PAG_EMPR = UC.CUO_EMPR
+
+   AND UC.CUO_CLAVE_DOC = F.DOC_CLAVE
+   AND UC.CUO_EMPR = F.DOC_EMPR
+
+   AND R.DOC_CLI = C.CLI_CODIGO
+   AND R.DOC_EMPR = C.CLI_EMPR
+
+   AND R.DOC_TIPO_MOV IN (6)
+   AND R.DOC_MON = M.MON_CODIGO
+   AND R.DOC_EMPR = M.MON_EMPR
+
+   AND R.DOC_SUC = S.SUC_CODIGO
+   AND R.DOC_EMPR = S.SUC_EMPR
+
+   AND E.EMPL_CODIGO_CLI(+) = C.CLI_CODIGO
+   AND E.EMPL_EMPRESA(+) = C.CLI_EMPR
+
+   AND SUC.SUC_CODIGO(+) = E.EMPL_SUCURSAL
+   AND SUC.SUC_EMPR(+) = E.EMPL_EMPRESA
+
+   AND R.DOC_NRO_TRANS_COMBUS = $P{P_NRO_REC}
+
+
+UNION
+
+SELECT R.DOC_NETO_EXEN_MON IMPORTE_RECIBO,
+       TO_CHAR(M.MON_CODIGO) MON_CODIGO,
+       M.MON_SIMBOLO,
+       DECODE(R.DOC_NRO_DOC,NULL,NULL,(SUBSTR('00' || R.DOC_NRO_DOC, 0, 3) || '-' ||
+       SUBSTR(R.DOC_NRO_DOC, 2, 3) || '-' || SUBSTR(R.DOC_NRO_DOC, 5, 7))) NRO_RECIBO,
+       C.CLI_NOM,
+       C.CLI_RUC,
+       TO_CHAR(F.DOC_NRO_DOC) NRO_FACTURA,
+       UP.PAG_IMP_MON IMPORTE_COBRO_CUOTA,
+       (SUM(UP.PAG_IMP_MON) OVER(PARTITION BY C.CLI_NOM)) IMPORTE_GEN,
+       MON_DEC_IMP,
+       S.SUC_DIR || ' , ' || TO_CHAR(R.DOC_FEC_DOC, 'DD') || ' de ' ||
+       RTRIM(TO_CHAR(R.DOC_FEC_DOC, 'MONTH', ' NLS_DATE_LANGUAGE = SPANISH')) || ' de ' ||
+       TO_CHAR(R.DOC_FEC_DOC, 'YYYY') || '.' FECHA_RECIBO,
+       SUC.SUC_ABREV
+
+
+  FROM FIN_DOCUMENTO   R,
+       FIN_UNION_PAGO  UP,
+       FIN_UNION_CUOTA UC,
+       FIN_DOCUMENTO   F,
+       FIN_CLIENTE     C,
+       GEN_MONEDA      M,
+       GEN_SUCURSAL    S,
+       PER_EMPLEADO    E,
+       GEN_SUCURSAL    SUC
+ WHERE R.DOC_EMPR = $P{P_EMPRESA}
+
+   AND R.DOC_CLAVE = UP.PAG_CLAVE_PAGO
+   AND R.DOC_EMPR = UP.PAG_EMPR
+
+   AND UP.PAG_CLAVE_DOC = UC.CUO_CLAVE_DOC
+   AND UP.PAG_EMPR = UC.CUO_EMPR
+
+   AND UP.PAG_FEC_VTO = UC.CUO_FEC_VTO
+   AND UP.PAG_EMPR = UC.CUO_EMPR
+
+   AND UC.CUO_CLAVE_DOC = F.DOC_CLAVE
+   AND UC.CUO_EMPR = F.DOC_EMPR
+
+   AND R.DOC_PROV = C.CLI_CODIGO
+   AND R.DOC_EMPR = C.CLI_EMPR
+
+   AND R.DOC_TIPO_MOV IN (6, 33)
+   AND R.DOC_MON = M.MON_CODIGO
+   AND R.DOC_EMPR = M.MON_EMPR
+
+   AND R.DOC_SUC = S.SUC_CODIGO
+   AND R.DOC_EMPR = S.SUC_EMPR
+
+   AND E.EMPL_CODIGO_CLI(+) = C.CLI_CODIGO
+   AND E.EMPL_EMPRESA(+) = C.CLI_EMPR
+
+   AND SUC.SUC_CODIGO(+) = E.EMPL_SUCURSAL
+   AND SUC.SUC_EMPR(+) = E.EMPL_EMPRESA
+
+   AND R.DOC_NRO_TRANS_COMBUS = $P{P_NRO_REC}
+
+   ORDER BY 5]]>
+	</queryString>
+	<field name="IMPORTE_RECIBO" class="java.math.BigDecimal"/>
+	<field name="MON_CODIGO" class="java.lang.String"/>
+	<field name="MON_SIMBOLO" class="java.lang.String"/>
+	<field name="NRO_RECIBO" class="java.lang.String"/>
+	<field name="CLI_NOM" class="java.lang.String"/>
+	<field name="CLI_RUC" class="java.lang.String"/>
+	<field name="NRO_FACTURA" class="java.lang.String"/>
+	<field name="IMPORTE_COBRO_CUOTA" class="java.math.BigDecimal"/>
+	<field name="IMPORTE_GEN" class="java.math.BigDecimal"/>
+	<field name="MON_DEC_IMP" class="java.math.BigDecimal"/>
+	<field name="FECHA_RECIBO" class="java.lang.String"/>
+	<field name="SUC_ABREV" class="java.lang.String"/>
+	<group name="CLIENTE" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{CLI_NOM}]]></groupExpression>
+		<groupHeader>
+			<band height="203">
+				<componentElement>
+					<reportElement key="table 1" x="12" y="2" width="102" height="35" uuid="dc03c4f9-0645-4c40-84b5-43c34f649358"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="LOGO" uuid="cfeadbc7-50ff-483c-88a7-096554e04dc9">
+							<datasetParameter name="P_EMPRESA">
+								<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+							</datasetParameter>
+						</datasetRun>
+						<jr:column width="78" uuid="4a73a8f3-c3f0-4f76-b5bc-b764eeed908b">
+							<jr:detailCell height="48" rowSpan="1">
+								<image>
+									<reportElement x="0" y="0" width="78" height="48" uuid="b3306260-62f5-4985-9bdd-e7c83d2ba743"/>
+									<imageExpression><![CDATA[$F{LOGO}]]></imageExpression>
+								</image>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+				<componentElement>
+					<reportElement key="table 1" x="311" y="2" width="102" height="35" uuid="e4376c99-5d27-4e00-8842-8147412d784c"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="LOGO" uuid="8075d6a0-eafe-4cf6-862f-291c88865e10">
+							<datasetParameter name="P_EMPRESA">
+								<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+							</datasetParameter>
+						</datasetRun>
+						<jr:column width="78" uuid="62b06720-c34f-467a-8f2f-678a24ead2a5">
+							<jr:detailCell height="48" rowSpan="1">
+								<image>
+									<reportElement x="0" y="0" width="78" height="48" uuid="4d31d797-f19b-427d-94e1-ee797030fec1"/>
+									<imageExpression><![CDATA[$F{LOGO}]]></imageExpression>
+								</image>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+				<line direction="BottomUp">
+					<reportElement x="165" y="0" width="1" height="82" uuid="d730af4a-47fb-45d9-8f65-d29e866d9a96"/>
+				</line>
+				<line>
+					<reportElement x="0" y="82" width="259" height="1" uuid="bf75ae86-7c76-45c7-a34c-514782d22127"/>
+				</line>
+				<staticText>
+					<reportElement x="117" y="2" width="47" height="35" uuid="ed76c092-2648-4f1a-aac4-93bdd7ffc5c4"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="4" isBold="true"/>
+					</textElement>
+					<text><![CDATA[COMPRA Y VENTA DE
+Insumos Agricolas  Granos en General
+SERVICIOS DE TRANSPORTES
+ACOPIO DE GRANOS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="1" y="41" width="119" height="13" uuid="66dee11a-2ed8-4791-a1c8-0dc24566d3a0"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="5" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Casa Central: Calle 1ra. Linea  J. Eulogio Estigarribia -Tel (0528) 222995 - Caaguazu - Paraguay
+transagro@transagro.com.py]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="58" width="24" height="20" uuid="1aaaf850-7816-49a3-b4d9-90510e2b4a2a"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="3" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Suc Nº 1
+Transporte
+R.I. Nº 7 Km 214 J. Eulogio Estigarribia
+Tel: (0528) 222 257 | (0985) 490 020
+Caaguazú - Paraguay]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="24" y="58" width="24" height="20" uuid="849a807b-ab90-4146-bbfe-15d1af73e88b"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="3" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Suc Nº 2
+Centro de Acopio
+Colonia Tres Palmas - Raul A. Oviedo
+Tel: (0983) 530 944 | (0528) 222 257
+Caaguazú - Paraguay]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="48" y="58" width="24" height="20" uuid="028bc388-80f6-483f-b32b-c8cac5b9c571"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="3" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Suc Nº 3
+Centro de Acopio
+Colonia Cedro Ty - Nueva Toledo
+Tel: (0983) 990 649 | (0528) 222 257
+Caaguazú - Paraguay]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="72" y="58" width="24" height="20" uuid="2243d1a5-33f5-4398-b3f2-c4a73fb0d03a"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="3" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Suc Nº 4
+Centro de Acopio
+Taruma - Yhu
+Tel: (0981) 404 882 | (0528) 222 257
+Caaguazú - Paraguay]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="96" y="58" width="24" height="20" uuid="0d27a540-907e-4ea7-aa85-ec0869192e57"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="3" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Suc Nº 5
+Centro de Acopio
+Casilla 2 - Raúl Arsenio Oviedo
+Tel: (0986) 401 667 | (0528) 222 257
+Caaguazú - Paraguay]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="166" y="2" width="82" height="38" uuid="0a9ac784-df00-407f-8ce8-b846a65ebac3"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true" isItalic="true"/>
+					</textElement>
+					<text><![CDATA[RECIBO DE DINERO
+RUC: 80024300-5]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="169" y="41" width="29" height="10" uuid="d24c65e9-b9d2-4a32-8425-e0d76e22fa28"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<text><![CDATA[Gs.US$]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="236" y="41" width="23" height="10" uuid="c95f68c6-4e8a-4641-80a2-1b2093530fba"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{MON_SIMBOLO}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="34" y="84" width="132" height="10" uuid="9e5bb4fc-b200-4908-ad86-8516013aeb96"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CLI_NOM}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="CLIENTE" pattern="" isBlankWhenNull="true">
+					<reportElement x="199" y="41" width="37" height="10" uuid="ac835de7-02d4-48c9-ae10-76560ef4c2b6"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{IMPORTE_GEN}]]></textFieldExpression>
+					<patternExpression><![CDATA[( $F{MON_CODIGO}== "1" ? "#,##0" : "#,##0.00" )]]></patternExpression>
+				</textField>
+				<staticText>
+					<reportElement x="169" y="58" width="19" height="15" uuid="e02b1d77-7553-4e1a-a70b-99bedd5639ac"/>
+					<textElement verticalAlignment="Top">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[N°]]></text>
+				</staticText>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement x="192" y="58" width="67" height="15" uuid="201aaf86-e6fa-463f-a2ad-7d85a396f820"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NRO_RECIBO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="2" y="84" width="31" height="10" uuid="057a8635-e3c1-4176-8641-18e27d2ec71c"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<text><![CDATA[Recibí de ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="169" y="84" width="35" height="10" uuid="74c400db-71c7-4a86-b793-bddc1d7d97f1"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<text><![CDATA[R.U.C. :]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="204" y="84" width="55" height="10" uuid="3000ab77-360f-499a-bec0-24070852581d"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CLI_RUC}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="2" y="108" width="50" height="10" uuid="c6dacb26-135c-419b-8fff-b26234ac8087"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<text><![CDATA[La cantidad de ]]></text>
+				</staticText>
+				<componentElement>
+					<reportElement key="table 1" x="53" y="108" width="204" height="15" uuid="80046a6e-de79-40c5-8e50-3a706931f445"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="CONVERTIR_NRO" uuid="fb154f4d-27bc-4b55-b147-88b6dba9b364">
+							<datasetParameter name="P_CLIENTE">
+								<datasetParameterExpression><![CDATA[$F{CLI_NOM}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_EMPRESA">
+								<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_RECIBO">
+								<datasetParameterExpression><![CDATA[$P{P_NRO_REC}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_MONEDA">
+								<datasetParameterExpression><![CDATA[$F{MON_CODIGO}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_IMP_GEN">
+								<datasetParameterExpression><![CDATA[$F{IMPORTE_GEN}]]></datasetParameterExpression>
+							</datasetParameter>
+						</datasetRun>
+						<jr:column width="206" uuid="c2dc9762-10d5-4d71-9360-bbe88bcc1684">
+							<jr:detailCell height="22" rowSpan="1">
+								<textField pattern="" isBlankWhenNull="true">
+									<reportElement x="0" y="2" width="204" height="20" uuid="835de9ec-d35e-4d4f-8353-756b552d17ef"/>
+									<textElement verticalAlignment="Top">
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{PRIMER}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+				<componentElement>
+					<reportElement key="table 1" x="2" y="130" width="259" height="15" uuid="46196a0c-3a72-4560-a25a-bd091ef1c023"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="CONVERTIR_NRO" uuid="a69b6671-2ced-4d4e-87ca-063114e067bb">
+							<datasetParameter name="P_CLIENTE">
+								<datasetParameterExpression><![CDATA[$F{CLI_NOM}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_EMPRESA">
+								<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_RECIBO">
+								<datasetParameterExpression><![CDATA[$P{P_NRO_REC}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_MONEDA">
+								<datasetParameterExpression><![CDATA[$F{MON_CODIGO}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_IMP_GEN">
+								<datasetParameterExpression><![CDATA[$F{IMPORTE_GEN}]]></datasetParameterExpression>
+							</datasetParameter>
+						</datasetRun>
+						<jr:column width="259" uuid="12857b09-455e-40c3-befe-aa2abff26327">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="259" height="20" uuid="8ba21472-09a2-4dc9-88ff-3c033d571155"/>
+									<textElement verticalAlignment="Top">
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{SEGUNDO}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+				<staticText>
+					<reportElement x="6" y="151" width="59" height="10" uuid="0df4467c-63cb-49fa-b2ce-9b2c6dc481d2"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<text><![CDATA[Efectivo N°]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="96" y="151" width="59" height="10" uuid="d136f803-2dda-4881-8518-cfcc1f3e7435"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<text><![CDATA[P/Fecha]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="192" y="151" width="59" height="10" uuid="3f50a8b2-e13a-4e7a-b470-a5864d1d3e29"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<text><![CDATA[c/Banco]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="3" y="167" width="59" height="10" uuid="ba590ee4-a2bd-4d0f-a29f-fe08d7f5404f"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<text><![CDATA[Cheque N°]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="6" y="184" width="251" height="10" uuid="9f8a90c8-46bb-45ed-ab52-046f35ccd7dc"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<text><![CDATA[Por concepto de pago de facturas según detalle:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="333" y="58" width="24" height="20" uuid="3b4ec8d3-4e87-489d-8498-accd47f9c0c3"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="3" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Suc Nº 2
+Centro de Acopio
+Colonia Tres Palmas - Raul A. Oviedo
+Tel: (0983) 530 944 | (0528) 222 257
+Caaguazú - Paraguay]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="512" y="83" width="52" height="10" uuid="fb0b899f-34c6-4340-a315-f2e7c64d7cef"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CLI_RUC}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="400" y="58" width="24" height="20" uuid="35cf579c-1125-4ee0-b930-b5fd0148cbc6"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="3" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Suc Nº 5
+Centro de Acopio
+Casilla 2 - Raúl Arsenio Oviedo
+Tel: (0986) 401 667 | (0528) 222 257
+Caaguazú - Paraguay]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="308" y="58" width="24" height="20" uuid="ec23a222-4468-4967-b002-651a2e229351"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="3" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Suc Nº 1
+Transporte
+R.I. Nº 7 Km 214 J. Eulogio Estigarribia
+Tel: (0528) 222 257 | (0985) 490 020
+Caaguazú - Paraguay]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="308" y="167" width="59" height="10" uuid="f57ed8f0-d707-4bbc-92de-f9b175c3e011"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<text><![CDATA[Cheque N°]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="417" y="2" width="47" height="35" uuid="e7652a01-8fb6-4aa0-8911-555645d26530"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="4" isBold="true"/>
+					</textElement>
+					<text><![CDATA[COMPRA Y VENTA DE
+Insumos Agricolas  Granos en General
+SERVICIOS DE TRANSPORTES
+ACOPIO DE GRANOS]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="344" y="83" width="122" height="10" uuid="f53d3920-221c-453b-8b28-481cd81b0a2c"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CLI_NOM}]]></textFieldExpression>
+				</textField>
+				<componentElement>
+					<reportElement key="table 1" x="309" y="130" width="259" height="15" uuid="8a5ca7d1-5d9f-4741-b82a-d76370905275"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="CONVERTIR_NRO" uuid="b61c7e52-5a6f-4b2b-9002-0321b26e29c5">
+							<datasetParameter name="P_CLIENTE">
+								<datasetParameterExpression><![CDATA[$F{CLI_NOM}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_EMPRESA">
+								<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_RECIBO">
+								<datasetParameterExpression><![CDATA[$P{P_NRO_REC}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_MONEDA">
+								<datasetParameterExpression><![CDATA[$F{MON_CODIGO}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_IMP_GEN">
+								<datasetParameterExpression><![CDATA[$F{IMPORTE_GEN}]]></datasetParameterExpression>
+							</datasetParameter>
+						</datasetRun>
+						<jr:column width="259" uuid="0ff847a9-5990-4977-8425-3f5f95afed18">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="259" height="20" uuid="6beebe72-7639-4a16-a9f9-50efddc61406"/>
+									<textElement verticalAlignment="Top">
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{SEGUNDO}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+				<componentElement>
+					<reportElement key="table 1" x="360" y="108" width="204" height="15" uuid="11dfd6dc-2db3-42b6-a9d6-47ec6d8b1808"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="CONVERTIR_NRO" uuid="eea6d1ed-b34f-484f-96ff-924bfc8859b5">
+							<datasetParameter name="P_CLIENTE">
+								<datasetParameterExpression><![CDATA[$F{CLI_NOM}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_EMPRESA">
+								<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_RECIBO">
+								<datasetParameterExpression><![CDATA[$P{P_NRO_REC}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_MONEDA">
+								<datasetParameterExpression><![CDATA[$F{MON_CODIGO}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_IMP_GEN">
+								<datasetParameterExpression><![CDATA[$F{IMPORTE_GEN}]]></datasetParameterExpression>
+							</datasetParameter>
+						</datasetRun>
+						<jr:column width="204" uuid="d9c1c61b-1018-4ead-a749-6d77407466eb">
+							<jr:detailCell height="22" rowSpan="1">
+								<textField pattern="" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="204" height="20" uuid="e9a058ba-51bb-4d0e-91ce-78aa5b4dc1fe"/>
+									<textElement verticalAlignment="Top">
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{PRIMER}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+				<staticText>
+					<reportElement x="308" y="108" width="50" height="10" uuid="12b3a33c-f5c7-4dc1-b25e-271f273b9888"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<text><![CDATA[La cantidad de ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="310" y="151" width="59" height="10" uuid="21d95c1f-243a-4792-8088-f9705ad93f2f"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<text><![CDATA[Efectivo N°]]></text>
+				</staticText>
+				<line>
+					<reportElement x="307" y="83" width="260" height="1" uuid="afa01ec0-3a70-4f28-9d32-4054e581156c"/>
+				</line>
+				<staticText>
+					<reportElement x="307" y="40" width="119" height="13" uuid="25121a1c-7f64-4ba9-b051-9e6c4abb3e77"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="5" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Casa Central: Calle 1ra. Linea  J. Eulogio Estigarribia -Tel (0528) 222995 - Caaguazu - Paraguay
+transagro@transagro.com.py]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="400" y="151" width="59" height="10" uuid="1b3885ae-7b91-46ce-80f9-603e33ea329c"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<text><![CDATA[P/Fecha]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="468" y="58" width="21" height="15" uuid="a370b4f1-16cd-4290-b86c-fa413e052382"/>
+					<textElement verticalAlignment="Top">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[N°]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="469" y="84" width="43" height="10" uuid="2299fe67-2af0-47b7-9811-204d69c0f77b"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<text><![CDATA[R.U.C. :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="467" y="37" width="29" height="10" uuid="5474f583-3cfb-4a25-8cb0-6aaf5e285aa2"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<text><![CDATA[Gs.US$]]></text>
+				</staticText>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement x="489" y="58" width="69" height="15" uuid="8628b6fc-6d51-4d6f-a6de-418c8e080dc4"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NRO_RECIBO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="494" y="151" width="59" height="10" uuid="602c1185-d082-4ba6-a7cf-7281df399afb"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<text><![CDATA[c/Banco]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="310" y="184" width="254" height="10" uuid="e4fa1a3f-be17-4c5f-b8bc-0818a9950fd9"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<text><![CDATA[Por concepto de pago de facturas según detalle:]]></text>
+				</staticText>
+				<textField evaluationTime="Group" evaluationGroup="CLIENTE" pattern="" isBlankWhenNull="true">
+					<reportElement x="498" y="37" width="37" height="10" uuid="2ba56e61-8957-4969-9bb5-9b08a905846c"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{IMPORTE_GEN}]]></textFieldExpression>
+					<patternExpression><![CDATA[( $F{MON_CODIGO}== "1" ? "#,##0" : "#,##0.00" )]]></patternExpression>
+				</textField>
+				<line direction="BottomUp">
+					<reportElement x="465" y="0" width="1" height="82" uuid="7fff7f7b-643b-4558-9d40-3f027aa9306b"/>
+				</line>
+				<staticText>
+					<reportElement x="357" y="58" width="24" height="20" uuid="efaf897c-2ac5-421e-b5db-0dda0caa13b1"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="3" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Suc Nº 3
+Centro de Acopio
+Colonia Cedro Ty - Nueva Toledo
+Tel: (0983) 990 649 | (0528) 222 257
+Caaguazú - Paraguay]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="308" y="83" width="36" height="10" uuid="ff468782-92c4-41a2-928b-c599b53f1ba5"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<text><![CDATA[Recibí de ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="469" y="-1" width="82" height="38" uuid="97a89938-8ba2-4e43-8ba7-e0f31dfd46ee"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true" isItalic="true"/>
+					</textElement>
+					<text><![CDATA[RECIBO DE DINERO
+RUC: 80024300-5]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="381" y="58" width="24" height="20" uuid="9a096ea2-5a40-4069-8bae-3ba3f31712c8"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="3" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Suc Nº 4
+Centro de Acopio
+Taruma - Yhu
+Tel: (0981) 404 882 | (0528) 222 257
+Caaguazú - Paraguay]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="537" y="37" width="23" height="10" uuid="658fcb91-1bb7-401c-ba40-9ef54365c076"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{MON_SIMBOLO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="328" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="1" y="0" width="258" height="320" uuid="235502aa-ff6f-45f4-a725-3f095f1528b2"/>
+			</rectangle>
+			<rectangle radius="10">
+				<reportElement x="297" y="0" width="270" height="320" uuid="d8530599-1662-47e0-8399-711d20294214"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="4" y="199" width="216" height="68" uuid="828d8953-ae4b-40cb-b392-4637db639983"/>
+			</rectangle>
+			<line direction="BottomUp">
+				<reportElement x="42" y="199" width="1" height="68" uuid="bd7011a3-24f7-4c3d-9524-6b2f2e8c9ba9"/>
+			</line>
+			<staticText>
+				<reportElement x="7" y="199" width="30" height="10" uuid="c9c0fa3b-07bc-4eab-bc74-3cabc5a9abda"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="5"/>
+				</textElement>
+				<text><![CDATA[Factura N°]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="47" y="200" width="30" height="10" uuid="ed4f800c-99c3-4734-a272-3590fa20d1cb"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="5"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="85" y="200" width="30" height="10" uuid="813f0ebf-b8e6-47ed-820c-17bddfa2d252"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="5"/>
+				</textElement>
+				<text><![CDATA[Factura N°]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="120" y="200" width="30" height="10" uuid="f53b530a-4b7c-414c-a047-e50aed1edf05"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="5"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="155" y="200" width="30" height="10" uuid="267960b4-7c05-43de-a24f-9addd7a2ba2c"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="5"/>
+				</textElement>
+				<text><![CDATA[Factura N°]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="190" y="200" width="30" height="10" uuid="e2d826b4-f69a-4dac-b234-041d8a257136"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="5"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+			<line direction="BottomUp">
+				<reportElement x="81" y="200" width="1" height="67" uuid="605e626f-0b17-484f-8a96-16d4579fcdf1"/>
+			</line>
+			<line direction="BottomUp">
+				<reportElement x="116" y="199" width="1" height="68" uuid="866d83bf-5102-42e2-b7a1-11b765dd29bd"/>
+			</line>
+			<line direction="BottomUp">
+				<reportElement x="152" y="200" width="1" height="67" uuid="89789cf6-84bf-4355-96d3-2ad64b10db96"/>
+			</line>
+			<line direction="BottomUp">
+				<reportElement x="187" y="200" width="1" height="67" uuid="53719da5-89a1-492d-a3a4-ce694b9e7d2a"/>
+			</line>
+			<line>
+				<reportElement x="4" y="211" width="216" height="1" uuid="5893d5ba-c5dc-4a29-a290-36987c9dd99f"/>
+			</line>
+			<rectangle>
+				<reportElement x="311" y="199" width="236" height="68" uuid="d545294e-f517-466c-a3bf-68417dbd58a0"/>
+			</rectangle>
+			<line direction="BottomUp">
+				<reportElement x="467" y="200" width="1" height="67" uuid="4f8a2f52-97f6-41e0-af38-a899712fd4b2"/>
+			</line>
+			<line direction="BottomUp">
+				<reportElement x="428" y="199" width="1" height="68" uuid="81e3d7e3-319c-42a8-855a-eee9415498b8"/>
+			</line>
+			<staticText>
+				<reportElement x="511" y="199" width="30" height="10" uuid="410f674d-41db-49f8-8ec5-4db4d6a6e8d8"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="5"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="434" y="200" width="30" height="10" uuid="a2a23c20-21c9-4170-a28b-3d527fb30fe5"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="5"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+			<line direction="BottomUp">
+				<reportElement x="388" y="200" width="1" height="67" uuid="f5de81f3-c046-4464-81c3-94ffefec9aa3"/>
+			</line>
+			<staticText>
+				<reportElement x="312" y="199" width="30" height="10" uuid="7d36a293-450b-4f3f-8673-a6453ef5e124"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="5"/>
+				</textElement>
+				<text><![CDATA[Factura N°]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="200" width="30" height="10" uuid="3b509e9a-8b7f-48db-8e53-c309731e9b05"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="5"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="473" y="200" width="30" height="10" uuid="4e279e4c-f151-41c3-95ca-884c7366f8ae"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="5"/>
+				</textElement>
+				<text><![CDATA[Factura N°]]></text>
+			</staticText>
+			<line direction="BottomUp">
+				<reportElement x="348" y="199" width="1" height="68" uuid="74c07c5d-67b6-41c2-89d0-271a88c6f205"/>
+			</line>
+			<staticText>
+				<reportElement x="396" y="200" width="30" height="10" uuid="aabd50da-16c8-48b3-8709-995639d5840f"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="5"/>
+				</textElement>
+				<text><![CDATA[Factura N°]]></text>
+			</staticText>
+			<line>
+				<reportElement x="311" y="211" width="236" height="1" uuid="c6f8f7a8-13be-4023-989d-7949f117ae03"/>
+			</line>
+			<line direction="BottomUp">
+				<reportElement x="506" y="200" width="1" height="67" uuid="8287168e-c0d3-442c-a918-701a3e6fe059"/>
+			</line>
+			<staticText>
+				<reportElement x="138" y="298" width="57" height="10" uuid="adb59a4b-f89d-48b5-ba25-2b5ef7ac7afc"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Firma]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="443" y="299" width="64" height="12" uuid="a284dc6e-5560-4bed-9a5d-68b1d8a30cc7"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Firma]]></text>
+			</staticText>
+			<line>
+				<reportElement x="436" y="296" width="76" height="1" uuid="8be28819-b51c-47de-915c-147903657e09"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="518" y="299" width="29" height="11" uuid="9739bf79-0fb4-4d2f-85fc-f32421fa959b"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SUC_ABREV}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="310" y="295" width="118" height="1" uuid="e97e4690-2486-4993-920a-59a52bb2d720"/>
+			</line>
+			<staticText>
+				<reportElement x="18" y="299" width="94" height="10" uuid="d93140f3-4ce0-454e-822e-701ce7d70bc4"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Lugar y Fecha]]></text>
+			</staticText>
+			<line>
+				<reportElement x="123" y="296" width="81" height="1" uuid="ee11568f-9f04-43e0-bffc-497f51c9cf6b"/>
+			</line>
+			<line>
+				<reportElement x="2" y="296" width="113" height="1" uuid="e217f709-73f5-4872-bce5-108531af9c96"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="204" y="298" width="24" height="10" uuid="d86be4fb-4e52-44e2-be00-0d90271b7b03"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SUC_ABREV}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="314" y="282" width="111" height="12" uuid="f2311532-6dd3-4950-889a-b809264b479f"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_RECIBO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="334" y="296" width="77" height="12" uuid="3277ff07-09f5-40fe-9820-013489e8dfb4"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Lugar y Fecha]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="6" y="285" width="111" height="10" uuid="fa7d8261-5804-4497-bb64-c4e539caac3e"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_RECIBO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</background>
+	<detail>
+		<band height="11">
+			<textField isBlankWhenNull="true">
+				<reportElement x="3" y="0" width="30" height="10" uuid="72ecee10-2e5e-4d38-a91f-4419c4d68efe"/>
+				<textElement textAlignment="Right" rotation="None">
+					<font fontName="Arial" size="5" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_FACTURA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="43" y="0" width="30" height="10" uuid="a5f3a000-37f6-4280-a62e-8f9e677ecd02"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_COBRO_CUOTA}]]></textFieldExpression>
+				<patternExpression><![CDATA[( $F{MON_CODIGO}== "1" ? "#,##0" : "#,##0.00" )]]></patternExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="312" y="1" width="30" height="10" uuid="5454691e-1456-4027-a31c-7c8615dfafba"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_FACTURA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="354" y="1" width="30" height="10" uuid="72f3fff6-0286-4085-959e-4464b75e9ce5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_COBRO_CUOTA}]]></textFieldExpression>
+				<patternExpression><![CDATA[( $F{MON_CODIGO}== "1" ? "#,##0" : "#,##0.00" )]]></patternExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

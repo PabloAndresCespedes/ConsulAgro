@@ -1,0 +1,680 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="tali201_gomeria" language="groovy" pageWidth="600" pageHeight="842" columnWidth="560" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c63dd902-d199-4893-a7e0-b3025018ded8">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="52"/>
+	<property name="ireport.y" value="19"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Transparent" backcolor="#F0F8FF" markup="none" isItalic="true" pdfFontName="Courier">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="grupo" uuid="e110759a-658f-4cd7-81a3-5925ef5f5503">
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_CLAVE_OT" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select distinct tal_ot_trabajos.trr_clave,
+                tal_ot_trabajos.trr_item,
+                tal_proc.prc_codigo,
+                tal_proc.prc_desc ||
+                decode(obse.tstd_obs,
+                       null,
+                       ' OBS: (' || tal_ot_trabajos.trr_obs || ')',
+                     -- '   OBS: (' || obse.tstd_obs || ')') prc_desc,
+                    '   OBS: (' || tal_ot_trabajos.trr_obs || ')') prc_desc,
+                --   obse.tstd_obs,
+                tal_proc.prc_tiempo,
+                tal_proc.prc_nro_mecanicos,
+                prc_grupo,
+                upper(o.tp_desc) tp_desc,
+               decode(trr_afecta, 1, 'CAMION',2,'CARRETA') AFECTA_PROC
+  from tal_ot_trabajos,
+       tal_proc,
+       (select tstd_clave, tstd_nro_item, tstd_proc, tstd_obs, toc_clave, tstd_empr
+          from tal_sol_trab_det ts, tal_ot ot
+         where ts.tstd_clave = ot.toc_solicitud
+         and ts.tstd_empr = ot.toc_empr
+         and ts.tstd_empr = 2) obse,
+         tal_grupo_proc o
+ where tal_proc.prc_codigo = tal_ot_trabajos.trr_proc
+   and prc_empr = trr_empr
+   and o.tp_codigo = 3
+   and prc_grupo = o.tp_codigo
+   and prc_empr = o.tp_empr
+   and tal_ot_trabajos.trr_clave = $P{P_CLAVE_OT}
+   and obse.toc_clave(+) = tal_ot_trabajos.trr_clave
+   and obse.tstd_empr(+) = trr_empr
+   and obse.tstd_proc(+) = tal_ot_trabajos.trr_proc
+  -- and (prc_grupo = :P_PRC_GRUPO or :P_PRC_GRUPO  is null)
+   and prc_empr = $P{P_EMPRESA}
+   and obse.tstd_nro_item(+) = tal_ot_trabajos.trr_item]]>
+		</queryString>
+		<field name="TRR_CLAVE" class="java.math.BigDecimal"/>
+		<field name="TRR_ITEM" class="java.math.BigDecimal"/>
+		<field name="PRC_CODIGO" class="java.math.BigDecimal"/>
+		<field name="PRC_DESC" class="java.lang.String"/>
+		<field name="PRC_TIEMPO" class="java.math.BigDecimal"/>
+		<field name="PRC_NRO_MECANICOS" class="java.math.BigDecimal"/>
+		<field name="PRC_GRUPO" class="java.math.BigDecimal"/>
+		<field name="TP_DESC" class="java.lang.String"/>
+		<field name="AFECTA_PROC" class="java.lang.String"/>
+		<group name="TIPO_DESC">
+			<groupExpression><![CDATA[$F{TP_DESC}]]></groupExpression>
+		</group>
+	</subDataset>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESCRIP_EMPR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCU_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLAVE_OT" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CAMION" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CARRETA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PRC_GRUPO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_km_sal" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT TAL_OT.TOC_CLAVE,
+       TAL_OT.TOC_NRO,
+       TRA_CAMION.CAM_PROPIO_COD MOVIL,
+       DECODE(TAL_OT.TOC_CLIENTE,
+              NULL,
+              DECODE(TRA_CAMION.CAM_PROPIO_COD,
+                     NULL,
+                     TAL_MOVIL_EXTERNO.ME_CHAPA,
+                     TRA_CAMION.CAM_CHAPA),
+              TAL_OT.TOC_CAM_TERC) CHAPA,
+       TRA_CAMION.CAM_CHASSIS,
+       TRA_CAMION.CAM_MODELO,
+       ' ' || TAL_OT.TOC_SOLICITADO_POR || '  ' TOC_SOLICITADO_POR,
+       TAL_OT.TOC_FEC_APERTURA,
+       TAL_OT.TOC_FEC_PLANEADA,
+       TAL_OT.TOC_FEC_INIC_TRAB,
+       TAL_OT.TOC_FEC_FIN_TRAB,
+       DECODE(TAL_OT.TOC_TIPO_MANT,
+              'M',
+              'Mantenimiento',
+              'A',
+              'Averia',
+              'R',
+              'Averia Critica',
+              'C',
+              'Cubiertas') TOC_TIPO_MANT,
+       DECODE(TAL_OT.TOC_ESTADO_CAMION, 'F', 'Funcionando', 'Averiado') TOC_ESTADO_CAMION,
+       TAL_OT.TOC_RECIBE,
+       TAL_OT.TOC_TIEMPO_REAL,
+       TAL_OT.TOC_KM_ACTUAL,
+       TAL_OT.TOC_HORA_ACTUAL,
+       TAL_OT.TOC_CAM_TERC,
+       ' ' ||
+       DECODE(TAL_OT.TOC_CLIENTE,
+              NULL,
+              'TRANSAGRO',
+              TAL_OT.TOC_CLIENTE || '-' || FIN_PERSONA.PNA_NOMBRE) || '  ' RAZON_SOCIAL,
+       DECODE(TAL_OT.TOC_ESTADO, 'C', 'Cerrado', 'Abierto') TOC_ESTADO,
+       TAL_OT.TOC_OBS,
+       TOC_CARRETA,
+       CAR_CHAPA,
+       CAR_MODELO
+  FROM TAL_OT, TRA_CAMION, TAL_MOVIL_EXTERNO, FIN_PERSONA, TRA_CARRETA
+ WHERE TRA_CAMION.CAM_CODIGO(+) = TAL_OT.TOC_CAMION
+   AND CAM_EMPR(+) = TOC_EMPR
+   AND TAL_OT.TOC_CLIENTE = PNA_CODIGO(+)
+   AND CAR_CODIGO(+) = TOC_CARRETA
+   AND CAR_EMPR(+) = TOC_EMPR
+   AND TOC_EMPR = PNA_EMPR(+)
+   AND TAL_MOVIL_EXTERNO.ME_CODIGO(+) = TAL_OT.TOC_MOVIL_EXTERNO
+   AND ME_EMPR(+) = TOC_EMPR
+   AND TOC_EMPR = $P{P_EMPRESA}
+   AND TOC_CLAVE = $P{P_CLAVE_OT}]]>
+	</queryString>
+	<field name="TOC_CLAVE" class="java.math.BigDecimal"/>
+	<field name="TOC_NRO" class="java.math.BigDecimal"/>
+	<field name="MOVIL" class="java.math.BigDecimal"/>
+	<field name="CHAPA" class="java.lang.String"/>
+	<field name="CAM_CHASSIS" class="java.lang.String"/>
+	<field name="CAM_MODELO" class="java.lang.String"/>
+	<field name="TOC_SOLICITADO_POR" class="java.lang.String"/>
+	<field name="TOC_FEC_APERTURA" class="java.sql.Timestamp"/>
+	<field name="TOC_FEC_PLANEADA" class="java.sql.Timestamp"/>
+	<field name="TOC_FEC_INIC_TRAB" class="java.sql.Timestamp"/>
+	<field name="TOC_FEC_FIN_TRAB" class="java.sql.Timestamp"/>
+	<field name="TOC_TIPO_MANT" class="java.lang.String"/>
+	<field name="TOC_ESTADO_CAMION" class="java.lang.String"/>
+	<field name="TOC_RECIBE" class="java.lang.String"/>
+	<field name="TOC_TIEMPO_REAL" class="java.math.BigDecimal"/>
+	<field name="TOC_KM_ACTUAL" class="java.math.BigDecimal"/>
+	<field name="TOC_HORA_ACTUAL" class="java.math.BigDecimal"/>
+	<field name="TOC_CAM_TERC" class="java.lang.String"/>
+	<field name="RAZON_SOCIAL" class="java.lang.String"/>
+	<field name="TOC_ESTADO" class="java.lang.String"/>
+	<field name="TOC_OBS" class="java.lang.String"/>
+	<field name="TOC_CARRETA" class="java.math.BigDecimal"/>
+	<field name="CAR_CHAPA" class="java.lang.String"/>
+	<field name="CAR_MODELO" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="166" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="50" width="555" height="81" uuid="da7335c1-e46d-47cc-a672-3f8128fcd3a8"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="75" y="52" width="50" height="10" uuid="ccfa80fe-53c1-4d37-85dd-cab04a7c69b3"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineColor="#E0E0E0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="40" y="65" width="50" height="10" uuid="2addea24-3862-414f-a206-25cf96e7d02c"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineColor="#E0E0E0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="92" y="63" width="56" height="10" uuid="d460e045-f4ee-467f-9a2c-d0ee859518eb"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineColor="#E0E0E0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="195" y="63" width="64" height="10" uuid="2d6c1cc6-9694-46f6-8e0a-784ae8264b7c"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineColor="#E0E0E0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="319" y="63" width="53" height="10" uuid="420b2941-76be-41f2-b0ed-8323682e014e"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineColor="#E0E0E0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="155" y="75" width="104" height="10" uuid="b8c8fa96-1d2f-4e86-9040-c7179c24d7ff"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineColor="#E0E0E0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="92" y="75" width="56" height="10" uuid="9de72524-7c7b-4409-8e03-041edb6211f5"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineColor="#E0E0E0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="38" y="75" width="52" height="10" uuid="87e83c6f-3c3b-406c-b420-d43fa5506110"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineColor="#E0E0E0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="38" y="86" width="148" height="10" uuid="76c9baac-8b20-46ad-b7be-08a4a8491dba"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineColor="#E0E0E0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="76" y="97" width="243" height="10" uuid="25c35068-84eb-4fbd-aafa-1fed8300e5f4"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineColor="#E0E0E0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="75" y="109" width="104" height="10" uuid="4e438691-2ad7-4678-aa02-e4c059da53f4"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineColor="#E0E0E0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="276" y="108" width="87" height="10" uuid="3e23967e-b968-407e-b3f0-6d5c78b8192a"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineColor="#E0E0E0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="458" y="108" width="78" height="10" uuid="6b43e5eb-8e4e-4eff-910c-35ded1019e78"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineColor="#E0E0E0"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="0" y="2" width="100" height="10" uuid="83e0088a-7de8-4cb8-bdf8-f9b87f69ef77"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESCRIP_EMPR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="12" width="100" height="10" uuid="c6c0af35-bd97-4844-a0dc-3647b0b3874d"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SUCU_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="26" width="355" height="10" uuid="3dc9ed8a-a23d-4f1d-81a4-96191e59e8a1"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="455" y="0" width="100" height="10" uuid="0bf94506-2877-4400-a5ae-3f22a37ef723"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="455" y="10" width="100" height="10" uuid="27cd3463-1449-49d0-8d48-06099e4348be"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="6" y="52" width="70" height="10" uuid="de50ff20-8aff-4cc7-90fb-2387742ab65c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Numero de Orden:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="6" y="64" width="34" height="10" uuid="910036f1-15f0-41f0-8d1a-a30776b378c7"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Vehiculo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="6" y="76" width="32" height="10" uuid="5f27759a-5abf-42c9-b96e-eedd5769ea83"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Carreta :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="6" y="87" width="32" height="10" uuid="881dc6b1-be36-4f4f-ba11-0def58e1bb91"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Cliente :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="6" y="98" width="70" height="10" uuid="73fd7b6d-a0b4-4aaf-98b7-a9a0b6ecf994"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Solicitado Por:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="6" y="110" width="70" height="10" uuid="4aeebbbb-4670-41b8-97ad-2a7eb26a0102"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Km Actual:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="160" y="64" width="35" height="10" uuid="382a1761-0009-4c3e-ba38-f3310769bd3e"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Chassis:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="285" y="64" width="34" height="10" uuid="a28a6f06-e53c-433b-b258-17bbbf4c0279"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Modelo :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="75" y="52" width="50" height="10" uuid="3970f57a-0b6b-4243-a160-c9366adfe57e"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOC_NRO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="40" y="64" width="50" height="10" uuid="e5c491ab-fd28-458d-81dc-74ea64fcb02f"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MOVIL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="92" y="64" width="56" height="10" uuid="d5b60c94-c671-4b47-a56a-be897322503f"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CHAPA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="195" y="64" width="64" height="10" uuid="6629b858-63c8-4e86-93c5-65f4f1d18568"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAM_CHASSIS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="319" y="64" width="53" height="10" uuid="c4b942ed-ce4d-4c65-b45d-c7a978b2a431"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAM_MODELO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="38" y="76" width="52" height="10" uuid="90d86e86-4d84-4104-b6b1-5f4cb273846c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOC_CARRETA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="92" y="76" width="56" height="10" uuid="37b05d32-0a19-4f31-8786-2b76cf7ad0ca"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAR_CHAPA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="155" y="76" width="104" height="10" uuid="b93cb75d-c463-4580-a59e-751ef1e22422"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAR_MODELO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="76" y="98" width="243" height="10" uuid="a59a7577-883a-41f1-bf91-3766526b62bf"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOC_SOLICITADO_POR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="38" y="87" width="148" height="10" uuid="7171d1ff-0280-4eb7-ba24-281ac6ca0208"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RAZON_SOCIAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="76" y="110" width="103" height="10" uuid="82b35c33-e8e7-49e5-ab0d-96703c7d9704"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOC_KM_ACTUAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="186" y="109" width="90" height="10" uuid="0c3f3b10-1ba3-44e3-894f-43696cad778c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Km prox. mantenimiento:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="276" y="109" width="87" height="10" uuid="cd95be05-19d5-459f-9243-931ccc4c81ef"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_km_sal}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="368" y="109" width="90" height="10" uuid="eea05d0a-1280-4239-8ce7-5cbcca9ba8ef"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Saldo Km p/ prox. mant:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="458" y="109" width="78" height="10" uuid="36a4ffb8-a256-4dd9-a047-82a5a9103a96"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_km_sal}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="151" width="555" height="14" uuid="85257e94-deb4-4d6a-a7fe-5f98f87921cc"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TRABAJOS A REALIZAR]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="13" splitType="Stretch">
+			<componentElement>
+				<reportElement key="table" x="0" y="0" width="555" height="13" uuid="5c33dcfe-d112-4b24-be24-0f197079ee5d"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="grupo" uuid="b86374d6-3e05-42ff-ba96-5d07d4fe59d9">
+						<datasetParameter name="P_EMPRESA">
+							<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_CLAVE_OT">
+							<datasetParameterExpression><![CDATA[$P{P_CLAVE_OT}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="113" uuid="f67c973c-3f07-4add-89cf-175aa88d094a">
+						<jr:groupHeader groupName="TIPO_DESC">
+							<jr:cell height="16" rowSpan="1">
+								<box>
+									<topPen lineWidth="0.25"/>
+									<leftPen lineWidth="0.25"/>
+								</box>
+								<staticText>
+									<reportElement x="15" y="0" width="98" height="15" uuid="f074f477-bb07-4da7-8630-1ecaf0d72eb8"/>
+									<textElement>
+										<font fontName="Arial" size="12" isBold="true"/>
+									</textElement>
+									<text><![CDATA[SECCION :]]></text>
+								</staticText>
+								<line>
+									<reportElement x="13" y="15" width="100" height="1" uuid="ffed4130-bfa8-44d7-875a-97be2cf0129f"/>
+									<graphicElement>
+										<pen lineWidth="0.25"/>
+									</graphicElement>
+								</line>
+							</jr:cell>
+						</jr:groupHeader>
+						<jr:detailCell height="12" rowSpan="1">
+							<box>
+								<leftPen lineWidth="0.25"/>
+								<bottomPen lineWidth="0.0"/>
+							</box>
+							<textField isBlankWhenNull="true">
+								<reportElement x="37" y="0" width="55" height="12" uuid="dabd2864-70b8-422a-91d1-8743ceb7f40e"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{AFECTA_PROC}]]></textFieldExpression>
+							</textField>
+							<rectangle>
+								<reportElement x="15" y="0" width="20" height="12" uuid="28824efd-03f9-457a-af3b-a911cdd5eb40"/>
+								<graphicElement>
+									<pen lineWidth="0.25"/>
+								</graphicElement>
+							</rectangle>
+							<staticText>
+								<reportElement x="92" y="0" width="21" height="12" uuid="74b579ab-5b7c-4aec-9c71-66acca4dc955"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<text><![CDATA[=>]]></text>
+							</staticText>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="442" uuid="55c8c2a5-b1a1-4315-bdf5-262fc530e1d5">
+						<jr:groupHeader groupName="TIPO_DESC">
+							<jr:cell height="16" rowSpan="1">
+								<box>
+									<topPen lineWidth="0.25"/>
+									<rightPen lineWidth="0.25"/>
+								</box>
+								<textField>
+									<reportElement x="0" y="0" width="442" height="15" uuid="faa3de0a-e04e-4dab-b37a-8ba383ff3f47"/>
+									<textElement>
+										<font fontName="Arial" size="12" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{TP_DESC}]]></textFieldExpression>
+								</textField>
+								<line>
+									<reportElement x="0" y="15" width="430" height="1" uuid="fb115d27-63f9-43d5-9b35-5a4e9b71ccc5"/>
+									<graphicElement>
+										<pen lineWidth="0.25"/>
+									</graphicElement>
+								</line>
+							</jr:cell>
+						</jr:groupHeader>
+						<jr:detailCell height="12" rowSpan="1">
+							<box>
+								<rightPen lineWidth="0.25"/>
+							</box>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="442" height="12" uuid="19ec5a7e-cc34-44d3-9344-a895b45d4d48"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{PRC_DESC}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="130" splitType="Stretch">
+			<staticText>
+				<reportElement x="6" y="0" width="45" height="10" uuid="22c69489-e82c-4bf4-9551-b9a5fcc58468"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Observacion :]]></text>
+			</staticText>
+			<line>
+				<reportElement x="6" y="16" width="530" height="1" uuid="6e5897dd-2896-4080-abd2-77e4d4f03c93"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="6" y="26" width="530" height="1" uuid="4e207e0d-cc1e-4c3b-a50e-7f04fb3646f3"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="6" y="36" width="530" height="1" uuid="3122b1f5-5f12-47d8-aa01-dde888e2efb4"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="555" y="-13" width="1" height="88" uuid="67c49c61-5cc3-4559-a4f9-585f0ec97199"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="75" width="556" height="1" uuid="27cd8702-b880-4a8c-a8da-91277c6ba294"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="-13" width="1" height="88" uuid="11f96d71-e153-46b7-8469-6038c7685bbe"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="458" y="66" width="78" height="1" uuid="88bc7aa7-1b42-4625-b46e-e663fc1799c9"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="458" y="66" width="78" height="10" uuid="2b3d0b7f-bfb4-4355-a9c6-e14f0287ddd4"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Firma Mecanico]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="27" splitType="Stretch">
+			<elementGroup>
+				<subreport>
+					<reportElement x="2" y="0" width="200" height="27" uuid="9947f454-f3c1-4113-9aaa-ced67696a05e"/>
+					<subreportParameter name="P_EMPRESA">
+						<subreportParameterExpression><![CDATA[$P{P_EMPRESA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_CARRETA">
+						<subreportParameterExpression><![CDATA[$F{TOC_CARRETA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_CAMION">
+						<subreportParameterExpression><![CDATA[$F{MOVIL}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "TALI300_CAMION.jasper"]]></subreportExpression>
+				</subreport>
+			</elementGroup>
+		</band>
+	</summary>
+</jasperReport>

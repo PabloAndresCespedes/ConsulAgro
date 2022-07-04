@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERI254_PAG" language="groovy" pageWidth="595" pageHeight="842" columnWidth="455" leftMargin="70" rightMargin="70" topMargin="70" bottomMargin="70" uuid="21be2439-d8ae-48bb-b488-ec0907bc7b38">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_LEGAJO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NUMERO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_VALOR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT 1 ORDEN,
+       '1/1' PAGARE_NRO,
+       SUM(PMOPD_CUOTA) TOTAL,
+       MAX(PMOPD_VENCIMIENTO) VENCIMIENTO,
+       P.PMOP_INT_ANUAL INTERES,
+       EMPL_LEGAJO||' '||E.EMPL_NOMBRE ||' ' ||E.EMPL_APE EMPLEADO,
+       EMPL_DOC_IDENT,
+       EMPL_DIR,
+       P.PMOP_FECHA_DESEMBOLSO FECHA_OPERACION,
+       GENERAL.FP_CONV_NRO_TXT(V_NUMERO => SUM(PMOPD_CUOTA) , V_MONEDA => MON_CODIGO) letras,
+       A.MON_DESC,
+       A.MON_SIMBOLO,
+  p.pmop_destino,
+mon_codigo
+  FROM PER_PRESTAMOS_PLAN_DET, PER_EMPLEADO E, PER_PRESTAMOS_PLAN P, GEN_MONEDA A
+ WHERE PMOPD_LEGAJO = E.EMPL_LEGAJO
+   AND PMOPD_EMPR = E.EMPL_EMPRESA
+   AND P.PMOP_LEGAJO = E.EMPL_LEGAJO
+   AND P.PMOP_EMPR = E.EMPL_EMPRESA
+   AND P.PMOP_NRO = PER_PRESTAMOS_PLAN_DET.PMOPD_NRO
+   AND P.PMOP_EMPR = PMOPD_EMPR
+   AND P.PMOP_MONEDA = MON_CODIGO
+   AND P.PMOP_EMPR = MON_EMPR
+   AND P.PMOP_EMPR = $P!{P_EMPRESA}
+    AND PMOPD_LEGAJO =$P!{P_LEGAJO}
+    AND PMOPD_NRO = $P{P_NUMERO}
+    AND 1 = $P{P_VALOR}
+ GROUP BY P.PMOP_INT_ANUAL ,
+       EMPL_LEGAJO || ' ' || E.EMPL_NOMBRE || ' ' || E.EMPL_APE ,
+       EMPL_DOC_IDENT,
+       EMPL_DIR,
+       P.PMOP_FECHA_DESEMBOLSO,
+         A.MON_DESC,
+       A.MON_SIMBOLO,
+      MON_CODIGO,
+  p.pmop_destino
+UNION ALL
+ SELECT PMOPD_CUOTA_NRO ORDEN,
+        PMOPD_CUOTA_NRO || '/ '|| P.PMOP_CANT_CUOTAS PAGARE_NRO,
+        PMOPD_CUOTA TOTAL,
+        PMOPD_VENCIMIENTO VENCIMIENTO,
+        P.PMOP_INT_ANUAL INTERES,
+        EMPL_LEGAJO || ' ' || E.EMPL_NOMBRE || ' ' || E.EMPL_APE EMPLEADO,
+        EMPL_DOC_IDENT,
+        EMPL_DIR,
+        P.PMOP_FECHA_DESEMBOLSO FECHA_OPERACION,
+      GENERAL.FP_CONV_NRO_TXT(V_NUMERO => PMOPD_CUOTA , V_MONEDA => MON_CODIGO) letras,
+       A.MON_DESC,
+       A.MON_SIMBOLO,
+  p.pmop_destino,
+mon_codigo
+  FROM PER_PRESTAMOS_PLAN_DET, PER_EMPLEADO E, PER_PRESTAMOS_PLAN P, GEN_MONEDA A
+ WHERE PMOPD_LEGAJO = E.EMPL_LEGAJO
+   AND PMOPD_EMPR = E.EMPL_EMPRESA
+   AND P.PMOP_LEGAJO = E.EMPL_LEGAJO
+   AND P.PMOP_EMPR = E.EMPL_EMPRESA
+   AND P.PMOP_NRO = PER_PRESTAMOS_PLAN_DET.PMOPD_NRO
+   AND P.PMOP_EMPR = PMOPD_EMPR
+   AND P.PMOP_MONEDA = MON_CODIGO
+   AND P.PMOP_EMPR = MON_EMPR
+    AND P.PMOP_EMPR = $P!{P_EMPRESA}
+    AND PMOPD_LEGAJO =$P!{P_LEGAJO}
+    AND PMOPD_NRO = $P{P_NUMERO}
+    AND 2 = $P{P_VALOR}
+ORDER BY 1]]>
+	</queryString>
+	<field name="ORDEN" class="java.math.BigDecimal"/>
+	<field name="PAGARE_NRO" class="java.lang.String"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<field name="VENCIMIENTO" class="java.sql.Timestamp"/>
+	<field name="INTERES" class="java.math.BigDecimal"/>
+	<field name="EMPLEADO" class="java.lang.String"/>
+	<field name="EMPL_DOC_IDENT" class="java.math.BigDecimal"/>
+	<field name="EMPL_DIR" class="java.lang.String"/>
+	<field name="FECHA_OPERACION" class="java.sql.Timestamp"/>
+	<field name="LETRAS" class="java.lang.String"/>
+	<field name="MON_DESC" class="java.lang.String"/>
+	<field name="MON_SIMBOLO" class="java.lang.String"/>
+	<field name="PMOP_DESTINO" class="java.lang.String"/>
+	<field name="MON_CODIGO" class="java.math.BigDecimal"/>
+	<group name="CANTIDAD">
+		<groupExpression><![CDATA[$F{ORDEN}]]></groupExpression>
+		<groupHeader>
+			<band height="136">
+				<staticText>
+					<reportElement x="145" y="0" width="180" height="60" uuid="0c334079-e0c1-464d-bf9f-786faaa6ad1b"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="16" isBold="true"/>
+					</textElement>
+					<text><![CDATA[PAGARE A LA ORDEN SIN PROTESTO]]></text>
+				</staticText>
+				<image>
+					<reportElement x="3" y="6" width="179" height="55" uuid="362e17e4-ce7e-4332-a611-1ca88b8f5c53"/>
+					<imageExpression><![CDATA["logo_t.jpg"]]></imageExpression>
+				</image>
+				<line>
+					<reportElement x="2" y="60" width="453" height="1" uuid="320f51ca-d64b-4512-a42c-14c75c9d5235"/>
+				</line>
+				<line>
+					<reportElement x="1" y="2" width="1" height="58" uuid="b6dd4d24-572a-4f12-a27d-bb65d1670f68"/>
+				</line>
+				<line>
+					<reportElement x="2" y="1" width="453" height="1" uuid="b6073433-32c4-4c05-946d-49dcea68aafb"/>
+				</line>
+				<line>
+					<reportElement x="455" y="2" width="1" height="58" uuid="c8af57f3-49ff-4a26-aead-2d9afd3601da"/>
+				</line>
+				<textField>
+					<reportElement x="155" y="93" width="298" height="20" uuid="a33be4f1-0370-4807-82b6-affd3a24521d"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{P_FECHA}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="116" width="50" height="20" uuid="2b06e523-2fbd-4475-a9ed-17b2c68f1871"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Cuota:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="36" y="116" width="218" height="20" uuid="ab36035b-4e84-403b-9629-2d37f72d08b1"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PAGARE_NRO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="321" y="61" width="59" height="20" uuid="87423a5b-6800-43da-8d29-46a4506cc9c3"/>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{MON_SIMBOLO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="380" y="60" width="73" height="20" uuid="847d0039-d06b-4b1c-8078-d5cdc763a24b"/>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+					<patternExpression><![CDATA[$F{MON_CODIGO}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="195"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="39" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="236" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="12" width="455" height="15" backcolor="#CCCCCC" uuid="cfe57ac9-c69e-4588-abab-2bff80dc8c11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TRANSAGRO S.A.o a su orden]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Opaque" x="0" y="44" width="455" height="40" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC" uuid="fd61fec9-067b-42ee-8009-2a79288bbb6b"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["La suma de "+$F{MON_DESC}+" "+$F{LETRAS}+" por igual valor recibido en efectivo a mi(nuestra) entera satisfacción. Queda pactada un interés compensatorio del "+$F{INTERES}+" % anual hasta su pago total."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="88" width="453" height="20" uuid="84ef405d-c5ff-40d2-bd82-e6d95633e1ef"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["El monto del pagare se detalla en concepto de prestamo para: "+$F{PMOP_DESTINO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="3" y="129" width="100" height="13" uuid="0f163978-23f6-4eed-99b6-216e9a6ebbeb"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="146" width="100" height="13" uuid="b2c36943-52e8-4666-871e-6908c94222c2"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dirección:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="164" width="100" height="13" uuid="cae11fbf-3e04-4ae9-87cc-cc83530b08ce"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha de Oparación:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="302" y="196" width="151" height="1" uuid="8cd108fc-c1a0-4123-ad5b-423a193e1516"/>
+			</line>
+			<staticText>
+				<reportElement x="301" y="205" width="23" height="20" uuid="1f08a62d-89b9-4d00-adef-2b2dfd401ad7"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[C.I.:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="325" y="215" width="128" height="1" uuid="0c0c61dc-b767-4116-95ca-c1f3cdd34990"/>
+			</line>
+			<textField>
+				<reportElement x="103" y="129" width="350" height="13" uuid="e06140ee-ca2c-446a-aebd-b8f0b55f63e9"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EMPLEADO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="103" y="146" width="350" height="13" uuid="23445979-0e2f-49ce-8df8-c4dc3e534aa3"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EMPL_DIR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="103" y="164" width="350" height="13" uuid="7dd7d2d1-2d4b-4572-88bc-3399795a1976"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_OPERACION}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="12" splitType="Stretch"/>
+	</summary>
+</jasperReport>

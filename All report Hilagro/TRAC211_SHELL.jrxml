@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TRAC211_SHELL" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f5315d73-85a9-4d71-93c1-662cd38f4c17">
+	<property name="ireport.zoom" value="3.221020000000002"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="41"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<subDataset name="SQL_DETALLE" uuid="5616ef89-b29a-48e3-aa8b-02dc1c5b5bc1">
+		<parameter name="P_SESSION" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_OCA_CLAVE" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT 'ORIGEN = ' || O.LOC_DESC || ' <br> DESTINO  = ' || ' ' ||
+       D.LOC_DESC DESTINO, --DESC
+       '<b>' || NVL(CAM.COMP_DESCRIPCION, ACO.COMP_DESCRIPCION) ||
+       '</b> <br> ' || P.PRO_DESCRIPCION COMP_DESCRIPCION,
+       B.OCP_CANT VOLUMEN,
+       A.OCA_CAMION,
+       TO_NUMBER(ROUND(SUM(TRAC211.FP_CALC_PRECIO(I_CLAVE_OC    => A.OCA_CLAVE,
+                                                  I_EMPRESA     => A.OCA_EMPR,
+                                                  I_TIP_FLETE   => TR.DES_TIPO_FLETE,
+                                                  I_DESC_CODIGO => TR.DES_CODIGO)),
+                       (CASE
+                         WHEN OCA_MON = 1 THEN
+                          0
+                         ELSE
+                          2
+                       END))) PRECIO,
+		TO_CHAR(TRUNC(OCA_FEC_SAL),'DD/MM/YYYY') OCA_FEC_SAL
+  FROM TRA_ORDEN_CARGA       A,
+       TRA_OCARGA_PROD       B,
+       TRA_CAMION_CISTERNA   E,
+       TRA_ACOPLADO_CISTERNA F,
+       TRA_CISTERNA_COMP     CAM,
+       TRA_CISTERNA_COMP     ACO,
+       TRA_OC_DESTINOS       DES,
+       GEN_LOCALIDAD         O,
+       GEN_LOCALIDAD         D,
+       TRA_CAMION            X,
+       TRA_PRODUCTO          P,
+       TRA_DESTINOS          TR
+
+ WHERE A.OCA_CLAVE = B.OCP_CODIGO
+   AND A.OCA_EMPR = B.OCP_EMPR
+
+   AND A.OCA_CAMION = E.CCOMP_CAM_CODIGO(+)
+   AND A.OCA_EMPR = E.CCOMP_EMPR(+)
+      --
+   AND DES.OCD_CLAVE_OCARGA = B.OCP_CODIGO
+   AND DES.OCD_EMPR = B.OCP_EMPR
+   AND DES.OCD_ITEM = B.OCP_NRO_ITEM
+      --
+   AND TR.DES_CODIGO = DES.OCD_COD_DESTINO
+   AND TR.DES_EMPR = DES.OCD_EMPR
+      --
+
+   AND DES.OCD_ORIGEN = O.LOC_CODIGO
+   AND DES.OCD_EMPR = O.LOC_EMPR
+      --
+   AND DES.OCD_DESTINO = D.LOC_CODIGO
+   AND DES.OCD_EMPR = D.LOC_EMPR
+      --
+   AND E.CCOMP_COMP_CODIGO = CAM.COMP_CODIGO(+)
+   AND E.CCOMP_EMPR = CAM.COMP_EMPR(+)
+      --
+   AND F.ACCOMP_COMP_CODIGO = ACO.COMP_CODIGO(+)
+   AND F.ACCOMP_EMPR = ACO.COMP_EMPR(+)
+      --
+   AND A.OCA_ACOPLADO = F.ACCOMP_CAR_CODIGO(+)
+   AND A.OCA_EMPR = F.ACCOMP_EMPR(+)
+
+   AND B.OCP_COMPARTIMENTO = NVL(E.CCOMP_COMP_CODIGO, F.ACCOMP_COMP_CODIGO)
+
+   AND X.CAM_CODIGO = A.OCA_CAMION
+   AND X.CAM_EMPR = A.OCA_EMPR
+
+   AND B.OCP_PRODUCTO = P.PRO_CODIGO
+   AND B.OCP_EMPR = P.PRO_EMPR
+
+   AND A.OCA_CODIGO = $P{P_OCA_CLAVE}
+   AND A.OCA_EMPR = 2
+ GROUP BY 'ORIGEN = ' || O.LOC_DESC || ' <br> DESTINO  = ' || ' ' ||
+          D.LOC_DESC, --DESC
+          '<b>' || NVL(CAM.COMP_DESCRIPCION, ACO.COMP_DESCRIPCION) ||
+          '</b> <br> ' || P.PRO_DESCRIPCION,
+          B.OCP_CANT,
+          A.OCA_CAMION,
+          OCA_MON,
+	OCA_FEC_SAL]]>
+		</queryString>
+		<field name="DESTINO" class="java.lang.String"/>
+		<field name="COMP_DESCRIPCION" class="java.lang.String"/>
+		<field name="VOLUMEN" class="java.math.BigDecimal"/>
+		<field name="OCA_CAMION" class="java.math.BigDecimal"/>
+		<field name="PRECIO" class="java.math.BigDecimal"/>
+		<field name="OCA_FEC_SAL" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESCRIP_EMPR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_MONEDA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_MONEDA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLI_NOMB" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_INICIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_FIN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SESSION_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_OBS_INCLUYE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT T.OCA_CODIGO,
+       T.CAMION,
+       T.DESTINOS,
+       T.SESSION_ID,
+       T.PRECIO,
+       T.OCA_MON,
+       TO_CHAR(TRUNC(T.OCA_FEC_SAL),'DD/MM/YYYY') OCA_FEC_SAL
+  FROM TRAC211_SHELL T
+ WHERE SESSION_ID = NVL($P{P_SESSION_ID}, SESSION_ID)
+ ORDER BY OCA_CODIGO ASC
+]]>
+	</queryString>
+	<field name="OCA_CODIGO" class="java.math.BigDecimal"/>
+	<field name="CAMION" class="java.lang.String"/>
+	<field name="DESTINOS" class="java.lang.String"/>
+	<field name="SESSION_ID" class="java.math.BigDecimal"/>
+	<field name="PRECIO" class="java.math.BigDecimal"/>
+	<field name="OCA_MON" class="java.math.BigDecimal"/>
+	<field name="OCA_FEC_SAL" class="java.lang.String"/>
+	<variable name="PRECIO_1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{PRECIO}]]></variableExpression>
+	</variable>
+	<variable name="PRECIO_2" class="java.math.BigDecimal" resetType="Group" resetGroup="OCA_CODIGO" calculation="Sum">
+		<variableExpression><![CDATA[$F{PRECIO}]]></variableExpression>
+	</variable>
+	<group name="OCA_CODIGO">
+		<groupExpression><![CDATA[$F{OCA_CODIGO}]]></groupExpression>
+		<groupHeader>
+			<band height="93">
+				<textField isBlankWhenNull="true">
+					<reportElement x="40" y="1" width="73" height="12" uuid="afb8e063-9f1a-4ba9-a944-aac6a70ad9a7"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{OCA_CODIGO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="4" y="1" width="37" height="12" uuid="98d295f1-9ccc-4f21-a4f1-0b5e72e4af9b"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true" isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[N° O.C.:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="5" y="16" width="35" height="10" uuid="eae7bdb1-be4c-484c-9441-8d15af9a966b"/>
+					<textElement>
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Camión:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="41" y="16" width="99" height="10" uuid="7e6351ab-f020-44d6-b033-9aa2e9ff6887"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CAMION}]]></textFieldExpression>
+				</textField>
+				<crosstab>
+					<reportElement x="6" y="28" width="549" height="63" uuid="6e5d01a8-2a34-4ee0-8a7f-210804b680e9"/>
+					<box>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<crosstabDataset>
+						<dataset>
+							<datasetRun subDataset="SQL_DETALLE" uuid="0e805f45-d601-463f-9844-cc87ff1f97d8">
+								<datasetParameter name="P_OCA_CLAVE">
+									<datasetParameterExpression><![CDATA[$F{OCA_CODIGO}]]></datasetParameterExpression>
+								</datasetParameter>
+							</datasetRun>
+						</dataset>
+					</crosstabDataset>
+					<crosstabHeaderCell>
+						<cellContents>
+							<staticText>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="103" height="36" uuid="806a7108-40c7-4803-bc4b-5207e51c297d"/>
+								<box>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="7" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Destinos]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="Crosstab Data Text" x="103" y="0" width="44" height="36" uuid="b2eb5108-d63d-45e9-b826-3b8fe2c8edf3"/>
+								<box>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="7" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Importe]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabHeaderCell>
+					<rowGroup name="DESTINO" width="103" totalPosition="End">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{DESTINO}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#F0F8FF" mode="Transparent">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+									<topPen lineStyle="Solid"/>
+									<leftPen lineStyle="Solid"/>
+									<bottomPen lineStyle="Solid"/>
+									<rightPen lineStyle="Solid"/>
+								</box>
+								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="103" height="25" uuid="b661e2ec-f2ce-48b4-95c5-497c5abfa4f9"/>
+									<textElement markup="html">
+										<font fontName="Arial" size="6"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{DESTINO}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents backcolor="#BFE1FF" mode="Transparent">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+									<topPen lineWidth="0.0" lineStyle="Dotted"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="0.0"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+							</cellContents>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="IMPORTE" width="44">
+						<bucket class="java.math.BigDecimal">
+							<bucketExpression><![CDATA[$F{PRECIO}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents>
+								<box>
+									<pen lineStyle="Solid"/>
+									<topPen lineWidth="0.5" lineStyle="Solid"/>
+									<leftPen lineWidth="0.5" lineStyle="Solid"/>
+									<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+									<rightPen lineWidth="0.5" lineStyle="Solid"/>
+								</box>
+								<textField pattern="#,##0.00" isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="42" height="25" uuid="73f9102a-a6c5-4254-bb4e-2191b4e7f38f"/>
+									<textElement textAlignment="Right">
+										<font fontName="Arial" size="6"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{IMPORTE}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<columnGroup name="COMP_DESCRIPCION" height="36" totalPosition="End">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{COMP_DESCRIPCION}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+							<cellContents backcolor="#F0F8FF" mode="Transparent">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+									<topPen lineStyle="Solid"/>
+									<leftPen lineStyle="Solid"/>
+									<bottomPen lineStyle="Solid"/>
+									<rightPen lineStyle="Solid"/>
+								</box>
+								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="1" y="0" width="47" height="36" uuid="3f36d1f7-c853-4b4e-bd3d-4eb27ece2387"/>
+									<textElement verticalAlignment="Top" rotation="None" markup="html">
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{COMP_DESCRIPCION}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabColumnHeader>
+						<crosstabTotalColumnHeader>
+							<cellContents backcolor="#BFE1FF" mode="Transparent"/>
+						</crosstabTotalColumnHeader>
+					</columnGroup>
+					<measure name="VOLUMENMeasure" class="java.math.BigDecimal">
+						<measureExpression><![CDATA[$F{VOLUMEN}]]></measureExpression>
+					</measure>
+					<crosstabCell width="48" height="25">
+						<cellContents>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="46" height="25" uuid="fd07c959-a930-4896-9a29-69acf2a4a9ef"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{VOLUMENMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="48" height="0" rowTotalGroup="DESTINO">
+						<cellContents backcolor="#BFE1FF" mode="Transparent"/>
+					</crosstabCell>
+					<crosstabCell width="0" height="25" columnTotalGroup="COMP_DESCRIPCION">
+						<cellContents backcolor="#BFE1FF" mode="Transparent"/>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="DESTINO" columnTotalGroup="COMP_DESCRIPCION">
+						<cellContents backcolor="#BFE1FF" mode="Transparent">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								<topPen lineWidth="0.0"/>
+								<leftPen lineWidth="0.0"/>
+								<bottomPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="IMPORTE">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="IMPORTE" columnTotalGroup="COMP_DESCRIPCION">
+						<cellContents/>
+					</crosstabCell>
+				</crosstab>
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement x="142" y="1" width="100" height="12" uuid="e767a03a-7b34-4934-b897-99899c5a3b8d"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{OCA_FEC_SAL}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="115" y="1" width="27" height="12" uuid="8710f928-3d5e-4983-870f-87afbf456d1e"/>
+					<textElement>
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Fecha:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="108" y="0" width="45" height="10" uuid="09791959-cbe4-48d0-b14a-a025ee610347"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{PRECIO_2}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="55" y="0" width="53" height="10" uuid="698c879e-60b9-46b5-97c8-5e422fb06f94"/>
+					<textElement>
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total O.C. :]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="119" splitType="Stretch">
+			<textField>
+				<reportElement x="133" y="38" width="290" height="20" uuid="5c13763e-6a15-44dc-964d-130e5ff4aa43"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="449" y="3" width="100" height="20" uuid="6dce9c22-9b4c-48a1-ab81-9778c979cbf7"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement x="35" y="64" width="487" height="55" uuid="0f4008d8-afb8-492c-a9f4-08482e430207"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<staticText>
+					<reportElement x="67" y="6" width="50" height="12" uuid="63f1a33d-603a-4b58-a9c3-860739c23d26"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Fecha Inicio:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="272" y="6" width="50" height="12" uuid="8b3671d5-4f3e-4b4a-a314-bd5717250d1f"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Fecha Fin:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="121" y="6" width="69" height="12" uuid="d588ea87-1235-45df-8349-97ce2145944e"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{P_FECHA_INICIO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="325" y="6" width="69" height="12" uuid="a8b069c3-4d5a-4b63-bbed-5f8aa4d61c41"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{P_FECHA_FIN}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="67" y="20" width="50" height="12" uuid="3fcd6bae-598e-4ea2-bf8f-c51f2526e3ba"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Cliente:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="120" y="20" width="245" height="12" uuid="ade6be3d-d664-48ec-b747-f77ccf9f2143"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{P_CLI_NOMB}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="67" y="35" width="50" height="12" uuid="0a0e682a-9eae-47e8-bb9c-4909196ea8ed"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Incluye:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="120" y="35" width="245" height="12" uuid="b83bff5b-9a39-46c4-9af0-29c2131b259a"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{P_OBS_INCLUYE}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<image>
+				<reportElement x="6" y="3" width="107" height="55" uuid="def394b2-23f4-4f88-8d42-542891b2966c"/>
+				<imageExpression><![CDATA["logoTransagro.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<columnFooter>
+		<band height="10" splitType="Immediate">
+			<textField isBlankWhenNull="true">
+				<reportElement x="102" y="0" width="51" height="10" uuid="5113a633-ec1a-48a8-972b-a1d85e27e340"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PRECIO_1}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{OCA_MON}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<staticText>
+				<reportElement x="41" y="0" width="57" height="10" uuid="5a060677-f6ec-4574-812c-de46d333cabb"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total General:]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+</jasperReport>

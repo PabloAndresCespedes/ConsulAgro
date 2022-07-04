@@ -1,0 +1,1119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="STKL264" language="javascript" pageWidth="750" pageHeight="842" columnWidth="710" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="0e029785-1cd6-4f51-a1fb-897291b749c2">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="382"/>
+	<property name="ireport.y" value="55"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="resumen" uuid="6f4783df-865f-4c04-814e-738fe081f874">
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_DESCRIP_EMPR" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_PROGRAMA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_LINEA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_MARCA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_GRUPO" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_TIPO_MOV" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_SUCURSAL" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_MONEDA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_FECHA_INICIO" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_FECHA_FIN" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_DESC_PROGRAMA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_DESC_MONEDA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_DESC_LINEA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_GRUPO_DESC" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_DESC_SUCURSAL" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_SIMBOLO" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_DESC_MARCA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_DESC_TIPO_M" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_OPER_T_M" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT GEN_SUCURSAL.SUC_ABREV,
+       STK_MARCA.MARC_DESC,
+       OPER_CODIGO,
+       NVL(TMOV_DESC, OPER_DESC) OPERACION,
+       DETA_ART,
+       ART_DESC,
+       ART_UNID_MED,
+       GEN_MONEDA.MON_SIMBOLO,
+       SUM(DECODE(OPER_ENT_SAL, 'E', -DETA_CANT, DETA_CANT)) CANTIDAD,
+       SUM(DECODE(OPER_ENT_SAL, 'E', -1, 1) *
+           (NVL(DETA_IMP_NETO_MON, 0) + NVL(DETA_IVA_MON, 0))) IMPORTE
+  FROM STK_MARCA,
+       STK_ARTICULO,
+       GEN_EMPRESA,
+       GEN_SUCURSAL,
+       STK_OPERACION,
+       STK_DOCUMENTO,
+       STK_DOCUMENTO_DET,
+       GEN_MONEDA,
+       GEN_TIPO_MOV
+ WHERE DOCU_EMPR = $P{P_EMPRESA}
+
+   AND DOCU_CLAVE = DETA_CLAVE_DOC
+   AND DOCU_EMPR = DETA_EMPR
+
+   AND EMPR_CODIGO = DOCU_EMPR
+
+   AND SUC_CODIGO = DOCU_SUC_ORIG
+   AND SUC_EMPR = DOCU_EMPR
+   and (SUC_CODIGO = $P{P_SUCURSAL} OR $P{P_SUCURSAL} IS NULL)
+
+   AND ART_CODIGO = DETA_ART
+   AND ART_EMPR = DETA_EMPR
+
+   AND MARC_CODIGO = ART_MARCA
+   AND MARC_EMPR = ART_EMPR
+   AND (MARC_CODIGO = $P{P_MARCA} OR $P{P_MARCA} IS NULL)
+
+   AND OPER_CODIGO = DOCU_CODIGO_OPER
+   AND OPER_EMPR = DOCU_EMPR
+   AND (OPER_CODIGO = $P{P_TIPO_MOV} OR $P{P_TIPO_MOV} IS NULL)
+
+   AND DOCU_MON = MON_CODIGO
+   AND DOCU_EMPR = MON_EMPR
+   AND (DOCU_MON = $P{P_MONEDA} OR $P{P_MONEDA} IS NULL)
+
+   AND OPER_CODIGO IN (3, 4, 10,12)
+   AND DOCU_TIPO_MOV = TMOV_CODIGO(+)
+   AND DOCU_EMPR = TMOV_EMPR(+)
+
+ GROUP BY GEN_SUCURSAL.SUC_ABREV,
+          STK_MARCA.MARC_DESC,
+          OPER_CODIGO,
+          NVL(TMOV_DESC, OPER_DESC),
+          DETA_ART,
+          ART_DESC,
+          ART_UNID_MED,
+          GEN_MONEDA.MON_SIMBOLO
+ ORDER BY OPER_CODIGO]]>
+		</queryString>
+		<field name="SUC_ABREV" class="java.lang.String"/>
+		<field name="MARC_DESC" class="java.lang.String"/>
+		<field name="OPER_CODIGO" class="java.math.BigDecimal"/>
+		<field name="OPERACION" class="java.lang.String"/>
+		<field name="DETA_ART" class="java.math.BigDecimal"/>
+		<field name="ART_DESC" class="java.lang.String"/>
+		<field name="ART_UNID_MED" class="java.lang.String"/>
+		<field name="MON_SIMBOLO" class="java.lang.String"/>
+		<field name="CANTIDAD" class="java.math.BigDecimal"/>
+		<field name="IMPORTE" class="java.math.BigDecimal"/>
+		<variable name="TOTAL" class="java.math.BigDecimal" resetType="Group" resetGroup="OPERACION" calculation="Sum">
+			<variableExpression><![CDATA[$F{CANTIDAD}]]></variableExpression>
+		</variable>
+		<group name="OPERACION">
+			<groupExpression><![CDATA[$F{OPER_CODIGO}]]></groupExpression>
+		</group>
+	</subDataset>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_MARCA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_LINEA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_GRUPO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_TIPO_MOV" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_MONEDA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_INICIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_FIN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA["VENTAS Y CONSUMOS POR DIA"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_MONEDA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_LINEA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_GRUPO_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SIMBOLO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_MARCA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_TIPO_M" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESCRIP_EMPR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_OPER_T_M" class="java.lang.String"/>
+	<parameter name="P_SUC_ABV" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[".\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT DOCU_EMPR,
+       EMPR_RAZON_SOCIAL,
+       DOCU_SUC_ORIG,
+       SUC_DESC,
+       ART_MARCA,
+       MARC_DESC,
+       ART_LINEA,
+       LIN_DESC,
+       ART_GRUPO,
+       GRUP_DESC,
+       DETA_ART,
+       ART_DESC,
+       ART_CODIGO,
+       MON_CODIGO,
+       ART_UNID_MED,
+       OPER_CODIGO,
+       OPER_DESC,
+       DOCU_NRO_DOC NRO_DOCUMENTO ,
+       DOCU_FEC_EMIS,
+       MON_SIMBOLO,
+       nvl(DECODE(OPER_ENT_SAL, 'E', -DETA_CANT, DETA_CANT),0) CANTIDAD,
+       DECODE(OPER_ENT_SAL, 'E', -1, 1) *
+       nvl(DECODE(OPER_CODIGO,
+              3,
+              NVL(DETA_IMP_NETO_MON, 0) + NVL(DETA_IVA_MON, 0),
+              NULL),0) IMPORTE,
+       CASE
+         WHEN MON_cODIGO = 1 THEN
+          DECODE(OPER_CODIGO,
+                 3,
+                 NVL(DETA_IMP_NETO_MON, 0) + NVL(DETA_IVA_MON, 0),
+                 NULL)
+         ELSE
+          0
+       END IMPORTE_LOC,
+       CASE
+         WHEN MON_cODIGO = 1 THEN
+          0
+         ELSE
+          DECODE(OPER_CODIGO,
+                 3,
+                 NVL(DETA_IMP_NETO_MON, 0) + NVL(DETA_IVA_MON, 0),
+                 NULL)
+       END IMPORTE_MON
+  FROM STK_MARCA,
+       STK_LINEA,
+       STK_GRUPO,
+       STK_ARTICULO,
+       GEN_EMPRESA,
+       GEN_SUCURSAL,
+       STK_OPERACION,
+       STK_DOCUMENTO,
+       STK_DOCUMENTO_DET,
+       GEN_MONEDA
+ WHERE DOCU_EMPR = $P{P_EMPRESA}
+
+   AND DOCU_CLAVE = DETA_CLAVE_DOC
+   AND DOCU_EMPR = DETA_EMPR
+
+   AND EMPR_CODIGO = DOCU_EMPR
+   AND SUC_CODIGO = DOCU_SUC_ORIG
+   AND SUC_EMPR = DOCU_EMPR
+
+   AND ART_CODIGO = DETA_ART
+   AND ART_EMPR = DETA_EMPR
+
+   AND MARC_CODIGO = ART_MARCA
+   AND MARC_EMPR = ART_EMPR
+   AND (MARC_CODIGO = $P{P_MARCA} OR $P{P_MARCA} IS NULL)
+
+   AND LIN_CODIGO = ART_LINEA
+   AND LIN_EMPR = ART_EMPR
+   AND (LIN_CODIGO = $P{P_LINEA} OR $P{P_LINEA} IS NULL)
+
+   AND GRUP_LINEA = LIN_CODIGO
+   AND GRUP_EMPR = ART_EMPR
+   AND (GRUP_LINEA = $P{P_LINEA} OR $P{P_LINEA} IS NULL)
+
+   AND GRUP_CODIGO = ART_GRUPO
+   AND GRUP_EMPR = ART_EMPR
+   AND (GRUP_CODIGO = $P{P_GRUPO} OR $P{P_GRUPO} IS NULL)
+
+   AND OPER_CODIGO = DOCU_CODIGO_OPER
+   AND OPER_EMPR = DOCU_EMPR
+   AND (OPER_CODIGO = $P{P_TIPO_MOV} OR $P{P_TIPO_MOV} IS NULL)
+
+   AND DOCU_MON = MON_CODIGO
+   AND DOCU_EMPR = MON_EMPR
+   AND (DOCU_MON = $P{P_MONEDA} OR $P{P_MONEDA} IS NULL)
+
+   AND DOCU_SUC_ORIG = SUC_CODIGO
+   AND DOCU_EMPR = SUC_EMPR
+   AND (DOCU_SUC_ORIG = $P{P_SUCURSAL} OR $P{P_SUCURSAL} IS NULL)
+
+   AND DOCU_FEC_EMIS >= to_date($P{P_FECHA_INICIO},'dd/mm/yyyy')
+
+   AND DOCU_FEC_EMIS <= to_date($P{P_FECHA_FIN},'dd/mm/yyyy')
+
+   AND OPER_CODIGO IN (3, 4, 10)
+
+
+ ORDER BY DOCU_EMPR,DOCU_SUC_ORIG,ART_MARCA,ART_LINEA,ART_GRUPO,DOCU_NRO_DOC,DETA_ART]]>
+	</queryString>
+	<field name="DOCU_EMPR" class="java.math.BigDecimal"/>
+	<field name="EMPR_RAZON_SOCIAL" class="java.lang.String"/>
+	<field name="DOCU_SUC_ORIG" class="java.math.BigDecimal"/>
+	<field name="SUC_DESC" class="java.lang.String"/>
+	<field name="ART_MARCA" class="java.math.BigDecimal"/>
+	<field name="MARC_DESC" class="java.lang.String"/>
+	<field name="ART_LINEA" class="java.math.BigDecimal"/>
+	<field name="LIN_DESC" class="java.lang.String"/>
+	<field name="ART_GRUPO" class="java.math.BigDecimal"/>
+	<field name="GRUP_DESC" class="java.lang.String"/>
+	<field name="DETA_ART" class="java.math.BigDecimal"/>
+	<field name="ART_DESC" class="java.lang.String"/>
+	<field name="ART_CODIGO" class="java.math.BigDecimal"/>
+	<field name="MON_CODIGO" class="java.math.BigDecimal"/>
+	<field name="ART_UNID_MED" class="java.lang.String"/>
+	<field name="OPER_CODIGO" class="java.math.BigDecimal"/>
+	<field name="OPER_DESC" class="java.lang.String"/>
+	<field name="NRO_DOCUMENTO" class="java.math.BigDecimal"/>
+	<field name="DOCU_FEC_EMIS" class="java.sql.Timestamp"/>
+	<field name="MON_SIMBOLO" class="java.lang.String"/>
+	<field name="CANTIDAD" class="java.math.BigDecimal"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<field name="IMPORTE_LOC" class="java.math.BigDecimal"/>
+	<field name="IMPORTE_MON" class="java.math.BigDecimal"/>
+	<variable name="ART_UNID_MED_1" class="java.lang.Integer" resetType="Group" resetGroup="Grupo" calculation="Count">
+		<variableExpression><![CDATA[$F{ART_UNID_MED}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_1" class="java.math.BigDecimal" resetType="Group" resetGroup="Grupo" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_2" class="java.math.BigDecimal" resetType="Group" resetGroup="Linea" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_3" class="java.math.BigDecimal" resetType="Group" resetGroup="Marca" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_4" class="java.math.BigDecimal" resetType="Group" resetGroup="Sucursal" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_5" class="java.math.BigDecimal" resetType="Group" resetGroup="Empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_6" class="java.math.BigDecimal" resetType="Group" resetGroup="Grupo" calculation="System">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_LOC_1" class="java.math.BigDecimal" resetType="Group" resetGroup="Grupo" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_LOC}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_MON_1" class="java.math.BigDecimal" resetType="Group" resetGroup="Grupo" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_MON}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_LOC_2" class="java.math.BigDecimal" resetType="Group" resetGroup="Linea" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_LOC}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_MON_2" class="java.math.BigDecimal" resetType="Group" resetGroup="Linea" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_MON}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_LOC_3" class="java.math.BigDecimal" resetType="Group" resetGroup="Marca" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_LOC}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_MON_3" class="java.math.BigDecimal" resetType="Group" resetGroup="Marca" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_MON}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_LOC_4" class="java.math.BigDecimal" resetType="Group" resetGroup="Sucursal" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_LOC}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_MON_4" class="java.math.BigDecimal" resetType="Group" resetGroup="Sucursal" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_MON}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_LOC_5" class="java.math.BigDecimal" resetType="Group" resetGroup="Empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_LOC}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_MON_5" class="java.math.BigDecimal" resetType="Group" resetGroup="Empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_MON}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_7" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<variable name="CANTIDAD_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CANTIDAD}]]></variableExpression>
+	</variable>
+	<group name="Empresa">
+		<groupExpression><![CDATA[$F{DOCU_EMPR}]]></groupExpression>
+		<groupHeader>
+			<band height="11">
+				<staticText>
+					<reportElement x="5" y="1" width="54" height="10" uuid="24485c68-1f16-408b-ac09-2f103d0328dc"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Empresa:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="114" y="1" width="327" height="10" uuid="5eb1c155-25ae-40b5-8419-84f5dee92924"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{EMPR_RAZON_SOCIAL}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="61" y="1" width="54" height="10" uuid="db6e4ceb-b7fd-441b-8ef4-158f1d5ac9c7"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DOCU_EMPR}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="8">
+				<staticText>
+					<reportElement x="328" y="-2" width="80" height="10" uuid="6f86d5bc-db2a-4e39-a644-5d9bdb026a2e"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Total Venta Empresa:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="493" y="-2" width="27" height="10" uuid="af69b489-5961-4e48-bc4e-81c7551b285f"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Gs.]]></text>
+				</staticText>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="409" y="-2" width="81" height="10" uuid="3521dd70-c97f-4165-91b7-4da5049ef92c"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{IMPORTE_LOC_5}]]></textFieldExpression>
+				</textField>
+				<textField pattern="0.00" isBlankWhenNull="true">
+					<reportElement x="520" y="-2" width="100" height="10" uuid="6dfac762-bd1f-4a84-8336-2b49ead05de3"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{IMPORTE_MON_5}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="623" y="-2" width="38" height="10" uuid="027ff916-b0a7-4623-b03d-bab10aeb4b1f"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Usd.]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Sucursal" footerPosition="StackAtBottom">
+		<groupExpression><![CDATA[$F{SUC_DESC}]]></groupExpression>
+		<groupHeader>
+			<band height="10">
+				<staticText>
+					<reportElement x="10" y="0" width="54" height="10" uuid="cac9b00c-2773-4663-a7c6-6dd647fbf1b5"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Sucursal:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="123" y="0" width="327" height="10" uuid="21feb9f7-0a31-43fb-b58a-a6299c24c567"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SUC_DESC}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="65" y="0" width="52" height="10" uuid="4ecb7a22-4020-4609-9bda-5abc089da77e"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DOCU_SUC_ORIG}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="9">
+				<staticText>
+					<reportElement x="330" y="-2" width="78" height="10" uuid="6609a2d3-2154-4d5a-9a69-03c6be4a08ea"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Total Venta Sucursal:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="493" y="-2" width="27" height="10" uuid="2123c39a-38fd-43e5-9ee6-cdba3d016225"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Gs.]]></text>
+				</staticText>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="409" y="-2" width="81" height="10" uuid="35663b29-1e8b-4d74-a0d5-803919b3ffa9"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{IMPORTE_LOC_4}]]></textFieldExpression>
+				</textField>
+				<textField pattern="0.00" isBlankWhenNull="true">
+					<reportElement x="520" y="-2" width="100" height="10" uuid="3c592ce2-b99b-474a-9d16-b5b5db3db9f8"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{IMPORTE_MON_4}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="623" y="-2" width="38" height="10" uuid="ff63c87f-ae5f-4478-82e0-0b3b7ddb1af6"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Usd.]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Marca">
+		<groupExpression><![CDATA[$F{MARC_DESC}]]></groupExpression>
+		<groupHeader>
+			<band height="10">
+				<staticText>
+					<reportElement x="17" y="0" width="54" height="10" uuid="2357f91f-8649-4d39-ab8e-0241aa8e8265"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Marca:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="131" y="0" width="327" height="10" uuid="bd8456a9-33a2-49f2-bfbd-668b36d8c9be"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{MARC_DESC}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="71" y="0" width="55" height="10" uuid="6dc8f39b-1d93-437d-9460-5a0747523ae8"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ART_MARCA}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="8">
+				<staticText>
+					<reportElement x="493" y="-3" width="27" height="10" uuid="acbfb472-2641-498b-b0b3-68ee621cc4e2"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Gs.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="338" y="-2" width="70" height="10" uuid="48feac83-1285-40ce-b43d-d36ced48e78e"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Total Venta Marca:]]></text>
+				</staticText>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="409" y="-2" width="81" height="10" uuid="f7d0e6be-fb16-48e0-a2f4-67c508414671"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{IMPORTE_LOC_3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="0.00" isBlankWhenNull="true">
+					<reportElement x="520" y="-2" width="100" height="10" uuid="6af84d67-0787-40f9-9191-be863550479c"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{IMPORTE_MON_3}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="623" y="-3" width="38" height="10" uuid="b2df0482-0e97-4dd8-b6e4-0b8877b75dca"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Usd.]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Linea">
+		<groupExpression><![CDATA[$F{LIN_DESC}]]></groupExpression>
+		<groupHeader>
+			<band height="10">
+				<staticText>
+					<reportElement x="23" y="0" width="55" height="10" uuid="f9709487-2676-48fb-8035-96ab033cae80"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Linea:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="139" y="0" width="326" height="10" uuid="aa0179eb-a512-4c8a-8ce4-945f42f745c3"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{LIN_DESC}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="79" y="0" width="53" height="10" uuid="4e19b5fa-2069-4f61-93c8-fceaebc40608"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ART_LINEA}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="9">
+				<staticText>
+					<reportElement x="341" y="-2" width="67" height="10" uuid="302125a9-583a-4c78-b1f3-9aa67e3b950f"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Total Venta Linea:]]></text>
+				</staticText>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="409" y="-2" width="81" height="10" uuid="c7a745d6-3228-4d95-b344-fc8c33548262"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{IMPORTE_LOC_2}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="493" y="-1" width="27" height="10" uuid="b04a8d28-9668-410b-a66f-82ba2492c1b1"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Gs.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="623" y="-3" width="38" height="10" uuid="22be5cf3-6024-489b-9e2e-ea5653f90a66"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Usd.]]></text>
+				</staticText>
+				<textField pattern="0.00" isBlankWhenNull="true">
+					<reportElement x="520" y="-2" width="100" height="10" uuid="b9e586dc-f63c-4795-82d7-9e0d205b7612"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{IMPORTE_MON_2}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Grupo">
+		<groupExpression><![CDATA[$F{GRUP_DESC}]]></groupExpression>
+		<groupHeader>
+			<band height="11">
+				<staticText>
+					<reportElement x="34" y="0" width="55" height="10" uuid="4fd41386-661e-4949-8c63-d5f9a0f705f1"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Grupo:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="150" y="1" width="326" height="10" uuid="6d137214-5807-4ec7-8a01-a1b66366c3d3"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{GRUP_DESC}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="91" y="0" width="52" height="10" uuid="3408011d-e6e6-4548-b377-cb1f990f87bb"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ART_GRUPO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="9">
+				<staticText>
+					<reportElement x="339" y="-1" width="70" height="10" uuid="6749d236-4b32-4860-a7f8-2259c9e4e74b"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Total Venta Grupo:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="493" y="-1" width="27" height="10" uuid="9f5fc542-ed83-4722-b279-773a5947aeac"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Gs.]]></text>
+				</staticText>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="409" y="-1" width="81" height="10" uuid="0a4205ef-cbfd-4b4b-92c1-318a132df18c"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{IMPORTE_LOC_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="0.00" isBlankWhenNull="true">
+					<reportElement x="520" y="-1" width="100" height="10" uuid="ff38defd-5768-4dfd-8205-bc9faa2655af"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{IMPORTE_MON_1}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="623" y="-1" width="38" height="10" uuid="e711ac01-0759-4fee-a55e-4b213f7a440e"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Usd.]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<title>
+		<band height="115" splitType="Stretch">
+			<textField>
+				<reportElement x="218" y="10" width="144" height="10" uuid="bf64e0cb-997f-4d81-9755-73c502728cd4"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESCRIP_EMPR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="378" y="10" width="204" height="10" uuid="140573ad-8308-4046-9e39-ec5babc5c4a5"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="177" height="10" uuid="0cda925d-9473-47e8-9088-0a365795cfb4"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESCRIP_EMPR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="11" width="177" height="10" uuid="ad11beeb-6b72-4e01-adaf-d83ef4714d89"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="12" y="35" width="73" height="10" uuid="c5382fea-6010-4ca1-95ce-1da45c63eb11"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Empresa:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="45" width="73" height="10" uuid="eabbda03-1970-44f1-9ad5-b72abc9e2ddb"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Sucursal:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="53" width="73" height="10" uuid="54f13aa6-ddba-47b5-8e8a-eec6a1731e28"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Marca:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="63" width="73" height="10" uuid="a3a61e93-b80c-41cd-9dba-4e54d7c3488b"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Linea:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="72" width="73" height="10" uuid="74de9f42-53a0-43d2-9938-093655b66e79"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Grupo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="83" width="73" height="10" uuid="9251cbc4-ea5a-4b34-bf65-93766999e658"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Fecha Desde:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="93" width="73" height="10" uuid="4b3892c9-1f81-4a9b-92d8-f6d160884036"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Fecha Hasta:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="105" width="73" height="10" uuid="f1b89f29-3068-4420-a9f7-970138baf411"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Moneda:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="85" y="35" width="34" height="10" uuid="befd1739-c771-4100-bf30-e1ac8a1e36f6"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_EMPRESA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="118" y="35" width="100" height="10" uuid="b519fdfb-6d42-4c19-84fc-3965ad0e8a5c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESCRIP_EMPR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="85" y="45" width="34" height="10" uuid="9092f51a-897e-4a0f-b542-6d700fbac5d4"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="118" y="45" width="100" height="10" uuid="2cac6cac-8a46-4f2c-a589-eb04a1d0b42c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="84" y="55" width="134" height="10" uuid="ebc0fcb6-23bf-4366-b7cc-3022d2bea146"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_MARCA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="84" y="63" width="134" height="10" uuid="b54913d1-ae65-45c2-a476-beae71e69989"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_LINEA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="83" y="73" width="135" height="10" uuid="92562c7e-ea1e-4d5c-abe7-c5273a8ddbfb"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_GRUPO_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="83" y="83" width="135" height="10" uuid="d48136e5-2e8d-4062-ace1-e771663fbcbe"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FECHA_INICIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="84" y="93" width="134" height="10" uuid="bbcc8b92-9431-48eb-b782-2bc88251a982"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FECHA_FIN}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="84" y="103" width="134" height="10" uuid="a619cc5a-7d17-4591-8d33-2176de3ab888"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_MONEDA}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="114" width="710" height="1" uuid="c47938d4-bd64-4f8c-976b-f61112e5ecaf"/>
+			</line>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="606" y="18" width="93" height="10" uuid="5f7d2725-8733-4f65-be63-e3811411d5d6"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="647" y="-1" width="63" height="10" uuid="644bd1d6-7395-49b4-bcc5-f1d9cf1dd7f0"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="361" y="10" width="18" height="10" uuid="9b71c7ee-36eb-433b-a3a5-69221167f04e"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[-]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="28" width="710" height="3" uuid="071dcb6e-87ef-42e3-b0b3-3ad609d8fa41"/>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="1" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="16" splitType="Stretch">
+			<staticText>
+				<reportElement x="32" y="2" width="30" height="10" uuid="b828f5c4-a896-4cc0-bebb-50662a609734"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="205" y="2" width="100" height="10" uuid="577ce4fd-56a9-4640-a585-07c4fbd7b39b"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Nro_Doc]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="294" y="2" width="46" height="10" uuid="0dcf5f46-7fd2-45be-bc7b-1c40d00e7e8d"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Código]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="325" y="2" width="100" height="10" uuid="1d77feeb-93de-476a-bd72-f49e7783a1d4"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Descripción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="530" y="4" width="32" height="10" uuid="0eebc13c-26ae-4b50-99e4-06cba9712a7a"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Cantidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="562" y="4" width="21" height="10" uuid="6716a2ae-aafc-474d-8d80-4d22a16b2b5f"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[U.M]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="604" y="3" width="58" height="10" uuid="4157151a-58f9-406b-989c-ac7b4ea19f1f"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Venta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="649" y="-1" width="43" height="10" uuid="c29330e9-9d95-4c40-90c7-8765202ce3bc"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="90" y="2" width="49" height="10" uuid="698996b3-3185-4cd2-9e29-cec3e59b7810"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Operación]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="11" width="710" height="4" uuid="783c4ab2-1054-40ca-b224-a3e60cc59e29"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="26" y="0" width="61" height="10" uuid="65290aa8-95f8-4aac-9687-b95aa4b3c901"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOCU_FEC_EMIS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="318" y="0" width="191" height="10" uuid="6e31ca3b-8cfc-4bc2-b15f-13526be6ea94"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ART_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="563" y="0" width="21" height="10" uuid="cd986871-8658-42da-9a2f-3b4c0caacc68"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ART_UNID_MED}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="585" y="0" width="80" height="10" uuid="f5b09a4b-9989-490b-ae50-aabefee65eef"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{MON_CODIGO}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="664" y="0" width="43" height="10" uuid="c2f9defb-48bc-489f-a55e-7d21d298e326"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MON_SIMBOLO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="198" y="0" width="76" height="10" uuid="02f74cad-b0fe-4f67-b6f7-9182b0f1cb9a"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_DOCUMENTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="281" y="0" width="37" height="10" uuid="00c3bc22-48aa-4b36-a046-9cfff3982ee1"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ART_CODIGO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="128" y="0" width="68" height="10" uuid="75424328-9f23-4b04-996c-65b8484e2b22"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OPER_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="96" y="0" width="26" height="10" uuid="73d93c7d-3abf-4d91-930d-15ba1522d1f5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OPER_CODIGO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="511" y="0" width="52" height="10" uuid="b1d6d479-e70d-4c30-80fd-5d23f7cf7c2d"/>
+				<textElement textAlignment="Right" rotation="None">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANTIDAD}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="14" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="710" height="14" uuid="04a3575b-d460-43ec-b02c-6c926679983d"/>
+				<subreportParameter name="P_MONEDA">
+					<subreportParameterExpression><![CDATA[$P{P_MONEDA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_FECHA_FIN">
+					<subreportParameterExpression><![CDATA[$P{P_FECHA_FIN}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_EMPRESA">
+					<subreportParameterExpression><![CDATA[$P{P_EMPRESA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_ARTICULO">
+					<subreportParameterExpression><![CDATA[$F{DETA_ART}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_TIPO_MOV">
+					<subreportParameterExpression><![CDATA[$P{P_TIPO_MOV}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_FECHA_INICIO">
+					<subreportParameterExpression><![CDATA[$P{P_FECHA_INICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_SUCURSAL">
+					<subreportParameterExpression><![CDATA[$P{P_SUCURSAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_MARCA">
+					<subreportParameterExpression><![CDATA[$P{P_MARCA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["STKL264_subreport1.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

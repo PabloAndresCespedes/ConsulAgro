@@ -1,0 +1,1576 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERC002_R" language="groovy" pageWidth="595" pageHeight="935" columnWidth="557" leftMargin="19" rightMargin="19" topMargin="20" bottomMargin="20" uuid="9c2dc00f-2abb-42ec-85a9-03f1b726a78d">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="8471"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="LIQUIDACION" uuid="774f378f-ea14-4d5f-a1ef-05e99dc9cc26">
+		<queryString>
+			<![CDATA[SELECT  T.DES_CON_COD,
+        NULL TIPO,
+        UPPER(CASE
+         WHEN DES_CON_DESC = 'AGUINALDO' THEN
+          'AGUINALDO PROPORCIONAL ' || TO_CHAR(RDE_FECHA, 'YYYY')
+         WHEN  DES_CON_DESC   = 'SALARIO' THEN
+          'SALARIO PROPORCIONAL ' || TO_CHAR(RDE_FECHA,'Month YYYY','nls_date_language=spanish')
+           WHEN  DES_CON_COD   = 4 THEN
+          DES_CON_DESC||' 9%'
+         WHEN  DES_CON_COD   = 31 THEN
+          DES_CON_DESC||' 5%'
+          ELSE
+            DES_CON_DESC
+          END) CONCEPTO,
+          CASE WHEN DES_CANT_PRO IS NOT NULL THEN
+           DES_DIAS
+           ELSE
+           DES_DIAS
+          END||
+          CASE WHEN NVL(DES_DIAS,0)=1 THEN
+            ' DIA'
+        WHEN NVL(DES_DIAS,0)>1 THEN
+            ' DIAS'
+         END DES_DIAS,
+       SUM(T.DES_IMPORTE) IMPORTE,
+
+       A.PCON_IND_DBCR
+  FROM PER_DESVINCULACION_DETALLE T, PER_CONCEPTO A, PER_REGISTRO_DESVINC_EMPL C
+ WHERE T.DES_EMPR = A.PCON_EMPR
+   AND T.DES_CON_COD = A.PCON_CLAVE
+   AND T.DES_CODIGO = C.RDE_CLAVE
+   AND T.DES_EMPR = C.RDE_EMPR
+   AND T.DES_EMPR =  1
+   AND T.DES_LEGAJO = 20137
+   AND T.DES_CODIGO = 	1069---:P3514_RDE_CLAVE
+   AND T.DES_TIPO NOT IN (12,20,4)
+  GROUP BY T.DES_CON_COD,
+        UPPER(CASE
+         WHEN DES_CON_DESC = 'AGUINALDO' THEN
+          'AGUINALDO PROPORCIONAL ' || TO_CHAR(RDE_FECHA, 'YYYY')
+         WHEN  DES_CON_DESC   = 'SALARIO' THEN
+          'SALARIO PROPORCIONAL ' || TO_CHAR(RDE_FECHA,  'Month YYYY','nls_date_language=spanish')
+           WHEN  DES_CON_COD   = 4 THEN
+          DES_CON_DESC||' 9%'
+         WHEN  DES_CON_COD   = 31 THEN
+          DES_CON_DESC||' 5%'
+          ELSE
+            DES_CON_DESC
+          END) ,
+       CASE WHEN DES_CANT_PRO IS NOT NULL THEN
+           DES_DIAS
+           ELSE
+           DES_DIAS
+          END||
+          CASE WHEN NVL(DES_DIAS,0)=1 THEN
+            ' DIA'
+        WHEN NVL(DES_DIAS,0)>1 THEN
+            ' DIAS'
+         END,
+       T.DES_CANT_PRO,
+       A.PCON_IND_DBCR
+  UNION ALL
+ SELECT 0, 'DEBITO', NULL, NULL, NULL, 'D'
+ FROM DUAL
+
+     UNION ALL
+ SELECT 0, 'CREDITO', NULL, NULL, NULL, 'C'
+ FROM DUAL
+order by 6,1]]>
+		</queryString>
+		<field name="DES_CON_COD" class="java.math.BigDecimal"/>
+		<field name="TIPO" class="java.lang.String"/>
+		<field name="CONCEPTO" class="java.lang.String"/>
+		<field name="DES_DIAS" class="java.lang.String"/>
+		<field name="IMPORTE" class="java.math.BigDecimal"/>
+		<field name="PCON_IND_DBCR" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CARGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NRO_CI" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_AREA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESDE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_HASTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_DESPIDO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NOMBRE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESDE2" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CIUDAD" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLAVE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\PRO4\\Desktop\\TRABAJOS2021\\JUNIO\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT A.EMPL_NOMBRE || ' ' || EMPL_APE NOMBRE,
+       A.EMPL_DOC_IDENT NRO_DOC,
+       CASE WHEN A.EMPL_SEXO = 'F'THEN
+         'la Sra.'
+         else
+           'el Sr.'
+        END dis,
+       CASE WHEN A.EMPL_SEXO = 'F'THEN
+         'SEÑORA'
+         else
+           'SEÑOR'
+        END dis2,
+       C.CAR_DESC CARGO,
+       DPP.AREDPP_DESC AREA,
+       CASE WHEN SUC_CODIGO IN (1,5) THEN
+         'Dr. Juan E. Estigarribia'
+	WHEN SUC_CODIGO IN (10) THEN
+            'Caacupé'
+           WHEN SUC_CODIGO IN (6) THEN
+	'Santa Rosa del Aguaray'
+	else
+          initcap(S.SUC_LOCALIDAD)
+         END||', '||to_char(t.rde_fecha,'DD')||' de '||LTRIM(RTRIM(to_char(t.rde_fecha,'month','nls_date_language=spanish')))||' de '||to_char(t.rde_fecha,'yyyy') fecha,
+       to_char(t.rde_fecha,'DD')||' de '||LTRIM(RTRIM(to_char(t.rde_fecha,'month','nls_date_language=spanish')))||' de '||to_char(t.rde_fecha,'yyyy') fecha_salida,
+      to_char(EMPL_FEC_INGRESO,'DD')||' de '||LTRIM(RTRIM(to_char(EMPL_FEC_INGRESO,'month','nls_date_language=spanish')))||' de '||to_char(EMPL_FEC_INGRESO,'yyyy') fecha_entrada,
+        CASE WHEN SUC_CODIGO IN (1,5) THEN
+         'Dr. Juan E. Estigarribia'
+	WHEN SUC_CODIGO IN (10) THEN
+            'Caacupé'
+	 WHEN SUC_CODIGO IN (6) THEN
+	'Santa Rosa del Aguaray'
+else
+          initcap(S.SUC_LOCALIDAD)
+         END||' a los '||to_char(t.rde_fecha,'DD')||' dias del mes '||LTRIM(RTRIM(to_char(t.rde_fecha,'month','nls_date_language=spanish')))||' del año '||to_char(t.rde_fecha,'yyyy') fecha_desc,
+RDE_TIPO_DESVINCULACION,
+empl_legajo,
+to_char(t.rde_fecha,'DD')||' de '||LTRIM(RTRIM(to_char(t.rde_fecha,'month','nls_date_language=spanish'))) dia_mes,
+CASE WHEN SUC_CODIGO IN (1,5) THEN
+   'Capital Humano'
+   else
+     'la sucursal de '||initcap(S.SUC_desc)
+end oficina,
+CASE WHEN ADD_MONTHS(A.EMPL_FEC_INGRESO, 12) > rde_fecha THEN
+          to_char(t.rde_fecha-30,'DD')||' de '||LTRIM(RTRIM(to_char(t.rde_fecha-30,'month','nls_date_language=spanish')))
+     ELSE
+          to_char(t.rde_fecha-45,'DD')||' de '||LTRIM(RTRIM(to_char(t.rde_fecha-45,'month','nls_date_language=spanish')))
+    END MES2,
+CASE WHEN T.RDE_TIPO_DESVINCULACION = 1 AND NVL(T.RDE_REN_EXONERADA,'N') = 'S' AND NVL(T.RDE_CUMPLIO_PRE_AVISO,'N') = 'N'  THEN
+    3
+
+   WHEN T.RDE_TIPO_DESVINCULACION = 1 AND NVL(T.RDE_REN_EXONERADA,'N') = 'S' AND NVL(T.RDE_CUMPLIO_PRE_AVISO,'N') = 'S' THEN
+     4
+      WHEN  T.RDE_TIPO_DESVINCULACION = 1 AND NVL(T.RDE_REN_EXONERADA,'N') = 'N' THEN
+2
+       END  EXONERAR,
+ CASE WHEN RDE_TIPO_DESVINCULACION = 2 AND  NVL(T.RDE_IND_OMISION_PREAVISO,'N')='S'THEN
+         1
+        END PRE_AVISO,
+SUC_CODIGO,
+to_char(T.RDE_FECHA_REN_HASTA,'DD')||' de '||LTRIM(RTRIM(to_char(RDE_FECHA_REN_HASTA,'month','nls_date_language=spanish'))) mes3_R,
+ to_char(T.RDE_FECHA_RENUNCIA,'DD')||' de '||LTRIM(RTRIM(to_char(RDE_FECHA_RENUNCIA,'month','nls_date_language=spanish'))) MES2_R,
+       CASE WHEN SUC_CODIGO IN (1,5) THEN
+         'Dr. Juan E. Estigarribia'
+  WHEN SUC_CODIGO IN (10) THEN
+            'Caacupé'
+ WHEN SUC_CODIGO IN (6) THEN
+	'Santa Rosa del Aguaray'
+          ELSE
+
+          initcap(S.SUC_LOCALIDAD)
+         END||', '||to_char(T.RDE_FECHA_RENUNCIA,'DD')||' de '||LTRIM(RTRIM(to_char(T.RDE_FECHA_RENUNCIA,'month','nls_date_language=spanish')))||' de '||to_char(t.rde_fecha,'yyyy') fecha_R
+  FROM PER_REGISTRO_DESVINC_EMPL T, PER_EMPLEADO A, PER_CARGO C, GEN_DEPARTAMENTO D, GEN_SUCURSAL S, PER_AREA_DPP DPP
+ WHERE T.RDE_EMPLEADO = A.EMPL_LEGAJO
+   AND T.RDE_EMPR = A.EMPL_EMPRESA
+   AND EMPL_CARGO = CAR_CODIGO
+   AND EMPL_EMPRESA = CAR_EMPR
+   AND RDE_DEPARTAMENTO = DPTO_CODIGO
+   AND EMPL_EMPRESA = DPTO_EMPR
+   AND DPP.AREDPP_CLAVE =A.EMPL_AREA_ORGANI
+   AND DPP.AREDPP_EMPR = A.EMPL_EMPRESA
+   AND S.SUC_CODIGO = d.dpto_suc
+   AND D.DPTO_EMPR = S.SUC_EMPR
+   AND RDE_CLAVE = 	$P{P_CLAVE}
+   AND EMPL_EMPRESA =$P{P_EMPRESA}]]>
+	</queryString>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="NRO_DOC" class="java.math.BigDecimal"/>
+	<field name="DIS" class="java.lang.String"/>
+	<field name="DIS2" class="java.lang.String"/>
+	<field name="CARGO" class="java.lang.String"/>
+	<field name="AREA" class="java.lang.String"/>
+	<field name="FECHA" class="java.lang.String"/>
+	<field name="FECHA_SALIDA" class="java.lang.String"/>
+	<field name="FECHA_ENTRADA" class="java.lang.String"/>
+	<field name="FECHA_DESC" class="java.lang.String"/>
+	<field name="RDE_TIPO_DESVINCULACION" class="java.math.BigDecimal"/>
+	<field name="EMPL_LEGAJO" class="java.math.BigDecimal"/>
+	<field name="DIA_MES" class="java.lang.String"/>
+	<field name="OFICINA" class="java.lang.String"/>
+	<field name="MES2" class="java.lang.String"/>
+	<field name="EXONERAR" class="java.math.BigDecimal"/>
+	<field name="PRE_AVISO" class="java.math.BigDecimal"/>
+	<field name="SUC_CODIGO" class="java.math.BigDecimal"/>
+	<field name="MES3_R" class="java.lang.String"/>
+	<field name="MES2_R" class="java.lang.String"/>
+	<field name="FECHA_R" class="java.lang.String"/>
+	<group name="RENUNCIA_CUMPLIO">
+		<groupExpression><![CDATA[$F{NOMBRE}]]></groupExpression>
+		<groupFooter>
+			<band height="895">
+				<printWhenExpression><![CDATA[$F{EXONERAR}==4]]></printWhenExpression>
+				<staticText>
+					<reportElement x="47" y="577" width="483" height="67" uuid="5536571a-86a4-40c7-87b8-2b66b06769c8">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==10]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CESAR AUGUSTO AGUILERA GONZALEZ
+Encargado de Sucursal Caacupé]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="41" y="169" width="275" height="21" uuid="00aea752-b8ee-4175-8b24-810f35a9b5ff"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DIS2}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="46" y="579" width="483" height="67" uuid="cce3b02b-180d-41e5-ae4e-bf41f31932bd">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==2]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MAREK KAUENHOWEN
+Administración Asunción
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="48" y="578" width="483" height="67" uuid="00e649ba-10c4-4342-a923-3aba98e60bdc">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==7]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MARIA LILIANA HERMOSA DE RECALDE
+Encargada de Sucursal Pedro Juan Caballero]]></text>
+				</staticText>
+				<line>
+					<reportElement x="186" y="577" width="208" height="1" uuid="e0e806ff-d732-4a56-8ce9-40a96abc5c87"/>
+				</line>
+				<textField>
+					<reportElement x="40" y="305" width="483" height="214" uuid="3c7272da-a5cb-4e63-b73a-e46ea8906d22"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="12"/>
+						<paragraph lineSpacing="1_1_2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Me dirijo a Usted a fin de comunicarle que la Empresa Hilagro S.A., ha resuelto aceptar su desvinculación voluntaria, que nos ha presentado en fecha "+$F{MES2_R}+" del cte. año, fijando, de acuerdo a su comunicación, el "+$F{MES3_R}+" como su último día de trabajo, fecha que se encontrara la liquidación que le corresponde por su renuncia voluntaria, en la oficina de "+$F{OFICINA}+" . \n\n"+
+"Deseándole éxitos en sus futuros emprendimientos, le saludamos atentamente. "]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="47" y="579" width="483" height="67" uuid="4dac5d5c-914d-4c69-957a-63a29cc13f31">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==6]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[VIDALINA JARA SARAGOZA
+Encargada de sucursal Santa Rosa
+]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="43" y="206" width="447" height="20" uuid="95c7d3fb-1413-4461-accd-48e6348cf8b8"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="48" y="579" width="483" height="67" uuid="40ffd490-a431-4fe5-8b91-44bf7c12b409">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==3]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HECTOR ARIEL DAVALOS HANZEN
+Encargado de Sucursal Concepción]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="75" y="114" width="464" height="20" uuid="24847385-c020-4c15-a8d3-377714a8a117"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA_R}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="41" y="246" width="446" height="25" uuid="25e5ccb1-b43f-4250-b58f-6d2596304a1a"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Presente:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="46" y="578" width="483" height="67" uuid="af9a35ce-1df1-44cd-9182-d1ac1216c5de">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==1]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ROSA EPIFANIA ROMERO TORRES
+Gerente de Capital Humano
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="48" y="579" width="483" height="67" uuid="5e50be99-c8d2-4ec7-bd02-bd30ae73d85c">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==4]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CARLOS ARIEL ESPINOLA BRIZUELA
+Encargado de  Sucursal Loma Plata
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="43" y="683" width="483" height="108" uuid="763eb19e-34d6-4ee6-b6c4-3a3326b6cad9"/>
+					<textElement>
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<text><![CDATA[Recibí Conforme: ----------------------------------
+
+Aclaración: -------------------------------------------
+
+
+]]></text>
+				</staticText>
+			</band>
+			<band height="895">
+				<printWhenExpression><![CDATA[$F{EXONERAR}==4]]></printWhenExpression>
+				<staticText>
+					<reportElement x="55" y="575" width="483" height="67" uuid="e9e9f866-5138-4820-b56a-5e01dbe595e2">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==7]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MARIA LILIANA HERMOSA DE RECALDE
+Encargada de Sucursal Pedro Juan Caballero]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="48" y="243" width="446" height="25" uuid="bfce109c-a46d-47d1-8fcb-7271c20ddca8"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Presente:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="55" y="576" width="483" height="67" uuid="60104a0f-7d19-4328-9ab4-250e05a0d226">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==3]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HECTOR ARIEL DAVALOS HANZEN
+Encargado de Sucursal Concepción]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="50" y="203" width="447" height="20" uuid="2565cf33-a7a5-43f3-9e31-2a57301b3075"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="47" y="302" width="483" height="214" uuid="fc1fd910-0ff8-4d4a-9151-7205a12e2b0e"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="12"/>
+						<paragraph lineSpacing="1_1_2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Me dirijo a Usted a fin de comunicarle que la Empresa Hilagro S.A., ha resuelto aceptar su desvinculación voluntaria, que nos ha presentado en fecha "+$F{MES2_R}+" del cte. año, fijando, de acuerdo a su comunicación, el "+$F{MES3_R}+" como su último día de trabajo, fecha que se encontrara la liquidación que le corresponde por su renuncia voluntaria, en la oficina de "+$F{OFICINA}+" . \n\n"+
+"Deseándole éxitos en sus futuros emprendimientos, le saludamos atentamente. "]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="55" y="576" width="483" height="67" uuid="a3bf27ef-b8e2-4e28-b48c-f6be6e71acb6">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==4]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CARLOS ARIEL ESPINOLA BRIZUELA
+Encargado de  Sucursal Loma Plata
+]]></text>
+				</staticText>
+				<line>
+					<reportElement x="193" y="574" width="208" height="1" uuid="cabc8d50-0d61-47de-b36a-a119452dedcf"/>
+				</line>
+				<staticText>
+					<reportElement x="53" y="576" width="483" height="67" uuid="9d377cc3-80b0-4c24-8762-a09effbfb91d">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==2]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MAREK KAUENHOWEN
+Administración Asunción
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="53" y="575" width="483" height="67" uuid="9095d522-ff38-4c27-a8c7-beabf2598c65">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==1]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ROSA EPIFANIA ROMERO TORRES
+Gerente de Capital Humano
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="54" y="574" width="483" height="67" uuid="2e9394bf-3659-41b0-915b-3bd41c053fb5">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==10]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CESAR AUGUSTO AGUILERA GONZALEZ
+Encargado de Sucursal Caacupé]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="48" y="166" width="275" height="21" uuid="a092f677-b1ee-48dc-be53-20b761cca84c"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DIS2}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="54" y="576" width="483" height="67" uuid="95535a4d-9645-42b8-aae9-43abdb63c385">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==6]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[VIDALINA JARA SARAGOZA
+Encargada de sucursal Santa Rosa
+]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="82" y="111" width="464" height="20" uuid="c4997689-8767-417f-a23e-33f82ace01ae"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA_R}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="renuncia_1">
+		<groupExpression><![CDATA[$F{NOMBRE}]]></groupExpression>
+		<groupFooter>
+			<band height="802">
+				<printWhenExpression><![CDATA[$F{EXONERAR}==2]]></printWhenExpression>
+				<textField>
+					<reportElement x="34" y="298" width="483" height="214" uuid="5fc43ba6-9f50-4b18-a612-4a0280bc1405"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="12"/>
+						<paragraph lineSpacing="1_1_2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Me dirijo a Usted a fin de comunicarle que la Empresa Hilagro S.A., ha resuelto aceptar su renuncia al puesto de trabajo, presentada por nota de fecha "+$F{MES2_R}+" del cte. año, comunicando que no queda exonerado de la obligación de otorgar preaviso legal por lo que su permanencia en el puesto de trabajo seria hasta el día "+$F{MES3_R}+" del cte. año.  De no poder cumplir con este requisito le será aplicado lo dispuesto en el Art. 90,2° parte del código de trabajo. \n\n"+
+"Por lo tanto, la liquidación de haberes que le corresponde estará a su disposición en la oficina de "+$F{OFICINA}+", el último día de trabajo en horario de oficina. \n\n"+
+"Deseándole éxitos en sus futuros emprendimientos, le saludamos atentamente."]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="35" y="576" width="483" height="67" uuid="a2e3a72d-a758-4f0b-9677-8f7be81b3b82">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==1]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ROSA EPIFANIA ROMERO TORRES
+Gerente de Capital Humano
+]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="64" y="112" width="464" height="20" uuid="84984517-6c09-4b3e-ab52-690e40d41a9f"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA_R}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="31" y="207" width="447" height="20" uuid="705b8377-47f4-4fdc-baba-7c0b6582c04a"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="175" y="575" width="208" height="1" uuid="dde3dd54-2154-4aba-b1d0-7ab9950a2e6f"/>
+				</line>
+				<staticText>
+					<reportElement x="39" y="673" width="483" height="108" uuid="a7053ed3-6724-4f0c-9eda-8422d3089f99"/>
+					<textElement>
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<text><![CDATA[Recibí Conforme: ----------------------------------
+
+Aclaración: -------------------------------------------
+
+
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="32" y="244" width="446" height="25" uuid="20aea3de-2f98-4e02-822c-179ac5fa1f6d"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Presente:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="32" y="166" width="275" height="21" uuid="04ba886c-371d-4181-9d9e-7e957ecf3329"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DIS2}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="35" y="576" width="483" height="67" uuid="739cfbda-eb73-4fc1-9475-767e42674f1c">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==10]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CESAR AUGUSTO AGUILERA GONZALEZ
+Encargado de Sucursal Caacupé]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="34" y="576" width="483" height="67" uuid="750d6144-611b-49cc-b91b-19b9baba1b23">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==7]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MARIA LILIANA HERMOSA DE RECALDE
+Encargada de Sucursal Pedro Juan Caballero]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="576" width="483" height="67" uuid="92fee81c-71ed-47cb-9762-5a5b0f45e4aa">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==2]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MAREK KAUENHOWEN
+Administración Asunción
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="34" y="576" width="483" height="67" uuid="cdf95e3d-e2f9-4758-93e3-690ec09dc632">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==6]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[VIDALINA JARA SARAGOZA
+Encargada de sucursal Santa Rosa
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="36" y="576" width="483" height="67" uuid="5070bd05-aa2e-43ec-a920-d8330ab2b704">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==4]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CARLOS ARIEL ESPINOLA BRIZUELA
+Encargado de  Sucursal Loma Plata
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="576" width="483" height="67" uuid="98277bcd-5930-48fb-8588-64d4a7ec279e">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==3]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HECTOR ARIEL DAVALOS HANZEN
+Encargado de Sucursal Concepción]]></text>
+				</staticText>
+			</band>
+			<band height="802">
+				<printWhenExpression><![CDATA[$F{EXONERAR}==2]]></printWhenExpression>
+				<textField>
+					<reportElement x="36" y="306" width="483" height="214" uuid="f272cbb9-8977-4962-a75b-a9c30f6ce9d5"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="12"/>
+						<paragraph lineSpacing="1_1_2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Me dirijo a Usted a fin de comunicarle que la Empresa Hilagro S.A., ha resuelto aceptar su renuncia al puesto de trabajo, presentada por nota de fecha "+$F{MES2_R}+" del cte. año, comunicando que no queda exonerado de la obligación de otorgar preaviso legal por lo que su permanencia en el puesto de trabajo seria hasta el día "+$F{MES3_R}+" del cte. año.  De no poder cumplir con este requisito le será aplicado lo dispuesto en el Art. 90,2° parte del código de trabajo. \n\n"+
+"Por lo tanto, la liquidación de haberes que le corresponde estará a su disposición en la oficina de "+$F{OFICINA}+", el último día de trabajo en horario de oficina. \n\n"+
+"Deseándole éxitos en sus futuros emprendimientos, le saludamos atentamente."]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="37" y="247" width="446" height="25" uuid="9758c9c6-0b82-4c1a-b78c-97891d78218d"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Presente:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="71" y="115" width="464" height="20" uuid="ac832ef5-0e88-4dbd-9aa1-8a849d1c85e1"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA_R}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="37" y="170" width="275" height="21" uuid="7e9b272b-00c3-4edc-a3f1-3678ad60ab9d"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DIS2}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="39" y="207" width="447" height="20" uuid="31466d63-8b6b-4df0-ada4-22fd94595c72"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="42" y="579" width="483" height="67" uuid="f0d432d1-29dc-41ca-9f05-122027641402">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==1]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ROSA EPIFANIA ROMERO TORRES
+Gerente de Capital Humano
+]]></text>
+				</staticText>
+				<line>
+					<reportElement x="182" y="578" width="208" height="1" uuid="ad2cbe42-5411-42fd-9c0c-a2934af8c780"/>
+				</line>
+				<staticText>
+					<reportElement x="43" y="578" width="483" height="67" uuid="c010755c-a3da-4cfc-8b2a-3431f485ea4b">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==10]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CESAR AUGUSTO AGUILERA GONZALEZ
+Encargado de Sucursal Caacupé]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="44" y="579" width="483" height="67" uuid="eaad1da0-7183-430e-b81b-53fb617b1fc8">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==7]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MARIA LILIANA HERMOSA DE RECALDE
+Encargada de Sucursal Pedro Juan Caballero]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="42" y="580" width="483" height="67" uuid="d00cf4c0-5298-4151-8b4a-3a203c9b5926">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==2]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MAREK KAUENHOWEN
+Administración Asunción
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="43" y="580" width="483" height="67" uuid="cd2ee07d-17e1-48bd-82c2-3059012a0981">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==6]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[VIDALINA JARA SARAGOZA
+Encargada de sucursal Santa Rosa
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="44" y="580" width="483" height="67" uuid="fef61eeb-63a4-4638-a8c7-4ba8a872813b">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==4]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CARLOS ARIEL ESPINOLA BRIZUELA
+Encargado de  Sucursal Loma Plata
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="44" y="580" width="483" height="67" uuid="1e122167-6de8-4161-a28a-a80345122976">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==3]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HECTOR ARIEL DAVALOS HANZEN
+Encargado de Sucursal Concepción]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="LIQUIDACION">
+		<groupExpression><![CDATA[$F{NOMBRE}]]></groupExpression>
+		<groupHeader>
+			<band height="895">
+				<subreport isUsingCache="true">
+					<reportElement x="22" y="51" width="447" height="844" uuid="9f664409-6f73-4492-a7b8-cb1d6bb5174f"/>
+					<subreportParameter name="P_EMPLEADO">
+						<subreportParameterExpression><![CDATA[$F{EMPL_LEGAJO}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_DESC_SUCURSAL"/>
+					<subreportParameter name="P_DESC_PROGRAMA"/>
+					<subreportParameter name="P_EMPRESA">
+						<subreportParameterExpression><![CDATA[$P{P_EMPRESA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_FEC_HASTA"/>
+					<subreportParameter name="P_CLAVE">
+						<subreportParameterExpression><![CDATA[$P{P_CLAVE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_PROGRAMA"/>
+					<subreportParameter name="P_DESC_EMPRESA"/>
+					<subreportParameter name="P_WHERE"/>
+					<subreportParameter name="P_FORMATO"/>
+					<subreportParameter name="P_FEC_DESDE"/>
+					<subreportParameter name="P_USUARIO"/>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "PERC002.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="802">
+				<printWhenExpression><![CDATA[$F{EXONERAR} == 3]]></printWhenExpression>
+				<textField>
+					<reportElement x="64" y="115" width="464" height="20" uuid="8fa6c15f-fe56-4ae5-b794-332ec019a3c1"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="34" y="209" width="447" height="20" uuid="177a777f-6a99-43f7-8aaf-98ee15226c89"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="35" y="247" width="446" height="25" uuid="2780f87a-ed62-4b4e-897f-70c87260d3ab"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Presente:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="36" y="169" width="275" height="21" uuid="bcebedc8-c3ee-4e9c-998c-934700c62f96"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DIS2}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="31" y="300" width="483" height="214" uuid="620848d6-cea3-4955-9494-0ad6902ac854"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="12"/>
+						<paragraph lineSpacing="1_1_2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Me dirijo a usted a fin de comunicarle que la Empresa Hilagro S.A., ha resuelto aceptar su desvinculación voluntaria, que nos ha presentado en fecha "+$F{DIA_MES}+" del cte. año. y conforme a su pedido queda exonerado de otorgar y cumplir el tiempo de preaviso legal que corresponde.\n\n"+
+"Por lo tanto, la liquidación de haberes que le corresponde estará a su disposición en la oficina de la empresa, donde se servirá pasar para percibirla en horario normal de trabajo\n\n"+
+"Deseándole éxitos en sus futuros emprendimientos, le saludamos atentamente. \n"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="35" y="579" width="483" height="67" uuid="4067ab6e-a3cf-44f9-83a4-2f7313a25929">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==1]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ROSA EPIFANIA ROMERO TORRES
+Gerente de Capital Humano
+]]></text>
+				</staticText>
+				<line>
+					<reportElement x="175" y="578" width="208" height="1" uuid="3f705ec3-12ba-4233-ba88-6203caa98380"/>
+				</line>
+				<staticText>
+					<reportElement x="39" y="676" width="483" height="108" uuid="1010b5f7-dcf7-44d8-b562-5001bfb76e13"/>
+					<textElement>
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<text><![CDATA[Recibí Conforme: ----------------------------------
+
+Aclaración: -------------------------------------------
+
+
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="579" width="483" height="67" uuid="859227b4-22f7-41e6-9466-434e08b01483">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==10]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CESAR AUGUSTO AGUILERA GONZALEZ
+Encargado de Sucursal Caacupé]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="579" width="483" height="67" uuid="053b58b8-8227-48e7-9916-8c7b24368789">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==7]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MARIA LILIANA HERMOSA DE RECALDE
+Encargada de Sucursal Pedro Juan Caballero]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="580" width="483" height="67" uuid="b7ecefa7-e97b-4f3d-83d8-a3393e24c520">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==2]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MAREK KAUENHOWEN
+Administración Asunción
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="36" y="578" width="483" height="67" uuid="de847b9b-9f96-4cb9-aee5-3f76d56e2eaa">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==6]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[VIDALINA JARA SARAGOZA
+Encargada de sucursal Santa Rosa
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="580" width="483" height="67" uuid="b00fcd43-232d-4a1f-b0b9-b63b093425c4">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==4]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CARLOS ARIEL ESPINOLA BRIZUELA
+Encargado de  Sucursal Loma Plata]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="580" width="483" height="67" uuid="bb50ba04-329e-4745-b061-7958b57ab995">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==3]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HECTOR ARIEL DAVALOS HANZEN
+Encargado de Sucursal Concepción]]></text>
+				</staticText>
+			</band>
+			<band height="802">
+				<printWhenExpression><![CDATA[$F{EXONERAR}==3]]></printWhenExpression>
+				<textField>
+					<reportElement x="40" y="329" width="483" height="214" uuid="0d8420ef-53bf-4ca8-aff1-c63900df8751"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="12"/>
+						<paragraph lineSpacing="1_1_2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Me dirijo a usted a fin de comunicarle que la Empresa Hilagro S.A., ha resuelto aceptar su desvinculación voluntaria, que nos ha presentado en fecha "+$F{DIA_MES}+" del cte. año. y conforme a su pedido queda exonerado de otorgar y cumplir el tiempo de preaviso legal que corresponde. \n\n"+
+"Por lo tanto, la liquidación de haberes que le corresponde estará a su disposición en la oficina de la empresa, donde se servirá pasar para percibirla en horario normal de trabajo.\n\n"+
+"Deseándole éxitos en sus futuros emprendimientos, le saludamos atentamente. \n"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="36" y="575" width="483" height="67" uuid="187af734-959d-4895-aad7-0b76400873ef">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==1]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ROSA EPIFANIA ROMERO TORRES
+Gerente de Capital Humano
+]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="65" y="111" width="464" height="20" uuid="df91eeaf-4ff2-4a80-a77a-29b4a09838f0"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="35" y="203" width="447" height="20" uuid="87c86f3a-a365-41dc-844e-aa2a8123e1a3"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="176" y="574" width="208" height="1" uuid="abf4f08b-0330-4863-8f7e-ef76912e95bf"/>
+				</line>
+				<staticText>
+					<reportElement x="38" y="243" width="446" height="25" uuid="4d99418f-89e5-4d2b-957f-293f2e9efd64"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Presente:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="36" y="165" width="275" height="21" uuid="a77559b4-1688-4617-8bc4-d93f05563bf1"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DIS2}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="36" y="575" width="483" height="67" uuid="c9688aad-386d-4790-b9e0-4cb8ad7e3a55">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==10]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CESAR AUGUSTO AGUILERA GONZALEZ
+Encargado de Sucursal Caacupé]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="37" y="575" width="483" height="67" uuid="4c6cee6f-445a-49fb-be73-5efcfadc2e82">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==7]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MARIA LILIANA HERMOSA DE RECALDE
+Encargada de Sucursal Pedro Juan Caballero]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="37" y="576" width="483" height="67" uuid="754e3679-48cf-4689-9ec7-95b27d4031f5">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==2]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MAREK KAUENHOWEN
+Administración Asunción
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="36" y="576" width="483" height="67" uuid="70fd559e-291a-4211-b669-2fab06728965">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==6]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[VIDALINA JARA SARAGOZA
+Encargada de sucursal Santa Rosa
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="37" y="576" width="483" height="67" uuid="f05afbd8-0bce-4e61-a0ce-22920a1ca774">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==4]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CARLOS ARIEL ESPINOLA BRIZUELA
+Encargado de  Sucursal Loma Plata]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="34" y="576" width="483" height="67" uuid="e962fd43-3790-40fd-943a-be3e050f6e60">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==3]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HECTOR ARIEL DAVALOS HANZEN
+Encargado de Sucursal Concepción]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="nota_Desp">
+		<groupExpression><![CDATA[$F{NOMBRE}]]></groupExpression>
+		<groupHeader>
+			<band height="802">
+				<staticText>
+					<reportElement x="35" y="114" width="483" height="25" uuid="3ee97f91-828e-4dc7-8eec-d3deccd94075"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CERTIFICADO DE TRABAJO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="159" width="483" height="25" uuid="023f4828-498f-4c00-8213-f694fa4aadfd"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[A quien corresponda.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="191" width="446" height="25" uuid="35306163-b65c-4fbc-a7cd-3bf73e9714de"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Presente:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="454" width="483" height="62" uuid="da389484-c237-4712-aabc-9659712c5b19">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==1]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[
+ROSA EPIFANIA ROMERO TORRES
+Gerente de Capital Humano
+
+]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="35" y="257" width="483" height="130" uuid="2b10aba3-b1e0-4047-a249-55aa4a1f73cd"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="12"/>
+						<paragraph lineSpacing="1_1_2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["CERTIFICAMOS, que " +$F{DIS}+ " " +$F{NOMBRE}+ " con C.I. N.º " +$F{NRO_DOC}+ ", fue colaborador de la Empresa HILAGRO S. A, desde la fecha "+$F{FECHA_ENTRADA}+" hasta el " +$F{FECHA_SALIDA}+ ", desempeñándose en el cargo de " +$F{CARGO}+ "  del área " +$F{AREA}+ ".\n\n"+
+"Se expide el presente certificado para los fines que hubiere lugar en la Ciudad de "+$F{FECHA_DESC}+"."]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="35" y="454" width="483" height="67" uuid="fa9a85ca-bd1b-40ed-a0d7-0c005d522fa7">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==10]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CESAR AUGUSTO AGUILERA GONZALEZ
+Encargado de Sucursal Caacupé]]></text>
+				</staticText>
+				<line>
+					<reportElement x="159" y="453" width="227" height="1" uuid="5bffc541-e693-4f50-b3b4-974793624170"/>
+				</line>
+				<staticText>
+					<reportElement x="34" y="454" width="483" height="67" uuid="2c41aaec-08f2-49be-a2a0-219124d52740">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==7]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MARIA LILIANA HERMOSA DE RECALDE
+Encargada de Sucursal Pedro Juan Caballero]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="34" y="454" width="483" height="67" uuid="5cb13257-7604-4ff7-8a63-a248b0d2ea55">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==2]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MAREK KAUENHOWEN
+Administración Asunción
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="34" y="454" width="483" height="67" uuid="8fbe2426-3799-4f6c-9cde-cafcc88e12f2">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==6]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[VIDALINA JARA SARAGOZA
+Encargada de sucursal Santa Rosa
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="34" y="454" width="483" height="67" uuid="f88b62e2-2a91-43ef-b006-87b3f96abb6b">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==4]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CARLOS ARIEL ESPINOLA BRIZUELA
+Encargado de  Sucursal Loma Plata]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="36" y="454" width="483" height="67" uuid="b84d389e-4bc1-4952-8acf-620ded927074">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==3]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HECTOR ARIEL DAVALOS HANZEN
+Encargado de Sucursal Concepción]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="802">
+				<printWhenExpression><![CDATA[$F{PRE_AVISO}==1]]></printWhenExpression>
+				<staticText>
+					<reportElement x="35" y="518" width="483" height="67" uuid="624b82a4-503f-4fab-be6e-a487860eb011">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==1]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ROSA EPIFANIA ROMERO TORRES
+Gerente de Capital Humano
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="317" width="483" height="140" uuid="3d1ab326-39cf-45ab-83ce-6332937d2190"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="12"/>
+						<paragraph lineSpacing="1_1_2"/>
+					</textElement>
+					<text><![CDATA[Me dirijo a Usted a fin de comunicarle que la empresa ha resuelto prescindir de sus servicios y dar por terminada la relación laboral existente, sin expresión de causa, a partir de la fecha de la presente nota.
+
+Por tanto, la liquidación correspondiente a sus haberes se encuentra a su disposición en la oficina de la empresa, donde se servirá pasar para percibirla en horario normal de trabajo
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="652" width="483" height="108" uuid="18de8149-ee3f-4d98-8032-f16dae1f97f7"/>
+					<textElement>
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<text><![CDATA[Recibí Conforme Original
+
+Firma: ----------------------------------
+
+Aclaración: ---------------------------
+
+C.I. N.º: --------------------------------
+
+
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="260" width="446" height="25" uuid="a2f045c4-d97f-4e01-b03f-8b968d8ba6e8"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Presente:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="34" y="216" width="447" height="20" uuid="a08f390a-1c20-41e6-840f-1bf9119baa70"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="54" y="114" width="464" height="20" uuid="fdd11ac2-afda-4745-907b-9fa9c62c565f"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="170" y="517" width="208" height="1" uuid="c18de81d-ac79-4114-8fcc-1b3811dd5bc8"/>
+				</line>
+				<textField>
+					<reportElement x="34" y="184" width="275" height="21" uuid="0837ddf7-52b9-4586-9b25-5ecdcc43605b"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DIS2}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="35" y="517" width="483" height="67" uuid="588f31e0-ea9f-4d10-b7da-40931f8c0276">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==10]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CESAR AUGUSTO AGUILERA GONZALEZ
+Encargado de Sucursal Caacupé]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="517" width="483" height="67" uuid="dd960870-6394-4661-b74d-e2c87930cacf">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==7]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MARIA LILIANA HERMOSA DE RECALDE
+Encargada de Sucursal Pedro Juan Caballero]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="36" y="519" width="483" height="67" uuid="e67ffed5-3ef4-44cc-a464-25187b378dab">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==2]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MAREK KAUENHOWEN
+Administración Asunción
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="36" y="519" width="483" height="67" uuid="48eab038-19a3-4cdd-b7aa-4ffc4f951c7f">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==6]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[VIDALINA JARA SARAGOZA
+Encargada de sucursal Santa Rosa
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="34" y="519" width="483" height="67" uuid="9b3b59b7-ef22-4dac-922b-e872e791d815">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==4]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CARLOS ARIEL ESPINOLA BRIZUELA
+Encargado de  Sucursal Loma Plata]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="519" width="483" height="67" uuid="f394f5d4-f7ec-4bb9-ad27-6c3487f4c84d">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==3]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HECTOR ARIEL DAVALOS HANZEN
+Encargado de Sucursal Concepción]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="certificado">
+		<groupExpression><![CDATA[$F{NOMBRE}]]></groupExpression>
+		<groupHeader>
+			<band/>
+			<band height="802">
+				<staticText>
+					<reportElement x="35" y="556" width="483" height="108" uuid="152615c6-ebdc-4f85-8e14-7432cbeb89bc"/>
+					<textElement>
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<text><![CDATA[Recibí Conforme Original
+
+Firma: ----------------------------------
+
+Aclaración: ---------------------------
+
+C.I. N.º: --------------------------------
+
+
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="115" width="483" height="25" uuid="1a28d65f-0ff1-4f93-96e4-088505a02136"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CERTIFICADO DE TRABAJO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="154" width="483" height="25" uuid="376323b6-288d-43ec-bf99-6dd51486a16d"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[A quien corresponda.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="195" width="446" height="25" uuid="d79e08cc-4ff1-4741-816c-d51cbca0fb93"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Presente:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="450" width="483" height="62" uuid="8008f9fb-7d9b-4576-b34d-02375dfb43c3">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==1]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[
+ROSA EPIFANIA ROMERO TORRES
+Gerente de Capital Humano
+
+]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="35" y="256" width="483" height="130" uuid="473e6ed3-79b6-43e4-9aee-69c47c576d7e"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="12"/>
+						<paragraph lineSpacing="1_1_2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["CERTIFICAMOS, que " +$F{DIS}+ " " +$F{NOMBRE}+ " con C.I. N.º " +$F{NRO_DOC}+ ", fue colaborador de la Empresa HILAGRO S. A, desde la fecha "+$F{FECHA_ENTRADA}+" hasta el " +$F{FECHA_SALIDA}+ ", desempeñándose en el cargo de " +$F{CARGO}+ "  del área " +$F{AREA}+ ".\n\n"+
+"Se expide el presente certificado para los fines que hubiere lugar en la Ciudad de "+$F{FECHA_DESC}+"."]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="35" y="450" width="483" height="67" uuid="fc807628-4888-4f54-8626-569a2a2c4e22">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==10]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CESAR AUGUSTO AGUILERA GONZALEZ
+Encargado de Sucursal Caacupé]]></text>
+				</staticText>
+				<line>
+					<reportElement x="159" y="449" width="227" height="1" uuid="98e7a19e-9a7d-4a8f-8447-f1c0219ccf37"/>
+				</line>
+				<staticText>
+					<reportElement x="34" y="450" width="483" height="67" uuid="39ffc161-ea7a-4048-a730-74b54a40fed2">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==7]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MARIA LILIANA HERMOSA DE RECALDE
+Encargada de Sucursal Pedro Juan Caballero]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="450" width="483" height="67" uuid="d3015e52-ed63-407b-8da5-e3fc9a77f50b">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==2]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MAREK KAUENHOWEN
+Administración Asunción
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="450" width="483" height="67" uuid="253ab675-086a-4143-9ed8-5c5b6c9f09cc">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==6]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[VIDALINA JARA SARAGOZA
+Encargada de sucursal Santa Rosa
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="37" y="450" width="483" height="67" uuid="6fd4e226-035b-40d4-b904-9ac95b07e23b">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==4]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CARLOS ARIEL ESPINOLA BRIZUELA
+Encargado de  Sucursal Loma Plata]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="37" y="450" width="483" height="67" uuid="70f37acc-e4db-469c-afab-4e814e7050d2">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==3]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HECTOR ARIEL DAVALOS HANZEN
+Encargado de Sucursal Concepción]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="802">
+				<printWhenExpression><![CDATA[$F{PRE_AVISO}==1]]></printWhenExpression>
+				<staticText>
+					<reportElement x="39" y="514" width="483" height="67" uuid="f90b7a91-b6ed-44b0-b9c1-3e914632b70b">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==1]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ROSA EPIFANIA ROMERO TORRES
+Gerente de Capital Humano
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="39" y="315" width="483" height="140" uuid="ea207cc8-0e70-428a-a748-3572634d64e7"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="12"/>
+						<paragraph lineSpacing="1_1_2"/>
+					</textElement>
+					<text><![CDATA[Me dirijo a Usted a fin de comunicarle que la empresa ha resuelto prescindir de sus servicios y dar por terminada la relación laboral existente, sin expresión de causa, a partir de la fecha de la presente nota.
+
+Por tanto, la liquidación correspondiente a sus haberes se encuentra a su disposición en la oficina de la empresa, donde se servirá pasar para percibirla en horario normal de trabajo
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="39" y="258" width="483" height="25" uuid="db85b652-97a4-4774-be16-22bb21e5b02a"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Presente:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="39" y="215" width="447" height="20" uuid="b4a71583-30ed-44a9-9e65-5e6d1dad8b8f"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="75" y="113" width="447" height="20" uuid="5d4040bb-05b3-4af5-95f4-71ece9ab5c00"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="174" y="514" width="208" height="1" uuid="25540e6f-0953-4591-97b8-cf89d9d6e833"/>
+				</line>
+				<textField>
+					<reportElement x="39" y="175" width="430" height="25" uuid="3fe20c00-2cea-4d4b-987c-21eac81d83ec"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DIS2}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="39" y="514" width="483" height="67" uuid="ae96dbca-c780-4409-af5e-156d39311103">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==10]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CESAR AUGUSTO AGUILERA GONZALEZ
+Encargado de Sucursal Caacupé]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="39" y="515" width="483" height="67" uuid="525e4e45-373c-4b3b-873e-1980d9c9c51e">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==7]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MARIA LILIANA HERMOSA DE RECALDE
+Encargada de Sucursal Pedro Juan Caballero]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="40" y="515" width="483" height="67" uuid="6d94c34b-ca61-4e53-8992-4402f928269d">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==2]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MAREK KAUENHOWEN
+Administración Asunción
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="40" y="515" width="483" height="67" uuid="96e97e00-1652-4ad3-b10d-737732d3d486">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==6]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[VIDALINA JARA SARAGOZA
+Encargada de sucursal Santa Rosa
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="40" y="515" width="483" height="67" uuid="5a666a10-3634-4162-8cb6-3c8906dcdbf7">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==4]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CARLOS ARIEL ESPINOLA BRIZUELA
+Encargado de  Sucursal Loma Plata]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="38" y="515" width="483" height="67" uuid="f0767f88-4271-47de-9011-ac0ec963fb1b">
+						<printWhenExpression><![CDATA[$F{SUC_CODIGO} ==3]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HECTOR ARIEL DAVALOS HANZEN
+Encargado de Sucursal Concepción]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+</jasperReport>

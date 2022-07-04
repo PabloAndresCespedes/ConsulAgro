@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERL029_FN1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c86c84e5-b909-4a98-b4c0-762082401f68">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_WHERE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESDE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_HASTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMP_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUC_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PERIODO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NIVEL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT A.DPTO_CODIGO,
+       A.DPTO_DESC,
+       A.SEM_FEC_INI,
+       A.SEM_FEC_FIN,
+       A.EMPL_LEGAJO,
+       A.EMPL_NOMBRE,
+       A.HDE,
+       A.HNE,
+       A.HME,
+TO_CHAR(SEM_FEC_INI) SEMANA
+  FROM PER_PERL029_TEMP A
+  WHERE  NIVEL='SEMANAL' AND
+      EMPL_LEGAJO IN (SELECT A.EMPL_LEGAJO
+                      FROM PER_EMPLEADO A
+                      WHERE
+                          EMPL_LEGAJO=A.EMPL_LEGAJO AND
+                          A.EMPL_SUCURSAL=$P!{P_SUCURSAL}
+                          AND A.EMPL_EMPRESA =$P!{P_EMPRESA})
+ AND (A.HDE>0 OR A.HNE>0 OR A.HME>0)
+AND A.EMPR =$P!{P_EMPRESA}
+$P!{P_WHERE}
+ORDER BY DPTO_CODIGO, SEM_FEC_INI]]>
+	</queryString>
+	<field name="DPTO_CODIGO" class="java.math.BigDecimal"/>
+	<field name="DPTO_DESC" class="java.lang.String"/>
+	<field name="SEM_FEC_INI" class="java.sql.Timestamp"/>
+	<field name="SEM_FEC_FIN" class="java.sql.Timestamp"/>
+	<field name="EMPL_LEGAJO" class="java.math.BigDecimal"/>
+	<field name="EMPL_NOMBRE" class="java.lang.String"/>
+	<field name="HDE" class="java.math.BigDecimal"/>
+	<field name="HNE" class="java.math.BigDecimal"/>
+	<field name="HME" class="java.math.BigDecimal"/>
+	<field name="SEMANA" class="java.lang.String"/>
+	<variable name="HDE_1" class="java.math.BigDecimal" resetType="Group" resetGroup="SEMANA" calculation="Sum">
+		<variableExpression><![CDATA[$F{HDE}]]></variableExpression>
+	</variable>
+	<variable name="HNE_1" class="java.math.BigDecimal" resetType="Group" resetGroup="SEMANA" calculation="Sum">
+		<variableExpression><![CDATA[$F{HNE}]]></variableExpression>
+	</variable>
+	<variable name="HME_1" class="java.math.BigDecimal" resetType="Group" resetGroup="SEMANA" calculation="Sum">
+		<variableExpression><![CDATA[$F{HME}]]></variableExpression>
+	</variable>
+	<variable name="HDE_2" class="java.math.BigDecimal" resetType="Group" resetGroup="DEPARTAMENTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{HDE}]]></variableExpression>
+	</variable>
+	<variable name="HDE_3" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{HDE}]]></variableExpression>
+	</variable>
+	<variable name="HNE_2" class="java.math.BigDecimal" resetType="Group" resetGroup="DEPARTAMENTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{HNE}]]></variableExpression>
+	</variable>
+	<variable name="HNE_3" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{HNE}]]></variableExpression>
+	</variable>
+	<variable name="HME_2" class="java.math.BigDecimal" resetType="Group" resetGroup="DEPARTAMENTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{HME}]]></variableExpression>
+	</variable>
+	<variable name="HME_3" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{HME}]]></variableExpression>
+	</variable>
+	<group name="DEPARTAMENTO">
+		<groupExpression><![CDATA[$F{DPTO_CODIGO}]]></groupExpression>
+		<groupHeader>
+			<band height="28">
+				<textField>
+					<reportElement x="1" y="15" width="23" height="13" uuid="38ff5c87-9344-4f16-b79b-e928b4452693"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DPTO_CODIGO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="25" y="15" width="270" height="13" uuid="5d3f479d-ef18-4f01-bced-a8f5b64d7077"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DPTO_DESC}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="17">
+				<staticText>
+					<reportElement x="8" y="0" width="100" height="13" uuid="65042b0f-741c-4bc1-8e43-fde807a84e02"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Departamento:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="285" y="0" width="54" height="13" uuid="50b22238-2ee8-472f-bd9c-5e1b4e8e75fb"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{HDE_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="373" y="0" width="62" height="13" uuid="fd6707b0-70c0-4b65-b882-cec51e4050c1"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{HNE_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="455" y="0" width="55" height="13" uuid="f3ee4db8-c774-4251-aa20-f459f2b175ad"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{HME_2}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="SEMANA">
+		<groupExpression><![CDATA[$F{SEMANA}]]></groupExpression>
+		<groupHeader>
+			<band height="34">
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="61" y="0" width="100" height="13" uuid="5f92b26e-b241-4257-af66-3ef59bffc3b0"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SEM_FEC_INI}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="161" y="0" width="100" height="13" uuid="fe4155b4-555b-4b77-8599-8d12abe450e3"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SEM_FEC_FIN}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="45" height="13" uuid="7b7aad5a-439d-43f8-9407-eb972247eb21"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SEMANA:]]></text>
+				</staticText>
+				<line>
+					<reportElement x="0" y="30" width="554" height="1" uuid="3e4bbaac-864b-4d29-a967-661e808b6ea4"/>
+				</line>
+				<staticText>
+					<reportElement x="271" y="17" width="68" height="13" uuid="743d99f2-7f91-446d-9497-1d288a922750"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[DIURNA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="371" y="17" width="64" height="13" uuid="c02a1fee-4d37-4ada-bde9-b6354ac4269d"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[NOCTURNA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="455" y="17" width="55" height="13" uuid="6118f6ab-546c-45a4-91f1-1e58addfc308"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MIXTA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="2" y="18" width="143" height="13" uuid="c3b9e328-e070-4ad0-bd60-da1d85dc8977"/>
+					<textElement>
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[EMPLEADO]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="16">
+				<textField pattern="#,##0.00">
+					<reportElement x="295" y="0" width="44" height="13" uuid="69eb7e54-d2c0-4868-b27b-5c226fb194be"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{HDE_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="374" y="0" width="61" height="13" uuid="b86b4b04-bfed-4907-bbf3-d249268bde3d"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{HNE_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="445" y="0" width="65" height="13" uuid="97e3b83e-df4d-4d2f-bbc9-7d4cbee22d8c"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{HME_1}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="8" y="0" width="100" height="13" uuid="631aeac8-2fe9-4fe7-9727-8790d34e5d70"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Semanal:]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="71" splitType="Stretch">
+			<staticText>
+				<reportElement x="435" y="0" width="105" height="12" uuid="032cc70a-eb2f-4f43-af0a-90fecce96e07"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[PERL029   Hoja N°:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="510" y="0" width="35" height="12" uuid="d45918f0-4c4d-4335-867e-1087a09d3cb5"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="435" y="13" width="105" height="13" uuid="95b4f2e6-eb89-4655-ac28-226ea680e9db"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="13" width="553" height="13" uuid="e13c6dac-4d53-4e7a-8e18-68cb8b85c57c"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LISTADO DE HORAS DEL MES]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="271" y="36" width="100" height="13" uuid="d416a6fc-7634-4df9-a518-1536ec86d2bc"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_HASTA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="75" y="36" width="112" height="13" uuid="b69cbce2-a2bc-42b1-b9b6-98d4d48ca81c"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESDE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="35" width="100" height="13" uuid="5cd0d39f-7d68-48ba-9882-d71f902145d2"/>
+				<textElement>
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Fecha Desde:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="201" y="36" width="100" height="13" uuid="638eebab-16a3-422b-9d9b-53644f5c7dc8"/>
+				<textElement>
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Fecha Hasta:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="2" y="0" width="198" height="13" uuid="b79fe69b-44e1-4b7f-ba9b-2058c95ea173"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_EMP_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="13" width="199" height="13" uuid="482c38ee-0cf7-4b26-adb9-696245e624f4"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SUC_DESC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="13">
+			<textField>
+				<reportElement x="2" y="0" width="43" height="13" uuid="fd5b08a9-da5d-4d32-8fc4-cdcae232d2c6"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EMPL_LEGAJO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="45" y="0" width="202" height="13" uuid="7e55feba-cc1e-4c3e-8633-d95a8dfacfac"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EMPL_NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="271" y="0" width="68" height="13" uuid="17dc0083-8096-4630-abd3-3769a82161f6"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HDE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="386" y="0" width="49" height="13" uuid="fde967cf-6ccb-4b23-818c-5fca4415a9cd"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HNE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="455" y="0" width="55" height="13" uuid="727e270d-3160-46de-9cb9-b95b37cd33e1"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HME}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="14" splitType="Stretch">
+			<staticText>
+				<reportElement x="8" y="0" width="100" height="13" uuid="f8dfa283-faa4-4c07-86b1-1debada9f9a9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total General:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="295" y="0" width="44" height="13" uuid="7073f10f-f1e7-42ae-bac1-d8193029f497"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{HDE_3}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="373" y="0" width="62" height="13" uuid="15ea87d6-a8fa-4f00-82d1-b3cd2bf4b652"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{HNE_3}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="455" y="0" width="55" height="13" uuid="17e9c85d-402e-4d86-b5c4-10243ccd7c3e"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{HME_3}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

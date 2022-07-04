@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERI005" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="78a689f7-2a6a-4481-8d7b-82d87e2425ee">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NRO_DOC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PERIODO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT PDOC_NRO_DOC,
+       PDOC_EMPLEADO,
+       EMPL_NOMBRE || ' ' || EMPL_APE NOMBRE,
+       PDOC_FEC,
+       DECODE(PCON_IND_DBCR, 'D', -1 * PDDET_IMP, PDDET_IMP) IMPORTE,
+       PDOC_CLAVE_FIN,
+       DOC_TIPO_MOV,
+       DOC_NRO_DOC,
+       PCON_CLAVE || ' - ' || PCON_DESC CONCEPTO,
+DPTO_CODIGO  ,
+DPTO_DESC,
+       PDOC_PERIODO,
+       PDOC_FEC_GRAB,
+       PDOC_LOGIN
+  FROM PER_DOCUMENTO,
+       PER_DOCUMENTO_DET,
+       PER_EMPLEADO,
+       FIN_DOCUMENTO,
+       PER_CONCEPTO,
+       FIN_CONCEPTO,
+       GEN_DEPARTAMENTO
+
+ WHERE PDDET_CLAVE_DOC = PDOC_CLAVE
+   AND PDDET_EMPR = PDOC_EMPR
+
+   AND PDOC_EMPLEADO = EMPL_LEGAJO
+   AND PDOC_EMPR = EMPL_EMPRESA
+
+   AND PDOC_CLAVE_FIN = DOC_CLAVE(+)
+   AND PDOC_EMPR = DOC_EMPR(+)
+
+   AND PDDET_CLAVE_CONCEPTO = PCON_CLAVE
+   AND PDDET_EMPR = PCON_EMPR
+
+   AND PCON_CLAVE_CONCEPTO = FCON_CLAVE(+)
+   AND PCON_EMPR = FCON_EMPR(+)
+
+   AND EMPL_DEPARTAMENTO = DPTO_CODIGO(+)
+   AND EMPL_EMPRESA = DPTO_EMPR(+)
+   AND PCON_EMPR = $P{P_EMPRESA}
+   AND PDOC_NRO_DOC = $P{P_NRO_DOC}
+   AND PDOC_PERIODO =$P{P_PERIODO}
+ ORDER BY 7, 3, 5 DESC]]>
+	</queryString>
+	<field name="PDOC_NRO_DOC" class="java.math.BigDecimal"/>
+	<field name="PDOC_EMPLEADO" class="java.math.BigDecimal"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="PDOC_FEC" class="java.sql.Timestamp"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<field name="PDOC_CLAVE_FIN" class="java.math.BigDecimal"/>
+	<field name="DOC_TIPO_MOV" class="java.math.BigDecimal"/>
+	<field name="DOC_NRO_DOC" class="java.math.BigDecimal"/>
+	<field name="CONCEPTO" class="java.lang.String"/>
+	<field name="DPTO_CODIGO" class="java.math.BigDecimal"/>
+	<field name="DPTO_DESC" class="java.lang.String"/>
+	<field name="PDOC_PERIODO" class="java.math.BigDecimal"/>
+	<field name="PDOC_FEC_GRAB" class="java.sql.Timestamp"/>
+	<field name="PDOC_LOGIN" class="java.lang.String"/>
+	<variable name="IMPORTE_1" class="java.math.BigDecimal" resetType="Group" resetGroup="EMPLEADO" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<group name="DEPARTAMENTO">
+		<groupExpression><![CDATA[$F{DPTO_CODIGO}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="EMPLEADO">
+		<groupExpression><![CDATA[$F{PDOC_EMPLEADO}]]></groupExpression>
+		<groupHeader>
+			<band height="10">
+				<staticText>
+					<reportElement x="-1" y="-1" width="62" height="11" uuid="d10a485e-81ee-4ee4-ba6e-4b8ef41be87a"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[EMPLEADO:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="106" y="-1" width="285" height="11" uuid="95080025-df56-4012-a17a-65d4e8404656"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="59" y="-1" width="38" height="11" uuid="a13120ae-6025-489f-9598-522bce81ad7e"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PDOC_EMPLEADO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="13">
+				<textField pattern="#,##0">
+					<reportElement x="455" y="2" width="100" height="11" uuid="e6cf1fb3-8831-4ad7-854b-0498ba0fa99c"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{IMPORTE_1}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="455" y="1" width="100" height="1" uuid="691af0b5-4c2f-47e9-a3b1-f3173a9c478b"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="502" y="0" width="49" height="20" uuid="bb8487f2-2094-48a9-927e-a15e528d0a92">
+					<printWhenExpression><![CDATA[$P{P_EMPRESA}=='1']]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PERI005]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="20" width="452" height="41" uuid="7ddb315d-00fb-4211-b8ad-0294a7c741a5">
+					<printWhenExpression><![CDATA[$P{P_PROGRAMA} == '1']]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MOVIMIENTOS PARA GRUPOS DE EMPLEADOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="20" width="452" height="41" uuid="354761ed-54de-4236-962d-d534ab1a588a">
+					<printWhenExpression><![CDATA[$P{P_PROGRAMA}=='2']]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[BONIFICACION FAMILIAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="502" y="0" width="49" height="20" uuid="ebeab6bf-16b2-4203-bb5f-936eba543025">
+					<printWhenExpression><![CDATA[$P{P_PROGRAMA} == '2']]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PERI048]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="502" y="0" width="49" height="20" uuid="2bc46dd3-5a57-4acb-ac72-a48ff7a387f2">
+					<printWhenExpression><![CDATA[$P{P_EMPRESA}=='3']]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PERI070]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="84" splitType="Stretch">
+			<textField>
+				<reportElement x="108" y="15" width="119" height="20" uuid="84f5fc86-c8d2-4253-bedd-26e6d9b650c4"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PDOC_NRO_DOC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="344" y="15" width="100" height="20" uuid="0fff01c9-7124-463c-b005-d5c3bdab6769"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PDOC_FEC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="108" y="44" width="119" height="20" uuid="12382b06-ffa0-4c7c-a255-c9e8553a6982"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PDOC_FEC_GRAB}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="291" y="44" width="100" height="20" uuid="8111ef45-4638-44cc-b104-ee6a2a7bc892"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PDOC_LOGIN}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="519" y="15" width="36" height="20" uuid="010b6bfd-31c0-47b9-bad3-698fa497e6aa"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PDOC_PERIODO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="15" width="103" height="20" uuid="8a309ab9-f57c-4d39-9e20-4602071af5ce"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NRO. DOCUMENTO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="227" y="15" width="122" height="20" uuid="a67899b4-35c7-4101-a22d-5cc6be2fedc5"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA DOCUMENTO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="460" y="15" width="59" height="20" uuid="3dd46f6f-86cb-4345-b9be-fb1bef1c9169"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PERIODO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="44" width="119" height="20" uuid="3dcff947-4b21-477b-91e2-2a11cc2b9329"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA DE GRAB.:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="227" y="44" width="64" height="20" uuid="3be91047-cc0c-4594-b178-b6267d4f6757"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[USUARIO:]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="12" splitType="Stretch">
+			<textField>
+				<reportElement x="129" y="0" width="390" height="11" uuid="05001a93-f484-4397-9749-488eb17bca7a"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DPTO_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="108" y="0" width="16" height="11" uuid="544f474c-018a-40fc-8dbe-1974a063f2bb"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DPTO_CODIGO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="103" height="11" uuid="cf8bf35f-8499-4ab3-b279-cb728144bc94"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DEPARTAMENTO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="-1" y="11" width="556" height="1" uuid="14fca97f-10be-465a-8641-4bd463edbdcd"/>
+			</line>
+			<staticText>
+				<reportElement x="291" y="1" width="135" height="11" uuid="aa99b2a2-3fd8-4675-b876-8df0121f6902"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONCEPTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="451" y="0" width="100" height="11" uuid="1c8422e1-6c15-4ebd-9a25-da5e4d4c0585"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IMPORTE]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField pattern="#,##0">
+				<reportElement x="455" y="0" width="100" height="11" uuid="fd84417d-fab1-4fac-b264-08b7f92fb05b"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="288" y="0" width="167" height="11" uuid="dc6e5218-d71d-478c-8ec9-57601131aa67"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CONCEPTO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+</jasperReport>

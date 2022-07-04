@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINI003_REC_AI_subreport1" language="groovy" columnCount="2" printOrder="Horizontal" pageWidth="555" pageHeight="380" whenNoDataType="BlankPage" columnWidth="277" columnSpacing="1" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryWithPageHeaderAndFooter="true" whenResourceMissingType="Empty" uuid="04d56e59-02b4-4f57-927a-ce67b1adcf3d">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DOC_CLAVE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select fc.CLI_CODIGO,
+       fc.CLI_NOM,
+       fc.cli_ruc,
+       substr(lpad(fd.DOC_NRO_DOC, 13, 0), 0, 3) || '-' ||
+       substr(lpad(fd.DOC_NRO_DOC, 13, 0), 4, 3) || '-' ||
+       substr(lpad(fd.DOC_NRO_DOC, 13, 0), 7, 14) nro_factura,
+       substr(lpad(fr.DOC_NRO_DOC, 13, 0), 0, 3) || '-' ||
+       substr(lpad(fr.DOC_NRO_DOC, 13, 0), 4, 3) || '-' ||
+       substr(lpad(fr.DOC_NRO_DOC, 13, 0), 7, 14) nro_recibo,
+       fd.doc_mon cod_moneda,
+       fd.doc_cta_bco,
+       fp.PAG_IMP_MON importe_pago,
+       fr.doc_fec_doc fecha_pago,
+       TO_CHAR(fr.doc_fec_doc, 'dd') as DayPago,
+       to_char(fr.doc_fec_doc, 'Month') as MonthPago,
+       to_char(fr.doc_fec_doc, 'YYYY') as YearPago,
+       E.EMPR_RUC RUC,
+       d.mon_simbolo simbolo,
+       LPAD(TRIM(DECODE(MON_CODIGO,
+              1,
+              to_char(fr.doc_neto_exen_mon, '999G999G999G999'),
+              to_char(fr.doc_neto_exen_mon, '999G999G999G999D00'))),30,'-') importe_recibo,
+       rpad(nvl(general.FP_CONV_NRO_TXT(fr.doc_neto_exen_mon,fr.doc_mon),'-'),90,'-') importe_pago_txt1,
+       rpad(nvl(substr(general.FP_CONV_NRO_TXT(fr.doc_neto_exen_mon,fr.doc_mon),91,1000),'--'),90,'-') importe_pago_txt2,
+       fp.pag_clave_pago,
+pag_fec_vto,
+ UPPER(S.SUC_LOCALIDAD || ',  ' || TO_CHAR(FR.DOC_FEC_DOC, 'dd')||' de '||TO_CHAR(FR.DOC_FEC_DOC, 'Month','nls_date_language=spanish')||
+       ' del '||TO_CHAR(FR.DOC_FEC_DOC, 'yyyy')||'.')
+        LUGAR_Y_FECHA,
+/*
+ substr(lpad(nc.DOC_NRO_DOC, 13, 0), 0, 3) || '-' ||
+       substr(lpad(nc.DOC_NRO_DOC, 13, 0), 4, 3) || '-' ||
+       substr(lpad(nc.DOC_NRO_DOC, 13, 0), 7, 14) */
+       nvl(fin_ncr_fac(i_clave_fac => fd.doc_clave,
+                   i_empresa => fd.doc_Empr),'---') Nota_C
+  from fin_documento  fd,
+       fin_UNION_pago fp,
+       fin_cliente    fc,
+       GEN_EMPRESA    E,
+       gen_moneda     d,
+       fin_documento  fr,
+       --fin_documento nc, --No se usa más...
+       gen_sucursal s
+ where fd.doc_clave = fp.pag_clave_doc
+   AND FD.DOC_EMPR = FP.PAG_EMPR
+   and fd.doc_cli = fc.cli_codigo
+   AND FD.DOC_EMPR = FC.CLI_EMPR
+   AND FD.DOC_EMPR = EMPR_CODIGO
+   and fd.doc_mon = mon_codigo
+   and fd.doc_empr = mon_empr
+   and pag_clave_pago = fr.doc_clave
+   and pag_empr = fr.doc_empr
+   and fr.doc_suc = suc_codigo
+   and fr.doc_empr = suc_empr
+  -- and fd.doc_clave=nc.doc_clave_fac_ncr(+)
+   and fd.doc_empr=$P{P_EMPRESA}
+   and fp.pag_clave_pago in ($P{P_DOC_CLAVE})
+   AND FP.PAG_EMPR =$P{P_EMPRESA}
+
+
+--and fp.pag_clave_pago in (&P_where)
+--GROUP BY CLI_CODIGO, CLI_NOM , DOC_NRO_DOC, PAG_IMP_MON, PAG_IMP_LOC]]>
+	</queryString>
+	<field name="CLI_CODIGO" class="java.math.BigDecimal"/>
+	<field name="CLI_NOM" class="java.lang.String"/>
+	<field name="CLI_RUC" class="java.lang.String"/>
+	<field name="NRO_FACTURA" class="java.lang.String"/>
+	<field name="NRO_RECIBO" class="java.lang.String"/>
+	<field name="COD_MONEDA" class="java.math.BigDecimal"/>
+	<field name="DOC_CTA_BCO" class="java.math.BigDecimal"/>
+	<field name="IMPORTE_PAGO" class="java.math.BigDecimal"/>
+	<field name="FECHA_PAGO" class="java.sql.Timestamp"/>
+	<field name="DAYPAGO" class="java.lang.String"/>
+	<field name="MONTHPAGO" class="java.lang.String"/>
+	<field name="YEARPAGO" class="java.lang.String"/>
+	<field name="RUC" class="java.lang.String"/>
+	<field name="SIMBOLO" class="java.lang.String"/>
+	<field name="IMPORTE_RECIBO" class="java.lang.String"/>
+	<field name="IMPORTE_PAGO_TXT1" class="java.lang.String"/>
+	<field name="IMPORTE_PAGO_TXT2" class="java.lang.String"/>
+	<field name="PAG_CLAVE_PAGO" class="java.math.BigDecimal"/>
+	<field name="PAG_FEC_VTO" class="java.sql.Timestamp"/>
+	<field name="LUGAR_Y_FECHA" class="java.lang.String"/>
+	<field name="NOTA_C" class="java.lang.String"/>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="108" splitType="Prevent">
+			<rectangle radius="10">
+				<reportElement mode="Transparent" x="12" y="10" width="535" height="96" uuid="b773d6bb-a54f-4c2f-a803-8ab554ad4678"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="400" y="33" width="22" height="12" uuid="533b09f6-5121-40e3-b5a8-bdc8920b40aa"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RUC:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="344" y="10" width="188" height="23" uuid="5eec273a-0b17-43b9-84e3-ebe9d52f28c6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RECIBO DE DINERO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="61" y="20" width="115" height="10" uuid="e50c44e0-a8ec-4684-9110-96d8d0eeb7ab"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Molinos Harineros y derivados]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="354" y="52" width="188" height="23" uuid="3b29f937-a169-4b28-98a2-bf8dcdbc0f37"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_RECIBO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="334" y="83" width="210" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="883d0105-50a6-429b-a70d-46372e399587"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None" markup="none">
+					<font fontName="Arial" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_RECIBO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="100" y="33" width="55" height="53" uuid="306282c3-acad-494e-91a0-0a686bbf1b0a"/>
+				<textElement>
+					<font fontName="Arial" size="4" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Planta Industrial:
+Ruta Internacional Nº7 km 214
+J.E. Estigarribia (Campo9)
+Caaguazú - Paraguay
+Tel/Fax (0528)222815(R.A.)
+ventas@hilagro.com.py
+www.hilagro.com.py]]></text>
+			</staticText>
+			<rectangle radius="10">
+				<reportElement x="334" y="50" width="210" height="26" uuid="90c19484-6525-4754-813c-6161c9e24a6e"/>
+			</rectangle>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="310" y="55" width="24" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="9a2eb8f3-42d8-46d2-adea-114ee549a9be"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SIMBOLO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="174" y="21" width="130" height="85" uuid="0cdb772e-b6a3-4e77-a6a3-dd389a152014"/>
+				<textElement>
+					<font fontName="Arial" size="4" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Suc.Asunción: Avda Defensores del Chaco Nº 815
+ Fdo. de la Mora - Paraguay
+ comercialasu@hilagro.com.py - Tel/Fax(021)502786/525288
+Suc.Loma Plata: Avda Central c/ 3 de Noviembre
+ Loma Plata Chaco- Paraguay
+ lomaplata@hilagro.com.py - Tel/Fax (0492)253 422
+Suc.Concepción: Ruta Nº5 - km 2015
+ Concepción-Paraguay
+ adm_c@hilagro.com.py - Tel/Fax (0331)242577
+Suc. Sta. Rosa: Ruta N° 3 Gral. Elizardo Aquino  km 327
+ Santa Rosa del Aguaray - Paraguay
+ santarosa@hilagro.com.py - TelFax: (0433) 240 204
+Suc. PJC: Avda. Jose Berges Nº 193 esq. Coronel Martinez.
+ Pedro Juan Caballero - Paraguay
+ pjc@hilagro.com.py - Tel: (336) 270 720
+Suc. San Ignacio: Cerro Corá c/ Brusqueti
+ San Ignacio Misiones - Paraguay
+ sim@hilagro.com.py - Tel: (O782) 232 949]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Transparent" x="430" y="33" width="80" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="383aa430-b867-4fc7-9633-8cd173eacfa2"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" markup="none">
+					<font fontName="Arial" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RUC}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="310" y="83" width="24" height="20" uuid="479933c7-c809-4084-bcdf-983a5f4f6a45"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nº]]></text>
+			</staticText>
+			<textField pattern="">
+				<reportElement x="342" y="55" width="196" height="20" uuid="330199a6-f40a-479c-ab27-3c2051297c09"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_RECIBO}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="22" y="30" width="71" height="50" uuid="bdb1af7e-2eb4-49d5-b945-949108ca348c"/>
+				<imageExpression><![CDATA["logo_rec_fini003.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="113" splitType="Prevent">
+			<staticText>
+				<reportElement x="12" y="79" width="57" height="15" uuid="bc29ead3-4b38-42b4-85db-8bb186e26f36"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Efectivo:]]></text>
+			</staticText>
+			<rectangle radius="5">
+				<reportElement mode="Transparent" x="67" y="6" width="351" height="20" uuid="a6a4a49b-041d-44e2-a958-e5c8a8910551"/>
+			</rectangle>
+			<rectangle radius="5">
+				<reportElement mode="Transparent" x="83" y="29" width="464" height="20" uuid="678aca57-3bb6-4fc7-9b13-1e8b163e035a"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="12" y="6" width="55" height="15" uuid="f8ef34e4-abba-4f33-bd55-550fdda38a83"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Recibi de :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="442" y="79" width="47" height="15" uuid="05fca68c-b512-4b3d-85d7-0292fcc24bda"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[c/Banco:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="13" y="29" width="70" height="20" uuid="b6bb81f9-6b67-408d-aac6-4a7b8e0d76ca"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[La cantidad de :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="13" y="94" width="198" height="15" uuid="1c9c58e4-34c4-4bb2-a432-eae77432573f"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Por concepto de  pago segun detalle:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="459" y="6" width="85" height="15" uuid="113d761f-efd3-49c0-9519-cdf7cb93c1a0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CLI_RUC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="93" y="29" width="451" height="15" uuid="ffa12f5b-f30c-406f-bc3e-65501c37f8ff"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_PAGO_TXT1}]]></textFieldExpression>
+			</textField>
+			<rectangle radius="5">
+				<reportElement mode="Transparent" x="12" y="54" width="535" height="20" uuid="62a725a7-d599-4639-96d3-f544763ad2cc"/>
+			</rectangle>
+			<rectangle radius="5">
+				<reportElement mode="Transparent" x="452" y="6" width="95" height="20" uuid="ffc0e54a-f4a1-43c5-be92-ee913a7fcf35"/>
+			</rectangle>
+			<textField>
+				<reportElement mode="Transparent" x="72" y="6" width="346" height="15" uuid="293adf6e-9d9f-422d-942b-eb84505f7087"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" size="8" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CLI_NOM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="172" y="79" width="68" height="15" uuid="ed1e0a32-7551-4d4f-8ca4-16bf7b843120"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Cheque Nº:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="312" y="79" width="52" height="15" uuid="993687bc-3100-4527-9773-574821066677"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[P/Fecha:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="13" y="53" width="531" height="15" uuid="929d9d1e-6eb7-4941-9e6d-23f726e3b097"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_PAGO_TXT2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="422" y="6" width="30" height="15" uuid="ffdfe96e-a265-4b5e-afe4-605a28440f6d"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[RUC:]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="22" splitType="Prevent">
+			<staticText>
+				<reportElement x="12" y="0" width="60" height="15" uuid="4dc4bd74-be0d-4583-8c48-a925dbbab4a3"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Factura:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="134" y="0" width="65" height="15" uuid="8bc4ff0d-a26d-4c8c-85dc-5ceb832bc1e2"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Importe:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="77" y="0" width="55" height="15" uuid="5eb11ae9-e331-4f24-b73a-2bd74c449488"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Vto.:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="13" y="15" width="253" height="1" uuid="26532e89-0b9d-4d32-b48f-4a272c2659e9"/>
+			</line>
+			<staticText>
+				<reportElement x="207" y="0" width="47" height="13" uuid="8b1ceffc-8b9b-4cb9-bc2a-f1552cb6fb10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Nota C.:]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField>
+				<reportElement x="12" y="0" width="65" height="10" uuid="e49240b9-52bb-43b9-977d-6cdfd9fc44d2"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_FACTURA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="77" y="0" width="56" height="10" uuid="f5b2ea6b-b2d9-4530-a345-31ebe7f57746"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PAG_FEC_VTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0">
+				<reportElement x="134" y="0" width="65" height="10" uuid="bff5acde-7e2b-43d3-a7f7-3927f97937e4"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_PAGO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="199" y="1" width="78" height="13" uuid="619bbc82-8e32-4584-b1e1-8428d2bada2a"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOTA_C}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="31" splitType="Prevent"/>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="45" splitType="Prevent">
+			<staticText>
+				<reportElement x="97" y="26" width="72" height="15" uuid="ab696475-0163-4a9d-8825-c27d9208af7d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Lugar y Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="358" y="26" width="92" height="15" uuid="db0c98ce-f191-43bf-b078-e4e099c91d34"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Firma]]></text>
+			</staticText>
+			<line>
+				<reportElement x="13" y="23" width="253" height="1" uuid="6aa4db86-6c8c-4bb6-afcd-4c675f19b50a"/>
+			</line>
+			<line>
+				<reportElement x="289" y="22" width="253" height="1" uuid="397f6bea-442e-4e12-919f-a2490ccc35d3"/>
+			</line>
+			<line>
+				<reportElement x="12" y="2" width="530" height="1" uuid="4694a326-bd8a-4c6d-b96d-a2965e1ae7e6"/>
+			</line>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="13" y="6" width="253" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="ab72a0ad-f4f1-4cb5-a0f0-846cfc10bf22"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None" markup="none">
+					<font fontName="Arial" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LUGAR_Y_FECHA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+</jasperReport>

@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINL277" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4e7e7a08-8554-4df7-9e14-1253aae4358d">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_TIPO_MOV" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLIENTE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROVEEDOR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_INICIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_FIN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NRO_DOC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_EMPRESA" class="java.lang.String"/>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String"/>
+	<parameter name="P_PROGRAMA" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\programacion10\\Documents\\Reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FORMATO" class="java.lang.String"/>
+	<parameter name="P_FECHA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_LIQUID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_WHERE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CTA" class="java.lang.String"/>
+	<parameter name="P_desc_sucursal" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT CONSULTA.*, TMOV_DESC, PROV_RAZON_SOCIAL, CLI_NOM
+  FROM GEN_TIPO_MOV,
+       FIN_PROVEEDOR,
+       FIN_CLIENTE,
+       (SELECT DOC_CLAVE,
+               DOC_NRO_DOC,
+               DOC_TIPO_MOV,
+               DOC_CLI,
+               DOC_PROV,
+               DOC_OBS,
+               DOC_FEC_DOC,
+               DECODE($P!{P_FECHA},'D','DOC_FEC_DOC','O','DOC_FEC_OPER','G','DOC_FEC_GRAB')FECHA ,
+               DOC_CLI_NOM,
+               CTAC_NRO CTA_CODIGO,
+               CTAC_DESC CTA_DESC,
+               DECODE(FCON_TIPO_SALDO, 'D', 'C', 'D') TIPO_SALDO,
+               SUM(DCON_EXEN_LOC + DCON_GRAV_LOC + DCON_IVA_LOC) IMP_TOTAL,
+               DOC_EMPR
+          FROM FIN_CONCEPTO, CNT_CUENTA, FIN_DOCUMENTO, FIN_DOC_CONCEPTO
+         WHERE DOC_CLAVE = DCON_CLAVE_DOC
+
+           AND DOC_EMPR = DCON_EMPR
+
+           AND DOC_SIST <> 'ACL'
+           AND DOC_SIST <> 'PMO'
+              AND (DOC_TIPO_MOV = $P!{P_TIPO_MOV} OR $P!{P_TIPO_MOV} IS NULL )
+          AND (DOC_CLI = $P!{P_CLIENTE} OR $P!{P_CLIENTE} IS NULL )
+          AND (DOC_PROV = $P!{P_PROVEEDOR} OR $P!{P_PROVEEDOR} IS NULL )
+          AND (DOC_CLAVE_LIQUID = $P!{P_LIQUID} OR $P!{P_LIQUID} IS NULL )
+           $P!{P_WHERE}
+          AND  (DOC_NRO_DOC = $P!{P_NRO_DOC} OR $P!{P_NRO_DOC}  IS NULL)
+
+           AND FCON_CLAVE = DCON_CLAVE_CONCEPTO
+           AND FCON_EMPR = DCON_EMPR
+
+           AND CTAC_CLAVE(+) = DCON_CLAVE_CTACO
+           AND CTAC_EMPR(+) = DCON_EMPR
+
+           AND DOC_EMPR = $P!{P_EMPRESA}
+           AND DCON_CLAVE_CTACO IS NOT NULL
+
+         GROUP BY DOC_CLAVE,
+                  DOC_NRO_DOC,
+                  DOC_TIPO_MOV,
+                  DOC_CLI,
+                  DOC_PROV,
+                  DOC_OBS,
+                  DOC_FEC_DOC,
+                  DECODE($P!{P_FECHA},'D','DOC_FEC_DOC','O','DOC_FEC_OPER','G','DOC_FEC_GRAB'),
+                  DOC_CLI_NOM,
+                  DOC_EMPR,
+                  CTAC_NRO,
+                  CTAC_DESC,
+                  DECODE(FCON_TIPO_SALDO, 'D', 'C', 'D')
+        UNION
+        SELECT DOC_CLAVE,
+               DOC_NRO_DOC,
+               DOC_TIPO_MOV,
+               DOC_CLI,
+               DOC_PROV,
+               DOC_OBS,
+               DOC_FEC_DOC,
+               DECODE($P!{P_FECHA},'D','DOC_FEC_DOC','O','DOC_FEC_OPER','G','DOC_FEC_GRAB') FEHCA ,
+               DOC_CLI_NOM,
+               DECODE(DOC_CTA_BCO,
+                      NULL,
+                      DECODE(DOC_CLI, NULL, C.CTAC_NRO, D.CTAC_NRO),
+                      A.CTAC_NRO) CTA_CODIGO,
+               DECODE(DOC_CTA_BCO,
+                      NULL,
+                      DECODE(DOC_CLI, NULL, C.CTAC_DESC, D.CTAC_DESC),
+                      A.CTAC_DESC) CTA_DESC,
+               DECODE(FCON_TIPO_SALDO, 'D', 'D', 'C') TIPO_SALDO,
+               SUM(DCON_EXEN_LOC + DCON_GRAV_LOC + DCON_IVA_LOC) IMP_TOTAL,
+               DOC_EMPR
+          FROM FIN_BANCO,
+               FIN_CONCEPTO,
+               CNT_CUENTA          A,
+               CNT_CUENTA          C,
+               CNT_CUENTA          D,
+               FIN_CUENTA_BANCARIA,
+               FIN_DOCUMENTO,
+               FIN_DOC_CONCEPTO,
+               FIN_CONFIGURACION
+         WHERE BCO_CODIGO(+) = CTA_BCO
+           AND BCO_EMPR(+) = CTA_EMPR
+
+           AND FCON_CLAVE = DCON_CLAVE_CONCEPTO
+           AND FCON_EMPR = DCON_EMPR
+
+           AND A.CTAC_CLAVE(+) = CTA_CLAVE_CTACO
+           AND A.CTAC_EMPR(+) = CTA_EMPR
+
+           AND C.CTAC_CLAVE(+) = CONF_CLAVE_CTACO_ACREEDORES
+           AND C.CTAC_EMPR(+) = CONF_EMPR
+
+           AND D.CTAC_CLAVE(+) = CONF_CLAVE_CTACO_DEUDORES
+           AND D.CTAC_EMPR(+) = CONF_EMPR
+
+           AND CTA_EMPR(+) = DOC_EMPR
+           AND CTA_CODIGO(+) = DOC_CTA_BCO
+
+           AND DOC_CLAVE = DCON_CLAVE_DOC
+           AND DOC_EMPR = DCON_EMPR
+
+           AND DOC_EMPR = CONF_EMPR
+
+           AND DOC_EMPR = $P!{P_EMPRESA}
+           AND DCON_CLAVE_CTACO IS NOT NULL
+              AND (DOC_TIPO_MOV = $P!{P_TIPO_MOV} OR $P!{P_TIPO_MOV} IS NULL )
+          AND (DOC_CLI = $P!{P_CLIENTE} OR $P!{P_CLIENTE} IS NULL )
+          AND (DOC_CLAVE_LIQUID = $P!{P_LIQUID} OR $P!{P_LIQUID} IS NULL )
+          AND (DOC_PROV = $P!{P_PROVEEDOR} OR $P!{P_PROVEEDOR} IS NULL )
+          $P!{P_WHERE}
+          AND  (DOC_NRO_DOC = $P!{P_NRO_DOC} OR $P!{P_NRO_DOC}  IS NULL)
+         GROUP BY DOC_CLAVE,
+                  DOC_EMPR,
+                  DOC_NRO_DOC,
+                  DOC_TIPO_MOV,
+                  DOC_CLI,
+                  DOC_PROV,
+                  DOC_OBS,
+                  DOC_FEC_DOC,
+                  DECODE($P!{P_FECHA},'D','DOC_FEC_DOC','O','DOC_FEC_OPER','G','DOC_FEC_GRAB'),
+                  DOC_CLI_NOM,
+                  DECODE(DOC_CTA_BCO,
+                         NULL,
+                         DECODE(DOC_CLI, NULL, C.CTAC_NRO, D.CTAC_NRO),
+                         A.CTAC_NRO),
+                  DECODE(DOC_CTA_BCO,
+                         NULL,
+                         DECODE(DOC_CLI, NULL, C.CTAC_DESC, D.CTAC_DESC),
+                         A.CTAC_DESC),
+                  DECODE(FCON_TIPO_SALDO, 'D', 'D', 'C')) CONSULTA
+
+ WHERE DOC_CLI = CLI_CODIGO(+)
+   AND DOC_EMPR = CLI_EMPR(+)
+   AND DOC_PROV = PROV_CODIGO(+)
+   AND DOC_EMPR = PROV_EMPR(+)
+   AND DOC_TIPO_MOV = TMOV_CODIGO
+   AND DOC_EMPR = TMOV_EMPR
+   AND DOC_CLAVE IN
+       (SELECT DOC_CLAVE
+          FROM FIN_CONCEPTO, CNT_CUENTA PP, FIN_DOCUMENTO, FIN_DOC_CONCEPTO
+         WHERE DOC_CLAVE = DCON_CLAVE_DOC
+           AND DOC_EMPR = DCON_EMPR
+
+
+           AND DOC_SIST <> 'ACL'
+           AND DOC_SIST <> 'PMO'
+
+           AND FCON_CLAVE = DCON_CLAVE_CONCEPTO
+           AND FCON_EMPR = DCON_EMPR
+
+           AND PP.CTAC_CLAVE(+) = DCON_CLAVE_CTACO
+           AND PP.CTAC_EMPR(+) = DCON_EMPR
+
+           AND DOC_EMPR = $P!{P_EMPRESA}
+           AND DCON_CLAVE_CTACO IS NOT NULL
+            AND (DOC_TIPO_MOV = $P!{P_TIPO_MOV} OR $P!{P_TIPO_MOV} IS NULL )
+          AND (DOC_CLI = $P!{P_CLIENTE} OR $P!{P_CLIENTE} IS NULL )
+          AND (DOC_CLAVE_LIQUID = $P!{P_LIQUID} OR $P!{P_LIQUID} IS NULL )
+          AND (DOC_PROV = $P!{P_PROVEEDOR} OR $P!{P_PROVEEDOR} IS NULL )
+           $P!{P_WHERE}
+
+          AND  (DOC_NRO_DOC = $P!{P_NRO_DOC} OR $P!{P_NRO_DOC}  IS NULL)
+        UNION
+        SELECT DOC_CLAVE
+          FROM FIN_BANCO,
+               FIN_CONCEPTO,
+               CNT_CUENTA          A,
+               CNT_CUENTA          B,
+               CNT_CUENTA          C,
+               CNT_CUENTA          D,
+               FIN_CUENTA_BANCARIA,
+               FIN_DOCUMENTO,
+               FIN_DOC_CONCEPTO,
+               FIN_CONFIGURACION
+         WHERE BCO_CODIGO(+) = CTA_BCO
+           AND BCO_EMPR(+) = CTA_EMPR
+
+           AND DOC_CTACO = B.CTAC_CLAVE(+)
+           AND DOC_EMPR = B.CTAC_EMPR(+)
+
+           AND FCON_CLAVE = DCON_CLAVE_CONCEPTO
+           AND FCON_EMPR = DCON_EMPR
+
+           AND A.CTAC_CLAVE(+) = CTA_CLAVE_CTACO
+           AND A.CTAC_EMPR(+) = CTA_EMPR
+
+           AND C.CTAC_CLAVE(+) = CONF_CLAVE_CTACO_ACREEDORES
+           AND C.CTAC_EMPR(+) = CONF_EMPR
+
+           AND D.CTAC_CLAVE(+) = CONF_CLAVE_CTACO_DEUDORES
+           AND D.CTAC_EMPR(+) = CONF_EMPR
+
+           AND CTA_EMPR(+) = DOC_EMPR
+           AND CTA_CODIGO(+) = DOC_CTA_BCO
+
+           AND DOC_CLAVE = DCON_CLAVE_DOC
+           AND DOC_EMPR = DCON_EMPR
+
+           AND DOC_EMPR = CONF_EMPR
+
+           AND DCON_CLAVE_CTACO IS NOT NULL
+           AND DOC_EMPR = $P!{P_EMPRESA}
+
+              AND (DOC_TIPO_MOV = $P!{P_TIPO_MOV} OR $P!{P_TIPO_MOV} IS NULL )
+          AND (DOC_CLI = $P!{P_CLIENTE} OR $P!{P_CLIENTE} IS NULL )
+          AND (DOC_PROV = $P!{P_PROVEEDOR} OR $P!{P_PROVEEDOR} IS NULL )
+          AND (DOC_CLAVE_LIQUID = $P!{P_LIQUID} OR $P!{P_LIQUID} IS NULL )
+        $P!{P_WHERE}
+
+  AND  (DOC_NRO_DOC = $P!{P_NRO_DOC} OR $P!{P_NRO_DOC}  IS NULL))
+ ORDER BY DOC_TIPO_MOV, DOC_NRO_DOC, TIPO_SALDO DESC, IMP_TOTAL DESC]]>
+	</queryString>
+	<field name="DOC_CLAVE" class="java.math.BigDecimal"/>
+	<field name="DOC_NRO_DOC" class="java.math.BigDecimal"/>
+	<field name="DOC_TIPO_MOV" class="java.math.BigDecimal"/>
+	<field name="DOC_CLI" class="java.math.BigDecimal"/>
+	<field name="DOC_PROV" class="java.math.BigDecimal"/>
+	<field name="DOC_OBS" class="java.lang.String"/>
+	<field name="DOC_FEC_DOC" class="java.sql.Timestamp"/>
+	<field name="FECHA" class="java.lang.String"/>
+	<field name="DOC_CLI_NOM" class="java.lang.String"/>
+	<field name="CTA_CODIGO" class="java.math.BigDecimal"/>
+	<field name="CTA_DESC" class="java.lang.String"/>
+	<field name="TIPO_SALDO" class="java.lang.String"/>
+	<field name="IMP_TOTAL" class="java.math.BigDecimal"/>
+	<field name="DOC_EMPR" class="java.math.BigDecimal"/>
+	<field name="TMOV_DESC" class="java.lang.String"/>
+	<field name="PROV_RAZON_SOCIAL" class="java.lang.String"/>
+	<field name="CLI_NOM" class="java.lang.String"/>
+	<variable name="TOTAL_DEBITO_1" class="java.lang.String" calculation="Sum">
+		<variableExpression><![CDATA[($F{TIPO_SALDO} == "D")? ($F{IMP_TOTAL}) : ($F{IMP_TOTAL})]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_CREDITO" class="java.lang.String" calculation="Sum">
+		<variableExpression><![CDATA[($F{TIPO_SALDO} == "C")? ($F{IMP_TOTAL}) : ($F{IMP_TOTAL})]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{IMP_TOTAL}]]></initialValueExpression>
+	</variable>
+	<variable name="SUMA_DEBITO2" class="java.lang.String">
+		<variableExpression><![CDATA[($F{TIPO_SALDO} == "D")? ($F{IMP_TOTAL}) : ($F{IMP_TOTAL})]]></variableExpression>
+	</variable>
+	<variable name="IMP_TOTAL_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMP_TOTAL}]]></variableExpression>
+	</variable>
+	<group name="TIPO_MOV">
+		<groupHeader>
+			<band height="11">
+				<textField>
+					<reportElement x="52" y="0" width="20" height="11" uuid="d6ab2782-b27a-4a4e-8162-eea72c75924b"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DOC_TIPO_MOV}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="4" y="0" width="45" height="11" uuid="cd3e155a-9e4b-4600-9509-ef3eca26c3d3"/>
+					<textElement>
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Tipo Mov.]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="77" y="0" width="74" height="11" uuid="bc16c538-8a03-422a-81c4-523f8d46ff2f"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TMOV_DESC}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="DOC_NUMERO_GRUP">
+		<groupExpression><![CDATA[$F{DOC_CLAVE}]]></groupExpression>
+		<groupHeader>
+			<band height="11">
+				<textField>
+					<reportElement x="183" y="1" width="187" height="10" uuid="ac29ba9f-5d43-4a6f-a541-e4ddeef4d0e2"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PROV_RAZON_SOCIAL}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="5" y="1" width="55" height="10" uuid="027fc131-2a8b-426a-9785-758425ebddc0"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DOC_FEC_DOC}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="76" y="1" width="85" height="10" uuid="112ca39d-6e18-479c-9d6d-e969d171757f"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DOC_NRO_DOC}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="10">
+				<textField isBlankWhenNull="true">
+					<reportElement x="84" y="0" width="134" height="10" uuid="51f6c070-f84a-40c0-963b-674a7a12f2d3"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DOC_OBS}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="24" y="0" width="55" height="10" uuid="985cf001-3ff5-4164-b993-2b4bd5d6a144"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Observacion :]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="CTA_GRUP">
+		<groupExpression><![CDATA[$F{CTA_CODIGO}]]></groupExpression>
+		<groupHeader>
+			<band height="12">
+				<textField pattern="#,##0">
+					<reportElement x="337" y="1" width="100" height="10" uuid="2a355a11-7114-462c-941a-b9f3be7944a6"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TIPO_SALDO} == "D"? $F{IMP_TOTAL} : " "]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="84" y="1" width="100" height="10" uuid="5f52bd4d-224c-4dde-8934-d246595bb924"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CTA_CODIGO}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="451" y="1" width="100" height="10" uuid="9ef63d2f-45cd-4ad4-bbb4-d18361459156"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TIPO_SALDO} == "C"? $F{IMP_TOTAL} : " "]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="218" y="1" width="114" height="10" uuid="0a89387a-82dc-48c9-8685-25d4e6b645ab"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CTA_DESC}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="156" splitType="Stretch">
+			<textField>
+				<reportElement x="69" y="68" width="83" height="11" uuid="044ca4a5-6a1a-4144-b4fb-48324fb2d92f"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FECHA_INICIO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="81" y="141" width="45" height="11" uuid="e2cbd99b-9ce7-40c9-988d-ce1e865296fb"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Cuenta ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="453" y="140" width="76" height="10" uuid="93ea7932-ef4f-4677-b43a-ec5693633bbd"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Credito]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="18" y="118" width="39" height="11" uuid="f194d215-be73-4878-aec8-c48efac6f0fc"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Fecha ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="69" y="84" width="83" height="11" uuid="af0b119a-62e6-4287-ac2e-56d5f8f7548a"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FECHA_FIN}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="185" y="141" width="100" height="11" uuid="abdb8a0c-4ca9-4511-9030-baccb494038b"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Descripcion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="77" y="118" width="51" height="11" uuid="aca4d16d-d0de-48b7-9c2f-8abc7c50052d"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Comprob.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="341" y="140" width="100" height="10" uuid="3329b46e-b923-4758-8330-e0d7d0e8b9dd"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Debito]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="84" width="60" height="11" uuid="58d1becf-972f-48b8-ab97-d628e28061a4"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[FECHA FIN :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="179" y="118" width="100" height="11" uuid="854c09df-10a3-4e32-a632-c9b59dc10571"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Proveedro/Cliente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="68" width="60" height="11" uuid="a30acd9f-ca70-4d8e-827d-a932e56586ad"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[FECHA INICIO :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="5" y="-47" width="110" height="16" uuid="12cbc0d0-b969-48be-938f-ea0971612431"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_EMPRESA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="5" y="-47" width="110" height="16" uuid="64047e91-8284-4e10-a9b1-11738cc31c9b"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_EMPRESA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="10" y="3" width="126" height="20" uuid="69068fcc-22fe-4c24-bc3e-d50c06547734"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_EMPRESA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="170" y="33" width="195" height="20" uuid="3f69c426-f861-4c6e-8135-f83e812e5f98"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="473" y="23" width="80" height="13" uuid="601a1e7a-88dc-4412-b775-49794a5d1c5c"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="492" y="7" width="21" height="13" uuid="ca313b36-0ec7-422b-a7d8-780b41c5ee21"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Hoja:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="516" y="7" width="35" height="13" uuid="e3acb01f-ea89-4808-b5d5-44f14e8919a3"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="410" y="7" width="65" height="13" uuid="82e811b8-40be-4ddc-beab-a00b6de8d9c7"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="152" width="555" height="1" uuid="6b019fcf-2b80-4767-9e36-ec8f5cccdf0b"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="10" y="23" width="126" height="20" uuid="11cec94d-4009-41de-b235-a17db10e3b6e"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_desc_sucursal}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="15" splitType="Stretch">
+			<staticText>
+				<reportElement x="4" y="1" width="137" height="10" uuid="cb03d131-f3e6-442c-bede-2585d9691cdc"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Fin Del Listado.]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="10" width="38" height="32" uuid="92c4d437-5c4a-4306-909e-f9b22864e196"/>
+				<subreportParameter name="P_EMPRESA">
+					<subreportParameterExpression><![CDATA[$P{P_EMPRESA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_TIPO_MOV">
+					<subreportParameterExpression><![CDATA[$P{P_TIPO_MOV}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_CLIENTE">
+					<subreportParameterExpression><![CDATA[$P{P_CLIENTE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_PROVEEDOR">
+					<subreportParameterExpression><![CDATA[$P{P_PROVEEDOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_FECHA_INICIO">
+					<subreportParameterExpression><![CDATA[$P{P_FECHA_INICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_FECHA_FIN">
+					<subreportParameterExpression><![CDATA[$P{P_FECHA_FIN}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_NRO_DOC">
+					<subreportParameterExpression><![CDATA[$P{P_NRO_DOC}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "SUB_REPORT_FINL277.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="248" y="0" width="27" height="10" uuid="c3b8174a-6279-4142-80f0-c3eeb4716e79"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total :]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement x="337" y="7" width="100" height="10" uuid="e8cd6020-324b-42f7-9647-eb78f1434069"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{IMP_TOTAL_1}/2]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="451" y="6" width="100" height="10" uuid="316be173-f675-452d-b657-6bbc638d0b0d"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{IMP_TOTAL_1}/2]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="448" y="3" width="100" height="1" uuid="f707d2d4-92eb-4325-a3de-893c2ba8b5e8"/>
+			</line>
+			<line>
+				<reportElement x="321" y="4" width="100" height="1" uuid="e6dd0500-cc06-48d1-a1bc-549753bd0e45"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

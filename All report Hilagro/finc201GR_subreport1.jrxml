@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="finc201GR_subreport1" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="b999737f-424a-4cbf-8af6-53024edd0c5d">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLAVE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT FCON_CODIGO   DCON_CONCEPTO,
+       FCON_DESC,
+       CTAC_NRO      DCON_CTA_CONT,
+       DCON_OBS,
+       DCON_EXEN_MON,
+       DCON_GRAV_MON,
+       DCON_IVA_MON,
+        (DCON_EXEN_MON+
+       DCON_GRAV_MON+
+       DCON_IVA_MON) TOTAL
+  FROM FIN_CONCEPTO, FIN_DOC_CONCEPTO, CNT_CUENTA
+ WHERE DCON_EMPR = $P!{P_EMPRESA}
+
+   AND DCON_CLAVE_CONCEPTO = FCON_CLAVE
+   AND DCON_EMPR = FCON_EMPR
+
+   AND DCON_CLAVE_CTACO = CTAC_CLAVE(+)
+   AND DCON_EMPR = CTAC_EMPR(+)
+
+   AND DCON_CLAVE_DOC =$P!{P_CLAVE}
+ ORDER BY DCON_ITEM]]>
+	</queryString>
+	<field name="DCON_CONCEPTO" class="java.math.BigDecimal"/>
+	<field name="FCON_DESC" class="java.lang.String"/>
+	<field name="DCON_CTA_CONT" class="java.math.BigDecimal"/>
+	<field name="DCON_OBS" class="java.lang.String"/>
+	<field name="DCON_EXEN_MON" class="java.math.BigDecimal"/>
+	<field name="DCON_GRAV_MON" class="java.math.BigDecimal"/>
+	<field name="DCON_IVA_MON" class="java.math.BigDecimal"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<variable name="TOTAL_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="11" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="18" splitType="Stretch">
+			<staticText>
+				<reportElement x="7" y="0" width="75" height="11" uuid="40e9e9ae-11ba-44ab-a86a-f3aa93515c01"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Concepto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="170" y="0" width="83" height="11" uuid="40813364-7754-4dae-92c2-bc6810e49834"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Cuentas Contables]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="256" y="0" width="123" height="11" uuid="20edf8b5-26a3-4eb9-acac-c21a8feb8e63"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Observación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="386" y="0" width="45" height="11" uuid="63cfc430-fa3c-4d58-b0c7-27fbc21b5024"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Exento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="439" y="0" width="45" height="11" uuid="bff99a59-0698-4a71-9133-6d82b3cd9062"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Grabada]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="489" y="0" width="45" height="11" uuid="728b49b1-2a64-4bc5-8fbd-c05f5bc05b3d"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[IVA]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1" y="12" width="550" height="1" uuid="d30f3931-43b7-43ff-824a-ccee33ece7fa"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="25" splitType="Stretch">
+			<textField>
+				<reportElement x="1" y="0" width="30" height="11" uuid="eb9fe84d-69f3-4f57-afb2-7f152728279d"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DCON_CONCEPTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="153" y="0" width="99" height="13" uuid="891394a0-4947-4ce4-a2cd-6299100d2ed7"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DCON_CTA_CONT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="257" y="0" width="122" height="11" uuid="f3af2927-8623-48da-9e60-faf06bf894b2"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DCON_OBS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="380" y="0" width="50" height="11" uuid="ddd15d7e-951f-45eb-94c6-c06e652f057d"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DCON_EXEN_MON}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="432" y="0" width="50" height="11" uuid="6e514d17-86d0-41e6-b1a5-7fd3844f2fd0"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DCON_GRAV_MON}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="483" y="0" width="50" height="11" uuid="9a2f08e8-5122-4aee-9e7a-e09294dbafed"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DCON_IVA_MON}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="31" y="0" width="122" height="22" uuid="bc6750a3-008d-4618-b410-bee669ea9435"/>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FCON_DESC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="14" splitType="Stretch">
+			<textField pattern="#,##0">
+				<reportElement x="483" y="1" width="50" height="11" uuid="bc5fee06-4ced-4e13-a7aa-c7e94645d3b1"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="403" y="0" width="29" height="11" uuid="8cb2115e-0d64-42d6-80f2-32e4e8e35717"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="379" y="0" width="172" height="1" uuid="fe0dd2b4-7add-4a83-909c-c55d5cbed37f"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

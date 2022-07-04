@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERI209_T" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ce1ae59e-237c-48bd-bed1-f11c55e03bc4">
+	<property name="ireport.zoom" value="2.0526324729228267"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="576"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="LOGO" uuid="54e62ec5-9af7-4104-a9c4-6f292b6cc245">
+		<queryString language="SQL">
+			<![CDATA[SELECT EMPR_LOGO LOGO
+FROM GEN_EMPRESA
+WHERE EMPR_CODIGO = 2]]>
+		</queryString>
+		<field name="LOGO" class="java.io.InputStream"/>
+	</subDataset>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_WHERE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DIAS_VACACIONES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FORMA_PAGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_IMPORTE_VAC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_IMPORTE_IPS" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_IMPORTE_AMH" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_IPS_AMH" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT PER_EMPLEADO.EMPL_LEGAJO,
+       PER_EMPLEADO.EMPL_NOMBRE || ' ' || PER_EMPLEADO.EMPL_APE NOMBRE,
+       'Dr.J.E.Estigarribia, ' || TO_CHAR(PDOC_FEC, 'dd') || ' de ' ||
+       LTRIM(RTRIM(TO_CHAR(PDOC_FEC, 'month','nls_date_language=spanish'))) || ' de ' ||
+       TO_CHAR(PDOC_FEC, 'yyyy') FECHA,
+       UPPER(DECODE(PCON_CLAVE,
+                    6,
+                    'Vacaciones ' || $P{P_DIAS_VACACIONES} || ' dias',
+                    PER_CONCEPTO.PCON_DESC)) PCON_DESC,
+       DECODE(FIN_CONCEPTO.FCON_TIPO_SALDO,
+              'C',
+              PER_DOCUMENTO_DET.PDDET_IMP,
+              -PER_DOCUMENTO_DET.PDDET_IMP) IMPORTE,
+       PDOC_MON,
+       PDOC_CLAVE_FIN,
+ PERI009.CF_RECIBIMOSFORMULA(I_EMPRESA => $P{P_EMPRESA}) CF_RECIBIMOS,
+ PERI009.CF_TOTAL_IMPORTEFORMULA(I_FORMA_PAGO => $P{P_FORMA_PAGO},
+                                             I_IMPORTE_VAC => $P{P_IMPORTE_VAC},
+                                             I_IMPORTE_AMH => $P{P_IMPORTE_AMH},
+                                             I_IMPORTE_IPS => $P{P_IMPORTE_IPS}) CF_TOTAL_IMPORTE,
+PERI009.CF_COTIZACIONFORMULA(I_PDOC_CLAVE_FIN => PDOC_CLAVE_FIN,
+                                          I_EMPRESA        => $P{P_EMPRESA}) CF_COTIZACION,
+PERI009.CF_SIMBOLO_MONFORMULA(I_PDOC_MON => PDOC_MON,
+                                           I_EMPRESA => $P{P_EMPRESA}) CF_SIMBOLO_MON,
+PERI009.CF_DESCRIPCION_VACACIONESFORMU(I_DIAS_VACACIONES => $P{P_DIAS_VACACIONES}) CF_DESCRIPCION_VACACIONES,
+TO_CHAR($P{P_IMPORTE_AMH}, '999G999G999G999') IMPORTE_AMH,
+TO_CHAR($P{P_IMPORTE_VAC},'999G999G999G999') IMPORTE_VAC
+  FROM PER_DOCUMENTO,
+       PER_DOCUMENTO_DET,
+       PER_CONCEPTO,
+       PER_DPTO_CONC,
+       PER_EMPLEADO,
+       FIN_CONCEPTO,
+       PER_PERIODO
+ WHERE PER_DOCUMENTO.PDOC_CLAVE = PER_DOCUMENTO_DET.PDDET_CLAVE_DOC
+   AND PDOC_EMPR = PDDET_EMPR
+   AND PER_CONCEPTO.PCON_CLAVE = PER_DOCUMENTO_DET.PDDET_CLAVE_CONCEPTO
+   AND PCON_EMPR = PDDET_EMPR
+   AND PER_CONCEPTO.PCON_CLAVE = PER_DPTO_CONC.DPTOC_PER_CONC
+   AND EMPL_EMPRESA = PDOC_EMPR
+   AND PER_EMPLEADO.EMPL_LEGAJO = PER_DOCUMENTO.PDOC_EMPLEADO
+   AND EMPL_EMPRESA = PDOC_EMPR
+   AND PER_EMPLEADO.EMPL_DEPARTAMENTO = PER_DPTO_CONC.DPTOC_DPTO
+   AND EMPL_EMPRESA = DPTOC_EMPR
+   AND FIN_CONCEPTO.FCON_CLAVE = PER_DPTO_CONC.DPTOC_FIN_CONC
+   AND FCON_EMPR = DPTOC_EMPR
+   AND FCON_EMPR = $P{P_EMPRESA}
+   AND PDOC_EMPR = PERI_EMPR
+   AND PER_DOCUMENTO.PDOC_PERIODO = PERI_CODIGO
+$P!{P_WHERE}
+ ORDER BY PER_EMPLEADO.EMPL_NOMBRE || ' ' || PER_EMPLEADO.EMPL_APE,
+          PER_DOCUMENTO.PDOC_CLAVE,
+          FIN_CONCEPTO.FCON_TIPO_SALDO]]>
+	</queryString>
+	<field name="EMPL_LEGAJO" class="java.math.BigDecimal"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="FECHA" class="java.lang.String"/>
+	<field name="PCON_DESC" class="java.lang.String"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<field name="PDOC_MON" class="java.math.BigDecimal"/>
+	<field name="PDOC_CLAVE_FIN" class="java.math.BigDecimal"/>
+	<field name="CF_RECIBIMOS" class="java.lang.String"/>
+	<field name="CF_TOTAL_IMPORTE" class="java.math.BigDecimal"/>
+	<field name="CF_COTIZACION" class="java.math.BigDecimal"/>
+	<field name="CF_SIMBOLO_MON" class="java.lang.String"/>
+	<field name="CF_DESCRIPCION_VACACIONES" class="java.lang.String"/>
+	<field name="IMPORTE_AMH" class="java.lang.String"/>
+	<field name="IMPORTE_VAC" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="339" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="338" uuid="0c107c39-a97c-4173-8973-31c63b0b9557"/>
+			</rectangle>
+			<textField isBlankWhenNull="true">
+				<reportElement x="202" y="137" width="341" height="20" uuid="97cda185-97dd-45e9-9113-666e5d14d8ff"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="85" y="159" width="437" height="20" uuid="c616562a-e468-4ef3-a0cd-743607da9c50"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_RECIBIMOS}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="170" y="185" width="89" height="20" uuid="59ff57a6-bc19-4cbe-9f74-3e96ee79b2ec"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[En concepto de:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="260" y="205" width="147" height="20" uuid="e3bdef97-bd46-4edd-a8ba-e09d0c119a0f"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_DESCRIPCION_VACACIONES}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="312" y="249" width="47" height="20" uuid="a1edb34b-353f-480a-8a86-742b046156bc"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="360" y="249" width="48" height="20" uuid="36f3f7ac-45ba-412e-a4f3-af2c3761270e"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_SIMBOLO_MON}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement x="409" y="249" width="100" height="20" uuid="b93859ee-832a-4767-b32d-bbab562032ed"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_TOTAL_IMPORTE}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="221" y="296" width="322" height="1" uuid="b6474dc5-85d1-4d8d-bf8f-88f91d8296dc"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="239" y="298" width="283" height="20" uuid="e8d312d7-4a3f-402e-8ad5-ef91c97214c4"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="260" y="229" width="147" height="20" uuid="23d208da-a105-448e-b7e9-994f0f5a0e54"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_IPS_AMH}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement x="408" y="205" width="100" height="20" uuid="3bf92101-9dc2-4868-9c32-be19ca773f3e"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_VAC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement x="408" y="229" width="100" height="20" uuid="720b3ecd-9337-4c9b-8ac7-9287dc33e2e1"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_AMH}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="-1" y="117" width="556" height="1" uuid="3da18629-32c5-4876-84c3-c9bc52e4c827"/>
+			</line>
+			<staticText>
+				<reportElement x="84" y="85" width="459" height="10" uuid="f0188d3e-58a1-4406-950c-a6f61631255b"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CALLE 1RA. LINEA  J. EULOGIO ESTIGARRIBIA -TEL (0528) 222995 - CAAGUAZU - PARAGUAY]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="16" y="85" width="93" height="10" uuid="1a528aa3-4a15-4f6e-a4e5-3467279b9854"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CASA CENTRAL : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="126" y="36" width="128" height="42" uuid="d270d7cf-ae20-46ba-a8f2-ebb3ce989e41"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[COMPRA Y VENTA DE GRANOS
+ACOPIO DE GRANOS
+SERVIOS DE TRANSPORTES]]></text>
+			</staticText>
+			<image>
+				<reportElement x="7" y="10" width="110" height="55" uuid="871693dc-477b-4887-a4a2-e999fa20e9a7"/>
+				<imageExpression><![CDATA["logo_transagro.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="124" y="16" width="175" height="26" uuid="98d162a9-ca66-4aeb-bc2a-c98d3968a52e"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[TRANSAGRO S.A.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="255" y="36" width="167" height="42" uuid="bfe4ef3e-017f-48b7-bb29-1fc38ec86b46"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[VENTA DE INSUMOS AGRICOLAS
+VENTA DE COMBUSTIBLES
+TIENDA DE REPUESTOS]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="432" splitType="Stretch">
+			<rectangle>
+				<reportElement x="-1" y="60" width="555" height="338" uuid="fb0aab3c-1758-46cb-9478-a3325f0f0e35"/>
+			</rectangle>
+			<line>
+				<reportElement x="-1" y="27" width="556" height="1" uuid="0df60e24-8860-4816-a37b-7ddbd88badc1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="259" y="265" width="147" height="20" uuid="108cfced-f758-473e-b198-1b49552ee03f"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_DESCRIPCION_VACACIONES}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="84" y="219" width="437" height="20" uuid="72e3b39f-e418-4bb4-914a-a6b29efb4229"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_RECIBIMOS}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="220" y="356" width="322" height="1" uuid="13603422-0c7b-4d19-8e9f-02dd1ed3012c"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="201" y="197" width="341" height="20" uuid="c2df7569-608d-43c8-8ffb-f6d8e34fa3d1"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="359" y="309" width="48" height="20" uuid="9f1bf86c-7997-4a47-8342-c18b9c751aa2"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_SIMBOLO_MON}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="311" y="309" width="47" height="20" uuid="8b5ce772-5b32-4359-8dde-c374a79a7b9d"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<line>
+				<reportElement x="-1" y="177" width="555" height="1" uuid="d4804d86-0bdd-4c19-a622-d871a3e6de54"/>
+			</line>
+			<staticText>
+				<reportElement x="169" y="245" width="89" height="20" uuid="b98259cc-453a-4ad4-9d5f-09357e968359"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[En concepto de:]]></text>
+			</staticText>
+			<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement x="408" y="309" width="100" height="20" uuid="98e7e439-c390-4136-813f-06fdcc12b439"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_TOTAL_IMPORTE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement x="407" y="289" width="100" height="20" uuid="eee488c9-19d8-4392-971c-fb98cad4706c"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_AMH}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement x="407" y="265" width="100" height="20" uuid="dc01649d-2ac1-42ca-b350-a435de396b45"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_VAC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="238" y="358" width="283" height="20" uuid="e1be28eb-ed9c-41ac-91ac-30f5f4bfb928"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="259" y="289" width="147" height="20" uuid="ec280aa9-872f-460a-a246-c7ef8c90df58"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_IPS_AMH}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="255" y="97" width="167" height="42" uuid="003cc700-d1ae-4b21-a674-ffff26dc3043"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[VENTA DE INSUMOS AGRICOLAS
+VENTA DE COMBUSTIBLES
+TIENDA DE REPUESTOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="124" y="77" width="175" height="26" uuid="9075e454-8a1a-4d3d-b694-6d0c0b63edcd"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[TRANSAGRO S.A.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="16" y="146" width="93" height="10" uuid="c9248c9a-7c14-4ae5-bd92-80394704bd65"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CASA CENTRAL : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="126" y="97" width="128" height="42" uuid="675c8042-fcce-4284-b4df-1f3795e3b2c5"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[COMPRA Y VENTA DE GRANOS
+ACOPIO DE GRANOS
+SERVIOS DE TRANSPORTES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="85" y="146" width="459" height="10" uuid="13a389d5-b3e7-4b10-8c50-f794c7801bfe"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CALLE 1RA. LINEA  J. EULOGIO ESTIGARRIBIA -TEL (0528) 222995 - CAAGUAZU - PARAGUAY]]></text>
+			</staticText>
+			<image>
+				<reportElement x="7" y="71" width="110" height="55" uuid="d0c80c4e-09d5-4908-b92c-6b56e9bfdc9d"/>
+				<imageExpression><![CDATA["logo_transagro.png"]]></imageExpression>
+			</image>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

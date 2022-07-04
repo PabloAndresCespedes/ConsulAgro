@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SUBREPORT_ACOM301_ACOPIO" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="596cdd99-f365-485e-acbb-b6ddc9fe1b08">
+	<property name="ireport.zoom" value="1.6500000000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\programacion15\\OneDrive - Grupo Hilagro\\Relevamiento de Datos\\Transagro\\1 - Control de Secado\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FECHA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT TO_CHAR(APB.PRBR_FEC_PESAJE,'DD/MM/YYYY') PRBR_FEC_PESAJE,
+       TO_CHAR(APB.PRBR_CLAVE_TICKET) PRBR_CLAVE_TICKET,
+       APB.PRBR_PRODUCTO,
+       APB.PRBR_PRODUCTO || '-' || AP.PROD_DESC DESC_PROD,
+       APB.PRBR_UNID_NETO,
+       APB.PRBR_EMPR,
+       APB.PRBR_EMPR || '-' || GE.EMPR_RAZON_SOCIAL EMPRESA,
+       APB.PRBR_SUC,
+       APB.PRBR_SUC || '-' || GS.SUC_DESC SUCURSAL,
+       AGP.GRUP_CODIGO,
+       AGP.GRUP_CODIGO || '-' || AGP.GRUP_DESC GRUPO
+  FROM ACO_PROD_BRUTO APB, ACO_PRODUCTO AP, GEN_EMPRESA GE, GEN_SUCURSAL GS, ACO_GRUPO_PRODUCTO AGP
+ WHERE APB.PRBR_EMPR = $P{EMPRESA}
+ and to_char(apb.prbr_fec_pesaje, 'DD/MM/YYYY' ) LIKE $P{FECHA}
+   AND AGP.GRUP_CODIGO IN (1,3,4)
+
+   AND AP.PROD_EMPR = APB.PRBR_EMPR
+   AND AP.PROD_CLAVE = APB.PRBR_PRODUCTO
+
+   AND GE.EMPR_CODIGO = APB.PRBR_EMPR
+
+   AND GS.SUC_EMPR = APB.PRBR_EMPR
+   AND GS.SUC_CODIGO = APB.PRBR_SUC
+
+   AND AGP.GRUP_CODIGO = AP.PROD_GRUPO
+   AND AGP.GRUP_EMPR = AP.PROD_EMPR
+
+ order by apb.prbr_suc, agp.grup_codigo]]>
+	</queryString>
+	<field name="PRBR_FEC_PESAJE" class="java.lang.String"/>
+	<field name="PRBR_CLAVE_TICKET" class="java.lang.String"/>
+	<field name="PRBR_PRODUCTO" class="java.math.BigDecimal"/>
+	<field name="DESC_PROD" class="java.lang.String"/>
+	<field name="PRBR_UNID_NETO" class="java.math.BigDecimal"/>
+	<field name="PRBR_EMPR" class="java.math.BigDecimal"/>
+	<field name="EMPRESA" class="java.lang.String"/>
+	<field name="PRBR_SUC" class="java.math.BigDecimal"/>
+	<field name="SUCURSAL" class="java.lang.String"/>
+	<field name="GRUP_CODIGO" class="java.math.BigDecimal"/>
+	<field name="GRUPO" class="java.lang.String"/>
+	<group name="GRUPO_SUCURSAL_TIPO_ACOPIO">
+		<groupExpression><![CDATA[$F{PRBR_SUC} + $F{GRUP_CODIGO}]]></groupExpression>
+		<groupHeader>
+			<band height="34">
+				<textField isBlankWhenNull="true">
+					<reportElement x="100" y="2" width="193" height="30" uuid="7521ebf9-5245-4215-9bd9-853987df6194"/>
+					<textElement verticalAlignment="Middle">
+						<font size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SUCURSAL}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="2" width="76" height="30" uuid="02c6d0ca-e14c-47c4-ba81-b79ac5ebb913"/>
+					<textElement verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SUCURSAL:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="363" y="2" width="187" height="30" uuid="e27f69ed-1803-40cb-b299-baacc102e769"/>
+					<textElement verticalAlignment="Middle">
+						<font size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{GRUPO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="303" y="2" width="49" height="30" uuid="37ccabc9-2985-4374-8579-68428e5ae246"/>
+					<textElement verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ACOPIO:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<title>
+		<band height="56" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="25" width="555" height="29" uuid="eab3095f-e474-4f31-9c27-db7aa3aea9d5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="22" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REPORTE DIARIO DE ACOPIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="0" width="100" height="25" uuid="ca2fd4d6-c8a1-4aac-9783-cd6c24cafb1c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[ACOM301]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="42" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="20" width="100" height="20" uuid="3a61939b-f1e9-4ec3-a712-d15382868da6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PRBR_CLAVE_TICKET}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement x="390" y="20" width="165" height="20" uuid="4bd93439-6522-4c2b-8b72-36c4889ee37e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PRBR_UNID_NETO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="100" y="20" width="290" height="20" uuid="866343ea-f3cd-40b8-aacc-3d0a5a247b44"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DESC_PROD}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="20" uuid="6f814135-9d88-4b47-b83f-501f4e2b0e98"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[COD. TICKET]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="390" y="0" width="165" height="20" uuid="b0f43d92-3634-4908-9929-507072936002"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PESO NETO (Kg)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="0" width="290" height="20" uuid="4a61edf5-13ca-4a3d-b126-3a4abb6694bf"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRODUCTO]]></text>
+			</staticText>
+		</band>
+		<band height="57">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="57" uuid="f09759ab-4379-48ae-9f31-2a7d3fcce028"/>
+				<subreportParameter name="P_CLAVE_TICKET">
+					<subreportParameterExpression><![CDATA[$F{PRBR_CLAVE_TICKET}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_EMPRESA">
+					<subreportParameterExpression><![CDATA[$F{PRBR_EMPR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "SUBREPORT_ACOM301_CALIFICACION.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

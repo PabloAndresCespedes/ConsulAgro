@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINM107" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1b90ddb8-8a93-4b0d-832c-5b6c3cd776d2">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="336"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="DET_ARQ_BILLETE" uuid="d1275e46-2de0-47da-9399-5ae98c6355c3">
+		<parameter name="P_ARQUEO" class="java.lang.String">
+			<defaultValueExpression><![CDATA[2]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_EMPR" class="java.lang.String">
+			<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT DB.ARNDET_CANT,
+       AB.BILLETE_VALOR,
+       DB.ARNDET_CANT * AB.BILLETE_VALOR MONTO
+  FROM FIN_ARQUEO_CAJA_DET_BILLETE DB,
+       FIN_ARQUEO_CAJA             AC,
+       FIN_ARQUEO_BILLETE          AB
+ WHERE DB.ARNDET_CODIGO = AC.ARQ_CODIGO
+   AND DB.ARNDET_EMPR = AC.ARQ_EMPR
+   AND DB.ARNDET_BILLETE = AB.BILLETE_CODIGO
+   AND DB.ARNDET_EMPR = AB.BILLETE_EMPR
+   AND DB.ARNDET_CODIGO = $P{P_ARQUEO}
+   AND DB.ARNDET_EMPR = $P{P_EMPR}]]>
+		</queryString>
+		<field name="ARNDET_CANT" class="java.math.BigDecimal"/>
+		<field name="BILLETE_VALOR" class="java.math.BigDecimal"/>
+		<field name="MONTO" class="java.math.BigDecimal"/>
+		<group name="BILLETE_VALOR">
+			<groupExpression><![CDATA[$F{BILLETE_VALOR}]]></groupExpression>
+		</group>
+	</subDataset>
+	<subDataset name="DET_CHEQUES" uuid="aa5e2ecf-e60c-432c-ade2-5fb46dbf89ed">
+		<parameter name="P_ARQUEO" class="java.lang.String">
+			<defaultValueExpression><![CDATA[2]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_EMPR" class="java.lang.String">
+			<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT DC.ACDET_DESC, DC.ACDET_FECHA, DC.ACDET_MONTO_GS, DC.ACDET_MOTIVO
+  FROM FIN_ARQUEO_CAJA_DET_COMPROB DC, FIN_ARQUEO_CAJA AC
+ WHERE DC.ACDET_ARQUEO = AC.ARQ_CODIGO
+   AND DC.ACDET_EMPR = AC.ARQ_EMPR
+   AND AC.ARQ_CODIGO = $P{P_ARQUEO}
+   AND AC.ARQ_EMPR = $P{P_EMPR}
+   AND DC.ACDET_TIPO = 1]]>
+		</queryString>
+		<field name="ACDET_DESC" class="java.lang.String"/>
+		<field name="ACDET_FECHA" class="java.sql.Timestamp"/>
+		<field name="ACDET_MONTO_GS" class="java.math.BigDecimal"/>
+		<field name="ACDET_MOTIVO" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="DET_TRANS_PEN" uuid="3ef15230-596b-4686-84e5-ab006bbe9c47">
+		<parameter name="P_ARQUEO" class="java.lang.String">
+			<defaultValueExpression><![CDATA[2]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_EMPR" class="java.lang.String">
+			<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT DC.ACDET_DESC, DC.ACDET_FECHA, DC.ACDET_MONTO_GS, DC.ACDET_MOTIVO
+  FROM FIN_ARQUEO_CAJA_DET_COMPROB DC, FIN_ARQUEO_CAJA AC
+ WHERE DC.ACDET_ARQUEO = AC.ARQ_CODIGO
+   AND DC.ACDET_EMPR = AC.ARQ_EMPR
+   AND AC.ARQ_CODIGO = $P{P_ARQUEO}
+   AND AC.ARQ_EMPR = $P{P_EMPR}
+   AND DC.ACDET_TIPO = 2]]>
+		</queryString>
+		<field name="ACDET_DESC" class="java.lang.String"/>
+		<field name="ACDET_FECHA" class="java.sql.Timestamp"/>
+		<field name="ACDET_MONTO_GS" class="java.math.BigDecimal"/>
+		<field name="ACDET_MOTIVO" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="DET_COMPROBANTES" uuid="5800627e-fd7c-492e-93c2-fbe96495f2ac">
+		<parameter name="P_ARQUEO" class="java.lang.String">
+			<defaultValueExpression><![CDATA[2]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_EMPR" class="java.lang.String">
+			<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT DC.ACDET_DESC, DC.ACDET_FECHA, DC.ACDET_MONTO_GS, DC.ACDET_MOTIVO
+  FROM FIN_ARQUEO_CAJA_DET_COMPROB DC, FIN_ARQUEO_CAJA AC
+ WHERE DC.ACDET_ARQUEO = AC.ARQ_CODIGO
+   AND DC.ACDET_EMPR = AC.ARQ_EMPR
+   AND AC.ARQ_CODIGO = $P{P_ARQUEO}
+   AND AC.ARQ_EMPR = $P{P_EMPR}
+   AND DC.ACDET_TIPO = 3]]>
+		</queryString>
+		<field name="ACDET_DESC" class="java.lang.String"/>
+		<field name="ACDET_FECHA" class="java.sql.Timestamp"/>
+		<field name="ACDET_MONTO_GS" class="java.math.BigDecimal"/>
+		<field name="ACDET_MOTIVO" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="P_ARQUEO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT AC.ARQ_OPERADOR,
+       CB.CTA_DESC || ' ' || CB.CTA_CODIGO CAJA,
+       SUM(DB.ARNDET_CANT * AB.BILLETE_VALOR) MONTO,
+       AC.ARQ_SISTEMA_GS,
+       SUM(DB.ARNDET_CANT * AB.BILLETE_VALOR) -  AC.ARQ_SISTEMA_GS DIFERENCIA
+  FROM FIN_ARQUEO_CAJA_DET_BILLETE DB,
+       FIN_ARQUEO_CAJA             AC,
+       FIN_ARQUEO_BILLETE          AB,
+       FIN_CUENTA_BANCARIA         CB
+ WHERE DB.ARNDET_CODIGO = AC.ARQ_CODIGO
+   AND DB.ARNDET_EMPR = AC.ARQ_EMPR
+   AND DB.ARNDET_BILLETE = AB.BILLETE_CODIGO
+   AND DB.ARNDET_EMPR = AB.BILLETE_EMPR
+   AND AC.ARQ_EMPR = CB.CTA_EMPR
+   AND AC.ARQ_CAJA = CB.CTA_CODIGO
+   AND DB.ARNDET_CODIGO = $P{P_ARQUEO}
+   AND DB.ARNDET_EMPR = $P{P_EMPR}
+ GROUP BY AC.ARQ_OPERADOR,
+          CB.CTA_DESC || ' ' || CB.CTA_CODIGO,
+          AC.ARQ_SISTEMA_GS]]>
+	</queryString>
+	<field name="ARQ_OPERADOR" class="java.lang.String"/>
+	<field name="CAJA" class="java.lang.String"/>
+	<field name="MONTO" class="java.math.BigDecimal"/>
+	<field name="ARQ_SISTEMA_GS" class="java.math.BigDecimal"/>
+	<field name="DIFERENCIA" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="535" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="499" width="202" height="36" uuid="5f83cd3b-7729-4b89-9e55-6b729ae39729"/>
+				<textElement textAlignment="Center">
+					<font size="24"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ARQ_OPERADOR}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement key="table 2" x="200" y="0" width="355" height="80" uuid="04fb114d-4e08-4ba8-95c4-c8e026d931a8"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="DET_CHEQUES" uuid="906cf4b5-7f38-4825-a0b5-44a395d671fb">
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="90" uuid="a519e706-3e3c-487f-97b9-154905a8d2f0">
+						<jr:tableHeader height="30"/>
+						<jr:columnHeader height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="30" uuid="7b135d77-cf4b-479a-a375-d56b7c4dc7e2"/>
+								<text><![CDATA[Nombre]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20">
+							<textField>
+								<reportElement x="0" y="0" width="90" height="20" uuid="b7c569ec-784f-4829-8491-4b914bfdeab0"/>
+								<textFieldExpression><![CDATA[$F{ACDET_DESC}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="c569853d-62b2-471c-88aa-8f5c78fede8d">
+						<jr:tableHeader height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="30" uuid="7b1bfcbc-290f-42c3-9bb7-a829390ed907"/>
+								<text><![CDATA[CHEQUES]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:columnHeader height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="30" uuid="a652c1b4-1048-48a6-9771-28cffa2bb86c"/>
+								<text><![CDATA[Fecha]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20">
+							<textField>
+								<reportElement x="0" y="0" width="90" height="20" uuid="c164257b-0c50-4baa-89fe-eb1c731fb0ef"/>
+								<textFieldExpression><![CDATA[$F{ACDET_FECHA}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="3e648b66-0460-4368-8fed-03b6cad3a780">
+						<jr:tableHeader height="30"/>
+						<jr:columnHeader height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="30" uuid="ba631638-cd05-4980-ac16-17081da38361"/>
+								<text><![CDATA[Monto]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20">
+							<textField>
+								<reportElement x="0" y="0" width="90" height="20" uuid="1ca3c1da-5786-4f4f-a7e1-c298fded9140"/>
+								<textFieldExpression><![CDATA[$F{ACDET_MONTO_GS}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="de23727f-e4ac-4abc-a0bd-9e30d4191a78">
+						<jr:tableHeader height="30"/>
+						<jr:columnHeader height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="30" uuid="9b1b52be-3169-48b7-ad74-43c9d87c0491"/>
+								<text><![CDATA[Motivo]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20">
+							<textField>
+								<reportElement x="0" y="0" width="90" height="20" uuid="c7dff28d-c4b6-424b-8e60-d6ff658457b9"/>
+								<textFieldExpression><![CDATA[$F{ACDET_MOTIVO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<componentElement>
+				<reportElement key="table 2" x="202" y="105" width="353" height="80" uuid="bddd9925-a2a9-49fb-8810-ee9a16f290fc"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="DET_TRANS_PEN" uuid="f799e768-4663-4623-8e69-b507c2b1aa9a">
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="90" uuid="b98512fa-e44a-432a-9d6d-435e92b3a633">
+						<jr:tableHeader height="30"/>
+						<jr:columnHeader height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="30" uuid="24c7c4bc-a5e6-4c23-857b-fcfbb31ff4f5"/>
+								<text><![CDATA[Cliente]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20">
+							<textField>
+								<reportElement x="0" y="0" width="90" height="20" uuid="e9d1468b-b439-48a0-9cd5-85b8c03afb42"/>
+								<textFieldExpression><![CDATA[$F{ACDET_DESC}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="029ff24d-a0eb-4461-8dfd-2f58bbe2e999">
+						<jr:tableHeader height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="30" uuid="8bda851e-12a1-4361-b8df-070e07e7170c"/>
+								<text><![CDATA[Tranferencias Pendientes]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:columnHeader height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="30" uuid="ecb72861-c707-46eb-b4e7-2dacecf945f8"/>
+								<text><![CDATA[Fecha]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20">
+							<textField>
+								<reportElement x="0" y="0" width="90" height="20" uuid="da26104f-2855-446a-9514-dd79d9deeff9"/>
+								<textFieldExpression><![CDATA[$F{ACDET_FECHA}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="7c769a72-8000-4813-a4d7-1126cfbd1749">
+						<jr:tableHeader height="30"/>
+						<jr:columnHeader height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="30" uuid="8b84bea8-c433-4b2c-8c4d-597a31094164"/>
+								<text><![CDATA[Monto]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20">
+							<textField>
+								<reportElement x="0" y="0" width="90" height="20" uuid="fd390f1c-e0a2-475f-9de1-a952932cad30"/>
+								<textFieldExpression><![CDATA[$F{ACDET_MONTO_GS}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="8c425a57-2d36-494c-9d3b-c3f28ad1170e">
+						<jr:tableHeader height="30"/>
+						<jr:columnHeader height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="30" uuid="b4cbb385-2889-406f-8e28-57784bb6cb73"/>
+								<text><![CDATA[Motivo]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20">
+							<textField>
+								<reportElement x="0" y="0" width="90" height="20" uuid="b4bc2a06-ec33-4cfe-bdfa-db0697ea395a"/>
+								<textFieldExpression><![CDATA[$F{ACDET_MOTIVO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<componentElement>
+				<reportElement key="table 2" x="202" y="209" width="353" height="80" uuid="8fede170-dd96-4257-a507-443e164b6d7b"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="DET_COMPROBANTES" uuid="e648bfe9-b431-42e9-8c8c-df2e1db3914d">
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="90" uuid="8b3768c6-49fc-44b6-84c4-4328f2c0ef7d">
+						<jr:tableHeader height="30"/>
+						<jr:columnHeader height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="30" uuid="e2b5ae24-b2c1-45cf-958d-4dbe84f2f427"/>
+								<text><![CDATA[Descripcion]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20">
+							<textField>
+								<reportElement x="0" y="0" width="90" height="20" uuid="67c95f27-9e24-4f3e-ad36-9dbf5583d0b1"/>
+								<textFieldExpression><![CDATA[$F{ACDET_DESC}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="6bda5f79-53fb-4964-9eab-17cb86d7a3fe">
+						<jr:tableHeader height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="30" uuid="1f1cbe85-53e8-48ef-920f-ae12a8935c1e"/>
+								<text><![CDATA[Comprobantes Pendientes]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:columnHeader height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="30" uuid="044e47dd-d57c-4d15-968f-b8c1592b2908"/>
+								<text><![CDATA[Fecha]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20">
+							<textField>
+								<reportElement x="0" y="0" width="90" height="20" uuid="1ea2b404-a01a-4583-9f6b-09b88c278428"/>
+								<textFieldExpression><![CDATA[$F{ACDET_FECHA}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="40e44d7e-b752-405e-8cbe-f2d6cf204383">
+						<jr:tableHeader height="30"/>
+						<jr:columnHeader height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="30" uuid="0447383e-cdc5-4a24-b242-b07481855da2"/>
+								<text><![CDATA[Monto]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20">
+							<textField>
+								<reportElement x="0" y="0" width="90" height="20" uuid="66a70dfd-0bfc-45e2-8d24-3deaa514301a"/>
+								<textFieldExpression><![CDATA[$F{ACDET_MONTO_GS}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="3d745f18-ab83-47cc-b43f-52bfe7a4625a">
+						<jr:tableHeader height="30"/>
+						<jr:columnHeader height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="30" uuid="8e597e27-c7a6-4d2e-817e-7cb73552cd71"/>
+								<text><![CDATA[Motivo]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20">
+							<textField>
+								<reportElement x="0" y="0" width="90" height="20" uuid="4762d2cd-d549-4188-b5e9-ee3dba721c80"/>
+								<textFieldExpression><![CDATA[$F{ACDET_MOTIVO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch">
+			<textField>
+				<reportElement x="36" y="4" width="100" height="20" uuid="1af384ec-a32b-433a-a5e0-8c6319b99887"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAJA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="22" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="179" height="20" uuid="b1607687-6286-4ef0-a439-471707e9c704"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Arqueo Caja]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<componentElement>
+				<reportElement key="table 2" x="0" y="0" width="179" height="21" uuid="2f731aa3-2af2-4a50-9040-e244c649aead"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="DET_ARQ_BILLETE" uuid="1f429b03-264a-4b0d-a92d-a39ef8923db3">
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="90" uuid="da25d7f6-233b-40cf-8dba-6421a1a05f00">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="16" uuid="a0d9887a-3378-4fe1-ba00-24a18e12cc6d"/>
+								<text><![CDATA[CANT.]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="90" height="20" uuid="2b379398-6fe6-485b-9770-00cf79b62a5c"/>
+								<textFieldExpression><![CDATA[$F{ARNDET_CANT}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="f222eed7-ffbe-45d0-a466-63d9080dca10">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="16" uuid="cad0e9db-e177-46cb-af8a-838ac3519208"/>
+								<text><![CDATA[VALOR]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="90" height="20" uuid="e58f6081-ba22-4fcc-a7cc-9074c1c85a2c"/>
+								<textFieldExpression><![CDATA[$F{BILLETE_VALOR}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="55e5da1c-15c2-4876-94af-03214030a9ff">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="16" uuid="34ccf5a8-8939-4065-b755-2f6773678793"/>
+								<text><![CDATA[MONTO]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="90" height="20" uuid="b654fa94-ad19-4e11-9080-638dbffeee10"/>
+								<textFieldExpression><![CDATA[$F{MONTO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="62" splitType="Stretch">
+			<textField pattern="#,##0.00">
+				<reportElement x="100" y="22" width="100" height="20" uuid="b2f36304-2110-4710-83f9-64cc8d695b87"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ARQ_SISTEMA_GS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="100" y="42" width="100" height="20" uuid="06aef413-c408-4687-9a0c-f5d281b3d52a"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIFERENCIA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="22" width="100" height="20" uuid="bd7b00e7-66c1-44f5-9368-c55a2864cbff"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Sistema]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="42" width="100" height="20" uuid="5ef84f07-a696-4ab6-a49c-b10f9650b1f1"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Diferencia]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="100" y="0" width="100" height="20" uuid="6fa682da-40a9-49dd-af2e-9f3f8a0f9827"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MONTO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="20" uuid="eb21ad09-cda0-4b29-a66a-886a39cb0ed3"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Caja]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

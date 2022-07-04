@@ -1,0 +1,910 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ACOC203_SOJA_MAIZ_TRIGO_1" language="groovy" pageWidth="1500" pageHeight="842" columnWidth="1460" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b5272645-1941-4167-a9b7-9fc4166eb9eb">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<parameter name="P_SESSION_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_ARTICULO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_OPERACION" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESDE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_HASTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CONTACTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PRODUCTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PRODUCTO_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROV_DES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPR_DES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT T.T_PROV_RAZON_SOCIAL,
+        T_DOC_FEC,
+        T_PRBR_NRO_TICKET,
+        T_DOC_NRO_CHAPA,
+        T_DOC_UNID_BRUTO,
+        T_DOC_UNID_TARA,
+        T_NETO,
+        T.T_TABLA_DESC,
+        T_PRAN_PUNTAJE,
+        T_PRCA_PORC_DESCUENTO,
+        T_DESC_KG,
+        T_TOTDCTO,
+        T.SESSION_ID,
+        T.EMPR,
+        T_TOTNETO,
+        MONSANTO,
+        T_PROD_DESC,
+        T_PRBR_NRO_TICKET,
+       DECODE (MONSANTO,'N',1,0) MONSANTO_N,
+       DECODE (MONSANTO,'S',1,0) MONSANTO_S,
+       acoc203.cf_sum_positivoformula (i_monsanto => MONSANTO ,
+                                       tot_neto   => T_TOTNETO       ) sum_positivo,
+       acoc203.cf_sum_negativoformula (i_monsanto => MONSANTO ,
+                                         tot_neto => T_TOTNETO       ) sum_negativo,
+       P.*
+  FROM ACOL025_DET_REC_TAGRO_TEMP T,
+                ( SELECT T_PROV_RAZON_SOCIAL,
+                      SUM(NVL(T_DOC_UNID_BRUTO,0)) TOT_BRUTO,
+                      SUM(NVL(T_DOC_UNID_TARA,0))  TOT_TARA,
+                      SUM(NVL(T_NETO,0)) TOT_NETO,
+                      SUM(NVL(T_DESC_KG,0)) TOT_KG,
+                      SUM(NVL(T_TOTDCTO,0))TOT_DCTO,
+                      SUM(NVL(T_TOTNETO,0)) TOT_NET,
+                      SESSION_ID,
+                      EMPR,
+T_TABLA_DESC
+                FROM ACOL025_DET_REC_TAGRO_TEMP
+
+                WHERE SESSION_ID = $P{P_SESSION_ID}
+                 AND EMPR = $P{P_EMPRESA}
+                 GROUP BY T_PROV_RAZON_SOCIAL,
+                          SESSION_ID,
+                          EMPR,
+T_TABLA_DESC
+              ORDER BY 1) P
+
+  WHERE T.SESSION_ID = $P{P_SESSION_ID}
+   AND  T.EMPR = $P{P_EMPRESA}
+   AND  T.T_PROV_RAZON_SOCIAL = P.T_PROV_RAZON_SOCIAL
+   AND  T.EMPR = P.EMPR
+   AND T.SESSION_ID = P.SESSION_ID
+   AND T.T_TABLA_DESC = P.T_TABLA_DESC
+
+order by T.T_PROV_RAZON_SOCIAL]]>
+	</queryString>
+	<field name="T_PROV_RAZON_SOCIAL" class="java.lang.String"/>
+	<field name="T_DOC_FEC" class="java.sql.Timestamp"/>
+	<field name="T_PRBR_NRO_TICKET" class="java.math.BigDecimal"/>
+	<field name="T_DOC_NRO_CHAPA" class="java.lang.String"/>
+	<field name="T_DOC_UNID_BRUTO" class="java.math.BigDecimal"/>
+	<field name="T_DOC_UNID_TARA" class="java.math.BigDecimal"/>
+	<field name="T_NETO" class="java.math.BigDecimal"/>
+	<field name="T_TABLA_DESC" class="java.lang.String"/>
+	<field name="T_PRAN_PUNTAJE" class="java.math.BigDecimal"/>
+	<field name="T_PRCA_PORC_DESCUENTO" class="java.math.BigDecimal"/>
+	<field name="T_DESC_KG" class="java.math.BigDecimal"/>
+	<field name="T_TOTDCTO" class="java.math.BigDecimal"/>
+	<field name="SESSION_ID" class="java.math.BigDecimal"/>
+	<field name="EMPR" class="java.math.BigDecimal"/>
+	<field name="T_TOTNETO" class="java.math.BigDecimal"/>
+	<field name="MONSANTO" class="java.lang.String"/>
+	<field name="T_PROD_DESC" class="java.lang.String"/>
+	<field name="MONSANTO_N" class="java.math.BigDecimal"/>
+	<field name="MONSANTO_S" class="java.math.BigDecimal"/>
+	<field name="SUM_POSITIVO" class="java.math.BigDecimal"/>
+	<field name="SUM_NEGATIVO" class="java.math.BigDecimal"/>
+	<field name="TOT_BRUTO" class="java.math.BigDecimal"/>
+	<field name="TOT_TARA" class="java.math.BigDecimal"/>
+	<field name="TOT_NETO" class="java.math.BigDecimal"/>
+	<field name="TOT_KG" class="java.math.BigDecimal"/>
+	<field name="TOT_DCTO" class="java.math.BigDecimal"/>
+	<field name="TOT_NET" class="java.math.BigDecimal"/>
+	<variable name="T_DOC_UNID_BRUTO_2" class="java.math.BigDecimal" incrementType="Group" incrementGroup="PROVEEDOR">
+		<variableExpression><![CDATA[$F{T_DOC_UNID_BRUTO}]]></variableExpression>
+	</variable>
+	<variable name="T_NETO_2" class="java.math.BigDecimal" incrementType="Group" incrementGroup="PROVEEDOR">
+		<variableExpression><![CDATA[$F{T_NETO}]]></variableExpression>
+	</variable>
+	<variable name="T_TOTDCTO_2" class="java.math.BigDecimal" incrementType="Group" incrementGroup="PROVEEDOR">
+		<variableExpression><![CDATA[$F{T_TOTDCTO}]]></variableExpression>
+	</variable>
+	<variable name="T_TOTNETO_2" class="java.math.BigDecimal" incrementType="Group" incrementGroup="PROVEEDOR">
+		<variableExpression><![CDATA[$F{T_TOTNETO}]]></variableExpression>
+	</variable>
+	<variable name="T_DOC_UNID_TARA_2" class="java.math.BigDecimal" incrementType="Group" incrementGroup="PROVEEDOR">
+		<variableExpression><![CDATA[$F{T_DOC_UNID_TARA}]]></variableExpression>
+	</variable>
+	<variable name="SUM_POSITIVO_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{SUM_POSITIVO}]]></variableExpression>
+	</variable>
+	<variable name="SUM_NEGATIVO_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{SUM_NEGATIVO}]]></variableExpression>
+	</variable>
+	<variable name="T_PRBR_NRO_TICKET_2" class="java.lang.Integer" incrementType="Group" incrementGroup="PROVEEDOR" calculation="DistinctCount">
+		<variableExpression><![CDATA[$F{T_PRBR_NRO_TICKET}]]></variableExpression>
+	</variable>
+	<variable name="MONSANTO_S_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONSANTO_S}]]></variableExpression>
+	</variable>
+	<variable name="MONSANTO_N_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONSANTO_N}]]></variableExpression>
+	</variable>
+	<variable name="T_DOC_UNID_BRUTO_1" class="java.math.BigDecimal" incrementType="Group" incrementGroup="PROVEEDOR" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_DOC_UNID_BRUTO}]]></variableExpression>
+	</variable>
+	<variable name="T_DOC_UNID_TARA_1" class="java.math.BigDecimal" incrementType="Group" incrementGroup="PROVEEDOR" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_DOC_UNID_TARA}]]></variableExpression>
+	</variable>
+	<variable name="T_NETO_1" class="java.math.BigDecimal" incrementType="Group" incrementGroup="PROVEEDOR" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_NETO}]]></variableExpression>
+	</variable>
+	<variable name="T_TOTDCTO_1" class="java.math.BigDecimal" incrementType="Group" incrementGroup="PROVEEDOR" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_TOTDCTO}]]></variableExpression>
+	</variable>
+	<variable name="T_TOTNETO_1" class="java.math.BigDecimal" incrementType="Group" incrementGroup="PROVEEDOR" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_TOTNETO}]]></variableExpression>
+	</variable>
+	<variable name="TOT_NET_1" class="java.math.BigDecimal" resetType="Group" resetGroup="PROVEEDOR" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_NET}]]></variableExpression>
+	</variable>
+	<variable name="TOT_BRUTO_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_BRUTO}]]></variableExpression>
+	</variable>
+	<variable name="TOT_TARA_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_TARA}]]></variableExpression>
+	</variable>
+	<variable name="TOT_NETO_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_NETO}]]></variableExpression>
+	</variable>
+	<variable name="TOT_DCTO_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_DCTO}]]></variableExpression>
+	</variable>
+	<variable name="TOT_NET_2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_NET}]]></variableExpression>
+	</variable>
+	<group name="PROVEEDOR">
+		<groupExpression><![CDATA[$F{T_PROV_RAZON_SOCIAL}]]></groupExpression>
+		<groupHeader>
+			<band height="16">
+				<textField>
+					<reportElement x="65" y="4" width="619" height="12" uuid="4d890178-da18-49fb-89ba-5b29d7eac605"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{T_PROV_RAZON_SOCIAL}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="23" y="4" width="42" height="12" uuid="e268e093-9832-4331-bd35-f8794cfd312c"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Proveedor:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="30">
+				<crosstab>
+					<reportElement x="1" y="0" width="1460" height="16" uuid="74055cbf-795b-4ca8-9b8f-fb872e233282"/>
+					<crosstabDataset>
+						<dataset resetType="Group" resetGroup="PROVEEDOR"/>
+					</crosstabDataset>
+					<crosstabHeaderCell>
+						<cellContents>
+							<staticText>
+								<reportElement style="Crosstab Data Text" x="0" y="8" width="59" height="12" uuid="3e81f7ef-66d0-4fb0-9123-7c67f73a12da"/>
+								<textElement>
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<text><![CDATA[Fec]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="Crosstab Data Text" x="61" y="8" width="70" height="12" uuid="0678c4ea-16f9-4f66-992a-64d0221ba06f"/>
+								<textElement>
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<text><![CDATA[Ticket]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="Crosstab Data Text" x="131" y="8" width="54" height="12" uuid="af15fb04-a57d-4325-a88e-b83c771e53b3"/>
+								<textElement>
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<text><![CDATA[Chapa]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="Crosstab Data Text" x="187" y="8" width="50" height="12" uuid="7730355f-ea60-4d22-8338-5fc803c58e4b"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<text><![CDATA[Bruto]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="Crosstab Data Text" x="237" y="8" width="50" height="12" uuid="d050085b-729d-499e-a950-6c0a4373bd30"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<text><![CDATA[Tara]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="Crosstab Data Text" x="287" y="8" width="50" height="12" uuid="922eda3c-2566-45db-892e-fce12ef58fb7"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<text><![CDATA[Neto]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="Crosstab Data Text" x="337" y="8" width="50" height="12" uuid="af033677-9497-40f8-bb84-694e19b7dc1d"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<text><![CDATA[Totdcto]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="Crosstab Data Text" x="387" y="8" width="50" height="12" uuid="50c7d252-0e87-4eac-93ec-353edb0a96e8"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<text><![CDATA[Totneto]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabHeaderCell>
+					<rowGroup name="T_DOC_FEC" width="61" totalPosition="End">
+						<bucket class="java.sql.Timestamp">
+							<bucketExpression><![CDATA[$F{T_DOC_FEC}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#FFFFFF" mode="Opaque">
+								<textField isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="61" height="13" uuid="43dc9a2b-d03a-49a6-a845-2ea9040de7db"/>
+									<textElement>
+										<font fontName="Arial" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{T_DOC_FEC}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents backcolor="#FFFFFF" mode="Opaque"/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="T_PRBR_NRO_TICKET" width="70" totalPosition="End">
+						<bucket class="java.math.BigDecimal">
+							<bucketExpression><![CDATA[$F{T_PRBR_NRO_TICKET}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#FFFFFF" mode="Opaque">
+								<textField isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="70" height="13" uuid="66e2b834-2d91-4350-882f-cf0728ffd2cf"/>
+									<textElement>
+										<font fontName="Arial" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{T_PRBR_NRO_TICKET}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents backcolor="#E6F3FF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+							</cellContents>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="group1" width="56">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{T_DOC_NRO_CHAPA}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#FFFFFF" mode="Opaque" style="Crosstab Data Text">
+								<textField isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="54" height="13" uuid="19a0f0ac-7e98-45ea-85df-ea86e0794106"/>
+									<textElement>
+										<font fontName="Arial" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{group1}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="group2" width="50">
+						<bucket class="java.math.BigDecimal">
+							<bucketExpression><![CDATA[$F{T_DOC_UNID_BRUTO}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#FFFFFF" mode="Opaque">
+								<textField pattern="#,##0" isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="13" uuid="385032fe-6e8e-4510-a9a3-803a2a83db0a"/>
+									<textElement textAlignment="Right">
+										<font fontName="Arial" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{group2}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="group3" width="50">
+						<bucket class="java.math.BigDecimal">
+							<bucketExpression><![CDATA[$F{T_DOC_UNID_TARA}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#FFFFFF" mode="Opaque">
+								<textField pattern="#,##0" isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="13" uuid="a64416f2-38d2-49a2-86e8-c8a459f95e3d"/>
+									<textElement textAlignment="Right">
+										<font fontName="Arial" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{group3}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="group4" width="50">
+						<bucket class="java.math.BigDecimal">
+							<bucketExpression><![CDATA[$F{T_NETO}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#FFFFFF" mode="Opaque">
+								<textField pattern="#,##0" isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="13" uuid="09424f42-8631-4bcf-a563-16801eaaae92"/>
+									<textElement textAlignment="Right">
+										<font fontName="Arial" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{group4}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="group5" width="50">
+						<bucket class="java.math.BigDecimal">
+							<bucketExpression><![CDATA[$F{T_TOTDCTO}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#FFFFFF" mode="Opaque">
+								<textField pattern="#,##0" isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="13" uuid="39e7dce8-1010-4d08-bd5e-6a25953af642"/>
+									<textElement textAlignment="Right">
+										<font fontName="Arial" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{group5}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="group6" width="51">
+						<bucket class="java.math.BigDecimal">
+							<bucketExpression><![CDATA[$F{T_TOTNETO}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#FFFFFF" mode="Opaque">
+								<textField pattern="#,##0" isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="13" uuid="d6faccfc-69d3-4c10-98fa-66d06f1be59e"/>
+									<textElement textAlignment="Right">
+										<font fontName="Arial" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{group6}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<columnGroup name="T_TABLA_DESC" height="21" totalPosition="End">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{T_TABLA_DESC}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+							<cellContents backcolor="#FFFFFF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textField>
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="107" height="20" uuid="6742c086-6b48-42db-8587-0d339db13da2"/>
+									<textElement>
+										<font fontName="Arial" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{T_TABLA_DESC}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabColumnHeader>
+						<crosstabTotalColumnHeader>
+							<cellContents backcolor="#E6F3FF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+							</cellContents>
+						</crosstabTotalColumnHeader>
+					</columnGroup>
+					<measure name="T_PRAN_PUNTAJEMeasure" class="java.math.BigDecimal">
+						<measureExpression><![CDATA[$F{T_PRAN_PUNTAJE}]]></measureExpression>
+					</measure>
+					<measure name="DESCUENTO" class="java.math.BigDecimal">
+						<measureExpression><![CDATA[$F{T_PRCA_PORC_DESCUENTO}]]></measureExpression>
+					</measure>
+					<measure name="DESC_KG" class="java.lang.Integer" calculation="Sum">
+						<measureExpression><![CDATA[$F{T_DESC_KG}]]></measureExpression>
+					</measure>
+					<measure name="suma_T_PRAN_PUNTAJE" class="java.math.BigDecimal" calculation="Average">
+						<measureExpression><![CDATA[$F{T_PRAN_PUNTAJE}]]></measureExpression>
+					</measure>
+					<measure name="SUMA_DESCUENTO" class="java.math.BigDecimal" calculation="Average">
+						<measureExpression><![CDATA[$F{T_PRCA_PORC_DESCUENTO}]]></measureExpression>
+					</measure>
+					<measure name="measure1" class="java.math.BigDecimal" calculation="Average">
+						<measureExpression><![CDATA[$F{T_DESC_KG}]]></measureExpression>
+					</measure>
+					<crosstabCell width="109" height="13">
+						<cellContents>
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="41" height="13" uuid="adc5dc45-12c7-405a-a0da-9b4eb412dcd9"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{T_PRAN_PUNTAJEMeasure}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="41" y="0" width="34" height="13" uuid="e9184db1-e821-4fe9-8b40-65e41a40dbc5"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{DESCUENTO}]]></textFieldExpression>
+							</textField>
+							<textField pattern="" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="75" y="0" width="33" height="13" uuid="5d65f0a5-5e38-405d-b827-1e150cbe0228"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{DESC_KG}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="109" height="32" rowTotalGroup="T_DOC_FEC">
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<textField pattern="#,##0.00">
+								<reportElement style="Crosstab Data Text" x="0" y="2" width="41" height="12" uuid="fea2b793-c51d-4591-a1b2-4231a3d3845c"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{suma_T_PRAN_PUNTAJE}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0.00">
+								<reportElement style="Crosstab Data Text" x="41" y="2" width="34" height="12" uuid="40fd50e8-538c-44fa-9617-3119458cc72f"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{SUMA_DESCUENTO}]]></textFieldExpression>
+							</textField>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="75" y="2" width="33" height="12" uuid="ff7f0245-42d7-4cda-aafe-6788eca47035"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{measure1}]]></textFieldExpression>
+							</textField>
+							<line>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="108" height="1" uuid="18ac23a8-b8b3-42d3-8380-ad8674fc1ce1"/>
+							</line>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="13" columnTotalGroup="T_TABLA_DESC">
+						<cellContents backcolor="#E6F3FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="32" rowTotalGroup="T_DOC_FEC" columnTotalGroup="T_TABLA_DESC">
+						<cellContents backcolor="#6093BF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="109" height="0" rowTotalGroup="T_PRBR_NRO_TICKET">
+						<cellContents backcolor="#E6F3FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="T_PRBR_NRO_TICKET" columnTotalGroup="T_TABLA_DESC">
+						<cellContents backcolor="#E6F3FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="group1">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="group1" columnTotalGroup="T_TABLA_DESC">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="group2">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="group2" columnTotalGroup="T_TABLA_DESC">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="group3">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="group3" columnTotalGroup="T_TABLA_DESC">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="group4">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="group4" columnTotalGroup="T_TABLA_DESC">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="group5">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="group5" columnTotalGroup="T_TABLA_DESC">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="group6">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="group6" columnTotalGroup="T_TABLA_DESC">
+						<cellContents/>
+					</crosstabCell>
+				</crosstab>
+			</band>
+			<band height="14">
+				<staticText>
+					<reportElement x="9" y="2" width="180" height="10" uuid="ad4ec421-b4e5-4cbe-a3e3-58351524e2f2"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Proveedor:       ]]></text>
+				</staticText>
+				<line>
+					<reportElement x="190" y="1" width="251" height="1" uuid="55d68e74-3d2b-409b-9769-3243bbf7af80"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="195" y="0" width="43" height="12" uuid="d80c2696-f21c-4cd7-ad33-63a35f1ee4d6"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TOT_BRUTO}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="240" y="2" width="48" height="10" uuid="8adfd5d8-156c-43ac-b132-a4b6ee082742"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TOT_TARA}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="290" y="2" width="49" height="10" uuid="f77f8dc7-5173-412f-9548-0b33b6d4c8c0"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TOT_NETO}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="341" y="2" width="47" height="10" uuid="85a47e59-be6f-4a3a-a966-f1e4dee275f3"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TOT_DCTO}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="390" y="1" width="51" height="11" uuid="879203f7-7bce-4f60-bc3f-2612f8d976bb"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TOT_NET}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="88" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="1460" height="87" uuid="681b03d9-f95d-4160-9d0f-e07fe9d126ff"/>
+			</rectangle>
+			<textField>
+				<reportElement x="388" y="2" width="602" height="12" uuid="7a00d4d3-1e6e-4df5-9c65-5eb3929be076"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="4" y="42" width="60" height="10" uuid="b166eb98-f454-43ae-b204-bb43c4baf2d4"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Fecha desde :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="55" width="60" height="10" uuid="76c45b9d-427c-423f-aba0-7c13b984cbde"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Producto:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="66" width="60" height="10" uuid="1542aa7b-c5f2-4ef9-a753-f68be30d631c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Proveedor:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="42" width="26" height="10" uuid="ec4f7734-b4c0-44f6-86d5-10528348bda2"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[hasta:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="65" y="42" width="100" height="10" uuid="11364825-27ac-4706-a96d-56e88e84a09c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESDE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="207" y="42" width="100" height="10" uuid="3fa9429c-43d9-40dc-ad2b-1dc5b874df23"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_HASTA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="65" y="55" width="40" height="10" uuid="1991722f-b5a6-46ea-b049-369d21ae5ee8"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_ARTICULO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="65" y="66" width="40" height="10" uuid="4e1c2be4-d0d3-46b4-9423-a98bb82cbd85"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_CONTACTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="105" y="55" width="202" height="10" uuid="171f528d-6ce9-4ec0-8ef4-ef5356bbbced"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PRODUCTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="105" y="66" width="202" height="10" uuid="31d2f613-c755-44fd-933c-296a343849f5"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROV_DES}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="2" width="246" height="12" uuid="a4d1d32b-2c6d-4805-b752-bd9b06eea29c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_EMPR_DES}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="14" width="246" height="12" uuid="bd24e023-f4dc-4406-94f9-4fbbf132dc56"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="1316" y="2" width="144" height="12" uuid="53ac4447-10f0-414d-b00d-8ee7d0316568"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="94" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="24" width="183" height="10" uuid="51dad531-d227-42d7-9600-6a1ba7bb8958"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total General:      ]]></text>
+			</staticText>
+			<line>
+				<reportElement x="189" y="22" width="252" height="1" uuid="170de703-09ae-4f53-8f48-13db515f7ac8"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<rectangle>
+				<reportElement x="7" y="40" width="197" height="51" uuid="6ebd94c9-c1d1-4b79-a16c-5d9218c01bc6"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="11" y="62" width="76" height="11" uuid="7c47a27c-8c6d-4815-8f28-5f17bf9e0c88"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Monsanto Positivo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="11" y="77" width="76" height="11" uuid="571d14a7-3f8e-414a-acf8-d64dca2b3784"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Monsanto Negaitivo: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="92" y="45" width="53" height="11" uuid="9832e40d-6af7-4f6c-9c55-28b3c6e272a4"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Cantidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="148" y="45" width="53" height="11" uuid="342e8428-1e3d-461c-a0cb-c8bca60c187f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Peso]]></text>
+			</staticText>
+			<line>
+				<reportElement x="92" y="56" width="53" height="1" uuid="b52b0774-c5aa-4e74-9644-7bdc222feaaa"/>
+			</line>
+			<line>
+				<reportElement x="148" y="56" width="53" height="1" uuid="8fe36962-aeb5-455d-b888-705d86bbdceb"/>
+			</line>
+			<textField pattern="#,##0;-#,##0">
+				<reportElement x="148" y="62" width="53" height="11" uuid="b4133452-6678-420a-ac2e-fff9ba96e1ee"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_POSITIVO_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0">
+				<reportElement x="148" y="77" width="53" height="11" uuid="052ba9d1-3f9e-4c08-a8ae-5d85dbaea8f2"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_NEGATIVO_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="98" y="4" width="85" height="13" uuid="9f1bbc51-0c05-4cda-8f67-2283ae6a7822"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cantidad de cargas]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="185" y="4" width="49" height="12" uuid="98e14864-68fa-4711-8ea9-9c7cd3b8d194"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{T_PRBR_NRO_TICKET_2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="92" y="62" width="53" height="11" uuid="8c093866-24c3-4d16-b466-ea4c5e35e0a0"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{MONSANTO_S_1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="92" y="77" width="53" height="11" uuid="a53eaa54-624f-42b7-b7fb-00683d25f49f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{MONSANTO_N_1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="24" width="43" height="10" uuid="d15c3159-dd61-4fac-9f89-d0fc02c3cb4b"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOT_BRUTO_1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="240" y="24" width="48" height="10" uuid="7efa26d6-d56a-4a79-823b-7dc407796191"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOT_TARA_1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="290" y="24" width="49" height="10" uuid="f339527e-465b-42eb-a6ea-203a891fb3ef"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOT_NETO_1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="341" y="24" width="47" height="10" uuid="68464eb5-59d8-4bbd-bf7c-e6ed81fbe60a"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOT_DCTO_1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="390" y="24" width="51" height="10" uuid="51f2e08e-53fc-4c36-a541-1eae3eb69274"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOT_NET_2}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERM075_SUB" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="08c2351f-4b29-48e5-8a47-866359f0326a">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="P_CLAVE_DPP" class="java.lang.String"/>
+	<parameter name="P_EMPRESA" class="java.lang.String"/>
+	<parameter name="P_TIPO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT CONS.Factor,LOWER(CONS.Detalles)Detalles
+       FROM ((SELECT 1 TIPO,1 Numero,'Nivel Educativo' Factor,D.NIVEDUC_DESC Detalles
+               FROM PER_DESCRIP_PUESTO_PERF DES,PER_NIVEL_EDUCATIVO D
+              WHERE DES.DPP_EMPR =  $P!{P_EMPRESA}
+                AND DES.DPP_CLAVE =  $P!{P_CLAVE_DPP}
+                AND DES.DPP_EMPR = D.NIVEDUC_EMPR
+                AND DES.DPP_NIVEL_EDUCA = D.NIVEDUC_CLAVE)
+                UNION ALL
+            (SELECT 1 TIPO,2 Numero,'Idiomas' Factor,wm_concat(I.IDI_DESC) Detalles
+              FROM PER_IDIOMA I
+             WHERE I.IDI_EMPR =  $P!{P_EMPRESA}
+               AND I.IDI_CODIGO IN (SELECT DI.DPPIDIO_IDIOMA
+                                      FROM PER_DPP_IDIOMA DI
+                                     WHERE DI.DPPIDIO_EMPR =  $P!{P_EMPRESA}
+                                       AND DI.DPPIDIO_DPP =  $P!{P_CLAVE_DPP}))
+                UNION ALL
+             (SELECT 1 TIPO,3 Numero,'Carreras' Factor,wm_concat(C.CARRERA_DESC) Detalles
+                FROM PER_CARRERA C
+               WHERE C.CARRERA_EMPR =  $P!{P_EMPRESA}
+                 AND C.CARRERA_CODIGO IN (SELECT CA.DPPCARR_CARRERA
+                                            FROM PER_DPP_CARRERA CA
+                                           WHERE CA.DPPCARR_EMPRESA =  $P!{P_EMPRESA}
+                                              AND CA.DPPCARR_DPP =  $P!{P_CLAVE_DPP}))
+                UNION ALL
+              (SELECT 1 TIPO,4 Numero,'Herramientas Informáticas' Factor,wm_concat(HER.HERINF_DESC) Detalles
+                 FROM PER_HERRAM_INF HER
+                WHERE HER.HERINF_EMPR =  $P!{P_EMPRESA}
+                  AND HER.HERINF_CLAVE IN (SELECT HE.HERDPP_HERR
+                                             FROM PER_DPP_HERRAM_INF HE
+                                            WHERE HE.HERDPP_EMPR =  $P!{P_EMPRESA}
+                                              AND HE.HERDPP_DPP =  $P!{P_CLAVE_DPP}))
+                UNION ALL
+               (SELECT 2 TIPO,1 Numero,'Comunicación e Interacción Humana' Factor,CAL.DDPCALIF_DESC
+                  FROM PER_DESCRIP_PUESTO_PERF D,PER_DPP_CALIFICACION CAL
+                 WHERE D.DPP_EMPR = $P!{P_EMPRESA}
+                   AND D.DPP_EMPR = CAL.DDPCALIF_EMPR
+                   AND D.DPP_NIV_FAC_CAL_1 = CAL.DDPCALIF_CLAVE
+                   AND CAL.DDPCALIF_NIVEL = 1
+                   AND D.DPP_CLAVE = $P!{P_CLAVE_DPP})
+                   UNION ALL
+               (SELECT 2 TIPO,2 Numero,'Actividades y Problemas' Factor,CAL.DDPCALIF_DESC
+                  FROM PER_DESCRIP_PUESTO_PERF D,PER_DPP_CALIFICACION CAL
+                 WHERE D.DPP_EMPR = $P!{P_EMPRESA}
+                   AND D.DPP_EMPR = CAL.DDPCALIF_EMPR
+                   AND D.DPP_NIV_FAC_CAL_2 = CAL.DDPCALIF_CLAVE
+                   AND CAL.DDPCALIF_NIVEL = 2
+                   AND D.DPP_CLAVE = $P!{P_CLAVE_DPP})
+                   UNION ALL
+               (SELECT 2 TIPO,3 Numero,'Decisiones Requeridas' Factor,CAL.DDPCALIF_DESC
+                  FROM PER_DESCRIP_PUESTO_PERF D,PER_DPP_CALIFICACION CAL
+                 WHERE D.DPP_EMPR = $P!{P_EMPRESA}
+                   AND D.DPP_EMPR = CAL.DDPCALIF_EMPR
+                   AND D.DPP_NIV_FAC_CAL_3 = CAL.DDPCALIF_CLAVE
+                   AND CAL.DDPCALIF_NIVEL = 3
+                   AND D.DPP_CLAVE = $P!{P_CLAVE_DPP})
+                   UNION ALL
+               (SELECT 2 TIPO,4 Numero,'Supervisión Ejercida' Factor,CAL.DDPCALIF_DESC
+                  FROM PER_DESCRIP_PUESTO_PERF D,PER_DPP_CALIFICACION CAL
+                 WHERE D.DPP_EMPR = $P!{P_EMPRESA}
+                   AND D.DPP_EMPR = CAL.DDPCALIF_EMPR
+                   AND D.DPP_NIV_FAC_CAL_4 = CAL.DDPCALIF_CLAVE
+                   AND CAL.DDPCALIF_NIVEL = 4
+                   AND D.DPP_CLAVE = $P!{P_CLAVE_DPP})
+                   UNION ALL
+               (SELECT 2 TIPO,5 Numero,'Alcance del Trabajo' Factor,CAL.DDPCALIF_DESC
+                  FROM PER_DESCRIP_PUESTO_PERF D,PER_DPP_CALIFICACION CAL
+                 WHERE D.DPP_EMPR = $P!{P_EMPRESA}
+                   AND D.DPP_EMPR = CAL.DDPCALIF_EMPR
+                   AND D.DPP_NIV_FAC_CAL_5 = CAL.DDPCALIF_CLAVE
+                   AND CAL.DDPCALIF_NIVEL = 5
+                   AND D.DPP_CLAVE = $P!{P_CLAVE_DPP})
+                   UNION ALL
+               (SELECT 2 TIPO,6 Numero,'Gestión del Capital Humano' Factor,CAL.DDPCALIF_DESC
+                  FROM PER_DESCRIP_PUESTO_PERF D,PER_DPP_CALIFICACION CAL
+                 WHERE D.DPP_EMPR = $P!{P_EMPRESA}
+                   AND D.DPP_EMPR = CAL.DDPCALIF_EMPR
+                   AND D.DPP_NIV_FAC_CAL_6 = CAL.DDPCALIF_CLAVE
+                   AND CAL.DDPCALIF_NIVEL = 6
+                   AND D.DPP_CLAVE = $P!{P_CLAVE_DPP})
+                   UNION ALL
+               (SELECT 2 TIPO,7 Numero,'Gestión de Recursos Materiales y/o Financieros' Factor,CAL.DDPCALIF_DESC
+                  FROM PER_DESCRIP_PUESTO_PERF D,PER_DPP_CALIFICACION CAL
+                 WHERE D.DPP_EMPR = $P!{P_EMPRESA}
+                   AND D.DPP_EMPR = CAL.DDPCALIF_EMPR
+                   AND D.DPP_NIV_FAC_CAL_7 = CAL.DDPCALIF_CLAVE
+                   AND CAL.DDPCALIF_NIVEL = 7
+                   AND D.DPP_CLAVE = $P!{P_CLAVE_DPP})
+                   UNION ALL
+               (SELECT 2 TIPO,8 Numero,'Esfuerzo Mental Y/O Visual' Factor,CAL.DDPCALIF_DESC
+                  FROM PER_DESCRIP_PUESTO_PERF D,PER_DPP_CALIFICACION CAL
+                 WHERE D.DPP_EMPR = $P!{P_EMPRESA}
+                   AND D.DPP_EMPR = CAL.DDPCALIF_EMPR
+                   AND D.DPP_NIV_FAC_CAL_8 = CAL.DDPCALIF_CLAVE
+                   AND CAL.DDPCALIF_NIVEL = 8
+                   AND D.DPP_CLAVE = $P!{P_CLAVE_DPP})
+                   UNION ALL
+               (SELECT 2 TIPO,9 Numero,'Esfuerzo Físico' Factor,CAL.DDPCALIF_DESC
+                  FROM PER_DESCRIP_PUESTO_PERF D,PER_DPP_CALIFICACION CAL
+                 WHERE D.DPP_EMPR = $P!{P_EMPRESA}
+                   AND D.DPP_EMPR = CAL.DDPCALIF_EMPR
+                   AND D.DPP_NIV_FAC_CAL_9 = CAL.DDPCALIF_CLAVE
+                   AND CAL.DDPCALIF_NIVEL = 9
+                   AND D.DPP_CLAVE = $P!{P_CLAVE_DPP})
+                   UNION ALL
+               (SELECT 2 TIPO,10 Numero,'Ambiente Y Contingencias' Factor,CAL.DDPCALIF_DESC
+                  FROM PER_DESCRIP_PUESTO_PERF D,PER_DPP_CALIFICACION CAL
+                 WHERE D.DPP_EMPR = $P!{P_EMPRESA}
+                   AND D.DPP_EMPR = CAL.DDPCALIF_EMPR
+                   AND D.DPP_NIV_FAC_CAL_10 = CAL.DDPCALIF_CLAVE
+                   AND CAL.DDPCALIF_NIVEL = 10
+                   AND D.DPP_CLAVE = $P!{P_CLAVE_DPP})) CONS
+        WHERE CONS.TIPO = $P!{P_TIPO}
+        ORDER BY Numero]]>
+	</queryString>
+	<field name="FACTOR" class="java.lang.String"/>
+	<field name="DETALLES" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<frame>
+				<reportElement style="table_TH" x="0" y="0" width="462" height="21" uuid="58715985-0d9e-495d-9aa1-274ab4b72043"/>
+				<staticText>
+					<reportElement x="246" y="3" width="179" height="15" uuid="a909c908-3c6e-450b-8adc-61af60f3ccc4"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Detalle]]></text>
+				</staticText>
+				<frame>
+					<reportElement style="table_TH" x="0" y="0" width="150" height="21" uuid="5c7394c3-4de2-4168-af02-2ec7730bc749"/>
+					<staticText>
+						<reportElement x="24" y="3" width="104" height="15" uuid="d0d9689b-8cfe-48fc-95f3-56840b7bc8f0"/>
+						<textElement textAlignment="Center"/>
+						<text><![CDATA[Factor]]></text>
+					</staticText>
+				</frame>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<frame>
+				<reportElement style="table" positionType="Float" x="0" y="0" width="462" height="22" isPrintWhenDetailOverflows="true" uuid="e0c08867-6da1-4f1b-a51c-ac52e03f376e"/>
+				<textField isBlankWhenNull="true">
+					<reportElement key="" x="2" y="7" width="147" height="13" uuid="8aa1710a-5852-478d-b68a-f1e8dbcff87d"/>
+					<textFieldExpression><![CDATA[$F{FACTOR}]]></textFieldExpression>
+				</textField>
+				<frame>
+					<reportElement style="table" x="150" y="0" width="312" height="22" uuid="5798a1c6-6b05-49ca-9ba3-263198865450"/>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement x="2" y="2" width="310" height="16" uuid="07ab33f9-6366-4e64-a6fb-677d7c576168"/>
+						<textFieldExpression><![CDATA[$F{DETALLES}]]></textFieldExpression>
+					</textField>
+				</frame>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

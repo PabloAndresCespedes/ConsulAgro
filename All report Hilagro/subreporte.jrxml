@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subreporte" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7f6a43f7-b1b2-4296-83e3-d0a9fd92b54c">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\user\\Documents\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PERIODO" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CONCEPTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SESSION" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT T_PDOC_EMPLEADO,
+       T_EMPL_NOMBRE,
+       T_EMPL_SUCURSAL,
+       T_SUC_DESC,
+       T_PDOC_DEPARTAMENTO,
+       T_DPTO_DESC,
+       T_PDDET_CLAVE_CONCEPTO,
+       T_PCON_DESC,
+       T_EMPL_FORMA_PAGO,
+       T_FORMA_DESC,
+       T_PCON_IND_DBCR,
+       T_PCON_IND_AGUINALDO,
+       T_PCON_IND_IPS,
+       T_EMPL_SITUACION,
+       T_PDOC_PERIODO,
+       T_PDOC_FEC,
+       CASE  WHEN T_PCON_IND_DBCR='C' THEN T_PDDET_IMP
+             WHEN T_PCON_IND_DBCR='D' THEN - T_PDDET_IMP
+             ELSE NULL
+       END IMPORTE,
+       T_P_LOGIN,
+       T_P_EMPRESA
+  FROM C_PERL200_TEMP
+ WHERE T_P_SESSION = $P{P_SESSION}
+AND T_PDOC_PERIODO = $P{P_PERIODO}
+AND T_EMPL_SUCURSAL = $P{SUCURSAL}
+AND T_PDDET_CLAVE_CONCEPTO = $P{P_CONCEPTO}
+order by T_SUC_DESC, T_EMPL_NOMBRE]]>
+	</queryString>
+	<field name="T_PDOC_EMPLEADO" class="java.math.BigDecimal"/>
+	<field name="T_EMPL_NOMBRE" class="java.lang.String"/>
+	<field name="T_EMPL_SUCURSAL" class="java.math.BigDecimal"/>
+	<field name="T_SUC_DESC" class="java.lang.String"/>
+	<field name="T_PDOC_DEPARTAMENTO" class="java.math.BigDecimal"/>
+	<field name="T_DPTO_DESC" class="java.lang.String"/>
+	<field name="T_PDDET_CLAVE_CONCEPTO" class="java.math.BigDecimal"/>
+	<field name="T_PCON_DESC" class="java.lang.String"/>
+	<field name="T_EMPL_FORMA_PAGO" class="java.math.BigDecimal"/>
+	<field name="T_FORMA_DESC" class="java.lang.String"/>
+	<field name="T_PCON_IND_DBCR" class="java.lang.String"/>
+	<field name="T_PCON_IND_AGUINALDO" class="java.lang.String"/>
+	<field name="T_PCON_IND_IPS" class="java.lang.String"/>
+	<field name="T_EMPL_SITUACION" class="java.lang.String"/>
+	<field name="T_PDOC_PERIODO" class="java.math.BigDecimal"/>
+	<field name="T_PDOC_FEC" class="java.sql.Timestamp"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<field name="T_P_LOGIN" class="java.lang.String"/>
+	<field name="T_P_EMPRESA" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="74" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement x="3" y="-72" width="87" height="27" uuid="6c505c84-13bc-4e33-8b8d-8ddc3d126cc7"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HILAGRO SA]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="487" y="-61" width="23" height="13" uuid="c2e88a8a-3c02-4201-8a97-99f487544399"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="-26" width="555" height="17" uuid="4fedf51d-2cca-4aaf-a2b4-a8bb83de8622"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LISTADO DE CLIENTES]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="439" y="-45" width="117" height="16" uuid="d5f039ff-b497-4b0e-b74a-5726c3ebded9"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="439" y="-61" width="44" height="13" uuid="e8bafbfa-0bec-40b0-b767-1f3617076605"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PAGINA:]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<subreport>
+				<reportElement x="14" y="10" width="200" height="100" uuid="57e619c8-c058-42d2-9cb7-4c3984be18b9"/>
+				<subreportParameter name="P_CONCEPTO">
+					<subreportParameterExpression><![CDATA[$P{P_CONCEPTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_PERIODO">
+					<subreportParameterExpression><![CDATA[$P{P_PERIODO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_SUCURSAL">
+					<subreportParameterExpression><![CDATA[$P{SUCURSAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_SESSION">
+					<subreportParameterExpression><![CDATA[$P{P_SESSION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subreporte1.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

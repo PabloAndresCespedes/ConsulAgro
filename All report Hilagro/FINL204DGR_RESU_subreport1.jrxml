@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINL204DGR_RESU_subreport1" language="groovy" pageWidth="345" pageHeight="802" columnWidth="345" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="4cf1f6cf-6d40-42d6-ab53-0c474eeb1ddf">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_SESSION_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT  ECC_MARCA MARCA,
+        ECC_SALDO SALIDA
+  FROM fin_ext_cli_sub_temp
+WHERE ECC_SESSION_ID = $P{P_SESSION_ID}
+ORDER BY ECC_MARCA]]>
+	</queryString>
+	<field name="MARCA" class="java.lang.String"/>
+	<field name="SALIDA" class="java.math.BigDecimal"/>
+	<variable name="SALIDA_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{SALIDA}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="10" splitType="Stretch">
+			<rectangle>
+				<reportElement x="1" y="0" width="342" height="10" forecolor="#FFFFFF" backcolor="#EBEBEB" uuid="ef43a664-856e-4399-8c88-8b492cae36df"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="10" y="0" width="233" height="10" uuid="32d8e1fe-6912-456c-8165-c095541aabe8"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[RESUMEN MARCA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="243" y="0" width="100" height="10" uuid="6addc509-27a7-46d0-aba5-738dcb1eec84"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[MONTO]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="11" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="10" y="1" width="233" height="10" uuid="fb9bd206-a03b-45d8-8a34-b759ba33f1ca"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MARCA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="243" y="1" width="100" height="10" uuid="ecd2caa9-4982-4bc6-a521-b5291dc276b9"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SALIDA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="12" splitType="Stretch">
+			<rectangle>
+				<reportElement x="1" y="0" width="342" height="12" forecolor="#FFFFFF" backcolor="#EBEBEB" uuid="2e833bf0-13c4-48bc-ab4e-d80ffbaa6794"/>
+			</rectangle>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="243" y="2" width="100" height="10" uuid="dd0a90f1-19d5-414a-ae05-592a563784da"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SALIDA_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

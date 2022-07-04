@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SIGL206GRUSD" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2413f17b-c240-437c-803e-bfdb381e1ab2">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="style1">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{IND_IMPUTABLE}=='N']]></conditionExpression>
+			<style isBlankWhenNull="true" fontName="Arial" fontSize="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+		</conditionalStyle>
+	</style>
+	<subDataset name="logo" uuid="3e1a6bdd-ac98-4068-883c-8fe21838ea3c">
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select EMPR_LOGO logo from gen_empresa WHERE EMPR_CODIGO = $P{P_EMPRESA}]]>
+		</queryString>
+		<field name="LOGO" class="java.io.InputStream"/>
+	</subDataset>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String"/>
+	<parameter name="P_PROGRAMA" class="java.lang.String"/>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String"/>
+	<parameter name="P_DESC_EMPRESA" class="java.lang.String"/>
+	<parameter name="P_FEC_INI" class="java.lang.String"/>
+	<parameter name="P_FEC_FIN" class="java.lang.String"/>
+	<parameter name="P_NIVEL" class="java.lang.String"/>
+	<parameter name="P_IMPORTE_CERO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_IND_TOT_TIT" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT CUENTA,
+       DECODE(IND_IMPUTABLE,'T',NULL,DESC_CTAC) DESC_CTAC,
+       TO_NUMBER(DECODE(IND_IMPUTABLE,'T',NULL,(CASE
+         WHEN $P{P_IND_TOT_TIT} = 'N' AND IND_IMPUTABLE = 'N' AND
+              SUBSTR(DESC_CTAC, 1, 5) <> 'Total' THEN
+          NULL
+         ELSE
+          ABS(IMPORTE)
+       END))) IMPORTE,
+       TO_NUMBER(DECODE(IND_IMPUTABLE,'T',NULL,(CASE
+         WHEN $P{P_IND_TOT_TIT} = 'N' AND IND_IMPUTABLE = 'N' AND
+              SUBSTR(DESC_CTAC, 1, 5) <> 'Total' THEN
+          NULL
+         ELSE
+          ABS(IMPORTE_US)
+       END))) IMPORTE_US,
+       LINEAS,
+       GRUPO,
+
+       DECODE(IND_IMPUTABLE,'T',NULL,(CASE
+         WHEN IMPORTE < 0 AND TIPO_SALDO = 'D' THEN
+          'CR'
+         WHEN IMPORTE > 0 AND TIPO_SALDO = 'C' THEN
+          'DB'
+         ELSE
+          NULL
+       END)) TIPO_SALDO,
+       NIVEL,
+       IND_IMPUTABLE,
+       TO_NUMBER(DECODE(IND_IMPUTABLE,'T',NULL,(CASE
+         WHEN $P{P_IND_TOT_TIT} = 'N' AND IND_IMPUTABLE = 'N' AND
+              SUBSTR(DESC_CTAC, 1, 5) <> 'Total' THEN
+          NULL
+         ELSE
+          ABS(ROUND(IMPORTE / DECODE(IMPORTE_US, 0, 1, IMPORTE_US), 0))
+       END))) TASA
+  FROM CNT_CNTL006_FINAL
+ WHERE (FEC_DESDE = TO_DATE($P{P_FEC_INI}, 'DD/MM/YYYY')OR CUENTA IN(2,4))
+   AND (FEC_HASTA = TO_DATE($P{P_FEC_FIN}, 'DD/MM/YYYY')OR CUENTA IN(2,4))
+   AND EMPR = $P{P_EMPRESA}
+   AND TIPO_INF = 'BBGG'
+   AND CUENTA <> 170
+UNION
+SELECT CUENTA,
+       DECODE(IND_IMPUTABLE,'T',NULL,DESC_CTAC)DESC_CTAC,
+       TO_NUMBER(DECODE(IND_IMPUTABLE,'T',NULL,(CASE
+         WHEN $P{P_IND_TOT_TIT} = 'N' AND IND_IMPUTABLE = 'N' AND
+              SUBSTR(DESC_CTAC, 1, 5) <> 'Total' THEN
+          NULL
+         ELSE
+          ABS(IMPORTE)
+       END))) IMPORTE,
+       TO_NUMBER(DECODE(IND_IMPUTABLE,'T',NULL,(CASE
+         WHEN $P{P_IND_TOT_TIT} = 'N' AND IND_IMPUTABLE = 'N' AND
+              SUBSTR(DESC_CTAC, 1, 5) <> 'Total' THEN
+          NULL
+         ELSE
+          ABS(IMPORTE_US)
+       END))) IMPORTE_US,
+       LINEAS,
+       GRUPO,
+       DECODE(IND_IMPUTABLE,'T',NULL,(CASE
+         WHEN IMPORTE < 0 AND TIPO_SALDO = 'D' THEN
+          'CR'
+         WHEN IMPORTE > 0 AND TIPO_SALDO = 'C' THEN
+          'DB'
+         ELSE
+          NULL
+       END)) TIPO_SALDO,
+       NIVEL,
+       IND_IMPUTABLE,
+       TO_NUMBER(DECODE(IND_IMPUTABLE,'T',NULL,(CASE
+         WHEN $P{P_IND_TOT_TIT} = 'N' AND IND_IMPUTABLE = 'N' AND
+              SUBSTR(DESC_CTAC, 1, 5) <> 'Total' THEN
+          NULL
+         ELSE
+          ABS(ROUND(IMPORTE / DECODE(IMPORTE_US, 0, 1, IMPORTE_US), 0))
+       END))) TASA
+  FROM CNT_CNTL006_FINAL
+ WHERE (FEC_DESDE = TO_DATE($P{P_FEC_INI}, 'DD/MM/YYYY')OR CUENTA IN(2,4))
+   AND (FEC_HASTA = TO_DATE($P{P_FEC_FIN}, 'DD/MM/YYYY')OR CUENTA IN(2,4))
+   AND EMPR = $P{P_EMPRESA}
+   AND TIPO_INF = 'BBGG'
+   AND CUENTA <> 170
+ ORDER BY 1]]>
+	</queryString>
+	<field name="CUENTA" class="java.math.BigDecimal"/>
+	<field name="DESC_CTAC" class="java.lang.String"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<field name="IMPORTE_US" class="java.math.BigDecimal"/>
+	<field name="LINEAS" class="java.math.BigDecimal"/>
+	<field name="GRUPO" class="java.math.BigDecimal"/>
+	<field name="TIPO_SALDO" class="java.lang.String"/>
+	<field name="NIVEL" class="java.math.BigDecimal"/>
+	<field name="IND_IMPUTABLE" class="java.lang.String"/>
+	<field name="TASA" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="100" splitType="Stretch">
+			<textField evaluationTime="Report">
+				<reportElement x="522" y="10" width="30" height="13" uuid="d7666960-c6d9-4ab6-8050-21bd3390cf40"/>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="135" y="22" width="272" height="13" uuid="c5016bae-ff1e-45ff-8b7b-a97a1c1c3031"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement x="450" y="29" width="102" height="13" uuid="36a278cc-d335-4d1d-82e1-929c09f5c475"/>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="419" y="10" width="45" height="13" uuid="a81248dc-9102-447d-b35c-6e9c241f3d03"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="464" y="10" width="58" height="13" uuid="937d9427-0980-4e22-b880-475fc11950a9"/>
+				<textElement textAlignment="Left">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="71" width="156" height="12" uuid="ed8c7f98-0656-4861-a960-51c3a394c2ce"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Correspondiente al ejercicio : del]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="86" width="156" height="12" uuid="cd0c2b19-4424-4aa5-a3ff-c12c25642e2d"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Incluye hasta el nivel de cuentas:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="171" y="71" width="73" height="12" uuid="3e0fa311-5f0a-4769-bd95-9a2075736715"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FEC_INI}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="259" y="71" width="76" height="12" uuid="394fa4aa-d636-42f5-b9eb-d59f3d386ee6"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FEC_FIN}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="245" y="71" width="13" height="12" uuid="af095896-5378-4e5b-8449-1d333766340e"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[al]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="171" y="86" width="100" height="12" uuid="549db75f-a98f-4cd9-847e-b66306f86c32"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_NIVEL}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement key="table 2" x="5" y="2" width="127" height="54" uuid="b37e3ce9-a09f-4de3-acd0-bd78859d9f03"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="logo" uuid="4b8cf51a-da38-45a2-817f-2f1fd5a79ca3">
+						<datasetParameter name="P_EMPRESA">
+							<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="105" uuid="1247bb84-a32e-47b1-b83f-f608e8a02202">
+						<jr:detailCell height="66" rowSpan="1">
+							<image hAlign="Left">
+								<reportElement x="0" y="0" width="105" height="66" uuid="6cd2bc61-8eac-4de7-a4cd-0734ba36e04a"/>
+								<imageExpression><![CDATA[$F{LOGO}]]></imageExpression>
+							</image>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="15" splitType="Stretch">
+			<staticText>
+				<reportElement x="5" y="0" width="100" height="12" uuid="a63c4102-39d6-4ae0-b20b-b5750299bdfe"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Cuentas]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="11" width="553" height="1" uuid="87ef88da-da5e-4cd5-9f40-7c95d8775842"/>
+			</line>
+			<staticText>
+				<reportElement x="217" y="0" width="54" height="12" uuid="27f09c38-1190-464c-9212-126cfce46fbd"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Gs]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="319" y="0" width="62" height="12" uuid="2c7d2beb-3cf5-4bce-b123-d67850aada0f"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Us]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="407" y="0" width="64" height="12" uuid="31bbbf6e-ee29-4242-982b-9800b3ed1d0c"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Gs/Us]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement style="style1" x="5" y="1" width="195" height="10" uuid="17b1b1b5-9f03-41c3-abc8-9f613a6986b2"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_CTAC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="style1" x="271" y="0" width="35" height="10" uuid="1b3f8cd6-37ad-4a6d-9032-0c097efd9f64"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO_SALDO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement style="style1" x="207" y="0" width="64" height="10" uuid="ddeed9d0-2cbe-4cf5-85d3-39a429bcad53"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="style1" x="317" y="0" width="64" height="10" uuid="959898ce-f881-43f8-a520-5de544eecb49"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_US}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement style="style1" x="407" y="1" width="64" height="10" uuid="a05d60c5-e17f-465f-a27d-387941b07148"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TASA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="10">
+			<staticText>
+				<reportElement x="5" y="0" width="100" height="10" uuid="fe32e2dc-abd9-4ada-8c00-7348beec94f9"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Fin Listado...]]></text>
+			</staticText>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

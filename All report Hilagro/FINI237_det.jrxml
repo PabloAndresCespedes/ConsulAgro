@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINI237_det" language="groovy" columnCount="3" pageWidth="425" pageHeight="421" orientation="Landscape" columnWidth="132" leftMargin="10" rightMargin="17" topMargin="11" bottomMargin="14" uuid="6e831bc2-f068-41d0-b6a2-24eacd48e8d6">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<subDataset name="LOGO" uuid="71f7f4de-112b-47f2-af1f-d4b86fc13172">
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT EMPR_LOGO LOGO
+FROM GEN_EMPRESA
+WHERE EMPR_CODIGO = $P{P_EMPRESA}]]>
+		</queryString>
+		<field name="LOGO" class="java.io.InputStream"/>
+	</subDataset>
+	<subDataset name="CONVERTIR_NRO" uuid="905df216-3a81-4605-aaea-ca4180b312a8">
+		<parameter name="P_CLIENTE" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_RECIBO" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_IMP_GEN" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_MONEDA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT X.*,SUBSTR(MONTO, 1, 65) PRIMER, SUBSTR(MONTO, 66) SEGUNDO
+  FROM (SELECT TO_CHAR($P{P_MONEDA}) MONEDA,
+               TO_CHAR($P{P_CLIENTE}) CLIENTE,
+               TO_CHAR(RPAD(GENERAL.FP_CONV_NRO_TXT($P{P_IMP_GEN}, $P{P_MONEDA}),
+                    196,
+                    '-')) MONTO
+          FROM DUAL) X]]>
+		</queryString>
+		<field name="MONEDA" class="java.lang.String"/>
+		<field name="CLIENTE" class="java.lang.String"/>
+		<field name="MONTO" class="java.lang.String"/>
+		<field name="PRIMER" class="java.lang.String"/>
+		<field name="SEGUNDO" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NRO_REC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FORMATO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT R.DOC_NETO_EXEN_MON IMPORTE_RECIBO,
+       TO_CHAR(M.MON_CODIGO) MON_CODIGO,
+       M.MON_SIMBOLO,
+        replace(to_char(R.DOC_NRO_DOC,'000g000g0000000'),',','-')NRO_RECIBO,
+       C.CLI_NOM,
+       C.CLI_RUC,
+       TO_CHAR(F.DOC_NRO_DOC) NRO_FACTURA,
+       UP.PAG_IMP_MON IMPORTE_COBRO_CUOTA,
+       (SUM(UP.PAG_IMP_MON)OVER(PARTITION BY C.CLI_NOM)) IMPORTE_GEN,
+       MON_DEC_IMP,
+       S.SUC_DIR || ' , ' || TO_CHAR(R.DOC_FEC_DOC, 'DD') || ' de ' ||
+       RTRIM(TO_CHAR(R.DOC_FEC_DOC, 'MONTH', ' NLS_DATE_LANGUAGE = SPANISH')) || ' de ' ||
+       TO_CHAR(R.DOC_FEC_DOC, 'YYYY') || '.' FECHA_RECIBO,
+       SUC.SUC_ABREV,
+
+ cli_codigo,
+row_number() over (partition by cli_codigo order by cli_codigo) cantidad
+  FROM FIN_DOCUMENTO   R,
+       FIN_UNION_PAGO  UP,
+       FIN_UNION_CUOTA UC,
+       FIN_DOCUMENTO   F,
+       FIN_CLIENTE     C,
+       GEN_MONEDA      M,
+       GEN_SUCURSAL    S,
+       PER_EMPLEADO    E,
+       GEN_SUCURSAL    SUC
+ WHERE R.DOC_EMPR =$P!{P_EMPRESA}
+   AND R.DOC_CLAVE = UP.PAG_CLAVE_PAGO
+   AND R.DOC_EMPR = UP.PAG_EMPR
+
+   AND UP.PAG_CLAVE_DOC = UC.CUO_CLAVE_DOC
+   AND UP.PAG_EMPR = UC.CUO_EMPR
+
+   AND UP.PAG_FEC_VTO = UC.CUO_FEC_VTO
+   AND UP.PAG_EMPR = UC.CUO_EMPR
+
+   AND UC.CUO_CLAVE_DOC = F.DOC_CLAVE
+   AND UC.CUO_EMPR = F.DOC_EMPR
+
+   AND R.DOC_CLI = C.CLI_CODIGO
+   AND R.DOC_EMPR = C.CLI_EMPR
+
+   AND R.DOC_TIPO_MOV IN (6)
+   AND R.DOC_MON = M.MON_CODIGO
+   AND R.DOC_EMPR = M.MON_EMPR
+
+   AND R.DOC_SUC = S.SUC_CODIGO
+   AND R.DOC_EMPR = S.SUC_EMPR
+
+   AND E.EMPL_CODIGO_CLI(+) = C.CLI_CODIGO
+   AND E.EMPL_EMPRESA(+) = C.CLI_EMPR
+
+   AND SUC.SUC_CODIGO(+) = E.EMPL_SUCURSAL
+   AND SUC.SUC_EMPR(+) = E.EMPL_EMPRESA
+
+   AND R.DOC_NRO_TRANS_COMBUS = $P!{P_NRO_REC}
+
+UNION
+
+SELECT R.DOC_NETO_EXEN_MON IMPORTE_RECIBO,
+       TO_CHAR(M.MON_CODIGO) MON_CODIGO,
+       M.MON_SIMBOLO,
+        replace(to_char(R.DOC_NRO_DOC,'000g000g0000000'),',','-')NRO_RECIBO,
+       C.CLI_NOM,
+       C.CLI_RUC,
+       TO_CHAR(F.DOC_NRO_DOC) NRO_FACTURA,
+       UP.PAG_IMP_MON IMPORTE_COBRO_CUOTA,
+       (SUM(UP.PAG_IMP_MON) OVER(PARTITION BY C.CLI_NOM)) IMPORTE_GEN,
+       MON_DEC_IMP,
+       S.SUC_DIR || ' , ' || TO_CHAR(R.DOC_FEC_DOC, 'DD') || ' de ' ||
+       RTRIM(TO_CHAR(R.DOC_FEC_DOC, 'MONTH', ' NLS_DATE_LANGUAGE = SPANISH')) || ' de ' ||
+       TO_CHAR(R.DOC_FEC_DOC, 'YYYY') || '.' FECHA_RECIBO,
+       SUC.SUC_ABREV,
+ cli_codigo,
+row_number() over (partition by cli_codigo order by cli_codigo) cantidad
+
+  FROM FIN_DOCUMENTO   R,
+       FIN_UNION_PAGO  UP,
+       FIN_UNION_CUOTA UC,
+       FIN_DOCUMENTO   F,
+       FIN_CLIENTE     C,
+       GEN_MONEDA      M,
+       GEN_SUCURSAL    S,
+       PER_EMPLEADO    E,
+       GEN_SUCURSAL    SUC
+ WHERE R.DOC_EMPR = $P!{P_EMPRESA}
+
+   AND R.DOC_CLAVE = UP.PAG_CLAVE_PAGO
+   AND R.DOC_EMPR = UP.PAG_EMPR
+
+   AND UP.PAG_CLAVE_DOC = UC.CUO_CLAVE_DOC
+   AND UP.PAG_EMPR = UC.CUO_EMPR
+
+   AND UP.PAG_FEC_VTO = UC.CUO_FEC_VTO
+   AND UP.PAG_EMPR = UC.CUO_EMPR
+
+   AND UC.CUO_CLAVE_DOC = F.DOC_CLAVE
+   AND UC.CUO_EMPR = F.DOC_EMPR
+
+   AND R.DOC_PROV = C.CLI_CODIGO
+   AND R.DOC_EMPR = C.CLI_EMPR
+
+   AND R.DOC_TIPO_MOV IN (6, 33)
+   AND R.DOC_MON = M.MON_CODIGO
+   AND R.DOC_EMPR = M.MON_EMPR
+
+   AND R.DOC_SUC = S.SUC_CODIGO
+   AND R.DOC_EMPR = S.SUC_EMPR
+
+   AND E.EMPL_CODIGO_CLI(+) = C.CLI_CODIGO
+   AND E.EMPL_EMPRESA(+) = C.CLI_EMPR
+
+   AND SUC.SUC_CODIGO(+) = E.EMPL_SUCURSAL
+   AND SUC.SUC_EMPR(+) = E.EMPL_EMPRESA
+
+   AND R.DOC_NRO_TRANS_COMBUS = $P!{P_NRO_REC}
+
+   ORDER BY 5,14]]>
+	</queryString>
+	<field name="IMPORTE_RECIBO" class="java.math.BigDecimal"/>
+	<field name="MON_CODIGO" class="java.lang.String"/>
+	<field name="MON_SIMBOLO" class="java.lang.String"/>
+	<field name="NRO_RECIBO" class="java.lang.String"/>
+	<field name="CLI_NOM" class="java.lang.String"/>
+	<field name="CLI_RUC" class="java.lang.String"/>
+	<field name="NRO_FACTURA" class="java.lang.String"/>
+	<field name="IMPORTE_COBRO_CUOTA" class="java.math.BigDecimal"/>
+	<field name="IMPORTE_GEN" class="java.math.BigDecimal"/>
+	<field name="MON_DEC_IMP" class="java.math.BigDecimal"/>
+	<field name="FECHA_RECIBO" class="java.lang.String"/>
+	<field name="SUC_ABREV" class="java.lang.String"/>
+	<field name="CLI_CODIGO" class="java.math.BigDecimal"/>
+	<field name="CANTIDAD" class="java.math.BigDecimal"/>
+	<group name="CLIENTE" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{CLI_NOM}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="11">
+			<textField isBlankWhenNull="true">
+				<reportElement x="13" y="1" width="58" height="10" uuid="5454691e-1456-4027-a31c-7c8615dfafba"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_FACTURA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="73" y="1" width="58" height="10" uuid="72f3fff6-0286-4085-959e-4464b75e9ce5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_COBRO_CUOTA}]]></textFieldExpression>
+				<patternExpression><![CDATA[( $F{MON_CODIGO}== "1" ? "#,##0" : "#,##0.00" )]]></patternExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

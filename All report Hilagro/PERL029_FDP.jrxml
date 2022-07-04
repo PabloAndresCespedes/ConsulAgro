@@ -1,0 +1,810 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERL029_FDP" language="groovy" pageWidth="1008" pageHeight="612" orientation="Landscape" columnWidth="968" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c86c84e5-b909-4a98-b4c0-762082401f68">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="3"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_WHERE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESDE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_HASTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMP_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUC_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PERIODO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NIVEL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select empl_legajo,
+               empl_nombre,
+               imp_hd,
+               imp_hn,
+               imp_hde,
+               imp_hne,
+               imp_hfd,
+               imp_hfn,
+               imp_hme,
+              pchd_hd,
+              pchd_hn,
+              pchd_hfd,
+              pchd_hfn,
+              pchd_hde,
+              pchd_hne,
+              pchd_hme,
+               pchd_htot,
+               totimphd,
+               totimphn,
+               totimphfd,
+               totimphfn,
+               totimphde,
+               totimphne,
+               totimphme,
+               totimpgral,
+              dpto_codigo,
+              dpto_desc,
+              FORMA_PAGO,
+              PAGO_DESC
+  from (
+
+        select empl_legajo,
+               empl_nombre,
+               imp_hd,
+               imp_hn,
+               imp_hde,
+               imp_hne,
+               imp_hfd,
+               imp_hfn,
+               imp_hme,
+               'Del ' || to_char(sem_fec_ini, 'dd') || ' al ' ||
+               to_char(sem_fec_fin, 'dd')  ||'- ' || DPTO_DESC semana,
+               sem_fec_ini,
+               sem_fec_fin,
+               sem_hd,
+               sem_hn,
+               sem_hm,
+               PER_PERL029_FINAL_TEMP.fecha pchd_fecha,
+               PER_PERL029_FINAL_TEMP.hd pchd_hd,
+               PER_PERL029_FINAL_TEMP.hn pchd_hn,
+               PER_PERL029_FINAL_TEMP.hfd pchd_hfd,
+               PER_PERL029_FINAL_TEMP.hfn pchd_hfn,
+               PER_PERL029_FINAL_TEMP.hde pchd_hde,
+               PER_PERL029_FINAL_TEMP.hne pchd_hne,
+               PER_PERL029_FINAL_TEMP.hme pchd_hme,
+               PER_PERL029_FINAL_TEMP.htot pchd_htot,
+               totimphd,
+               totimphn,
+               totimphfd,
+               totimphfn,
+               totimphde,
+               totimphne,
+               totimphme,
+               totimpgral,
+               decode(nivel,
+                      'DIARIO',
+                      null,
+                      'PRE-SEMANAL',
+                      'TOTAL HS SEMANA:',
+                      'SEMANAL',
+                      'SEMANA: Del ' ||to_char(sem_fec_ini, 'dd') || ' al ' || to_char(sem_fec_fin, 'dd'),
+                      'EMPLEADO',
+                      'TOTAL EMPLEADO: ' || EMPL_LEGAJO || '-' || EMPL_NOMBRE,
+                      'SECTOR',
+                      'TOTAL SECTOR: ' || DPTO_CODIGO || '-' || DPTO_DESC,
+                      'GENERAL',
+                      'TOTAL GENERAL') descripcion,
+               nivel,
+               secuencia,
+              dpto_codigo,
+              dpto_desc,
+	     NVL(FORMA_PAGO,PAGO) FORMA_PAGO,
+               DECODE(NVL(FORMA_PAGO,PAGO),1,'JORNAL','MENSUAL')PAGO_DESC
+          from PER_PERL029_FINAL_TEMP,
+               (SELECT EMPL_LEGAJO         COD_LEGAJO,
+                       EMPL_EMPRESA        COD_EMPRESA,
+                       empl_ind_hora_extra,
+                       empl_forma_pago     PAGO
+                  FROM PER_EMPLEADO) B
+         where PERIODO = $P!{P_PERIODO}
+           AND EMPL_LEGAJO in
+               (select a.empl_legajo
+                  from per_empleado a
+                 where empl_legajo = a.empl_legajo
+                   and a.empl_sucursal =$P!{P_SUCURSAL}
+                   and a.empl_empresa = $P{P_EMPRESA}
+$P!{P_WHERE}
+)
+           and nivel = 'EMPLEADO'
+           AND EMPL_LEGAJO = COD_LEGAJO
+           AND EMPR = COD_EMPRESA
+           AND EMPR = $P!{P_EMPRESA}
+)
+ order by FORMA_PAGO,dpto_codigo,EMPL_NOMBRE, secuencia]]>
+	</queryString>
+	<field name="EMPL_LEGAJO" class="java.math.BigDecimal"/>
+	<field name="EMPL_NOMBRE" class="java.lang.String"/>
+	<field name="IMP_HD" class="java.math.BigDecimal"/>
+	<field name="IMP_HN" class="java.math.BigDecimal"/>
+	<field name="IMP_HDE" class="java.math.BigDecimal"/>
+	<field name="IMP_HNE" class="java.math.BigDecimal"/>
+	<field name="IMP_HFD" class="java.math.BigDecimal"/>
+	<field name="IMP_HFN" class="java.math.BigDecimal"/>
+	<field name="IMP_HME" class="java.math.BigDecimal"/>
+	<field name="PCHD_HD" class="java.math.BigDecimal"/>
+	<field name="PCHD_HN" class="java.math.BigDecimal"/>
+	<field name="PCHD_HFD" class="java.math.BigDecimal"/>
+	<field name="PCHD_HFN" class="java.math.BigDecimal"/>
+	<field name="PCHD_HDE" class="java.math.BigDecimal"/>
+	<field name="PCHD_HNE" class="java.math.BigDecimal"/>
+	<field name="PCHD_HME" class="java.math.BigDecimal"/>
+	<field name="PCHD_HTOT" class="java.math.BigDecimal"/>
+	<field name="TOTIMPHD" class="java.math.BigDecimal"/>
+	<field name="TOTIMPHN" class="java.math.BigDecimal"/>
+	<field name="TOTIMPHFD" class="java.math.BigDecimal"/>
+	<field name="TOTIMPHFN" class="java.math.BigDecimal"/>
+	<field name="TOTIMPHDE" class="java.math.BigDecimal"/>
+	<field name="TOTIMPHNE" class="java.math.BigDecimal"/>
+	<field name="TOTIMPHME" class="java.math.BigDecimal"/>
+	<field name="TOTIMPGRAL" class="java.math.BigDecimal"/>
+	<field name="DPTO_CODIGO" class="java.math.BigDecimal"/>
+	<field name="DPTO_DESC" class="java.lang.String"/>
+	<field name="FORMA_PAGO" class="java.math.BigDecimal"/>
+	<field name="PAGO_DESC" class="java.lang.String"/>
+	<variable name="PCHD_HD_1" class="java.math.BigDecimal" resetType="Group" resetGroup="DPTO_CODIGO" calculation="Sum">
+		<variableExpression><![CDATA[$F{PCHD_HD}]]></variableExpression>
+	</variable>
+	<variable name="PCHD_HN_1" class="java.math.BigDecimal" resetType="Group" resetGroup="DPTO_CODIGO" calculation="Sum">
+		<variableExpression><![CDATA[$F{PCHD_HN}]]></variableExpression>
+	</variable>
+	<variable name="PCHD_HDE_1" class="java.math.BigDecimal" resetType="Group" resetGroup="DPTO_CODIGO" calculation="Sum">
+		<variableExpression><![CDATA[$F{PCHD_HDE}]]></variableExpression>
+	</variable>
+	<variable name="PCHD_HNE_1" class="java.math.BigDecimal" resetType="Group" resetGroup="DPTO_CODIGO" calculation="Sum">
+		<variableExpression><![CDATA[$F{PCHD_HNE}]]></variableExpression>
+	</variable>
+	<variable name="PCHD_HME_1" class="java.math.BigDecimal" resetType="Group" resetGroup="DPTO_CODIGO" calculation="Sum">
+		<variableExpression><![CDATA[$F{PCHD_HME}]]></variableExpression>
+	</variable>
+	<variable name="TOTIMPHFD_1" class="java.math.BigDecimal" resetType="Group" resetGroup="DPTO_CODIGO" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTIMPHFD}]]></variableExpression>
+	</variable>
+	<variable name="TOTIMPHFN_1" class="java.math.BigDecimal" resetType="Group" resetGroup="DPTO_CODIGO" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTIMPHFN}]]></variableExpression>
+	</variable>
+	<variable name="TOTIMPHFD_2" class="java.math.BigDecimal" resetType="Group" resetGroup="DPTO_CODIGO" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTIMPHFD}]]></variableExpression>
+	</variable>
+	<variable name="TOTIMPHFN_2" class="java.math.BigDecimal" resetType="Group" resetGroup="DPTO_CODIGO" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTIMPHFN}]]></variableExpression>
+	</variable>
+	<variable name="TOTIMPHME_1" class="java.math.BigDecimal" resetType="Group" resetGroup="DPTO_CODIGO" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTIMPHME}]]></variableExpression>
+	</variable>
+	<variable name="TOTIMPHNE_1" class="java.math.BigDecimal" resetType="Group" resetGroup="DPTO_CODIGO" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTIMPHNE}]]></variableExpression>
+	</variable>
+	<variable name="TOTIMPHN_1" class="java.math.BigDecimal" resetType="Group" resetGroup="DPTO_CODIGO" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTIMPHN}]]></variableExpression>
+	</variable>
+	<variable name="TOTIMPHDE_1" class="java.math.BigDecimal" resetType="Group" resetGroup="DPTO_CODIGO" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTIMPHDE}]]></variableExpression>
+	</variable>
+	<variable name="TOTIMPHD_1" class="java.math.BigDecimal" resetType="Group" resetGroup="DPTO_CODIGO" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTIMPHD}]]></variableExpression>
+	</variable>
+	<variable name="TOTIMPGRAL_1" class="java.math.BigDecimal" resetType="Group" resetGroup="DPTO_CODIGO" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTIMPGRAL}]]></variableExpression>
+	</variable>
+	<variable name="total_imp_extra" class="java.math.BigDecimal" resetType="Group" resetGroup="DPTO_CODIGO" calculation="Sum">
+		<variableExpression><![CDATA[$V{TOTIMPHDE_1}+$V{TOTIMPHNE_1}+$V{TOTIMPHME_1}]]></variableExpression>
+	</variable>
+	<variable name="PCHD_HTOT_1" class="java.math.BigDecimal" resetType="Group" resetGroup="DPTO_CODIGO" calculation="Sum">
+		<variableExpression><![CDATA[$F{PCHD_HTOT}]]></variableExpression>
+	</variable>
+	<variable name="total_hs_extras" class="java.math.BigDecimal" resetType="Group" resetGroup="DPTO_CODIGO" calculation="Sum">
+		<variableExpression><![CDATA[$V{PCHD_HDE_1}+$V{PCHD_HNE_1}+$V{PCHD_HME_1}]]></variableExpression>
+	</variable>
+	<group name="FORMA DE PAGO">
+		<groupExpression><![CDATA[$F{FORMA_PAGO}]]></groupExpression>
+		<groupHeader>
+			<band height="20" splitType="Prevent">
+				<textField>
+					<reportElement x="86" y="0" width="196" height="17" uuid="5864f6ce-0a0e-464e-bc62-6c0f5d33443e"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PAGO_DESC}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="100" height="18" uuid="da7a4a9c-bf83-4969-91d0-5bd5a2a3478c"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[FORMA PAGO:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="1"/>
+		</groupFooter>
+	</group>
+	<group name="DPTO_CODIGO">
+		<groupExpression><![CDATA[$F{DPTO_CODIGO}]]></groupExpression>
+		<groupHeader>
+			<band height="35">
+				<staticText>
+					<reportElement x="38" y="20" width="181" height="13" uuid="cdd8f1f3-050b-4511-b969-ee6343e8fb5f"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[NOMBRE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="20" width="33" height="13" uuid="4fdc70f4-8b3d-41c2-9662-b3c69b0e4324"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[LEGAJO]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="33" y="0" width="168" height="15" uuid="d4ea0809-598f-4181-9016-840fd71660d5"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DPTO_DESC}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="207" y="22" width="30" height="13" uuid="2217d119-1d7f-4afc-80d4-52c51a74ddce"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HD]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="237" y="22" width="30" height="13" uuid="a1ec60fd-7c7b-4764-8e9b-c71186742da0"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HDE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="267" y="22" width="30" height="13" uuid="5b17932d-b26e-42fc-be55-24a51c17977f"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HN]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="297" y="22" width="30" height="13" uuid="e7ed54fd-9867-430d-823b-f3a9b9b1bafe"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HNE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="327" y="22" width="30" height="13" uuid="4c18f830-f9bd-4ae7-a3da-ee44d5987159"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HME]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="387" y="22" width="30" height="13" uuid="11b1ef5c-1e89-4784-a89e-c42a43cc0c8e"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HFN]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="357" y="22" width="30" height="13" uuid="7bf30598-712e-47d4-aa5c-cb6c44349d7d"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HFD]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="456" y="18" width="35" height="17" uuid="7f2ba3be-e23a-473e-a38e-dcecc1b3e17c"/>
+					<textElement textAlignment="Right">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL GRAL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="513" y="22" width="50" height="13" uuid="efad8afe-693f-4552-836f-16553f54f4d2"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HD]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="510" y="2" width="458" height="13" uuid="3c9af770-ca42-4187-82de-79a07fa53ca8"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[IMPORTE]]></text>
+				</staticText>
+				<line>
+					<reportElement x="510" y="34" width="458" height="1" uuid="34271720-4b0f-4d2e-91fe-3e7af8c6f93d"/>
+				</line>
+				<staticText>
+					<reportElement x="564" y="22" width="50" height="13" uuid="01f95f46-e17b-4ff4-a78a-598e889a3a0e"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HDE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="614" y="22" width="50" height="13" uuid="6fee0365-8b83-410e-b2dd-b9171599aee9"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HN]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="815" y="22" width="50" height="13" uuid="3e650e95-7df0-4f5c-bc04-a176e8ab9a35"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HFN]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="664" y="22" width="50" height="13" uuid="918bda9e-3bb3-4dd2-8b90-becfda0a542c"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HNE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="714" y="22" width="50" height="13" uuid="47bf7c0b-b785-47a1-8fa4-68524db30c47"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HME]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="765" y="22" width="50" height="13" uuid="ef7668bb-d0f0-439a-a1df-3d21bf12cb87"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HFD]]></text>
+				</staticText>
+				<line>
+					<reportElement x="205" y="34" width="288" height="1" uuid="f2c1132f-159e-42a6-b267-ba81846c9e3a"/>
+				</line>
+				<staticText>
+					<reportElement x="204" y="2" width="287" height="13" uuid="df18c53e-c97d-4f99-929f-873bf3e3ce02"/>
+					<box>
+						<pen lineWidth="1.0" lineStyle="Solid"/>
+						<topPen lineWidth="1.0" lineStyle="Solid"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[HORA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="918" y="18" width="50" height="17" uuid="ebae22b8-58f0-4ace-9a8d-9eb07c5eeebe"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL GRAL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="419" y="18" width="35" height="17" uuid="8401c0b6-7d97-48a4-85ed-49b7914c36ad"/>
+					<textElement textAlignment="Right">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL EXTRA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="868" y="18" width="50" height="17" uuid="6c8d6366-6dd8-4b4b-bd40-0b70ed046cc2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL EXTRA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="0" width="88" height="15" uuid="e8300b0c-f72b-4488-9315-57a949164e00"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[DPTO:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="29">
+				<textField>
+					<reportElement x="207" y="0" width="30" height="13" uuid="d967bd4d-a086-46fb-b9c4-ad436a901432"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{PCHD_HD_1}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="267" y="0" width="30" height="13" uuid="3e8fc880-d933-4e04-adaa-64978896dde4"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{PCHD_HN_1}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="237" y="0" width="30" height="13" uuid="f7980c9e-ea2e-4a36-8d70-0673297375d6"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{PCHD_HDE_1}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="297" y="0" width="30" height="13" uuid="0102e0a2-f5b9-486c-8c5f-5055516ae1bc"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{PCHD_HNE_1}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="327" y="0" width="30" height="13" uuid="2389c323-54c9-465e-8e11-e4414ae01de8"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{PCHD_HME_1}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="357" y="0" width="30" height="13" uuid="988cf7ad-c35c-47d4-a8ee-3e4a9cdf3e25"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTIMPHFD_1}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="387" y="0" width="30" height="13" uuid="8c830604-4586-4ea7-8a0a-a08d05724caf"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTIMPHFN_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="765" y="0" width="50" height="13" uuid="85300c63-c427-450b-b399-66924e7419f8"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTIMPHFD_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="815" y="0" width="50" height="13" uuid="298810b1-7f72-42fb-b125-7eedd18af3a2"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTIMPHFN_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="714" y="0" width="50" height="13" uuid="d8421e57-4d76-41f5-8ce2-5cb96f80cdfe"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTIMPHME_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="664" y="0" width="50" height="13" uuid="abf3a766-e41c-4808-834f-163ab4c86665"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTIMPHNE_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="614" y="0" width="50" height="13" uuid="559dfa18-018b-47dc-849d-9e62188ee5ed"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTIMPHN_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="564" y="0" width="50" height="13" uuid="efe37784-7c0d-4f93-8895-54c1963265e0"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTIMPHDE_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="513" y="0" width="50" height="13" uuid="29b0374f-46de-402b-aca2-8fc52879732b"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTIMPHD_1}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="918" y="0" width="50" height="13" uuid="007ed5bc-16d2-4160-b235-60f59364ccd9"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTIMPGRAL_1}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="868" y="0" width="50" height="13" uuid="84a058e2-3781-48d9-950c-91a208690501"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{total_imp_extra}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="456" y="0" width="35" height="13" uuid="04a5319f-18dc-465a-8e69-285f3f0ff68a"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{PCHD_HTOT_1}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="420" y="0" width="34" height="13" uuid="4629f80b-4162-4ee7-8515-39c14080ed65"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{total_hs_extras}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="206" y="0" width="286" height="1" uuid="12226749-89d2-49e6-b0ff-90189b4a1119"/>
+				</line>
+				<line>
+					<reportElement x="510" y="0" width="458" height="1" uuid="7588b79d-9758-4781-b491-78db99d06310"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="59" splitType="Stretch">
+			<staticText>
+				<reportElement x="435" y="0" width="105" height="12" uuid="032cc70a-eb2f-4f43-af0a-90fecce96e07"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[PERL029   Hoja N°:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="510" y="0" width="35" height="12" uuid="d45918f0-4c4d-4335-867e-1087a09d3cb5"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="435" y="13" width="105" height="13" uuid="95b4f2e6-eb89-4655-ac28-226ea680e9db"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="13" width="553" height="13" uuid="e13c6dac-4d53-4e7a-8e18-68cb8b85c57c"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LISTADO DE HORAS DEL MES]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="271" y="36" width="100" height="13" uuid="d416a6fc-7634-4df9-a518-1536ec86d2bc"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_HASTA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="75" y="36" width="112" height="13" uuid="b69cbce2-a2bc-42b1-b9b6-98d4d48ca81c"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESDE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="35" width="100" height="13" uuid="5cd0d39f-7d68-48ba-9882-d71f902145d2"/>
+				<textElement>
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Fecha Desde:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="201" y="36" width="100" height="13" uuid="638eebab-16a3-422b-9d9b-53644f5c7dc8"/>
+				<textElement>
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Fecha Hasta:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="2" y="0" width="198" height="13" uuid="b79fe69b-44e1-4b7f-ba9b-2058c95ea173"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_EMP_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="13" width="199" height="13" uuid="482c38ee-0cf7-4b26-adb9-696245e624f4"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SUC_DESC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="14">
+			<textField>
+				<reportElement x="0" y="0" width="33" height="13" uuid="19c43a6a-071c-4649-a28b-0aadb27935e4"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EMPL_LEGAJO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="38" y="0" width="181" height="13" uuid="2d2d5f24-db16-4349-9248-9f75c6b66fa4"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EMPL_NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="207" y="-1" width="30" height="13" uuid="bb2c9dd6-fe1f-4ec2-8442-7fd8223709b7"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PCHD_HD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="237" y="-1" width="30" height="13" uuid="d0f6ae0f-fb14-4a2e-a1a7-7531bdc31c08"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PCHD_HDE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="267" y="-1" width="30" height="13" uuid="585c0508-d052-4961-8408-62a71b75f1f4"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PCHD_HN}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="297" y="0" width="30" height="13" uuid="30f44de5-5e13-4583-9efa-678d8a66607f"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PCHD_HNE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="327" y="0" width="30" height="13" uuid="c8bc9929-9659-462a-8b9d-e60479f96030"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PCHD_HME}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="387" y="0" width="30" height="13" uuid="22783418-9600-4baa-972e-5ca5ed765229"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PCHD_HFN}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="357" y="0" width="30" height="13" uuid="d6a2f2a8-7d03-471b-b47a-9d6ce7dae758"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PCHD_HFD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="456" y="0" width="35" height="14" uuid="33dbff57-9655-418b-8cbc-f696caa93ec8"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PCHD_HTOT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="513" y="0" width="50" height="13" uuid="61364400-dead-4926-a34f-a8f9f97dc1b6"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTIMPHD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="564" y="0" width="50" height="13" uuid="34750829-a407-4433-9f7f-9a936f40513c"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTIMPHDE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="614" y="0" width="50" height="13" uuid="5e665166-cef3-4197-8214-8f3407e44d80"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTIMPHN}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="815" y="0" width="50" height="13" uuid="cb9b0846-e0ef-4417-b152-bcd57b1e8b81"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTIMPHFN}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="664" y="0" width="50" height="13" uuid="9f126fa8-bf28-4ccf-af55-7ca1794c7814"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTIMPHNE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="714" y="0" width="50" height="13" uuid="a244b9be-e515-4e72-9dad-0d83cc1fdda0"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTIMPHME}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="765" y="0" width="50" height="13" uuid="cd8c95d4-1a7f-4e5d-bc5e-bfdcb12141c6"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTIMPHFD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="918" y="0" width="50" height="13" uuid="00339912-f690-42be-a8b4-6039202d3eba"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTIMPGRAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="420" y="0" width="35" height="13" uuid="af51ebec-13de-498f-8492-e968db1c7819"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PCHD_HDE}+$F{PCHD_HNE}+$F{PCHD_HME}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="867" y="0" width="50" height="13" uuid="c6d3c7a5-8e52-4aa7-b187-3b38710c500c"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTIMPHME}+$F{TOTIMPHNE}+$F{TOTIMPHDE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="2" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="1" splitType="Stretch"/>
+	</summary>
+</jasperReport>

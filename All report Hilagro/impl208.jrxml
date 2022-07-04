@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="IMPL208" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a137621c-a092-4eea-a128-4d8ff1b97d4c">
+	<property name="ireport.zoom" value="2.3579476910000086"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="nroImportacion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString language="plsql">
+		<![CDATA[select
+ '(IMPL208) '||to_char(current_date, 'dd-mm-rrrr hh24:mi:ss') f_current,
+ desp_nro         nro_importacion,
+ fcon_codigo      cod_concepto,
+ dcon_tipo_saldo  ind_dbcr,
+ fcon_desc        concepto,
+ ctac_nro ||'-'||ctac_desc cta_contable,
+ decode(dcon_tipo_saldo,'C',
+       (dcon_exen_loc + dcon_grav_loc),
+       ((dcon_exen_loc + dcon_grav_loc) * (-1))
+       ) importe,
+ doc_tipo_mov  tipo_movimiento,
+ doc_fec_doc   f_documento,
+ doc_fec_oper  f_operacion,
+ doc_nro_doc   nro_doc,
+ doc_prov ||'-'||prov_razon_social proveedor
+from  imp_despacho,
+      imp_importacion,
+      fin_concepto,
+      cnt_cuenta,
+      fin_doc_concepto,
+      fin_proveedor,
+      fin_documento,
+      com_factura_rec r
+where imp_clave = dcon_clave_imp
+  and imp_empr  = dcon_empr
+  and fcon_clave = dcon_clave_concepto
+  and fcon_empr  = dcon_empr
+  and ctac_clave = dcon_clave_ctaco
+  and ctac_empr  = dcon_empr
+  and dcon_clave_doc = doc_clave
+  and dcon_empr = doc_empr
+  and desp_clave(+) = imp_clave_desp
+  and desp_empr(+) = imp_empr
+and doc_prov <> imp_proveedor
+  and prov_codigo(+) = doc_prov
+  and prov_empr(+) = doc_empr
+  and fac_clave_doc_fin = doc_clave
+  and fac_empr = doc_empr
+  and fac_alfanumerico is null
+and doc_empr  = 2
+and imp_clave = $P{nroImportacion}]]>
+	</queryString>
+	<field name="F_CURRENT" class="java.lang.String"/>
+	<field name="NRO_IMPORTACION" class="java.math.BigDecimal"/>
+	<field name="COD_CONCEPTO" class="java.math.BigDecimal"/>
+	<field name="IND_DBCR" class="java.lang.String"/>
+	<field name="CONCEPTO" class="java.lang.String"/>
+	<field name="CTA_CONTABLE" class="java.lang.String"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<field name="TIPO_MOVIMIENTO" class="java.math.BigDecimal"/>
+	<field name="F_DOCUMENTO" class="java.sql.Timestamp"/>
+	<field name="F_OPERACION" class="java.sql.Timestamp"/>
+	<field name="NRO_DOC" class="java.math.BigDecimal"/>
+	<field name="PROVEEDOR" class="java.lang.String"/>
+	<variable name="IMPORTE_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="36" splitType="Stretch">
+			<staticText>
+				<reportElement x="12" y="5" width="100" height="15" uuid="a2cd55c0-1046-463b-93af-a0b39ed18c7d"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[TRANSAGRO S.A.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="20" width="100" height="15" uuid="babc3924-1f36-4e2d-bbcb-100fa1c4b389"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[J.E.ESTIGARRIBIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="5" width="555" height="15" uuid="74378867-69bb-4c46-b947-dfffcccb554c"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DETALLE DE GASTOS POR IMPORTACIÓN]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="398" y="5" width="157" height="15" uuid="c5671b84-ffb5-4373-8498-3ac672a80721"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{F_CURRENT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="48" splitType="Stretch">
+			<staticText>
+				<reportElement x="12" y="17" width="181" height="15" uuid="22f5111d-6e58-4f72-8640-9a8e3d0e8200"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cuenta Contable:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="101" y="17" width="459" height="15" uuid="4a405dc9-ad4c-4169-8132-c89a751091b8"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CTA_CONTABLE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="3" y="33" width="40" height="15" uuid="0c771383-bb99-4a66-8b7c-fc007d658dc9"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tip.Mov]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="44" y="33" width="54" height="15" uuid="fb0cd422-2c46-4dc0-821e-e63954822916"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Doc.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="101" y="33" width="59" height="15" uuid="6d4b2925-7aa9-4667-806a-a43ebacd839b"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Oper.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="165" y="33" width="70" height="15" uuid="3b908f19-a990-4e8f-9277-3108c218cabb"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro. Doc.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="241" y="33" width="197" height="15" uuid="4490b159-10c8-4f53-b72f-51a78bde5327"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Proveedor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="473" y="33" width="37" height="15" uuid="e7c318ea-3959-48bf-b4d8-db6e86709e00"/>
+				<textElement textAlignment="Center">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Db.Cr.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="499" y="33" width="54" height="15" uuid="b8b88557-958d-4b67-8f64-a3ca0cf10d94"/>
+				<textElement textAlignment="Right" rotation="None">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="2" width="181" height="15" uuid="33c081ad-783a-4489-bf7c-8335266435ae"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro. Importación:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="101" y="2" width="100" height="15" uuid="582118a3-920c-4736-a333-854748c1cec6"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_IMPORTACION}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement x="3" y="1" width="40" height="13" uuid="c45a76fa-ccbb-4cf1-b598-5933570cad8d"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO_MOVIMIENTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="44" y="1" width="54" height="13" uuid="e3150630-2377-4297-85d1-c01e7ae4c537"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{F_DOCUMENTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="101" y="1" width="59" height="13" uuid="e11daea3-8349-4f6d-82b5-03b67120eeb6"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{F_OPERACION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="165" y="1" width="70" height="13" uuid="fe0a8372-2e9a-4f95-ab44-fc3af9080e79"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_DOC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="241" y="1" width="232" height="13" uuid="14fe7737-b3cb-4c38-9b62-a05d5db239fe"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROVEEDOR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="475" y="1" width="25" height="13" uuid="53e7c508-b116-471d-beda-b8910e09ae4e"/>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IND_DBCR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="498" y="1" width="55" height="13" uuid="24f5868b-40b3-4171-82a2-f7718b1284b6"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="42" splitType="Stretch">
+			<staticText>
+				<reportElement x="362" y="10" width="111" height="15" uuid="78d763e1-126a-419c-9ae1-af63ba1789f9"/>
+				<textElement textAlignment="Right" rotation="None">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total General]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement x="473" y="10" width="80" height="15" uuid="0a52a58a-5b61-4a9a-83f9-65cebd0aba0b"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{IMPORTE_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+	<noData>
+		<band height="50">
+			<staticText>
+				<reportElement x="0" y="15" width="555" height="15" uuid="f126ff64-dabe-4402-9b6e-6c6c4364e882"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[SIN DATOS PARA ESTE NRO DE IMPORTACIÓN]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

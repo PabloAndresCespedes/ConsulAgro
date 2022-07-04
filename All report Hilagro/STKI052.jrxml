@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="STKI052" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bffb6d25-9b5e-44be-b44c-20e34ea05e23">
+	<property name="ireport.zoom" value="1.6105100000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_DOCUT_CLAVE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT DETAT_EMPR EMPRESA,
+       S.DOCUT_NRO_DOC NUMERO,
+       O.OPER_NOMBRE EMISOR,
+       O.OPER_LOGIN EMISOR_LOGIN,
+       S.DOCUT_SUC_DEST || '-' || SUC.SUC_DESC SUCURSAL_DESTINO,
+       S.DOCUT_DEP_DEST || '-' || DEP.DEP_DESC DEPOSITO_DESTINO,
+       S.DOCUT_USER_SOLICIT USER_SOLICIT,
+       OS.OPER_NOMBRE SOLICITANTE,
+       A.ART_DESC ARTICULO,
+       D.DETAT_ART COD_ARTICULO,
+       D.DETAT_ART_CANT CANTIDAD,
+       D.DETAT_DOCU_CLAVE CLAVE,
+       S.DOCUT_FEC_EMIS FECHA,
+       A.ART_UNID_MED UNID_MED,
+       D.DETAT_NRO_LOTE LOTE,
+       D.DETAT_NRO_ITEM ITEM
+  FROM STK_ARTICULO           A,
+       STK_DOCUMENTO_DET_TEMP D,
+       STK_DOCUMENTO_TEMP     S,
+       GEN_OPERADOR           O,
+       GEN_SUCURSAL           SUC,
+       STK_DEPOSITO           DEP,
+       GEN_OPERADOR           OS
+ WHERE A.ART_CODIGO = D.DETAT_ART
+   AND A.ART_EMPR = D.DETAT_EMPR
+
+   AND S.DOCUT_CLAVE = D.DETAT_DOCU_CLAVE
+   AND S.DOCUT_EMPR = D.DETAT_EMPR
+
+   AND SUC.SUC_CODIGO = S.DOCUT_SUC_DEST
+   AND SUC.SUC_EMPR = S.DOCUT_EMPR
+
+   AND DEP.DEP_SUC = S.DOCUT_SUC_DEST
+   AND DEP.DEP_CODIGO = S.DOCUT_DEP_DEST
+   AND DEP.DEP_EMPR = S.DOCUT_EMPR
+
+   AND OS.OPER_LOGIN = S.DOCUT_USER_SOLICIT
+
+   AND S.DOCUT_LOGIN = O.OPER_LOGIN
+
+   AND S.DOCUT_CLAVE = $P{P_DOCUT_CLAVE}
+   AND S.DOCUT_EMPR = $P{P_EMPRESA}
+
+ORDER BY D.DETAT_NRO_ITEM]]>
+	</queryString>
+	<field name="EMPRESA" class="java.math.BigDecimal"/>
+	<field name="NUMERO" class="java.math.BigDecimal"/>
+	<field name="EMISOR" class="java.lang.String"/>
+	<field name="EMISOR_LOGIN" class="java.lang.String"/>
+	<field name="SUCURSAL_DESTINO" class="java.lang.String"/>
+	<field name="DEPOSITO_DESTINO" class="java.lang.String"/>
+	<field name="USER_SOLICIT" class="java.lang.String"/>
+	<field name="SOLICITANTE" class="java.lang.String"/>
+	<field name="ARTICULO" class="java.lang.String"/>
+	<field name="COD_ARTICULO" class="java.math.BigDecimal"/>
+	<field name="CANTIDAD" class="java.math.BigDecimal"/>
+	<field name="CLAVE" class="java.math.BigDecimal"/>
+	<field name="FECHA" class="java.sql.Timestamp"/>
+	<field name="UNID_MED" class="java.lang.String"/>
+	<field name="LOTE" class="java.lang.String"/>
+	<field name="ITEM" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="137" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="103" y="26" width="100" height="20" uuid="81af017f-5b5a-4e3e-868a-9dd2bb858121"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NUMERO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="103" y="46" width="100" height="20" uuid="931d400c-e674-40e5-a6b9-70da28bcb4c8"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EMISOR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="103" y="66" width="100" height="20" uuid="987adfb0-8325-4a73-a542-d7158fce9e1d"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SOLICITANTE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="103" y="86" width="100" height="20" uuid="fe5df198-635d-40f0-8b88-f59d87b8ec33"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SUCURSAL_DESTINO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="103" y="106" width="100" height="20" uuid="66be5ebf-7c5f-45f8-b0ce-b31bed683396"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DEPOSITO_DESTINO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="26" width="100" height="20" uuid="d732fce9-689f-4d00-89d1-38e3384efd83"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro. Translado:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="46" width="100" height="20" uuid="c8c71c96-e7b0-45c5-91f2-3573cd1f3f09"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Emisor:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="66" width="100" height="20" uuid="cbf5106c-dac1-4ff3-8486-aff3287458a2"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Solicitante:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="86" width="100" height="20" uuid="da6b945c-2c5e-41cd-a271-dff5335c248c"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Suc. Destino:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="106" width="100" height="20" uuid="e0e4313f-b25a-4470-bb9b-19377930a23b"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dep. Destino:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="421" y="26" width="100" height="20" uuid="a61e3588-12ae-4c61-a2bb-07450ef83ac1"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="320" y="26" width="100" height="20" uuid="9b2bbb6e-9bc4-427b-be7b-6e4c6e146223"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="220" y="0" width="100" height="20" uuid="42293eaa-4ae1-4ec1-b3b5-c18d68640621"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Traslado interno]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="18" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="2" width="100" height="11" uuid="4bfa4552-4631-4260-8423-1386588e31ec"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cod. Articulo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="145" y="2" width="185" height="11" uuid="7133012c-df24-4e94-9787-21a3ee2d5213"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descripcion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="444" y="2" width="100" height="11" uuid="2777af27-d9ba-4402-9825-5c080f92433b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cantidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="340" y="2" width="93" height="11" uuid="c3f596aa-a6f5-4171-8eb2-4b1922165d68"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Lote]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="105" y="2" width="37" height="11" uuid="150bf07b-91f6-4453-8fb2-6e55de926c90"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[U. M.]]></text>
+			</staticText>
+			<line>
+				<reportElement x="2" y="14" width="542" height="1" uuid="19a06d51-7856-44f7-9809-38d4933cd168"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="2" y="3" width="100" height="11" uuid="24943a78-244b-44ba-8573-48bdf07f736c"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COD_ARTICULO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="145" y="3" width="185" height="11" uuid="711aad28-6cc5-4c24-881e-36a219929af7"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ARTICULO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="444" y="3" width="100" height="11" uuid="e703baf5-db29-424e-9ffb-295f68a2adee"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANTIDAD}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="340" y="3" width="93" height="11" uuid="9f6ebb6c-0162-45f7-bac3-42d9d662e1b2"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LOTE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="105" y="3" width="37" height="11" uuid="134605cf-bd0f-42c5-9a56-635ec5b0944f"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNID_MED}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

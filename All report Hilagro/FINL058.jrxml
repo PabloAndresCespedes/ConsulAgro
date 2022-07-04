@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINL058" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="46c54ebe-1dc9-44ab-b3fd-fff38206b7bd">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USUARIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESDE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_HASTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT NCR_NRO_DOC,
+       NRO_FACTURA,
+       to_char(NCR_FEC_DOC)NCR_FEC_DOC,
+       DOC_SUC,
+       SUCURSAL,
+       NCR_CLI,
+       CLI_NOM CLI_NOMBRE,
+       MOTIVO_ANULACION,
+       NCR_NETO_EXENTO + NCR_NETO_GRAV_LOC_5 + NCR_NETO_GRAV_LOC_10 TOTAL,
+       NCR_COD_USUARIO_CAST,
+       NCR_USUARIO_NOMBRE,
+       ORDEN_CARGA,
+       ESTADO COD_ESTADO,
+       DECODE(ESTADO, 'A', 'ANULADO', 'P', 'PENDIENTE', 'C', 'CONFIRMADO') ESTADO
+  FROM FIN_FINI047_NCR_CAST_C T, FIN_CLIENTE
+ WHERE NCR_CLI = CLI_CODIGO
+   AND T.NCR_EMPR = CLI_EMPR
+   AND T.NCR_EMPR = $P!{P_EMPRESA}
+   AND T.NCR_COD_USUARIO_CAST =$P!{P_USUARIO}
+   AND T.DOC_SUC = $P!{P_SUCURSAL}
+   AND  to_char(T.NCR_FEC_DOC) BETWEEN $P{P_DESDE} AND $P{P_HASTA}
+order by estado,3]]>
+	</queryString>
+	<field name="NCR_NRO_DOC" class="java.math.BigDecimal"/>
+	<field name="NRO_FACTURA" class="java.math.BigDecimal"/>
+	<field name="NCR_FEC_DOC" class="java.lang.String"/>
+	<field name="DOC_SUC" class="java.math.BigDecimal"/>
+	<field name="SUCURSAL" class="java.lang.String"/>
+	<field name="NCR_CLI" class="java.math.BigDecimal"/>
+	<field name="CLI_NOMBRE" class="java.lang.String"/>
+	<field name="MOTIVO_ANULACION" class="java.lang.String"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<field name="NCR_COD_USUARIO_CAST" class="java.math.BigDecimal"/>
+	<field name="NCR_USUARIO_NOMBRE" class="java.lang.String"/>
+	<field name="ORDEN_CARGA" class="java.math.BigDecimal"/>
+	<field name="COD_ESTADO" class="java.lang.String"/>
+	<field name="ESTADO" class="java.lang.String"/>
+	<variable name="TOTAL_1" class="java.math.BigDecimal" resetType="Group" resetGroup="ESTADO" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+	</variable>
+	<group name="ESTADO">
+		<groupExpression><![CDATA[$F{COD_ESTADO}]]></groupExpression>
+		<groupHeader>
+			<band height="40">
+				<staticText>
+					<reportElement x="0" y="20" width="52" height="20" uuid="a99154b9-c5c6-451f-8f64-b04bb7091c5d"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[NCR NRO DOC]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="55" y="20" width="72" height="20" uuid="19a0a40d-a902-4cc1-993e-97b485d3b7a6"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[NRO FACTURA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="144" y="20" width="58" height="20" uuid="bc05dec1-4c91-4f0d-834d-8c980f7176f8"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[NCR FEC DOC]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="223" y="20" width="35" height="20" uuid="971163df-0b72-4668-a4db-c45ab0d8fef1"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CLIENTE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="449" y="18" width="78" height="21" uuid="032aa660-5aa5-4c1c-aa66-853fe95c2b73"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ORDEN CARGA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="527" y="19" width="208" height="20" uuid="b1127268-ff9c-4ddd-98ca-9c4efa5deda3"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MOTIVO ANULACION]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="735" y="20" width="67" height="20" uuid="ce95acf7-1dda-4236-8eb9-2de01c3ae918"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="0" y="0" width="274" height="20" uuid="cdd07b25-0958-4a0b-9598-6c7a3d06886c"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ESTADO}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="38" width="802" height="1" uuid="16c4c5d5-e3d7-4ccf-9cb1-52af7ff56aa6"/>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="16">
+				<textField pattern="#,##0">
+					<reportElement x="735" y="3" width="67" height="13" uuid="574b163f-d7ec-463a-b3d4-2605d712584f"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTAL_1}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="1" width="100" height="13" uuid="87fbaa5f-2d4c-473f-b425-2a7c552f6f6e"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Estado:]]></text>
+				</staticText>
+				<line>
+					<reportElement x="735" y="1" width="67" height="1" uuid="5d292292-6821-4ee2-ac71-6b62019fefbc"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="40" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="802" height="28" uuid="cb2e9ace-1d27-4660-9cf5-4a5278939ed9"/>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LISTADO DE NOTAS DE CREDTOS - CAST]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="28" width="802" height="1" uuid="b5740b09-17dd-454b-9072-aff7f3620114"/>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="76" splitType="Stretch">
+			<textField>
+				<reportElement x="64" y="23" width="100" height="20" uuid="e6d2dc2d-5cdb-4886-8b86-cf54d2ea9310"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NCR_USUARIO_NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="64" y="3" width="100" height="20" uuid="8c1759f5-08d0-4930-84dc-ca43e50a46fa"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="52" height="20" uuid="e1c1b58c-6e70-44f3-accc-796a09b47455"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sucursal:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="20" width="52" height="20" uuid="f676ba93-43c7-4027-9a0c-30ab11e3e86b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Usuario:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="64" y="43" width="100" height="20" uuid="d480a3f0-3395-4788-9e04-f2cc9047e2d4"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESDE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="244" y="43" width="100" height="20" uuid="e252b20d-8862-48f0-b72c-738ef552a318"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_HASTA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="40" width="52" height="20" uuid="9673c71a-da45-4c92-931c-452d534491ba"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Desde:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="192" y="43" width="52" height="20" uuid="bd20b9f1-95dc-44c4-a67d-4de4569274cf"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Desde:]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="1" width="52" height="13" uuid="3ee41f81-473d-4887-9508-f71282a1eed8"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NCR_NRO_DOC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="55" y="0" width="72" height="13" uuid="18e59282-178c-46ff-b731-16ad758864b9"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_FACTURA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="134" y="0" width="58" height="13" uuid="28b7c550-7586-4bca-ad87-5c7bc2061296"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NCR_FEC_DOC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="470" y="0" width="57" height="13" uuid="c8ef1309-694c-4c6d-830e-a9916bdcc600"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDEN_CARGA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="735" y="1" width="67" height="13" uuid="3f7fdf72-bf2d-4ae8-9f2d-c68e8889cba0"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="527" y="0" width="208" height="13" uuid="789ed05c-15f5-4b60-8b22-bd30f7157cc0"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MOTIVO_ANULACION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="266" y="1" width="196" height="13" uuid="461624b8-c064-4a0b-8069-6227251742e4"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CLI_NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="202" y="1" width="56" height="13" uuid="3f1815d2-2211-4f5c-92cf-188fdb6f020f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NCR_CLI}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="16" splitType="Stretch">
+			<textField pattern="#,##0">
+				<reportElement x="735" y="0" width="67" height="13" uuid="7b9f99c5-8ec1-4d66-ba36-da94e5526cb2"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="13" uuid="759bbfff-a690-4cc5-a997-79cb8c5a4d51"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total General:]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

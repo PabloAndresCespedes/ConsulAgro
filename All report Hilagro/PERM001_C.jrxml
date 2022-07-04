@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERM001_C" pageWidth="595" pageHeight="842" columnWidth="455" leftMargin="70" rightMargin="70" topMargin="20" bottomMargin="20" uuid="57cf517c-44ea-41bb-9b2d-84cd03749eb4">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FIRMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CARGO_FIRMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPR_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_LEGAJO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT A.EMPL_NOMBRE || ' ' || EMPL_APE NOMBRE,
+       replace(REPLACE(to_Char(A.EMPL_DOC_IDENT, '999G999G999G999'),
+                       ' ',
+                       ''),
+               ',',
+               '.') NRO_DOC,
+       CASE
+         WHEN A.EMPL_SEXO = 'F' THEN
+          'la Sra.'
+         else
+          'el Sr.'
+       END dis,
+       CASE
+         WHEN A.EMPL_SEXO = 'F' THEN
+          'SEÑORA'
+         else
+          'SEÑOR'
+       END dis2,
+       C.CAR_DESC CARGO,
+       DPP.AREDPP_DESC AREA,
+       CASE
+         WHEN SUC_CODIGO IN (1, 5) THEN
+          'Dr. Juan E. Estigarribia'
+         WHEN SUC_CODIGO IN (10) THEN
+          'Caacupé'
+         WHEN SUC_CODIGO IN (6) THEN
+          'Santa Rosa del Aguaray'
+         else
+          initcap(S.SUC_LOCALIDAD)
+       END || ', ' || to_char(sysdate, 'DD') || ' de ' ||
+       LTRIM(RTRIM(to_char(sysdate, 'month', 'nls_date_language=spanish'))) ||
+       ' de ' || to_char(sysdate, 'yyyy') fecha,
+       to_char(sysdate, 'DD') || ' de ' ||
+       LTRIM(RTRIM(to_char(sysdate, 'month', 'nls_date_language=spanish'))) ||
+       ' de ' || to_char(sysdate, 'yyyy') fecha_salida,
+       to_char(EMPL_FEC_INGRESO, 'DD') || ' de ' ||
+       LTRIM(RTRIM(to_char(EMPL_FEC_INGRESO,
+                           'month',
+                           'nls_date_language=spanish'))) || ' de ' ||
+       to_char(EMPL_FEC_INGRESO, 'yyyy') fecha_entrada,
+       CASE
+         WHEN SUC_CODIGO IN (1, 5) THEN
+          'Dr. Juan E. Estigarribia'
+         WHEN SUC_CODIGO IN (10) THEN
+          'Caacupé'
+         WHEN SUC_CODIGO IN (6) THEN
+          'Santa Rosa del Aguaray'
+         else
+          initcap(S.SUC_LOCALIDAD)
+       END || ' a los ' || to_char(sysdate, 'DD') || ' dias del mes ' ||
+       LTRIM(RTRIM(to_char(sysdate, 'month', 'nls_date_language=spanish'))) ||
+       ' del año ' || to_char(sysdate, 'yyyy') fecha_desc,
+       empl_legajo,
+       to_char(sysdate, 'DD') || ' de ' ||
+       LTRIM(RTRIM(to_char(sysdate, 'month', 'nls_date_language=spanish'))) dia_mes,
+       CASE
+         WHEN SUC_CODIGO IN (1, 5) THEN
+          'Capital Humano'
+         else
+          'la sucursal de ' || initcap(S.SUC_desc)
+       end oficina,
+       SUC_CODIGO,
+       E.EMPR_RAZON_SOCIAL
+  FROM PER_EMPLEADO     A,
+       PER_CARGO        C,
+       GEN_DEPARTAMENTO D,
+       GEN_SUCURSAL     S,
+       PER_AREA_DPP     DPP,
+       GEN_EMPRESA      E
+ WHERE EMPL_CARGO = CAR_CODIGO
+   AND EMPL_EMPRESA = CAR_EMPR
+   AND EMPL_DEPARTAMENTO = DPTO_CODIGO
+   AND EMPL_EMPRESA = DPTO_EMPR
+   AND DPP.AREDPP_CLAVE = A.EMPL_AREA_ORGANI
+   AND DPP.AREDPP_EMPR = A.EMPL_EMPRESA
+   AND S.SUC_CODIGO = d.dpto_suc
+   AND D.DPTO_EMPR = S.SUC_EMPR
+   AND E.EMPR_CODIGO = EMPL_EMPRESA
+   AND EMPL_LEGAJO = $P!{P_LEGAJO}
+   AND EMPL_EMPRESA =$P!{P_EMPRESA}]]>
+	</queryString>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="NRO_DOC" class="java.lang.String"/>
+	<field name="DIS" class="java.lang.String"/>
+	<field name="DIS2" class="java.lang.String"/>
+	<field name="CARGO" class="java.lang.String"/>
+	<field name="AREA" class="java.lang.String"/>
+	<field name="FECHA" class="java.lang.String"/>
+	<field name="FECHA_SALIDA" class="java.lang.String"/>
+	<field name="FECHA_ENTRADA" class="java.lang.String"/>
+	<field name="FECHA_DESC" class="java.lang.String"/>
+	<field name="EMPL_LEGAJO" class="java.math.BigDecimal"/>
+	<field name="DIA_MES" class="java.lang.String"/>
+	<field name="OFICINA" class="java.lang.String"/>
+	<field name="SUC_CODIGO" class="java.math.BigDecimal"/>
+	<field name="EMPR_RAZON_SOCIAL" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="802" splitType="Stretch">
+			<staticText>
+				<reportElement x="3" y="173" width="161" height="20" uuid="326d70db-316c-4c45-90e6-fdac36bff9a5"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[A quien corresponda.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="210" width="161" height="20" uuid="c558e8d0-d344-4b33-9727-cd378f149196"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[Presente]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="3" y="254" width="453" height="130" uuid="cbed7363-2069-4e83-8b8d-acc8239f70a2"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" size="12"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CERTIFICAMOS, que " +$F{DIS}+ " " +$F{NOMBRE}+ " con C.I. N.º " +$F{NRO_DOC}+ ", es colaborador de la Empresa " +$F{EMPR_RAZON_SOCIAL}+ ", desde la fecha "+$F{FECHA_ENTRADA}+", desempeñándose en el cargo de " +$F{CARGO}+ "  del área " +$F{AREA}+ ".\n\n"+
+"Se expide el presente certificado para los fines que hubiere lugar en la Ciudad de "+$F{FECHA_DESC}+"."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="493" width="240" height="15" uuid="032ff4de-5df4-480d-a102-db52ed5c4807"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FIRMA}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="120" y="477" width="227" height="1" uuid="0827c903-55aa-4e6b-9e23-ba39e334b2ff"/>
+			</line>
+			<textField>
+				<reportElement x="114" y="478" width="240" height="15" uuid="98735968-2110-45f3-95bd-3778a4e2bcf3"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_CARGO_FIRMA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="122" width="455" height="20" uuid="9823a6f8-dc06-45ca-92ec-7d2690e83f4b"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CERTITICADO DE TRABAJO]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+</jasperReport>

@@ -1,0 +1,829 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERC002_RT" language="groovy" pageWidth="595" pageHeight="935" columnWidth="557" leftMargin="19" rightMargin="19" topMargin="20" bottomMargin="20" uuid="9c2dc00f-2abb-42ec-85a9-03f1b726a78d">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="LIQUIDACION" uuid="774f378f-ea14-4d5f-a1ef-05e99dc9cc26">
+		<queryString>
+			<![CDATA[SELECT  T.DES_CON_COD,
+        NULL TIPO,
+        UPPER(CASE
+         WHEN DES_CON_DESC = 'AGUINALDO' THEN
+          'AGUINALDO PROPORCIONAL ' || TO_CHAR(RDE_FECHA, 'YYYY')
+         WHEN  DES_CON_DESC   = 'SALARIO' THEN
+          'SALARIO PROPORCIONAL ' || TO_CHAR(RDE_FECHA,'Month YYYY','nls_date_language=spanish')
+           WHEN  DES_CON_COD   = 4 THEN
+          DES_CON_DESC||' 9%'
+         WHEN  DES_CON_COD   = 31 THEN
+          DES_CON_DESC||' 5%'
+          ELSE
+            DES_CON_DESC
+          END) CONCEPTO,
+          CASE WHEN DES_CANT_PRO IS NOT NULL THEN
+           DES_DIAS
+           ELSE
+           DES_DIAS
+          END||
+          CASE WHEN NVL(DES_DIAS,0)=1 THEN
+            ' DIA'
+        WHEN NVL(DES_DIAS,0)>1 THEN
+            ' DIAS'
+         END DES_DIAS,
+       SUM(T.DES_IMPORTE) IMPORTE,
+
+       A.PCON_IND_DBCR
+  FROM PER_DESVINCULACION_DETALLE T, PER_CONCEPTO A, PER_REGISTRO_DESVINC_EMPL C
+ WHERE T.DES_EMPR = A.PCON_EMPR
+   AND T.DES_CON_COD = A.PCON_CLAVE
+   AND T.DES_CODIGO = C.RDE_CLAVE
+   AND T.DES_EMPR = C.RDE_EMPR
+   AND T.DES_EMPR =  1
+   AND T.DES_LEGAJO = 20137
+   AND T.DES_CODIGO = 	1069---:P3514_RDE_CLAVE
+   AND T.DES_TIPO NOT IN (12,20,4)
+  GROUP BY T.DES_CON_COD,
+        UPPER(CASE
+         WHEN DES_CON_DESC = 'AGUINALDO' THEN
+          'AGUINALDO PROPORCIONAL ' || TO_CHAR(RDE_FECHA, 'YYYY')
+         WHEN  DES_CON_DESC   = 'SALARIO' THEN
+          'SALARIO PROPORCIONAL ' || TO_CHAR(RDE_FECHA,  'Month YYYY','nls_date_language=spanish')
+           WHEN  DES_CON_COD   = 4 THEN
+          DES_CON_DESC||' 9%'
+         WHEN  DES_CON_COD   = 31 THEN
+          DES_CON_DESC||' 5%'
+          ELSE
+            DES_CON_DESC
+          END) ,
+       CASE WHEN DES_CANT_PRO IS NOT NULL THEN
+           DES_DIAS
+           ELSE
+           DES_DIAS
+          END||
+          CASE WHEN NVL(DES_DIAS,0)=1 THEN
+            ' DIA'
+        WHEN NVL(DES_DIAS,0)>1 THEN
+            ' DIAS'
+         END,
+       T.DES_CANT_PRO,
+       A.PCON_IND_DBCR
+  UNION ALL
+ SELECT 0, 'DEBITO', NULL, NULL, NULL, 'D'
+ FROM DUAL
+
+     UNION ALL
+ SELECT 0, 'CREDITO', NULL, NULL, NULL, 'C'
+ FROM DUAL
+order by 6,1]]>
+		</queryString>
+		<field name="DES_CON_COD" class="java.math.BigDecimal"/>
+		<field name="TIPO" class="java.lang.String"/>
+		<field name="CONCEPTO" class="java.lang.String"/>
+		<field name="DES_DIAS" class="java.lang.String"/>
+		<field name="IMPORTE" class="java.math.BigDecimal"/>
+		<field name="PCON_IND_DBCR" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CARGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NRO_CI" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_AREA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESDE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_HASTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_DESPIDO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NOMBRE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESDE2" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CIUDAD" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLAVE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT A.EMPL_NOMBRE || ' ' || EMPL_APE NOMBRE,
+       replace(REPLACE(to_Char(A.EMPL_DOC_IDENT,'999G999G999G999'),' ',''),',','.')  NRO_DOC,
+       CASE WHEN A.EMPL_SEXO = 'F'THEN
+         'la Sra.'
+         else
+           'el Sr.'
+        END dis,
+       CASE WHEN A.EMPL_SEXO = 'F'THEN
+         'SEÑORA'
+         else
+           'SEÑOR'
+        END dis2,
+       lower(C.CAR_DESC) CARGO,
+       DPP.AREDPP_DESC AREA,
+       CASE WHEN SUC_CODIGO IN (1,5) THEN
+         'Dr. Juan E. Estigarribia'
+	WHEN SUC_CODIGO IN (10) THEN
+            'Caacupé'
+           WHEN SUC_CODIGO IN (6) THEN
+	'Santa Rosa del Aguaray'
+	else
+          initcap(S.SUC_LOCALIDAD)
+         END||', '||to_char(t.rde_fecha,'DD')||' de '||LTRIM(RTRIM(to_char(t.rde_fecha,'month','nls_date_language=spanish')))||' de '||to_char(t.rde_fecha,'yyyy') fecha,
+       to_char(t.rde_fecha,'DD')||' de '||LTRIM(RTRIM(to_char(t.rde_fecha,'month','nls_date_language=spanish')))||' de '||to_char(t.rde_fecha,'yyyy') fecha_salida,
+      to_char(EMPL_FEC_INGRESO,'DD')||' de '||LTRIM(RTRIM(to_char(EMPL_FEC_INGRESO,'month','nls_date_language=spanish')))||' de '||to_char(EMPL_FEC_INGRESO,'yyyy') fecha_entrada,
+        CASE WHEN SUC_CODIGO IN (1,5) THEN
+         'Dr. Juan E. Estigarribia'
+	WHEN SUC_CODIGO IN (10) THEN
+            'Caacupé'
+	 WHEN SUC_CODIGO IN (6) THEN
+	'Santa Rosa del Aguaray'
+else
+          initcap(S.SUC_LOCALIDAD)
+         END||' a los '||to_char(t.rde_fecha,'DD')||' dias del mes '||LTRIM(RTRIM(to_char(t.rde_fecha,'month','nls_date_language=spanish')))||' del año '||to_char(t.rde_fecha,'yyyy') fecha_desc,
+RDE_TIPO_DESVINCULACION,
+empl_legajo,
+to_char(t.rde_fecha,'DD')||' de '||LTRIM(RTRIM(to_char(t.rde_fecha,'month','nls_date_language=spanish'))) dia_mes,
+CASE WHEN SUC_CODIGO IN (1,5) THEN
+   'Capital Humano'
+   else
+     'la sucursal de '||initcap(S.SUC_desc)
+end oficina,
+CASE WHEN ADD_MONTHS(A.EMPL_FEC_INGRESO, 12) > rde_fecha THEN
+          to_char(t.rde_fecha-30,'DD')||' de '||LTRIM(RTRIM(to_char(t.rde_fecha-30,'month','nls_date_language=spanish')))
+     ELSE
+          to_char(t.rde_fecha-45,'DD')||' de '||LTRIM(RTRIM(to_char(t.rde_fecha-45,'month','nls_date_language=spanish')))
+    END MES2,
+CASE WHEN T.RDE_TIPO_DESVINCULACION = 1 AND NVL(T.RDE_REN_EXONERADA,'N') = 'S' THEN
+    3
+      WHEN  T.RDE_TIPO_DESVINCULACION = 1 AND NVL(T.RDE_REN_EXONERADA,'N') = 'N' THEN
+2
+       END  EXONERAR,
+ CASE WHEN RDE_TIPO_DESVINCULACION = 2 AND  NVL(T.RDE_IND_OMISION_PREAVISO,'N')='S'THEN
+         1
+        END PRE_AVISO,
+SUC_CODIGO,
+to_char(T.RDE_FECHA_REN_HASTA,'DD')||' de '||LTRIM(RTRIM(to_char(RDE_FECHA_REN_HASTA,'month','nls_date_language=spanish'))) mes3_R,
+ to_char(T.RDE_FECHA_RENUNCIA,'DD')||' de '||LTRIM(RTRIM(to_char(RDE_FECHA_RENUNCIA,'month','nls_date_language=spanish'))) MES2_R,
+       CASE WHEN SUC_CODIGO IN (1,5) THEN
+         'Dr. Juan E. Estigarribia'
+  WHEN SUC_CODIGO IN (10) THEN
+            'Caacupé'
+ WHEN SUC_CODIGO IN (6) THEN
+	'Santa Rosa del Aguaray'
+          ELSE
+
+          initcap(S.SUC_LOCALIDAD)
+         END||', '||to_char(T.RDE_FECHA_RENUNCIA,'DD')||' de '||LTRIM(RTRIM(to_char(T.RDE_FECHA_RENUNCIA,'month','nls_date_language=spanish')))||' de '||to_char(t.rde_fecha,'yyyy') fecha_R,
+ CASE WHEN T.RDE_TIPO_DESVINCULACION = 5 THEN
+             1
+             WHEN T.RDE_TIPO_DESVINCULACION = 6 THEN
+             2
+
+             ELSE
+               3
+              END HOJA_LIQ
+  FROM PER_REGISTRO_DESVINC_EMPL T, PER_EMPLEADO A, PER_CARGO C, GEN_DEPARTAMENTO D, GEN_SUCURSAL S, PER_AREA_DPP DPP
+ WHERE T.RDE_EMPLEADO = A.EMPL_LEGAJO
+   AND T.RDE_EMPR = A.EMPL_EMPRESA
+   AND EMPL_CARGO = CAR_CODIGO
+   AND EMPL_EMPRESA = CAR_EMPR
+   AND RDE_DEPARTAMENTO = DPTO_CODIGO
+   AND EMPL_EMPRESA = DPTO_EMPR
+   AND DPP.AREDPP_CLAVE(+) =A.EMPL_AREA_ORGANI
+   AND DPP.AREDPP_EMPR(+) = A.EMPL_EMPRESA
+   AND S.SUC_CODIGO = d.dpto_suc
+   AND D.DPTO_EMPR = S.SUC_EMPR
+   AND RDE_CLAVE = 	$P{P_CLAVE}
+   AND EMPL_EMPRESA =$P{P_EMPRESA}]]>
+	</queryString>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="NRO_DOC" class="java.lang.String"/>
+	<field name="DIS" class="java.lang.String"/>
+	<field name="DIS2" class="java.lang.String"/>
+	<field name="CARGO" class="java.lang.String"/>
+	<field name="AREA" class="java.lang.String"/>
+	<field name="FECHA" class="java.lang.String"/>
+	<field name="FECHA_SALIDA" class="java.lang.String"/>
+	<field name="FECHA_ENTRADA" class="java.lang.String"/>
+	<field name="FECHA_DESC" class="java.lang.String"/>
+	<field name="RDE_TIPO_DESVINCULACION" class="java.math.BigDecimal"/>
+	<field name="EMPL_LEGAJO" class="java.math.BigDecimal"/>
+	<field name="DIA_MES" class="java.lang.String"/>
+	<field name="OFICINA" class="java.lang.String"/>
+	<field name="MES2" class="java.lang.String"/>
+	<field name="EXONERAR" class="java.math.BigDecimal"/>
+	<field name="PRE_AVISO" class="java.math.BigDecimal"/>
+	<field name="SUC_CODIGO" class="java.math.BigDecimal"/>
+	<field name="MES3_R" class="java.lang.String"/>
+	<field name="MES2_R" class="java.lang.String"/>
+	<field name="FECHA_R" class="java.lang.String"/>
+	<field name="HOJA_LIQ" class="java.math.BigDecimal"/>
+	<group name="renuncia_2">
+		<groupExpression><![CDATA[$F{NOMBRE}]]></groupExpression>
+		<groupFooter>
+			<band height="802">
+				<printWhenExpression><![CDATA[$F{EXONERAR}==2]]></printWhenExpression>
+				<textField>
+					<reportElement x="34" y="298" width="483" height="214" uuid="5fc43ba6-9f50-4b18-a612-4a0280bc1405"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="12"/>
+						<paragraph lineSpacing="1_1_2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Me dirijo a Usted a fin de comunicarle que la Empresa TRANSAGRO S.A., ha resuelto aceptar su renuncia al puesto de trabajo, presentada por nota de fecha "+$F{MES2_R}+" del cte. año, comunicando que no queda exonerado de la obligación de otorgar preaviso legal por lo que su permanencia en el puesto de trabajo seria hasta el día "+$F{MES3_R}+" del cte. año.  De no poder cumplir con este requisito le será aplicado lo dispuesto en el Art. 90,2° parte del código de trabajo. \n\n"+
+"Por lo tanto, la liquidación de haberes que le corresponde estará a su disposición en la oficina de "+$F{OFICINA}+", el último día de trabajo en horario de oficina. \n\n"+
+"Deseándole éxitos en sus futuros emprendimientos, le saludamos atentamente."]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="53" y="113" width="464" height="20" uuid="84984517-6c09-4b3e-ab52-690e40d41a9f"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA_R}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="31" y="207" width="447" height="20" uuid="705b8377-47f4-4fdc-baba-7c0b6582c04a"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="32" y="244" width="446" height="25" uuid="20aea3de-2f98-4e02-822c-179ac5fa1f6d"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" isUnderline="true"/>
+					</textElement>
+					<text><![CDATA[Presente:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="32" y="166" width="275" height="21" uuid="04ba886c-371d-4181-9d9e-7e957ecf3329"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DIS2}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="34" y="578" width="483" height="165" uuid="d3884027-7c76-4d4b-a2ef-a3813f93abc8"/>
+					<textElement>
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<text><![CDATA[RECIBÍ ORIGINAL: ...............................................
+
+Aclaración de firma: ..............................................
+
+C.I. N.º:..................................................................
+
+Fecha de Recepción:............................................]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="356" y="536" width="159" height="42" uuid="0374b217-2f3e-4c65-afd4-44ce72fb8e7b"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Franz Friesen Friesen Gerente Administrativo]]></text>
+				</staticText>
+				<line>
+					<reportElement x="356" y="536" width="160" height="1" uuid="6a06fafa-d704-40ce-b246-5c7d37614406"/>
+				</line>
+			</band>
+			<band height="895">
+				<printWhenExpression><![CDATA[$F{EXONERAR}==3]]></printWhenExpression>
+				<textField>
+					<reportElement x="31" y="166" width="275" height="21" uuid="897587c4-a587-426a-98cc-62b6ed24c21a"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DIS2}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="52" y="113" width="464" height="20" uuid="08459137-3855-40e1-82eb-9c06fca16449"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA_R}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="30" y="207" width="447" height="20" uuid="83546f42-4de6-4129-8846-5ccb4a70d662"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="31" y="244" width="446" height="25" uuid="a6617256-744f-4163-8a85-d8d035f00c64"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" isUnderline="true"/>
+					</textElement>
+					<text><![CDATA[Presente:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="31" y="299" width="483" height="130" uuid="405099c2-52af-4453-987d-1c22a5624aa6"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="12"/>
+						<paragraph lineSpacing="1_1_2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Tengo el agrado de dirigirme a Ud., en representación de la Empresa TRANSAGRO S.A a fin de comunicarle que hemos decidido aceptar su renuncia presentada por nota de fecha "+$F{DIA_MES}+" delcorriente. -\n\n"+
+"Por lo tanto, la liquidación de haberes que le corresponde está a su disposición en la oficina de la Empresa. - \n\n"+
+"Deseándole éxitos en sus futuros emprendimientos, le saludamos atentamente. \n"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="31" y="527" width="483" height="165" uuid="a2121ff8-0727-4ba6-b8ef-0aa6362bf78b"/>
+					<textElement>
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<text><![CDATA[RECIBÍ ORIGINAL: ...............................................
+
+Aclaración de firma: ..............................................
+
+C.I. N.º:..................................................................
+
+Fecha de Recepción:............................................]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="355" y="466" width="159" height="42" uuid="52ce76ce-1afb-4bdb-9074-2c5c4d960e14"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Franz Friesen Friesen Gerente Administrativo]]></text>
+				</staticText>
+				<line>
+					<reportElement x="355" y="466" width="160" height="1" uuid="fa17138b-f582-40f6-8deb-efd180c50fd7"/>
+				</line>
+			</band>
+			<band height="895">
+				<printWhenExpression><![CDATA[$F{RDE_TIPO_DESVINCULACION}==4]]></printWhenExpression>
+				<textField>
+					<reportElement x="32" y="210" width="447" height="20" uuid="27e938f9-cb5e-41a7-8075-4642cc1c34ed"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="33" y="247" width="446" height="25" uuid="6a24d354-089c-4620-9994-fa4769626a99"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" isUnderline="true"/>
+					</textElement>
+					<text><![CDATA[Presente:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="357" y="469" width="159" height="42" uuid="abfeaf76-b1b4-4ab1-8e8c-443f5c503584"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Franz Friesen Friesen Gerente Administrativo]]></text>
+				</staticText>
+				<line>
+					<reportElement x="357" y="469" width="160" height="1" uuid="1a9f5d97-4787-49fa-95ee-436d9e1f58f3"/>
+				</line>
+				<staticText>
+					<reportElement x="33" y="530" width="483" height="165" uuid="415a10c7-74a1-4b24-a5c5-346cc0fff125"/>
+					<textElement>
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<text><![CDATA[RECIBÍ ORIGINAL: ...............................................
+
+Aclaración de firma: ..............................................
+
+C.I. N.º:..................................................................
+
+Fecha de Recepción:............................................]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="36" y="169" width="275" height="21" uuid="7f854e9d-324c-4e09-98ba-30491adbf7aa"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DIS2}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="54" y="116" width="464" height="20" uuid="2f8327c5-4a6f-4159-bfa2-06e6aaf879da"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="95" y="272" width="403" height="25" uuid="88cb747a-33f6-4e09-a154-932a6ae7c308"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[Comunicación de Termino de Contrato en Periodo de Prueba]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="58" y="272" width="37" height="25" uuid="bc550c1b-c5f9-4984-8e91-1f92575a9b39"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" isUnderline="true"/>
+					</textElement>
+					<text><![CDATA[Ref.: ]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="30" y="318" width="483" height="130" uuid="22749c7c-4f05-42d3-9eea-a5a1f4ae5d53"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="12"/>
+						<paragraph lineSpacing="1_1_2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Le comunicamos por este medio que por encontrarse Ud. en periodo de prueba, la Empresa ha decidido dar por terminado el contrato de trabajo a partir de la fecha "+$F{DIA_MES}+", de conformidad al Art. 60 y concordantes del Código del Trabajo. \n\n"+
+"Sin otro particular, le Saludamos muy atentamente.- \n"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="LIQUIDACION">
+		<groupExpression><![CDATA[$F{NOMBRE}]]></groupExpression>
+		<groupHeader>
+			<band height="895">
+				<subreport>
+					<reportElement x="12" y="109" width="524" height="433" uuid="d8d18e39-4d47-48d4-98b5-cf17dc166e1c">
+						<printWhenExpression><![CDATA[$F{HOJA_LIQ}==3]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="P_EMPLEADO">
+						<subreportParameterExpression><![CDATA[$F{EMPL_LEGAJO}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_DESC_SUCURSAL"/>
+					<subreportParameter name="P_DESC_PROGRAMA"/>
+					<subreportParameter name="P_EMPRESA">
+						<subreportParameterExpression><![CDATA[$P{P_EMPRESA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_FEC_HASTA"/>
+					<subreportParameter name="P_CLAVE">
+						<subreportParameterExpression><![CDATA[$P{P_CLAVE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_PROGRAMA"/>
+					<subreportParameter name="P_DESC_EMPRESA"/>
+					<subreportParameter name="P_WHERE"/>
+					<subreportParameter name="P_FEC_DESDE"/>
+					<subreportParameter name="P_FORMATO"/>
+					<subreportParameter name="P_USUARIO"/>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "PERC002T.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement x="12" y="109" width="524" height="433" uuid="fe8c1198-eb39-43e8-a193-3a112d5decb9">
+						<printWhenExpression><![CDATA[$F{HOJA_LIQ}==2]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="P_EMPRESA">
+						<subreportParameterExpression><![CDATA[$P{P_EMPRESA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_DESC_SUCURSAL"/>
+					<subreportParameter name="P_DESC_EMPRESA"/>
+					<subreportParameter name="P_PROGRAMA"/>
+					<subreportParameter name="P_DESC_PROGRAMA"/>
+					<subreportParameter name="P_FORMATO"/>
+					<subreportParameter name="P_FEC_DESDE"/>
+					<subreportParameter name="P_FEC_HASTA"/>
+					<subreportParameter name="P_USUARIO"/>
+					<subreportParameter name="P_WHERE"/>
+					<subreportParameter name="P_EMPLEADO">
+						<subreportParameterExpression><![CDATA[$F{EMPL_LEGAJO}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_CLAVE">
+						<subreportParameterExpression><![CDATA[$P{P_CLAVE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "PERC002TZ.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement x="13" y="109" width="523" height="361" uuid="32b4064d-5643-405a-a6e5-dda1d7a105cc">
+						<printWhenExpression><![CDATA[$F{HOJA_LIQ}==1]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="P_EMPRESA">
+						<subreportParameterExpression><![CDATA[$P{P_EMPRESA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_DESC_SUCURSAL"/>
+					<subreportParameter name="P_DESC_EMPRESA"/>
+					<subreportParameter name="P_PROGRAMA"/>
+					<subreportParameter name="P_DESC_PROGRAMA"/>
+					<subreportParameter name="P_FORMATO"/>
+					<subreportParameter name="P_FEC_DESDE"/>
+					<subreportParameter name="P_FEC_HASTA"/>
+					<subreportParameter name="P_USUARIO"/>
+					<subreportParameter name="P_WHERE"/>
+					<subreportParameter name="P_EMPLEADO">
+						<subreportParameterExpression><![CDATA[$F{EMPL_LEGAJO}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_CLAVE">
+						<subreportParameterExpression><![CDATA[$P{P_CLAVE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "PERC002F.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="802">
+				<printWhenExpression><![CDATA[$F{EXONERAR} == 3]]></printWhenExpression>
+				<textField>
+					<reportElement x="53" y="115" width="464" height="20" uuid="8fa6c15f-fe56-4ae5-b794-332ec019a3c1"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="34" y="209" width="447" height="20" uuid="177a777f-6a99-43f7-8aaf-98ee15226c89"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="35" y="247" width="446" height="25" uuid="2780f87a-ed62-4b4e-897f-70c87260d3ab"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" isUnderline="true"/>
+					</textElement>
+					<text><![CDATA[Presente:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="36" y="169" width="275" height="21" uuid="bcebedc8-c3ee-4e9c-998c-934700c62f96"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DIS2}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="31" y="300" width="483" height="130" uuid="620848d6-cea3-4955-9494-0ad6902ac854"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="12"/>
+						<paragraph lineSpacing="1_1_2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Tengo el agrado de dirigirme a Ud., en representación de la Empresa TRANSAGRO S.A a fin de comunicarle que hemos decidido aceptar su renuncia presentada por nota de fecha "+$F{DIA_MES}+" delcorriente y exonerarle del plazo de preaviso establecido en el Código de Trabajo, así mismo le informamos que su liquidación correspondiente se encuentra disponible en la Empresa. -\n\n"+
+"Sin otro particular, le saludo atentamente. \n"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="23" y="524" width="483" height="165" uuid="84f0ddaa-1904-48a9-9a79-91ca5e14c20f"/>
+					<textElement>
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<text><![CDATA[RECIBÍ ORIGINAL: ...............................................
+
+Aclaración de firma: ..............................................
+
+C.I. N.º:..................................................................
+
+Fecha de Recepción:.............................................]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="354" y="457" width="159" height="42" uuid="83de589d-1399-4717-a6e8-58014c4aa7c9"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Franz Friesen Friesen Gerente Administrativo]]></text>
+				</staticText>
+				<line>
+					<reportElement x="354" y="457" width="160" height="1" uuid="5cea3d76-6412-43a9-b9ca-cdd19db0442f"/>
+				</line>
+			</band>
+			<band height="802">
+				<printWhenExpression><![CDATA[$F{EXONERAR}==3]]></printWhenExpression>
+				<textField>
+					<reportElement x="32" y="302" width="483" height="130" uuid="0b65d072-ae63-41ed-8d92-76dd194dffde"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="12"/>
+						<paragraph lineSpacing="1_1_2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Tengo el agrado de dirigirme a Ud., en representación de la Empresa TRANSAGRO S.A a fin de comunicarle que hemos decidido aceptar su renuncia presentada por nota de fecha "+$F{DIA_MES}+" delcorriente y exonerarle del plazo de preaviso establecido en el Código de Trabajo, así mismo le informamos que su liquidación correspondiente se encuentra disponible en la Empresa. -\n\n"+
+"Sin otro particular, le saludo atentamente. \n"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="35" y="211" width="447" height="20" uuid="124a79b8-1b37-4d1b-bd02-f2e6a0297218"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="36" y="249" width="446" height="25" uuid="e79d0205-1cb9-42a3-a543-ed26f9e9e785"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" isUnderline="true"/>
+					</textElement>
+					<text><![CDATA[Presente:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="54" y="117" width="464" height="20" uuid="b723d771-1797-49f8-a2c6-05c8ea38b690"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="37" y="171" width="275" height="21" uuid="6ef340ec-cdeb-417d-be72-caa7d87bc4cc"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DIS2}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="34" y="552" width="483" height="165" uuid="40a2947a-ba2c-4149-98a8-438d85adf067"/>
+					<textElement>
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<text><![CDATA[RECIBÍ ORIGINAL: ...............................................
+
+Aclaración de firma: ..............................................
+
+C.I. N.º:..................................................................
+
+Fecha de Recepción:............................................]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="356" y="454" width="159" height="42" uuid="93a24447-a0f3-453a-b50c-1a7ff65d3ea4"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Franz Friesen Friesen Gerente Administrativo]]></text>
+				</staticText>
+				<line>
+					<reportElement x="356" y="454" width="160" height="1" uuid="c13ac23f-ed17-4ec7-ae04-0e1edc41e5ed"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="nota_Desp">
+		<groupExpression><![CDATA[$F{NOMBRE}]]></groupExpression>
+		<groupHeader>
+			<band height="802">
+				<staticText>
+					<reportElement x="34" y="211" width="483" height="25" uuid="3ee97f91-828e-4dc7-8eec-d3deccd94075"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="12" isBold="true" isUnderline="true"/>
+					</textElement>
+					<text><![CDATA[CERTIFICADO DE TRABAJO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="354" y="453" width="159" height="42" uuid="da389484-c237-4712-aabc-9659712c5b19"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Franz Friesen Friesen Gerente Administrativo]]></text>
+				</staticText>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement x="112" y="257" width="406" height="130" uuid="2b10aba3-b1e0-4047-a249-55aa4a1f73cd"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="12" isBold="false"/>
+						<paragraph lineSpacing="1_1_2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Que " +$F{DIS}+ " " +$F{NOMBRE}+ " con C.I. N.º " +$F{NRO_DOC}+ ", ha trabajado en esta empresa desde el "+$F{FECHA_ENTRADA}+" hasta el " +$F{FECHA_SALIDA}+ ", desempeñándose como " +$F{CARGO}+ ". Se expide el presente certificado en cumplimiento a lo dispuesto en el código de Trabajo y para lo que hubiere lugar en derecho. En la Ciudad de "+$F{FECHA_DESC}+"."]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="354" y="453" width="160" height="1" uuid="5bffc541-e693-4f50-b3b4-974793624170"/>
+				</line>
+				<staticText>
+					<reportElement x="12" y="257" width="100" height="20" uuid="1a7a307c-8fa4-48ad-a6b9-7e89695160d6"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" isUnderline="true"/>
+					</textElement>
+					<text><![CDATA[CERTIFICAMOS:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="certificado">
+		<groupExpression><![CDATA[$F{NOMBRE}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="802">
+				<printWhenExpression><![CDATA[$F{PRE_AVISO}==1]]></printWhenExpression>
+				<staticText>
+					<reportElement x="34" y="315" width="483" height="140" uuid="ea207cc8-0e70-428a-a748-3572634d64e7"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="12"/>
+						<paragraph lineSpacing="1_1_2"/>
+					</textElement>
+					<text><![CDATA[Me dirijo a Usted a fin de comunicarle que la empresa ha resuelto prescindir de sus servicios y dar por terminada la relación laboral existente, sin expresión de causa, a partir de la fecha de la presente nota.
+
+Por tanto, la liquidación correspondiente a sus haberes se encuentra a su disposición en la oficina de la empresa, donde se servirá pasar para percibirla en horario normal de trabajo
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="34" y="258" width="483" height="25" uuid="db85b652-97a4-4774-be16-22bb21e5b02a"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" isUnderline="true"/>
+					</textElement>
+					<text><![CDATA[Presente:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="34" y="215" width="447" height="20" uuid="b4a71583-30ed-44a9-9e65-5e6d1dad8b8f"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="70" y="113" width="447" height="20" uuid="5d4040bb-05b3-4af5-95f4-71ece9ab5c00"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="34" y="175" width="430" height="25" uuid="3fe20c00-2cea-4d4b-987c-21eac81d83ec"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DIS2}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="33" y="547" width="483" height="165" uuid="77b4f528-7f5b-4e66-8be4-c51cbff040c9"/>
+					<textElement>
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<text><![CDATA[RECIBÍ ORIGINAL: ...............................................
+
+Aclaración de firma: ..............................................
+
+C.I. N.º:..................................................................
+
+Fecha de Recepción:............................................]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="354" y="486" width="159" height="42" uuid="27bbff1e-e57a-45d5-bc11-4c859e2fb41c"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Franz Friesen Friesen Gerente Administrativo]]></text>
+				</staticText>
+				<line>
+					<reportElement x="354" y="486" width="160" height="1" uuid="36f058d2-090d-4820-935c-20968eefb906"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+</jasperReport>

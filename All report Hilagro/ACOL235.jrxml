@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ACOL235" language="groovy" pageWidth="800" pageHeight="842" columnWidth="760" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ada01e80-630d-428c-a41a-a300d06274eb">
+	<property name="ireport.zoom" value="1.4641000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<subDataset name="CONTRATO" uuid="244cd111-dd60-4a0f-b5d7-6c5974d74b61">
+		<parameter name="P_PERSONA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_CON_CLAVE" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_PRODUCTO" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT *
+  FROM (SELECT PLAN_CONTRATO,
+               PLAN_CANTIDAD,
+               PLAN_MES_ANHO,
+               NVL(C.CON_PROVEEDOR, C.CON_CLIENTE) PERSONA,
+               F.PNA_NOMBRE || ' - ' || F.PNA_APE RAZON_SOCIAL,
+               DECODE(C.CON_IND_CONTRATO, 'V', 'VENTA', 'C', 'COMPRA') TIPO_CONTRATO,
+               T.PROD_CODIGO,
+               T.PROD_DESC,
+               CON_AÑO || '-' || CON_NRO NRO_CONTRATO,
+               PLAN_EMPR
+          FROM ACO_CONTRATO_PLAN P,
+               ACO_CONTRATO      C,
+               ACO_PRODUCTO      T,
+               FIN_PERSONA       F
+         WHERE P.PLAN_CONTRATO = C.CON_CLAVE
+           AND P.PLAN_EMPR = C.CON_EMPR
+
+           AND C.CON_PRODUCTO = T.PROD_CLAVE
+           AND C.CON_EMPR = T.PROD_EMPR
+
+           AND NVL(C.CON_PROVEEDOR, C.CON_CLIENTE) = F.PNA_CODIGO
+           AND CON_EMPR = F.PNA_EMPR
+
+        )
+
+      ,
+
+       (SELECT PRBR_CLAVE_CONTRATO,
+               PRBR_EMPR,
+               TO_CHAR(ES.PRBR_FEC_PESAJE, 'yyyy-mm') ANHO_MES,
+               SUM(PRBR_UNID_NETO) CANTIDAD
+          FROM ACO_PROD_ENT_SAL ES
+         GROUP BY PRBR_CLAVE_CONTRATO,
+                  PRBR_EMPR,
+                  TO_CHAR(ES.PRBR_FEC_PESAJE, 'yyyy-mm'))
+
+ WHERE PRBR_CLAVE_CONTRATO(+) = PLAN_CONTRATO
+   AND ANHO_MES(+) = PLAN_MES_ANHO
+   AND PRBR_EMPR(+) = PLAN_EMPR
+   AND (PLAN_CONTRATO = $P{P_CON_CLAVE} OR $P{P_CON_CLAVE} IS NULL)
+   AND PLAN_EMPR = $P{P_EMPRESA}
+   AND PROD_CODIGO = $P{P_PRODUCTO}
+   AND (PERSONA= $P{P_PERSONA} OR $P{P_PERSONA} IS NULL)]]>
+		</queryString>
+		<field name="PLAN_CONTRATO" class="java.math.BigDecimal"/>
+		<field name="PLAN_CANTIDAD" class="java.math.BigDecimal"/>
+		<field name="PLAN_MES_ANHO" class="java.lang.String"/>
+		<field name="PERSONA" class="java.math.BigDecimal"/>
+		<field name="RAZON_SOCIAL" class="java.lang.String"/>
+		<field name="TIPO_CONTRATO" class="java.lang.String"/>
+		<field name="PROD_CODIGO" class="java.math.BigDecimal"/>
+		<field name="PROD_DESC" class="java.lang.String"/>
+		<field name="NRO_CONTRATO" class="java.lang.String"/>
+		<field name="PLAN_EMPR" class="java.math.BigDecimal"/>
+		<field name="PRBR_CLAVE_CONTRATO" class="java.math.BigDecimal"/>
+		<field name="PRBR_EMPR" class="java.math.BigDecimal"/>
+		<field name="ANHO_MES" class="java.lang.String"/>
+		<field name="CANTIDAD" class="java.math.BigDecimal"/>
+	</subDataset>
+	<parameter name="P_CON_CLAVE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPR_DES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PERSONA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT DISTINCT PLAN_CONTRATO,
+               NVL(C.CON_PROVEEDOR, C.CON_CLIENTE) PERSONA,
+               F.PNA_NOMBRE || ' - ' || F.PNA_APE RAZON_SOCIAL,
+               DECODE(C.CON_IND_CONTRATO, 'V', 'VENTA', 'C', 'COMPRA') TIPO_CONTRATO,
+               T.PROD_CODIGO,
+               T.PROD_DESC,
+               CON_AÑO || '-' || CON_NRO NRO_CONTRATO,
+               PLAN_EMPR
+          FROM ACO_CONTRATO_PLAN P,
+               ACO_CONTRATO      C,
+               ACO_PRODUCTO      T,
+               FIN_PERSONA       F
+         WHERE P.PLAN_CONTRATO = C.CON_CLAVE
+           AND P.PLAN_EMPR = C.CON_EMPR
+
+           AND C.CON_PRODUCTO = T.PROD_CLAVE
+           AND C.CON_EMPR = T.PROD_EMPR
+
+           AND NVL(C.CON_PROVEEDOR, C.CON_CLIENTE) = F.PNA_CODIGO
+           AND CON_EMPR = F.PNA_EMPR
+
+           AND (PLAN_CONTRATO = $P{P_CON_CLAVE} OR $P{P_CON_CLAVE} IS NULL)
+           AND PLAN_EMPR = $P{P_EMPRESA}
+           AND (NVL(C.CON_PROVEEDOR, C.CON_CLIENTE)= $P{P_PERSONA} OR $P{P_PERSONA} IS NULL)
+ORDER BY PLAN_CONTRATO, T.PROD_CODIGO]]>
+	</queryString>
+	<field name="PLAN_CONTRATO" class="java.math.BigDecimal"/>
+	<field name="PERSONA" class="java.math.BigDecimal"/>
+	<field name="RAZON_SOCIAL" class="java.lang.String"/>
+	<field name="TIPO_CONTRATO" class="java.lang.String"/>
+	<field name="PROD_CODIGO" class="java.math.BigDecimal"/>
+	<field name="PROD_DESC" class="java.lang.String"/>
+	<field name="NRO_CONTRATO" class="java.lang.String"/>
+	<field name="PLAN_EMPR" class="java.math.BigDecimal"/>
+	<group name="CON_CLAVE">
+		<groupExpression><![CDATA[$P{P_CON_CLAVE}]]></groupExpression>
+		<groupHeader>
+			<band height="201">
+				<rectangle>
+					<reportElement x="0" y="0" width="760" height="191" uuid="5ea30002-3ffb-42a9-9247-8a305fc25145"/>
+					<graphicElement>
+						<pen lineWidth="0.25"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement x="125" y="87" width="430" height="20" uuid="a36c1d98-4534-48ae-b97f-e00ddf6e10a4"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{RAZON_SOCIAL}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="79" y="87" width="100" height="20" uuid="67e9a656-b897-4f64-ba59-bc1630ebbe14"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Persona:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="78" y="142" width="100" height="20" uuid="f7e27825-bf24-405b-b56a-9016a09c66c4"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Tipo Contrato:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="78" y="112" width="100" height="20" uuid="a957914f-c54d-433c-a4dc-7a4bac6b723f"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Contrato:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="125" y="112" width="176" height="20" uuid="8373035a-ce3a-42de-9748-ac79463f49ef"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NRO_CONTRATO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="148" y="142" width="219" height="20" uuid="edd44152-8a9f-47eb-ac6f-7b0ea3624059"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TIPO_CONTRATO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="198" y="31" width="479" height="20" uuid="8d6f8f47-9f81-450d-88b0-31f3f0d4e363"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="producto">
+		<groupExpression><![CDATA[$F{PROD_CODIGO}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="41">
+				<crosstab>
+					<reportElement x="125" y="0" width="635" height="41" uuid="1e721ae2-3300-4642-a77a-18880db40e62"/>
+					<crosstabDataset>
+						<dataset>
+							<datasetRun subDataset="CONTRATO" uuid="4209dbe0-50c9-4eb9-ae0e-5e331f691e86">
+								<datasetParameter name="P_PERSONA">
+									<datasetParameterExpression><![CDATA[$P{P_PERSONA}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="P_CON_CLAVE">
+									<datasetParameterExpression><![CDATA[$P{P_CON_CLAVE}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="P_EMPRESA">
+									<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="P_PRODUCTO">
+									<datasetParameterExpression><![CDATA[$F{PROD_CODIGO}]]></datasetParameterExpression>
+								</datasetParameter>
+							</datasetRun>
+						</dataset>
+					</crosstabDataset>
+					<rowGroup name="PLAN_CONTRATO" width="0" totalPosition="End">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{PLAN_CONTRATO}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents/>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<columnGroup name="PLAN_MES_ANHO" height="24" totalPosition="End">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{PLAN_MES_ANHO}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+							<cellContents backcolor="#FFFFFF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+									<topPen lineWidth="0.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="0.0"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+								<textField isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="0" y="4" width="110" height="10" uuid="a0564555-debc-4f76-ab86-9be213502998"/>
+									<box>
+										<pen lineWidth="0.25"/>
+										<topPen lineWidth="0.25"/>
+										<leftPen lineWidth="0.25"/>
+										<bottomPen lineWidth="0.25"/>
+										<rightPen lineWidth="0.25"/>
+									</box>
+									<textElement>
+										<font size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{PLAN_MES_ANHO}]]></textFieldExpression>
+								</textField>
+								<staticText>
+									<reportElement style="Crosstab Data Text" x="0" y="14" width="57" height="10" uuid="8f0b0bb6-8591-416e-a773-30717b3922c4"/>
+									<box>
+										<pen lineWidth="0.25"/>
+										<topPen lineWidth="0.25"/>
+										<leftPen lineWidth="0.25"/>
+										<bottomPen lineWidth="0.25"/>
+										<rightPen lineWidth="0.25"/>
+									</box>
+									<textElement>
+										<font fontName="Arial" size="8"/>
+									</textElement>
+									<text><![CDATA[Planificado]]></text>
+								</staticText>
+								<staticText>
+									<reportElement style="Crosstab Data Text" x="57" y="14" width="53" height="10" uuid="28e73114-336d-41a4-944a-c169538bdd5d"/>
+									<box>
+										<pen lineWidth="0.25"/>
+										<topPen lineWidth="0.25"/>
+										<leftPen lineWidth="0.25"/>
+										<bottomPen lineWidth="0.25"/>
+										<rightPen lineWidth="0.25"/>
+									</box>
+									<textElement>
+										<font fontName="Arial" size="8"/>
+									</textElement>
+									<text><![CDATA[Cumplido]]></text>
+								</staticText>
+							</cellContents>
+						</crosstabColumnHeader>
+						<crosstabTotalColumnHeader>
+							<cellContents backcolor="#BFE1FF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+									<topPen lineWidth="0.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="0.0"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+							</cellContents>
+						</crosstabTotalColumnHeader>
+					</columnGroup>
+					<measure name="PLAN_CANTIDADMeasure" class="java.lang.Integer">
+						<measureExpression><![CDATA[$F{PLAN_CANTIDAD}]]></measureExpression>
+					</measure>
+					<measure name="CANTIDAD_CUMPLI" class="java.math.BigDecimal">
+						<measureExpression><![CDATA[$F{CANTIDAD}]]></measureExpression>
+					</measure>
+					<crosstabCell width="111" height="12">
+						<cellContents>
+							<box>
+								<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+								<topPen lineWidth="0.0"/>
+								<leftPen lineWidth="0.0"/>
+								<bottomPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+							<textField pattern="#,##0" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="57" height="12" uuid="ec9fcf5d-5381-42b4-94e9-c5424e79a429"/>
+								<box>
+									<pen lineWidth="0.25"/>
+									<topPen lineWidth="0.25"/>
+									<leftPen lineWidth="0.25"/>
+									<bottomPen lineWidth="0.25"/>
+									<rightPen lineWidth="0.25"/>
+								</box>
+								<textElement>
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{PLAN_CANTIDADMeasure}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="57" y="0" width="53" height="12" uuid="c330365b-fc33-4bb3-b7b4-dced71b2afab"/>
+								<box>
+									<pen lineWidth="0.25"/>
+									<topPen lineWidth="0.25"/>
+									<leftPen lineWidth="0.25"/>
+									<bottomPen lineWidth="0.25"/>
+									<rightPen lineWidth="0.25"/>
+								</box>
+								<textElement>
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{CANTIDAD_CUMPLI}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="12" columnTotalGroup="PLAN_MES_ANHO">
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+								<topPen lineWidth="0.0"/>
+								<leftPen lineWidth="0.0"/>
+								<bottomPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell height="0" rowTotalGroup="PLAN_CONTRATO">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell height="0" rowTotalGroup="PLAN_CONTRATO" columnTotalGroup="PLAN_MES_ANHO">
+						<cellContents/>
+					</crosstabCell>
+				</crosstab>
+				<textField>
+					<reportElement x="48" y="24" width="77" height="12" uuid="b2643b24-6fec-4c28-a7ff-e0c46cd72c32"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PROD_DESC}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="24" width="48" height="12" uuid="0d6ac217-116b-4895-9ab8-d4a92b644add"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Producto:]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

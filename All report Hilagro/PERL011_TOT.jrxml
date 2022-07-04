@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERL011_TOT" language="javascript" pageWidth="1133" pageHeight="842" columnWidth="1093" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cb29c0f7-0e22-4d60-a3fa-48b21d4492f4">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<style name="SALDO_NEGATIVO">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{IMPORTEMeasure} < 0]]></conditionExpression>
+			<style forecolor="#FF3333" backcolor="#FF3333"/>
+		</conditionalStyle>
+	</style>
+	<style name="DOLAR" forecolor="#333333" backcolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{measure1} < 0]]></conditionExpression>
+			<style forecolor="#FF0033" backcolor="#FF0033"/>
+		</conditionalStyle>
+	</style>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="MAYOR" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{IMPORTEMeasure}>$V{promedio}]]></conditionExpression>
+			<style forecolor="#FF0033"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SESSION_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DEPARTAMENTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESDE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_HASTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCU" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCU_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USUARIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT DPTO_CODIGO,
+       DEPARTAMENTO,
+       SUCURSAL,
+       NOMBRE,
+       ANHO_MES,
+       IMPORTE,
+       ROUND(AVG(IMPORTE) OVER(PARTITION BY NOMBRE)) PROMEDIO
+  FROM (SELECT T.DPTO_CODIGO,
+               T.SUCURSAL,
+               T.NOMBRE,
+               ANHO_MES,
+               SUM(T.IMPORTE) IMPORTE,
+               T.DEPARTAMENTO
+          FROM PER_PERL011_C_TEMP T
+         WHERE T.SESSION_ID = $P{P_SESSION_ID}
+         GROUP BY T.DPTO_CODIGO,
+                  T.SUCURSAL,
+                  T.NOMBRE,
+                  ANHO_MES,
+                  DEPARTAMENTO)
+ ORDER BY 2, 1, 3, 4
+]]>
+	</queryString>
+	<field name="DPTO_CODIGO" class="java.math.BigDecimal"/>
+	<field name="DEPARTAMENTO" class="java.lang.String"/>
+	<field name="SUCURSAL" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="ANHO_MES" class="java.lang.String"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<field name="PROMEDIO" class="java.math.BigDecimal"/>
+	<variable name="IMPORTE_1" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_3" class="java.math.BigDecimal" resetType="Group" resetGroup="SUCURSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<group name="SUCURSAL">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<staticText>
+					<reportElement x="7" y="3" width="63" height="11" uuid="37ec415d-a435-4959-b501-7e2223b13d8f"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Sucursal :]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="70" y="3" width="252" height="11" uuid="94f27949-e8bd-42d4-a223-c03daa188d75"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SUCURSAL}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="12"/>
+			<band height="47">
+				<crosstab>
+					<reportElement x="0" y="0" width="810" height="44" uuid="d903c33a-c0c1-44c7-b480-2d2c4d0e41d6"/>
+					<crosstabDataset>
+						<dataset resetType="Group" resetGroup="SUCURSAL"/>
+					</crosstabDataset>
+					<crosstabHeaderCell>
+						<cellContents>
+							<staticText>
+								<reportElement style="Crosstab Data Text" x="221" y="0" width="100" height="18" uuid="34cc70fe-b787-492f-90bf-d8a2a24667ba"/>
+								<textElement verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Promedio]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabHeaderCell>
+					<rowGroup name="NOMBRE" width="221" totalPosition="End">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{NOMBRE}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#BFE1FF" mode="Transparent">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textField isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="2" y="0" width="211" height="13" uuid="09446d05-0886-462f-92c6-608cd33416e1"/>
+									<textElement textAlignment="Left" verticalAlignment="Middle">
+										<font fontName="Arial" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{NOMBRE}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents backcolor="#E6F3FF" mode="Transparent">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<staticText>
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="213" height="20" uuid="64efcb3c-e6b2-4a89-a5e6-22bff2260bc7"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Total Por Concepto ]]></text>
+								</staticText>
+							</cellContents>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="promedio" width="100">
+						<bucket class="java.math.BigDecimal">
+							<bucketExpression><![CDATA[$F{PROMEDIO}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents>
+								<box>
+									<topPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textField pattern="#,##0">
+									<reportElement style="Crosstab Data Text" x="7" y="0" width="88" height="14" uuid="20e33024-9e84-4c85-90f1-ea2f00b9b74d"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{promedio}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<columnGroup name="MES_ANHO" height="18" totalPosition="End">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{ANHO_MES}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+							<cellContents backcolor="#E6F3FF" mode="Transparent">
+								<box>
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textField>
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="97" height="18" uuid="b7ee3b11-22d9-459a-954a-7fe0a8b270dd"/>
+									<textElement verticalAlignment="Middle">
+										<font size="8" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{MES_ANHO}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabColumnHeader>
+						<crosstabTotalColumnHeader>
+							<cellContents/>
+						</crosstabTotalColumnHeader>
+					</columnGroup>
+					<measure name="IMPORTEMeasure" class="java.lang.Integer" calculation="Sum">
+						<measureExpression><![CDATA[$F{IMPORTE}]]></measureExpression>
+					</measure>
+					<crosstabCell width="97" height="14">
+						<cellContents>
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField pattern="#,##0" isBlankWhenNull="true">
+								<reportElement style="MAYOR" x="0" y="0" width="97" height="13" uuid="bd9dc3dc-bb63-47c3-8167-dddee131a3f8"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{IMPORTEMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="97" height="20" rowTotalGroup="NOMBRE">
+						<cellContents backcolor="#E6F3FF" mode="Transparent">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="97" height="20" uuid="f33c2247-5e68-48ef-b037-645461814733"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{IMPORTEMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="14" columnTotalGroup="MES_ANHO">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell width="0" height="20" rowTotalGroup="NOMBRE" columnTotalGroup="MES_ANHO">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="promedio">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="promedio" columnTotalGroup="MES_ANHO">
+						<cellContents/>
+					</crosstabCell>
+				</crosstab>
+			</band>
+			<band height="18"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="7" y="68" width="69" height="11" uuid="1b2b5835-7732-4474-8862-666a5f4606eb"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Fecha desde:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="259" y="68" width="51" height="11" uuid="0c95bd4c-a613-49a8-a12b-ecc5f699f899"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[hasta:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="464" y="68" width="74" height="11" uuid="b92bc2d8-4996-412a-9981-a38e82547ea6"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Departamento:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="4" y="4" width="100" height="20" uuid="9723d15b-34e5-4b84-b41c-b98c8a72e427"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_EMPRESA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="5" y="25" width="100" height="20" uuid="016f3632-3a0d-47a3-80ab-e1acca05d7fd"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SUCU_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="76" y="68" width="131" height="11" uuid="cc09aa9c-c956-41ef-b182-27f232d97e71"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESDE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="310" y="68" width="132" height="11" uuid="69abd0ac-d3b5-4ee5-bdfe-bd1f3dc51b78"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_HASTA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="538" y="68" width="122" height="11" uuid="87fb0304-3089-41ae-b7c4-820c59c0ef2e"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DEPARTAMENTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="310" y="37" width="195" height="20" uuid="c75224c9-5d49-4903-9e7f-6349742a01b1"/>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="291" y="34" width="19" height="20" uuid="6e122a2c-06fa-47af-9389-7f1ca39e4173"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[-]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="123" y="37" width="168" height="20" uuid="19b6493c-3599-4934-8665-2f927d93c535"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$P{P_DESC_EMPRESA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<summary>
+		<band height="1" splitType="Stretch"/>
+	</summary>
+	<noData>
+		<band height="16"/>
+	</noData>
+</jasperReport>

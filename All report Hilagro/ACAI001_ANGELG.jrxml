@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ACAI001_ANGELG" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="07a5c5ae-21d9-4538-bb91-e5104be9f709">
+	<property name="ireport.zoom" value="1.4641000000000035"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_CLAVE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USUARIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT AA.ALUM_NOMBRE,
+       AA.ALUM_APELLIDO,
+       AA.ALUM_CI,
+       AA.ALUM_TELEFONO,
+       DECODE(AA.ALUM_GENERO, 'M', 'MASCULINO', 'F', 'FEMENINO', 'OTROS') genero,
+       AA.ALUM_PAIS,
+       AC.CUR_DESCRIPCION,
+       AC.CUR_ANHO_ELECTIVO,
+       CF.MAT_DESCRIPCION,
+       AM.MAT_FECHA,
+       AM.MAT_DIRECTOR,
+       AM.MAT_CLAVE,
+       amd.MAT_DET_ITEM,
+       cf.MAT_DESCRIPCION,
+       ap.PROF_NOMBRE||' '||ap.PROF_APELLIDO director,
+       sa.SALA_DESC,
+       gp.PAIS_DESC,
+       AA.ALUM_IMG
+  FROM ACA_ALUMNOS_JR   AA,
+       ACA_PROFESOR_JR  AP,
+       ACA_MATRICULA_JR AM,
+       ACA_CURSOS_JR    AC,
+       ACA_MATERIA_JR   CF,
+       ACA_MATRICULA_DET_JR AMD,
+       aca_sala_jr sa,
+       gen_pais gp
+ WHERE AA.ALUM_CLAVE = AM.MAT_ALUM
+   AND AA.ALUM_EMPR = AM.MAT_EMPR
+   AND AA.ALUM_USER = AM.MAT_USER
+
+   AND AM.MAT_CURSO = AC.CUR_CLAVE
+   AND AM.MAT_EMPR = AC.CUR_EMPR
+   AND AM.MAT_USER = AC.CUR_USER
+
+
+
+   AND AC.CUR_CLAVE = CF.MAT_CURSO
+   AND AC.CUR_EMPR = CF.MAT_EMPR
+   AND AC.CUR_USER = CF.MAT_USER
+
+   AND CF.MAT_PROF = AP.PROF_CLAVE
+   AND CF.MAT_EMPR = AP.PROF_EMPR
+   AND CF.MAT_USER = AP.PROF_USER
+
+   AND AM.MAT_CLAVE = AMD.MAT_DET_CLAVE
+   AND AM.MAT_EMPR = AMD.MAT_DET_EMPR
+   AND AM.MAT_USER = AMD.MAT_DET_USER
+
+   AND amd.MAT_DET_SALA = sa.SALA_COD
+   AND amd.MAT_DET_EMPR = sa.SALA_EMPR
+   AND amd.MAT_DET_USER = sa.SALA_USER
+
+   AND gp.PAIS_CODIGO = aa.ALUM_PAIS
+   AND gp.PAIS_EMPR = aa.ALUM_EMPR
+
+   AND AMD.MAT_DET_CLAVE = $P{P_CLAVE}
+   AND AMD.MAT_DET_EMPR = $P{P_EMPRESA}
+   AND AMD.MAT_DET_USER = $P{P_USUARIO}]]>
+	</queryString>
+	<field name="ALUM_NOMBRE" class="java.lang.String"/>
+	<field name="ALUM_APELLIDO" class="java.lang.String"/>
+	<field name="ALUM_CI" class="java.lang.String"/>
+	<field name="ALUM_TELEFONO" class="java.lang.String"/>
+	<field name="GENERO" class="java.lang.String"/>
+	<field name="ALUM_PAIS" class="java.math.BigDecimal"/>
+	<field name="CUR_DESCRIPCION" class="java.lang.String"/>
+	<field name="CUR_ANHO_ELECTIVO" class="java.math.BigDecimal"/>
+	<field name="MAT_DESCRIPCION" class="java.lang.String"/>
+	<field name="MAT_FECHA" class="java.sql.Timestamp"/>
+	<field name="MAT_DIRECTOR" class="java.math.BigDecimal"/>
+	<field name="MAT_CLAVE" class="java.math.BigDecimal"/>
+	<field name="MAT_DET_ITEM" class="java.math.BigDecimal"/>
+	<field name="DIRECTOR" class="java.lang.String"/>
+	<field name="SALA_DESC" class="java.lang.String"/>
+	<field name="PAIS_DESC" class="java.lang.String"/>
+	<field name="ALUM_IMG" class="oracle.jdbc.OracleBlob"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="177" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="0" y="0" width="555" height="177" uuid="8c8d9c44-d128-43b5-9f24-c6098f758c6c"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="425" y="17" width="112" height="20" forecolor="#999999" uuid="ab68cb50-a9aa-4788-aae3-679754d89bb1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[ACAI001_JR_ANGELG]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="145" y="4" width="264" height="43" uuid="be2eb78a-16ce-4bdf-93fe-33570384e430"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial Black" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE ALUMNO]]></text>
+			</staticText>
+			<elementGroup>
+				<staticText>
+					<reportElement x="319" y="90" width="70" height="15" uuid="c92f88bd-a6f9-4460-a55b-37f1b00d7350"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TELEFONO:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="87" y="73" width="153" height="15" uuid="e0435f2a-9366-4c00-bb8a-d5a1ed62dba0"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ALUM_NOMBRE}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="389" y="105" width="148" height="15" uuid="bfc89db9-c825-4ccd-8936-56b8e7a2858c"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PAIS_DESC}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="87" y="104" width="153" height="14" uuid="ac3222c3-c64c-4575-965f-74b4046dca3b"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{GENERO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="87" y="133" width="153" height="15" uuid="7490557e-93a1-47c2-a696-4a5956dd7a46"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CUR_ANHO_ELECTIVO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="319" y="105" width="70" height="15" uuid="2fdc6a6c-3b86-4250-af26-7704f92e7fc7"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[PAÍS:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="319" y="74" width="70" height="15" uuid="1aeec7b2-6bc6-4009-aa12-a6adff886ccb"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[C.I. NRO.:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="12" y="74" width="75" height="15" uuid="d4042239-54f6-4406-bbf4-d2a126342a90"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[NOMBRE(s):]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="12" y="133" width="75" height="15" uuid="382ebdb4-d6d5-4726-ac53-c5cb6def4713"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[AÑO LECTIVO:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="319" y="133" width="75" height="15" uuid="78d6e0fc-d748-4973-9e0e-62373ca8acbf"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CURSO:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="12" y="88" width="75" height="15" uuid="0675cb70-eee5-4b25-8b4f-6aa7431c4db1"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[APELLIDO(s):]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="389" y="74" width="148" height="15" uuid="6f0e87de-1059-4e9a-bec2-ac13d9196f66"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ALUM_CI}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="12" y="103" width="75" height="15" uuid="452a8ae3-2f9d-46b1-b611-74a84dcc072a"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[GÉNERO:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="87" y="88" width="153" height="15" uuid="82f8cd8c-6768-4d0c-a96a-f49ac24a5c2b"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ALUM_APELLIDO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="389" y="90" width="148" height="15" uuid="b3e6b0cb-d119-4e9d-a8d8-39ddcc7eb4b8"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ALUM_TELEFONO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="394" y="149" width="143" height="14" uuid="f899e373-7f8a-4552-a70d-fdf729d55eca"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DIRECTOR}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="319" y="148" width="75" height="15" uuid="45544b3f-0d9d-42a6-a7bc-20ebb2e8e27b"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[DIRECTOR:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="394" y="133" width="143" height="15" uuid="e5abebee-aaf1-41da-9d67-7a1ade28d805"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CUR_DESCRIPCION}]]></textFieldExpression>
+				</textField>
+			</elementGroup>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="13" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="33" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="0" y="2" width="555" height="30" uuid="481fd803-8887-46d0-81fc-18e4555bd4f9"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="9" width="75" height="20" uuid="a8287132-db4b-4717-bce1-75f1cba7c39e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="75" y="9" width="189" height="20" uuid="7958301a-e01d-4023-ab6d-2f8101970376"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[MATERIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="264" y="9" width="184" height="20" uuid="984fbd5b-e374-4235-8dd8-5ffb43c819ab"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[SALA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="448" y="9" width="107" height="20" uuid="73548e4c-64e6-46a3-87fd-601863ae4a56"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="75" height="20" uuid="ad63d53e-a177-4f90-883c-86c18c02d9cd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{MAT_DET_ITEM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="75" y="0" width="189" height="20" uuid="49b77861-61e8-4324-bd85-bebe3da78d9c"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{MAT_DESCRIPCION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="264" y="0" width="184" height="20" uuid="1cf3d306-a609-4738-bcf6-0e4aba499c82"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{SALA_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="448" y="0" width="107" height="20" uuid="71058c12-6123-4580-bb82-a438ea5eda10"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{MAT_FECHA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

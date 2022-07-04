@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SUBreport_STKI0034" language="groovy" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="182cf076-f4e4-4c56-9c03-f5c984bf3594">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_FIN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SOLO_VILLA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_ESTADO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_EMPRESA" class="java.lang.String"/>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String"/>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String"/>
+	<parameter name="P_HORA_DESDE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_HORA_HASTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_DESDE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_HASTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_WHERE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT DISTINCT J.OPER_DESC,
+                C.DOCU_NRO_DOC NRO_DOC,
+                A.OCA_CLAVE    ORDEN_CARGA,
+                A.OCA_FECHA    FECHA_ORDEN_CARGA,
+                DECODE(oper_desc ,'VENTA',0,1) CANT_REMIS,
+                DECODE(oper_desc ,'VENTA',1,0) CANT_FACT,
+                DECODE(oper_desc ,'VENTA',0,1)+ DECODE(oper_desc ,'VENTA',1,0) TOTAL
+  FROM STK_ORDEN_CARGA_LONDON A,
+       STK_DOCUMENTO          C,
+       STK_DOCUMENTO_DET      D,
+       STK_REMI_CONDUCTOR     E,
+       STK_REMI_VEHICULO      F,
+       STK_ARTICULO           G,
+       STK_MARCA              H,
+       STK_LINEA              I,
+       STK_OPERACION          J,
+       GEN_SUCURSAL           GS,
+       (SELECT DOCU_CLAVE_PADRE FROM STK_DOCUMENTO WHERE DOCU_CODIGO_OPER=14 AND DOCU_EMPR=1) ANUL
+ WHERE A.OCA_CLAVE = C.DOCU_OCARGA_LONDON
+   AND C.DOCU_CLAVE = D.DETA_CLAVE_DOC
+   AND A.OCA_CAMION = F.RMAR_VEH_COD
+   AND A.OCA_CONDUCTOR = E.RCONDUCT_COD
+   AND D.DETA_ART = G.ART_CODIGO
+
+
+
+   AND C.DOCU_CLAVE=ANUL.DOCU_CLAVE_PADRE(+)
+   AND ANUL.DOCU_CLAVE_PADRE IS NULL
+
+   AND C.DOCU_CODIGO_OPER not in (11,14)
+   AND G.ART_MARCA = H.MARC_CODIGO
+   AND G.ART_LINEA = I.LIN_CODIGO
+   AND C.DOCU_CODIGO_OPER = J.OPER_CODIGO
+   AND A.OCA_EMPR = C.DOCU_EMPR
+   AND C.DOCU_EMPR = DETA_EMPR
+   AND DETA_EMPR = E.RCONDUCT_EMPR
+   AND E.RCONDUCT_EMPR = F.RMAR_EMPR
+   AND F.RMAR_EMPR = ART_EMPR
+   AND ART_EMPR = MARC_EMPR
+   AND MARC_EMPR = LIN_EMPR
+   AND LIN_EMPR = OPER_EMPR
+   AND OPER_EMPR = SUC_EMPR
+
+   AND OCA_EMPR = $P!{P_EMPRESA}
+   AND  A.OCA_SUC =$P!{P_SUCURSAL}
+   AND A.OCA_FECHA = TO_DATE($P{P_FECHA_FIN},'DD/MM/YYYY')
+   $P!{P_WHERE}
+ORDER BY A.OCA_CLAVE,DOCU_NRO_DOC]]>
+	</queryString>
+	<field name="OPER_DESC" class="java.lang.String"/>
+	<field name="NRO_DOC" class="java.math.BigDecimal"/>
+	<field name="ORDEN_CARGA" class="java.math.BigDecimal"/>
+	<field name="FECHA_ORDEN_CARGA" class="java.sql.Timestamp"/>
+	<field name="CANT_REMIS" class="java.math.BigDecimal"/>
+	<field name="CANT_FACT" class="java.math.BigDecimal"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<variable name="CANT_REMIS_1" class="java.math.BigDecimal" resetType="Group" resetGroup="ORDEN_DE_CARGA" calculation="Sum">
+		<variableExpression><![CDATA[$F{CANT_REMIS}]]></variableExpression>
+	</variable>
+	<variable name="CANT_FACT_1" class="java.math.BigDecimal" resetType="Group" resetGroup="ORDEN_DE_CARGA" calculation="Sum">
+		<variableExpression><![CDATA[$F{CANT_FACT}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_1" class="java.math.BigDecimal" resetType="Group" resetGroup="ORDEN_DE_CARGA" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+	</variable>
+	<group name="ORDEN_DE_CARGA">
+		<groupExpression><![CDATA[$F{ORDEN_CARGA}]]></groupExpression>
+		<groupHeader>
+			<band height="18">
+				<textField evaluationTime="Group" evaluationGroup="ORDEN_DE_CARGA" isBlankWhenNull="true">
+					<reportElement x="308" y="0" width="75" height="11" uuid="5926cac3-b992-4e18-8a07-02990eed97ba"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CANT_REMIS_1}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="ORDEN_DE_CARGA" isBlankWhenNull="true">
+					<reportElement x="389" y="0" width="75" height="11" uuid="fffddba1-0b54-4492-a9d5-3b90ae42c20e"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CANT_FACT_1}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="ORDEN_DE_CARGA" isBlankWhenNull="true">
+					<reportElement x="480" y="0" width="75" height="11" uuid="8f869d4d-06ed-4afd-8193-ebfaf90a6d9b"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTAL_1}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="4" y="0" width="75" height="11" uuid="1fe249b1-e03b-4bab-8219-13b6f35da299"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ORDEN_CARGA}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement x="81" y="0" width="75" height="11" isPrintWhenDetailOverflows="true" uuid="e55cd0e9-a1ea-4857-bc19-f13665cc3538"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA_ORDEN_CARGA}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="99" splitType="Stretch">
+			<staticText>
+				<reportElement x="6" y="56" width="280" height="20" uuid="d4cb9306-8336-4dfa-8fae-4a6d2f8158a5"/>
+				<text><![CDATA[RESUMEN DE DOCUMENTO POR ORDEN DE CARGA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="84" width="75" height="13" uuid="3106afa3-ee9e-4d47-bdc2-0a77607b21bf"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro Carga]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="84" width="75" height="13" uuid="fbab5f60-768a-4143-8956-50a792d83ecc"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="155" y="84" width="75" height="13" uuid="5be47903-8a8a-4537-a69a-1acf738c7414"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo Doc]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="306" y="84" width="75" height="13" uuid="49d62a02-3205-498d-aa85-cc40c4831ccc"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cant Remis]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="230" y="84" width="75" height="13" uuid="efc786ba-0d3b-485a-bf11-afcec46dbdb8"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Numero]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="387" y="84" width="75" height="13" uuid="3d9587d4-4af2-447f-a781-aa85d1194124"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cant Fact]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="478" y="84" width="75" height="13" uuid="04c4b102-396b-4e6d-b4e3-6c90f599714a"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="7" y="35" width="100" height="13" uuid="8f5c6415-7df1-4770-85bb-6b156e5ceafe"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="513" y="14" width="30" height="13" uuid="b3fabaee-fe35-4f4f-a092-e9b9ed1fb096"/>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="455" y="14" width="58" height="13" uuid="8edf9e8e-6cf7-498b-9501-4240d360e512"/>
+				<textElement textAlignment="Left">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de "]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement x="455" y="33" width="88" height="13" uuid="e1cd2cec-6501-4128-a451-2c776f4e35b9"/>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="149" y="23" width="272" height="15" uuid="13c15571-b783-4f21-8245-205446139174"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="7" y="10" width="116" height="13" uuid="f74f02c1-b922-465d-b046-e56fe6dddbfb"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_EMPRESA}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="97" width="555" height="1" uuid="bf1f9733-c93a-4d62-b70a-4e96b2fbbfbf"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="11" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="156" y="0" width="75" height="11" uuid="5706ef02-03d7-4aa8-86db-2e7b15066186"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OPER_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="231" y="0" width="75" height="11" uuid="24a6ad83-9629-4bae-95e8-bc4df9a7b633"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_DOC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

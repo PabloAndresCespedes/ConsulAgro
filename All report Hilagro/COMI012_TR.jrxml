@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="COMI012_TR" language="groovy" pageWidth="600" pageHeight="850" columnWidth="560" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4164a582-40f0-47f6-81c2-84629e4f33da">
+	<property name="ireport.zoom" value="1.652892561983471"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="logo" uuid="57e5b831-fe18-442f-9f73-41e08d3d2147">
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select EMPR_LOGO logo
+from gen_empresa
+WHERE EMPR_CODIGO = $P{P_EMPRESA}]]>
+		</queryString>
+		<field name="LOGO" class="java.io.InputStream"/>
+	</subDataset>
+	<subDataset name="Valor a pagar" uuid="c059547a-fee0-48ed-988f-2e5c1772c615">
+		<parameter name="P_VALOR" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_MON_DESC" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="p_mon" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT   MON_SIMBOLO|| ' ' ||GENERAL.FP_CONV_NRO_TXT($P!{P_VALOR}) VALOR
+         FROM gen_moneda
+        where mon_codigo = $P{p_mon}
+          and mon_empr = $P{P_EMPRESA}]]>
+		</queryString>
+		<field name="VALOR" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="firma" uuid="d1f7e2e5-38a3-49b7-b2a7-5e50535a4d23">
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_RESPONSABLE" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select g.oper_img_blob
+  from per_empleado t, gen_operador g
+ where t.empl_legajo = $P{P_RESPONSABLE}
+   and t.empl_empresa = $P{P_EMPRESA}
+   and t.empl_cod_operador = g.oper_codigo
+   and t.empl_empresa = g.oper_empr]]>
+		</queryString>
+		<field name="OPER_IMG_BLOB" class="java.io.InputStream"/>
+	</subDataset>
+	<subDataset name="cuotas" uuid="d4d9d94f-108b-47cf-9f1a-aa5c1ee2aa1b">
+		<parameter name="P_CLAVE" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_MON" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT ORCUO_NRO,
+       ORCUO_EMPR,
+       ORCUO_FEC_VTO,
+       ORCUO_IMPORTE_MON,
+       ORCUO_IMPORTE_LOC,$P!{P_MON} ORCOM_MON
+  FROM COM_ORDEN_COMPRA_CUO T
+ WHERE T.ORCUO_NRO = $P{P_CLAVE}
+   AND T.ORCUO_EMPR = $P{P_EMPRESA}]]>
+		</queryString>
+		<field name="ORCUO_NRO" class="java.math.BigDecimal"/>
+		<field name="ORCUO_EMPR" class="java.math.BigDecimal"/>
+		<field name="ORCUO_FEC_VTO" class="java.sql.Timestamp"/>
+		<field name="ORCUO_IMPORTE_MON" class="java.math.BigDecimal"/>
+		<field name="ORCUO_IMPORTE_LOC" class="java.math.BigDecimal"/>
+		<field name="ORCOM_MON" class="java.math.BigDecimal"/>
+	</subDataset>
+	<parameter name="P_CLAVE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select t.orcom_fec_emis,
+       t.orcom_prov,
+       p.prov_razon_social,
+       t.orcom_prov_vendedor,
+       t.orcom_prov_vend_tel,
+       d.orcomdet_item,
+       a.art_desc,
+       d.orcomdet_cant,
+       d.orcomdet_precio_unit,
+       t.orcom_nro,
+       d.orcomdet_cant * d.orcomdet_precio_unit importe,
+       t.orcom_mon,
+       m.mon_simbolo,
+       orcomdet_codigo,
+       orcom_responsable,
+       (select v.arch_contenido
+                  from gen_archivo v, adcs.stk_art_documento d
+                 where v.arch_empr = d.sad_empr
+                   and v.arch_clave = d.sad_clave_archivo
+                   and d.sad_art_codigo = a.art_codigo
+                   and d.sad_empr = art_empr) ARCHIVO,
+       sm.marc_desc
+  from COM_ORDEN_COMPRA     t,
+       fin_proveedor        p,
+       com_orden_compra_det d,
+       stk_articulo         a,
+       gen_moneda m,
+       stk_marca sm
+ where t.orcom_nro = $P{P_CLAVE}
+   and t.orcom_empr = $P{P_EMPRESA}
+   and t.orcom_prov = p.prov_codigo
+   and t.orcom_empr = p.prov_empr
+   and d.orcomdet_nro = t.orcom_nro
+   and d.orcomdet_empr = t.orcom_empr
+   and d.orcomdet_art = a.art_codigo
+   and d.orcomdet_empr = a.art_empr
+
+   and a.art_marca = sm.marc_codigo
+   and a.art_empr = sm.marc_empr
+
+   and m.mon_codigo = orcom_mon
+   and m.mon_empr = orcom_empr]]>
+	</queryString>
+	<field name="ORCOM_FEC_EMIS" class="java.sql.Timestamp"/>
+	<field name="ORCOM_PROV" class="java.math.BigDecimal"/>
+	<field name="PROV_RAZON_SOCIAL" class="java.lang.String"/>
+	<field name="ORCOM_PROV_VENDEDOR" class="java.lang.String"/>
+	<field name="ORCOM_PROV_VEND_TEL" class="java.lang.String"/>
+	<field name="ORCOMDET_ITEM" class="java.math.BigDecimal"/>
+	<field name="ART_DESC" class="java.lang.String"/>
+	<field name="ORCOMDET_CANT" class="java.math.BigDecimal"/>
+	<field name="ORCOMDET_PRECIO_UNIT" class="java.math.BigDecimal"/>
+	<field name="ORCOM_NRO" class="java.math.BigDecimal"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<field name="ORCOM_MON" class="java.math.BigDecimal"/>
+	<field name="MON_SIMBOLO" class="java.lang.String"/>
+	<field name="ORCOMDET_CODIGO" class="java.math.BigDecimal"/>
+	<field name="ORCOM_RESPONSABLE" class="java.math.BigDecimal"/>
+	<field name="ARCHIVO" class="java.io.InputStream"/>
+	<field name="MARC_DESC" class="java.lang.String"/>
+	<variable name="IMPORTE_1" class="java.math.BigDecimal" resetType="Group" resetGroup="CLAVE" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_2" class="java.math.BigDecimal" resetType="Group" resetGroup="CLAVE" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<group name="CLAVE">
+		<groupExpression><![CDATA[$F{ORCOM_NRO}]]></groupExpression>
+		<groupHeader>
+			<band/>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="13" splitType="Prevent">
+				<subreport>
+					<reportElement x="5" y="0" width="552" height="13" uuid="bc0e7294-5b8d-4da3-97f2-970ca72728e8"/>
+					<subreportParameter name="P_CLAVE">
+						<subreportParameterExpression><![CDATA[$P{P_CLAVE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_EMPRESA">
+						<subreportParameterExpression><![CDATA[$P{P_EMPRESA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "COMI012_TR_subreport1.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Prevent"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="119">
+			<staticText>
+				<reportElement x="67" y="18" width="220" height="20" uuid="3e3810e0-8499-415b-8caa-7e6e6f0ef36c"/>
+				<textElement>
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ORDEN DE COMPRAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="91" y="48" width="59" height="12" uuid="d6d3dd28-e06e-41bd-b612-69df71f50ad5"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="91" y="61" width="59" height="12" uuid="9f726241-ec82-4c8d-9745-5d18fead9612"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Proveedor:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="91" y="74" width="59" height="12" uuid="6ff18163-c3eb-4f71-94cf-6cc19516ece9"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Vendedor:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="91" y="87" width="59" height="12" uuid="88866276-1968-45cf-94e3-e2ddb90f0c9f"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Telefono:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="154" y="48" width="210" height="12" uuid="f3b6c747-0f56-4fb5-872e-f19f0eec0128"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORCOM_FEC_EMIS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="155" y="61" width="209" height="12" uuid="aa80c7e0-df61-42cb-8d8c-c7746d4fe3de"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROV_RAZON_SOCIAL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="154" y="74" width="210" height="12" uuid="fa8e4d2a-b628-4acf-8e4d-7bf74e2d1f19"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORCOM_PROV_VENDEDOR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="155" y="87" width="209" height="12" uuid="177ad12f-bee8-4575-a860-138ae61aed94"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORCOM_PROV_VEND_TEL}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement key="table 2" x="349" y="12" width="108" height="73" uuid="62f6ea23-87c4-4b72-bb4a-606c6c51568b"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="logo" uuid="116ce3b8-9592-449b-91e5-78bc18d70477">
+						<datasetParameter name="P_EMPRESA">
+							<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="132" uuid="c86ef53d-87ff-4f86-85bd-bec9efa804fd">
+						<jr:detailCell height="76" rowSpan="1">
+							<image hAlign="Left">
+								<reportElement x="0" y="0" width="132" height="76" uuid="03ffc5f5-9f30-4fcb-b0e8-c125e2674f28"/>
+								<imageExpression><![CDATA[$F{LOGO}]]></imageExpression>
+							</image>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<textField evaluationTime="Report">
+				<reportElement x="428" y="87" width="33" height="10" uuid="6564a560-b27e-4930-9dd0-b3e2a011f404"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="377" y="87" width="30" height="10" uuid="2f217daf-1998-4f1f-8048-c5bd8cb0406f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="407" y="87" width="20" height="10" uuid="4275a856-c88a-4d30-bdfb-c8dd53db56df"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[de]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="345" y="87" width="32" height="10" uuid="4aaa2fb8-dd04-4f45-a984-47dfcaae904b"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Pag]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="91" y="99" width="59" height="12" uuid="e8cf0666-88f1-4196-a4e9-12b8f60d922d"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro OC:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="155" y="99" width="100" height="12" uuid="40d913e8-fff6-4b25-b3ec-92de4e96fda6"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_CLAVE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<lastPageFooter>
+		<band splitType="Stretch"/>
+	</lastPageFooter>
+	<summary>
+		<band height="190" splitType="Prevent">
+			<rectangle>
+				<reportElement x="353" y="0" width="203" height="10" uuid="8e6a3cb8-3f79-4e77-9ae2-cc55fac0d399"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="8" y="10" width="548" height="94" uuid="412e56a2-a25e-45ff-8b7b-ef59b64187a4"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</rectangle>
+			<line>
+				<reportElement x="224" y="90" width="115" height="1" uuid="7179199c-4389-4acc-869b-f32f01d177b5"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="224" y="90" width="115" height="7" uuid="8e1925d3-c1b5-4075-b693-a90a00ca3094"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Aclaración de Firma]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="406" y="90" width="100" height="7" uuid="4bee1898-6076-43c4-b0cb-bd0f0e5455bb"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Cédula de Identidad]]></text>
+			</staticText>
+			<line>
+				<reportElement x="17" y="90" width="115" height="1" uuid="8aeb569c-1821-4a2e-b884-a3bc6f830b07"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="406" y="90" width="100" height="1" uuid="f53fa0f6-4dd7-47e6-b5e4-eeb2fb4f9c68"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="17" y="91" width="115" height="7" uuid="9e89260e-2127-4323-a814-1fd09cb7b801"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Firma del Responsable]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table 2" x="25" y="39" width="92" height="10" uuid="02d79df1-8211-4828-bbee-3a914c881a66"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="firma" uuid="f8e1f740-9cd9-486b-96a4-a5d9029a65f9">
+						<datasetParameter name="P_EMPRESA">
+							<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_RESPONSABLE">
+							<datasetParameterExpression><![CDATA[$F{ORCOM_RESPONSABLE}]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="132" uuid="3f29ec9d-00e6-4f52-a025-cfe7b5aab699">
+						<jr:detailCell height="58" rowSpan="1">
+							<image hAlign="Left">
+								<reportElement x="0" y="6" width="132" height="38" uuid="fb87800b-60a2-4a5d-b03c-e1e9fb8816aa"/>
+								<imageExpression><![CDATA[$F{OPER_IMG_BLOB}]]></imageExpression>
+							</image>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<staticText>
+				<reportElement x="362" y="0" width="34" height="10" uuid="8e9479a3-a19f-4fdb-90ed-5ad79c6d395a"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="457" y="0" width="20" height="10" uuid="8ff23a80-368c-474d-abc6-66e20312b548"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MON_SIMBOLO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="17" y="14" width="72" height="11" uuid="0b2143bb-8566-4c20-a0a1-bb965b04a2b2"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[IMPORTE CON LETRA:]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table 2" x="80" y="14" width="222" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="1ef3db33-b705-4fae-9eb3-a3b042e17900"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Valor a pagar" uuid="52c967d6-d72e-4456-86cd-f7fcfc45c184">
+						<datasetParameter name="P_VALOR">
+							<datasetParameterExpression><![CDATA[$V{IMPORTE_1}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="p_mon">
+							<datasetParameterExpression><![CDATA[$F{ORCOM_MON}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_EMPRESA">
+							<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="382" uuid="67c4278a-1f01-4cc7-a4f5-6faeb7544ad9">
+						<jr:detailCell height="14" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="366" height="13" uuid="f62cdf01-31e9-43b4-b97f-eb03691287fb"/>
+								<textElement textAlignment="Left" verticalAlignment="Top">
+									<font fontName="Arial" size="5" isBold="false"/>
+									<paragraph tabStopWidth="40"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{VALOR}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<line>
+				<reportElement x="8" y="25" width="548" height="1" uuid="fffcdfe4-a104-4e8d-9606-cd21654ac450"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="497" y="0" width="1" height="10" uuid="8c583b1b-622b-40e2-887f-33d04736a756"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="442" y="0" width="1" height="10" uuid="561b6233-6f12-40a0-a20e-a4f08d215fa1"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="399" y="0" width="1" height="10" uuid="61270dc9-7fac-4d67-af3e-7897abb7d417"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<textField evaluationTime="Group" evaluationGroup="CLAVE" isBlankWhenNull="true">
+				<reportElement x="501" y="0" width="53" height="10" uuid="aeadcec2-ce8b-4c86-9677-a56aa3170859"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{IMPORTE_2}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{ORCOM_MON}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<componentElement>
+				<reportElement key="table" x="349" y="125" width="207" height="39" uuid="9fada4b2-c9e8-404f-b5a3-f763b299c394"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="cuotas" uuid="60119f66-988c-4d95-b0be-0763ae674385">
+						<datasetParameter name="P_CLAVE">
+							<datasetParameterExpression><![CDATA[$F{ORCOM_NRO}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_EMPRESA">
+							<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_MON">
+							<datasetParameterExpression><![CDATA[$F{ORCOM_MON}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="90" uuid="2813e3e6-9051-4afa-8b05-9a7ca7489249">
+						<jr:tableHeader height="10" rowSpan="1">
+							<box>
+								<topPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.25"/>
+								<bottomPen lineWidth="0.25"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="10" uuid="6689ecf3-ab69-47eb-a565-51a8ea59fb21"/>
+								<textElement>
+									<font fontName="Arial" size="8" isBold="true" isUnderline="true"/>
+								</textElement>
+								<text><![CDATA[Forma de Pago]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:columnHeader height="10" rowSpan="1">
+							<box>
+								<topPen lineWidth="0.25" lineColor="#999999"/>
+								<leftPen lineWidth="0.25" lineColor="#999999"/>
+								<bottomPen lineWidth="0.25" lineColor="#999999"/>
+								<rightPen lineWidth="0.25" lineColor="#999999"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="10" uuid="eb3cd489-0ae2-40e3-9436-451290ec0812"/>
+								<textElement>
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Vencimiento]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="10" rowSpan="1">
+							<box>
+								<pen lineWidth="0.25" lineColor="#CCCCCC"/>
+								<topPen lineWidth="0.25" lineColor="#CCCCCC"/>
+								<leftPen lineWidth="0.25" lineColor="#CCCCCC"/>
+								<bottomPen lineWidth="0.25" lineColor="#CCCCCC"/>
+								<rightPen lineWidth="0.25" lineColor="#CCCCCC"/>
+							</box>
+							<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="90" height="10" uuid="c03698a6-3443-4fc4-bf0b-8646665948ad"/>
+								<textElement>
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{ORCUO_FEC_VTO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="753e6c08-16f4-4f71-b08b-5c3af2925c2d">
+						<jr:tableHeader style="table" height="10" rowSpan="1">
+							<box>
+								<topPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.0"/>
+								<bottomPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.25"/>
+							</box>
+						</jr:tableHeader>
+						<jr:columnHeader height="10" rowSpan="1">
+							<box>
+								<topPen lineWidth="0.25" lineColor="#999999"/>
+								<leftPen lineWidth="0.25" lineColor="#999999"/>
+								<bottomPen lineWidth="0.25" lineColor="#999999"/>
+								<rightPen lineWidth="0.25" lineColor="#999999"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="10" uuid="a7326380-a070-4394-b0a0-ccf7fc5491e8"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Monto Cuota]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="10" rowSpan="1">
+							<box>
+								<topPen lineWidth="0.25" lineColor="#CCCCCC"/>
+								<leftPen lineWidth="0.25" lineColor="#CCCCCC"/>
+								<bottomPen lineWidth="0.25" lineColor="#CCCCCC"/>
+								<rightPen lineWidth="0.25" lineColor="#CCCCCC"/>
+							</box>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="90" height="10" uuid="1b65b185-0c46-4ac0-ac24-f1e1767fc369"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{ORCUO_IMPORTE_MON}]]></textFieldExpression>
+								<patternExpression><![CDATA[$F{ORCOM_MON}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</summary>
+	<noData>
+		<band/>
+	</noData>
+</jasperReport>

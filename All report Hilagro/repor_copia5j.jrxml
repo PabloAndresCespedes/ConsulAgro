@@ -1,0 +1,1216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="repor_copia5j" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="44fafed9-d0b8-45dc-8b6f-afe3993d10a8">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLI_CODIGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLI_VENDEDOR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FCAT_CODIGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLI_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_VISITA_SEMANAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_VISITA_QUINCENAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPL_NOMBRE" class="java.lang.String"/>
+	<parameter name="P_PROGRAMA" class="java.lang.String"/>
+	<parameter name="P_CLI_NOM" class="java.lang.String"/>
+	<parameter name="P_CATEG_DESC" class="java.lang.String"/>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String"/>
+	<parameter name="P_DESC_EMPRESA" class="java.lang.String"/>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT 1 ITEM,
+       'LUNES - SEMANAL' DIA,
+       D.FCAT_DESC,
+       A.CLI_CODIGO,
+       SUBSTR(A.CLI_NOM, 1, 35) CLI_NOM,
+       SUBSTR(E.ZONA_DESC, 1, 20) ZONA_DESC,
+       SUBSTR(A.CLI_DIR, 1, 30) CLI_DIR,
+       SUBSTR(A.CLI_TEL, 1, 15) CLI_TEL,
+       SUBSTR(CLI_PERS_CONTACTO, 1, 30) CLI_CONTACTO,
+       CLI_VENDEDOR,
+       A.CLI_ORDEN_LUN ORDEN,
+
+       F.FCAT_CODIGO,
+       F.FCAT_DESC,
+       G.RAMO_CODIGO,
+       G.RAMO_DESC,
+       H.CAN_CODIGO,
+       H.CAN_DESC,
+       FH.HOL_OBS_FACT ,
+       DECODE(A.CLI_IND_EXHIBIDOR, 'S', 'S', NULL) CLI_IND_EXHIBIDOR,
+       A.CLI_NOM_FANTASIA,
+       NVL(A.CLI_FREC_VISITA_SEMANAL, 'N') SEMANAL,
+       NVL(A.CLI_FREC_VISITA_QUINCENAL, 'N') QUINCENAL
+
+  FROM FIN_CLIENTE     A,
+       FAC_CATEGORIA   D,
+       FAC_ZONA        E,
+       FAC_CATEGORIA   F,
+       FIN_RAMO        G,
+       FAC_CANAL_VENTA H,
+       FIN_FICHA_HOLDING FH
+ WHERE A.CLI_CATEG = D.FCAT_CODIGO
+   AND  A.CLI_COD_FICHA_HOLDING = FH.HOL_CODIGO
+   AND CLI_EMPR = D.FCAT_EMPR
+   AND CLI_EMPR = CAN_EMPR
+   AND CLI_EMPR = ZONA_EMPR
+   AND CLI_EMPR =  $P{P_EMPRESA}
+   AND CLI_EMPR = RAMO_EMPR
+   AND CLI_EMPR = F.FCAT_EMPR
+   AND A.CLI_ZONA = E.ZONA_CODIGO
+   AND NVL(A.CLI_DIA_LUNES, 'N') = 'S'
+
+   AND A.CLI_CATEG = F.FCAT_CODIGO
+   AND A.CLI_RAMO = G.RAMO_CODIGO
+   AND A.CLI_CANAL = H.CAN_CODIGO
+   AND A.CLI_FREC_VISITA_SEMANAL = 'S'
+    AND CLI_EMPR =  FH.HOL_EMPR
+   AND CLI_EST_CLI = 'A'
+        AND (CLI_CODIGO  = $P{P_CLI_CODIGO} or  $P{P_CLI_CODIGO} is null)
+             AND (CLI_VENDEDOR  = $P{P_CLI_VENDEDOR} or  $P{P_CLI_VENDEDOR} is null)
+        AND (F.FCAT_CODIGO  = $P{P_FCAT_CODIGO} or  $P{P_FCAT_CODIGO} is null)
+           AND (CLI_SUCURSAL = $P{P_CLI_SUCURSAL} or  $P{P_CLI_SUCURSAL} is null)
+       AND (A.CLI_FREC_VISITA_SEMANAL = $P!{P_VISITA_SEMANAL} or  $P!{P_VISITA_SEMANAL} is null )
+
+
+
+UNION
+SELECT 1 ITEM,
+       'LUNES - QUINCENAL' DIA,
+       D.FCAT_DESC,
+       A.CLI_CODIGO,
+       SUBSTR(A.CLI_NOM, 1, 35) CLI_NOM,
+       SUBSTR(E.ZONA_DESC, 1, 20) ZONA_DESC,
+       SUBSTR(A.CLI_DIR, 1, 30) CLI_DIR,
+       SUBSTR(A.CLI_TEL, 1, 15) CLI_TEL,
+       SUBSTR(CLI_PERS_CONTACTO, 1, 30) CLI_CONTACTO,
+       CLI_VENDEDOR,
+       A.CLI_ORDEN_LUN ORDEN,
+       F.FCAT_CODIGO,
+       F.FCAT_DESC,
+       G.RAMO_CODIGO,
+       G.RAMO_DESC,
+       H.CAN_CODIGO,
+       H.CAN_DESC,
+       FH.HOL_OBS_FACT ,
+       DECODE(A.CLI_IND_EXHIBIDOR, 'S', 'S', NULL) CLI_IND_EXHIBIDOR,
+       A.CLI_NOM_FANTASIA,
+       NVL(A.CLI_FREC_VISITA_SEMANAL, 'N') SEMANAL,
+       NVL(A.CLI_FREC_VISITA_QUINCENAL, 'N') QUINCENAL
+  FROM FIN_CLIENTE     A,
+       FAC_CATEGORIA   D,
+       FAC_ZONA        E,
+       FAC_CATEGORIA   F,
+       FIN_RAMO        G,
+       FAC_CANAL_VENTA H,
+       FIN_FICHA_HOLDING FH
+ WHERE A.CLI_CATEG = D.FCAT_CODIGO
+ AND  A.CLI_COD_FICHA_HOLDING = FH.HOL_CODIGO
+   AND A.CLI_ZONA = E.ZONA_CODIGO
+   AND NVL(A.CLI_DIA_LUNES, 'N') = 'S'
+   AND A.CLI_CATEG = F.FCAT_CODIGO
+   AND A.CLI_RAMO = G.RAMO_CODIGO
+   AND A.CLI_CANAL = H.CAN_CODIGO
+   AND A.CLI_FREC_VISITA_QUINCENAL = 'S'
+   AND CLI_EMPR = D.FCAT_EMPR
+   AND CLI_EMPR = CAN_EMPR
+   AND CLI_EMPR = ZONA_EMPR
+   AND CLI_EMPR =  $P{P_EMPRESA}
+   AND CLI_EMPR = RAMO_EMPR
+   AND CLI_EMPR = F.FCAT_EMPR
+    AND CLI_EMPR =  FH.HOL_EMPR
+   AND CLI_EST_CLI = 'A'
+        AND (CLI_CODIGO  = $P{P_CLI_CODIGO} or  $P{P_CLI_CODIGO} is null)
+            AND (CLI_VENDEDOR  = $P{P_CLI_VENDEDOR} or  $P{P_CLI_VENDEDOR} is null)
+        AND (F.FCAT_CODIGO  = $P{P_FCAT_CODIGO} or  $P{P_FCAT_CODIGO} is null)
+           AND (CLI_SUCURSAL = $P{P_CLI_SUCURSAL} or  $P{P_CLI_SUCURSAL} is null)
+       AND (A.CLI_FREC_VISITA_SEMANAL = $P!{P_VISITA_SEMANAL} or  $P!{P_VISITA_SEMANAL} is null )
+
+
+
+UNION
+SELECT 2,
+       'MARTES -  SEMANAL',
+       D.FCAT_DESC,
+       A.CLI_CODIGO,
+       SUBSTR(A.CLI_NOM, 1, 35) CLI_NOM,
+       SUBSTR(E.ZONA_DESC, 1, 20) ZONA_DESC,
+       SUBSTR(A.CLI_DIR, 1, 30) CLI_DIR,
+       SUBSTR(A.CLI_TEL, 1, 15) CLI_TEL,
+       SUBSTR(CLI_PERS_CONTACTO, 1, 30) CLI_CONTACTO,
+       CLI_VENDEDOR,
+       A.CLI_ORDEN_MAR ORDEN,
+       F.FCAT_CODIGO,
+       F.FCAT_DESC,
+       G.RAMO_CODIGO,
+       G.RAMO_DESC,
+       H.CAN_CODIGO,
+       H.CAN_DESC,
+       FH.HOL_OBS_FACT ,
+       DECODE(A.CLI_IND_EXHIBIDOR, 'S', 'S', NULL) CLI_IND_EXHIBIDOR,
+       A.CLI_NOM_FANTASIA,
+       NVL(A.CLI_FREC_VISITA_SEMANAL, 'N') SEMANAL,
+       NVL(A.CLI_FREC_VISITA_QUINCENAL, 'N') QUINCENAL
+  FROM FIN_CLIENTE     A,
+       FAC_CATEGORIA   D,
+       FAC_ZONA        E,
+       FAC_CATEGORIA   F,
+       FIN_RAMO        G,
+       FAC_CANAL_VENTA H,
+       FIN_FICHA_HOLDING FH
+ WHERE A.CLI_CATEG = D.FCAT_CODIGO
+ AND  A.CLI_COD_FICHA_HOLDING = FH.HOL_CODIGO
+   AND A.CLI_ZONA = E.ZONA_CODIGO
+   AND NVL(A.CLI_DIA_MARTES, 'N') = 'S'
+   AND A.CLI_CATEG = F.FCAT_CODIGO
+   AND A.CLI_RAMO = G.RAMO_CODIGO
+   AND A.CLI_CANAL = H.CAN_CODIGO
+   AND A.CLI_FREC_VISITA_SEMANAL = 'S'
+   AND CLI_EMPR = D.FCAT_EMPR
+   AND CLI_EMPR = CAN_EMPR
+   AND CLI_EMPR = ZONA_EMPR
+   AND CLI_EMPR =  $P{P_EMPRESA}
+   AND CLI_EMPR = RAMO_EMPR
+   AND CLI_EMPR = F.FCAT_EMPR
+    AND CLI_EMPR =  FH.HOL_EMPR
+   AND CLI_EST_CLI = 'A'
+        AND (CLI_CODIGO  = $P{P_CLI_CODIGO} or  $P{P_CLI_CODIGO} is null)
+           AND (CLI_VENDEDOR  = $P{P_CLI_VENDEDOR} or  $P{P_CLI_VENDEDOR} is null)
+        AND (F.FCAT_CODIGO  = $P{P_FCAT_CODIGO} or  $P{P_FCAT_CODIGO} is null)
+           AND (CLI_SUCURSAL = $P{P_CLI_SUCURSAL} or  $P{P_CLI_SUCURSAL} is null)
+       AND (A.CLI_FREC_VISITA_SEMANAL = $P!{P_VISITA_SEMANAL} or  $P!{P_VISITA_SEMANAL} is null )
+
+
+
+UNION
+SELECT 2,
+       'MARTES - QUINCENAL',
+       D.FCAT_DESC,
+       A.CLI_CODIGO,
+       SUBSTR(A.CLI_NOM, 1, 35) CLI_NOM,
+       SUBSTR(E.ZONA_DESC, 1, 20) ZONA_DESC,
+       SUBSTR(A.CLI_DIR, 1, 30) CLI_DIR,
+       SUBSTR(A.CLI_TEL, 1, 15) CLI_TEL,
+       SUBSTR(CLI_PERS_CONTACTO, 1, 30) CLI_CONTACTO,
+       CLI_VENDEDOR,
+       A.CLI_ORDEN_MAR ORDEN,
+       F.FCAT_CODIGO,
+       F.FCAT_DESC,
+       G.RAMO_CODIGO,
+       G.RAMO_DESC,
+       H.CAN_CODIGO,
+       H.CAN_DESC,
+       FH.HOL_OBS_FACT ,
+       DECODE(A.CLI_IND_EXHIBIDOR, 'S', 'S', NULL) CLI_IND_EXHIBIDOR,
+       A.CLI_NOM_FANTASIA,
+       NVL(A.CLI_FREC_VISITA_SEMANAL, 'N') SEMANAL,
+       NVL(A.CLI_FREC_VISITA_QUINCENAL, 'N') QUINCENAL
+  FROM FIN_CLIENTE     A,
+       FAC_CATEGORIA   D,
+       FAC_ZONA        E,
+       FAC_CATEGORIA   F,
+       FIN_RAMO        G,
+       FAC_CANAL_VENTA H,
+       FIN_FICHA_HOLDING FH
+ WHERE A.CLI_CATEG = D.FCAT_CODIGO
+  AND  A.CLI_COD_FICHA_HOLDING = FH.HOL_CODIGO
+   AND A.CLI_ZONA = E.ZONA_CODIGO
+   AND NVL(A.CLI_DIA_MARTES, 'N') = 'S'
+   AND A.CLI_CATEG = F.FCAT_CODIGO
+   AND A.CLI_RAMO = G.RAMO_CODIGO
+   AND A.CLI_CANAL = H.CAN_CODIGO
+   AND A.CLI_FREC_VISITA_QUINCENAL = 'S'
+   AND CLI_EMPR = D.FCAT_EMPR
+   AND CLI_EMPR = CAN_EMPR
+   AND CLI_EMPR = ZONA_EMPR
+   AND CLI_EMPR =  $P{P_EMPRESA}
+   AND CLI_EMPR = RAMO_EMPR
+   AND CLI_EMPR = F.FCAT_EMPR
+    AND CLI_EMPR =  FH.HOL_EMPR
+   AND CLI_EST_CLI = 'A'
+        AND (CLI_CODIGO  = $P{P_CLI_CODIGO} or  $P{P_CLI_CODIGO} is null)
+            AND (CLI_VENDEDOR  = $P{P_CLI_VENDEDOR} or  $P{P_CLI_VENDEDOR} is null)
+        AND (F.FCAT_CODIGO  = $P{P_FCAT_CODIGO} or  $P{P_FCAT_CODIGO} is null)
+           AND (CLI_SUCURSAL = $P{P_CLI_SUCURSAL} or  $P{P_CLI_SUCURSAL} is null)
+       AND (A.CLI_FREC_VISITA_SEMANAL = $P!{P_VISITA_SEMANAL} or $P!{P_VISITA_SEMANAL} is null )
+
+
+
+UNION
+SELECT 3,
+       'MIÉRCOLES -  SEMANAL',
+       D.FCAT_DESC,
+       A.CLI_CODIGO,
+       SUBSTR(A.CLI_NOM, 1, 35) CLI_NOM,
+       SUBSTR(E.ZONA_DESC, 1, 20) ZONA_DESC,
+       SUBSTR(A.CLI_DIR, 1, 30) CLI_DIR,
+       SUBSTR(A.CLI_TEL, 1, 15) CLI_TEL,
+       SUBSTR(CLI_PERS_CONTACTO, 1, 30) CLI_CONTACTO,
+       CLI_VENDEDOR,
+       A.CLI_ORDEN_MIER ORDEN,
+
+       F.FCAT_CODIGO,
+       F.FCAT_DESC,
+       G.RAMO_CODIGO,
+       G.RAMO_DESC,
+       H.CAN_CODIGO,
+       H.CAN_DESC,
+       FH.HOL_OBS_FACT ,
+       DECODE(A.CLI_IND_EXHIBIDOR, 'S', 'S', NULL) CLI_IND_EXHIBIDOR,
+       A.CLI_NOM_FANTASIA,
+       NVL(A.CLI_FREC_VISITA_SEMANAL, 'N') SEMANAL,
+       NVL(A.CLI_FREC_VISITA_QUINCENAL, 'N') QUINCENAL
+
+  FROM FIN_CLIENTE     A,
+       FAC_CATEGORIA   D,
+       FAC_ZONA        E,
+       FAC_CATEGORIA   F,
+       FIN_RAMO        G,
+       FAC_CANAL_VENTA H,
+       FIN_FICHA_HOLDING FH
+ WHERE A.CLI_CATEG = D.FCAT_CODIGO
+ AND  A.CLI_COD_FICHA_HOLDING = FH.HOL_CODIGO
+   AND A.CLI_ZONA = E.ZONA_CODIGO
+   AND NVL(A.CLI_DIA_MIERCOLES, 'N') = 'S'
+
+   AND A.CLI_CATEG = F.FCAT_CODIGO
+   AND A.CLI_RAMO = G.RAMO_CODIGO
+   AND A.CLI_CANAL = H.CAN_CODIGO
+   AND A.CLI_FREC_VISITA_SEMANAL = 'S'
+   AND CLI_EMPR = D.FCAT_EMPR
+   AND CLI_EMPR = CAN_EMPR
+   AND CLI_EMPR = ZONA_EMPR
+   AND CLI_EMPR =  $P{P_EMPRESA}
+   AND CLI_EMPR = RAMO_EMPR
+   AND CLI_EMPR = F.FCAT_EMPR
+    AND CLI_EMPR =  FH.HOL_EMPR
+   AND CLI_EST_CLI = 'A'
+        AND (CLI_CODIGO  = $P{P_CLI_CODIGO} or  $P{P_CLI_CODIGO} is null)
+            AND (CLI_VENDEDOR  = $P{P_CLI_VENDEDOR} or  $P{P_CLI_VENDEDOR} is null)
+        AND (F.FCAT_CODIGO  = $P{P_FCAT_CODIGO} or  $P{P_FCAT_CODIGO} is null)
+           AND (CLI_SUCURSAL = $P{P_CLI_SUCURSAL} or  $P{P_CLI_SUCURSAL} is null)
+       AND (A.CLI_FREC_VISITA_SEMANAL = $P!{P_VISITA_SEMANAL} or  $P!{P_VISITA_SEMANAL} is null )
+
+
+
+UNION
+
+SELECT 3,
+       'MIÉRCOLES-QUINCENAL',
+       D.FCAT_DESC,
+       A.CLI_CODIGO,
+       SUBSTR(A.CLI_NOM, 1, 35) CLI_NOM,
+       SUBSTR(E.ZONA_DESC, 1, 20) ZONA_DESC,
+       SUBSTR(A.CLI_DIR, 1, 30) CLI_DIR,
+       SUBSTR(A.CLI_TEL, 1, 15) CLI_TEL,
+       SUBSTR(CLI_PERS_CONTACTO, 1, 30) CLI_CONTACTO,
+       CLI_VENDEDOR,
+       A.CLI_ORDEN_MIER ORDEN,
+       F.FCAT_CODIGO,
+       F.FCAT_DESC,
+       G.RAMO_CODIGO,
+       G.RAMO_DESC,
+       H.CAN_CODIGO,
+       H.CAN_DESC,
+       FH.HOL_OBS_FACT ,
+       DECODE(A.CLI_IND_EXHIBIDOR, 'S', 'S', NULL) CLI_IND_EXHIBIDOR,
+       A.CLI_NOM_FANTASIA,
+       NVL(A.CLI_FREC_VISITA_SEMANAL, 'N') SEMANAL,
+       NVL(A.CLI_FREC_VISITA_QUINCENAL, 'N') QUINCENAL
+  FROM FIN_CLIENTE     A,
+       FAC_CATEGORIA   D,
+       FAC_ZONA        E,
+       FAC_CATEGORIA   F,
+       FIN_RAMO        G,
+       FAC_CANAL_VENTA H,
+       FIN_FICHA_HOLDING FH
+ WHERE A.CLI_CATEG = D.FCAT_CODIGO
+ AND  A.CLI_COD_FICHA_HOLDING = FH.HOL_CODIGO
+   AND A.CLI_ZONA = E.ZONA_CODIGO
+   AND NVL(A.CLI_DIA_MIERCOLES, 'N') = 'S'
+   AND A.CLI_CATEG = F.FCAT_CODIGO
+   AND A.CLI_RAMO = G.RAMO_CODIGO
+   AND A.CLI_CANAL = H.CAN_CODIGO
+   AND A.CLI_FREC_VISITA_QUINCENAL = 'S'
+   AND CLI_EMPR = D.FCAT_EMPR
+   AND CLI_EMPR = CAN_EMPR
+   AND CLI_EMPR = ZONA_EMPR
+   AND CLI_EMPR =  $P{P_EMPRESA}
+   AND CLI_EMPR = RAMO_EMPR
+   AND CLI_EMPR = F.FCAT_EMPR
+    AND CLI_EMPR =  FH.HOL_EMPR
+   AND CLI_EST_CLI = 'A'
+        AND (CLI_CODIGO  = $P{P_CLI_CODIGO} or  $P{P_CLI_CODIGO} is null)
+            AND (CLI_VENDEDOR  = $P{P_CLI_VENDEDOR} or  $P{P_CLI_VENDEDOR} is null)
+        AND (F.FCAT_CODIGO  = $P{P_FCAT_CODIGO} or  $P{P_FCAT_CODIGO} is null)
+           AND (CLI_SUCURSAL = $P{P_CLI_SUCURSAL} or  $P{P_CLI_SUCURSAL} is null)
+       AND (A.CLI_FREC_VISITA_SEMANAL = $P!{P_VISITA_SEMANAL} or  $P!{P_VISITA_SEMANAL} is null )
+
+
+
+UNION
+SELECT 4,
+       'JUEVES-SEMANAL',
+       D.FCAT_DESC,
+       A.CLI_CODIGO,
+       SUBSTR(A.CLI_NOM, 1, 35) CLI_NOM,
+       SUBSTR(E.ZONA_DESC, 1, 20) ZONA_DESC,
+       SUBSTR(A.CLI_DIR, 1, 30) CLI_DIR,
+       SUBSTR(A.CLI_TEL, 1, 15) CLI_TEL,
+       SUBSTR(CLI_PERS_CONTACTO, 1, 30) CLI_CONTACTO,
+       CLI_VENDEDOR,
+       A.CLI_ORDEN_JUE,
+       F.FCAT_CODIGO,
+       F.FCAT_DESC,
+       G.RAMO_CODIGO,
+       G.RAMO_DESC,
+       H.CAN_CODIGO,
+       H.CAN_DESC,
+       FH.HOL_OBS_FACT ,
+       DECODE(A.CLI_IND_EXHIBIDOR, 'S', 'S', NULL) CLI_IND_EXHIBIDOR,
+       A.CLI_NOM_FANTASIA,
+       NVL(A.CLI_FREC_VISITA_SEMANAL, 'N') SEMANAL,
+       NVL(A.CLI_FREC_VISITA_QUINCENAL, 'N') QUINCENAL
+
+  FROM FIN_CLIENTE     A,
+       FAC_CATEGORIA   D,
+       FAC_ZONA        E,
+       FAC_CATEGORIA   F,
+       FIN_RAMO        G,
+       FAC_CANAL_VENTA H,
+       FIN_FICHA_HOLDING FH
+ WHERE A.CLI_CATEG = D.FCAT_CODIGO
+ AND  A.CLI_COD_FICHA_HOLDING = FH.HOL_CODIGO
+   AND A.CLI_ZONA = E.ZONA_CODIGO
+   AND NVL(A.CLI_DIA_JUEVES, 'N') = 'S'
+
+   AND A.CLI_CATEG = F.FCAT_CODIGO
+   AND A.CLI_RAMO = G.RAMO_CODIGO
+   AND A.CLI_CANAL = H.CAN_CODIGO
+   AND A.CLI_FREC_VISITA_SEMANAL = 'S'
+   AND CLI_EMPR = D.FCAT_EMPR
+   AND CLI_EMPR = CAN_EMPR
+   AND CLI_EMPR = ZONA_EMPR
+   AND CLI_EMPR =  $P{P_EMPRESA}
+   AND CLI_EMPR = RAMO_EMPR
+   AND CLI_EMPR = F.FCAT_EMPR
+    AND CLI_EMPR =  FH.HOL_EMPR
+   AND CLI_EST_CLI = 'A'
+             AND (CLI_CODIGO  = $P{P_CLI_CODIGO} or  $P{P_CLI_CODIGO} is null)
+             AND (CLI_VENDEDOR  = $P{P_CLI_VENDEDOR} or  $P{P_CLI_VENDEDOR} is null)
+            AND (F.FCAT_CODIGO  = $P{P_FCAT_CODIGO} or  $P{P_FCAT_CODIGO} is null)
+             AND (CLI_SUCURSAL = $P{P_CLI_SUCURSAL} or  $P{P_CLI_SUCURSAL} is null)
+         AND (A.CLI_FREC_VISITA_SEMANAL = $P!{P_VISITA_SEMANAL} or  $P!{P_VISITA_SEMANAL} is null )
+
+
+
+UNION
+
+SELECT 4,
+       'JUEVES-QUINCENAL',
+       D.FCAT_DESC,
+       A.CLI_CODIGO,
+       SUBSTR(A.CLI_NOM, 1, 35) CLI_NOM,
+       SUBSTR(E.ZONA_DESC, 1, 20) ZONA_DESC,
+       SUBSTR(A.CLI_DIR, 1, 30) CLI_DIR,
+       SUBSTR(A.CLI_TEL, 1, 15) CLI_TEL,
+       SUBSTR(CLI_PERS_CONTACTO, 1, 30) CLI_CONTACTO,
+       CLI_VENDEDOR,
+       A.CLI_ORDEN_JUE,
+       F.FCAT_CODIGO,
+       F.FCAT_DESC,
+       G.RAMO_CODIGO,
+       G.RAMO_DESC,
+       H.CAN_CODIGO,
+       H.CAN_DESC,
+       FH.HOL_OBS_FACT ,
+       DECODE(A.CLI_IND_EXHIBIDOR, 'S', 'S', NULL) CLI_IND_EXHIBIDOR,
+       A.CLI_NOM_FANTASIA,
+       NVL(A.CLI_FREC_VISITA_SEMANAL, 'N') SEMANAL,
+       NVL(A.CLI_FREC_VISITA_QUINCENAL, 'N') QUINCENAL
+
+  FROM FIN_CLIENTE     A,
+       FAC_CATEGORIA   D,
+       FAC_ZONA        E,
+       FAC_CATEGORIA   F,
+       FIN_RAMO        G,
+       FAC_CANAL_VENTA H,
+       FIN_FICHA_HOLDING FH
+ WHERE A.CLI_CATEG = D.FCAT_CODIGO
+ AND  A.CLI_COD_FICHA_HOLDING = FH.HOL_CODIGO
+AND A.CLI_ZONA = E.ZONA_CODIGO
+   AND NVL(A.CLI_DIA_JUEVES, 'N') = 'S'
+
+   AND A.CLI_CATEG = F.FCAT_CODIGO
+   AND A.CLI_RAMO = G.RAMO_CODIGO
+   AND A.CLI_CANAL = H.CAN_CODIGO
+   AND A.CLI_FREC_VISITA_QUINCENAL = 'S'
+   AND CLI_EMPR = D.FCAT_EMPR
+   AND CLI_EMPR = CAN_EMPR
+   AND CLI_EMPR = ZONA_EMPR
+   AND CLI_EMPR =  $P{P_EMPRESA}
+   AND CLI_EMPR = RAMO_EMPR
+   AND CLI_EMPR = F.FCAT_EMPR
+    AND CLI_EMPR =  FH.HOL_EMPR
+   AND CLI_EST_CLI = 'A'
+             AND (CLI_CODIGO  = $P{P_CLI_CODIGO} or  $P{P_CLI_CODIGO} is null)
+             AND (CLI_VENDEDOR  = $P{P_CLI_VENDEDOR} or  $P{P_CLI_VENDEDOR} is null)
+            AND (F.FCAT_CODIGO  = $P{P_FCAT_CODIGO} or  $P{P_FCAT_CODIGO} is null)
+             AND (CLI_SUCURSAL = $P{P_CLI_SUCURSAL} or  $P{P_CLI_SUCURSAL} is null)
+         AND (A.CLI_FREC_VISITA_SEMANAL = $P!{P_VISITA_SEMANAL} or  $P!{P_VISITA_SEMANAL} is null )
+
+
+
+UNION
+SELECT 5,
+       'VIERNES-SEMANAL',
+       D.FCAT_DESC,
+       A.CLI_CODIGO,
+       SUBSTR(A.CLI_NOM, 1, 35) CLI_NOM,
+       SUBSTR(E.ZONA_DESC, 1, 20) ZONA_DESC,
+       SUBSTR(A.CLI_DIR, 1, 30) CLI_DIR,
+       SUBSTR(A.CLI_TEL, 1, 15) CLI_TEL,
+       SUBSTR(CLI_PERS_CONTACTO, 1, 30) CLI_CONTACTO,
+       CLI_VENDEDOR,
+       A.CLI_ORDEN_VIER,
+
+       F.FCAT_CODIGO,
+       F.FCAT_DESC,
+       G.RAMO_CODIGO,
+       G.RAMO_DESC,
+       H.CAN_CODIGO,
+       H.CAN_DESC,
+       FH.HOL_OBS_FACT ,
+       DECODE(A.CLI_IND_EXHIBIDOR, 'S', 'S', NULL) CLI_IND_EXHIBIDOR,
+       A.CLI_NOM_FANTASIA,
+       NVL(A.CLI_FREC_VISITA_SEMANAL, 'N') SEMANAL,
+       NVL(A.CLI_FREC_VISITA_QUINCENAL, 'N') QUINCENAL
+
+  FROM FIN_CLIENTE     A,
+       FAC_CATEGORIA   D,
+       FAC_ZONA        E,
+       FAC_CATEGORIA   F,
+       FIN_RAMO        G,
+       FAC_CANAL_VENTA H,
+       FIN_FICHA_HOLDING FH
+ WHERE A.CLI_CATEG = D.FCAT_CODIGO
+ AND  A.CLI_COD_FICHA_HOLDING = FH.HOL_CODIGO
+   AND A.CLI_ZONA = E.ZONA_CODIGO
+   AND NVL(A.CLI_DIA_VIERNES, 'N') = 'S'
+
+   AND A.CLI_CATEG = F.FCAT_CODIGO
+   AND A.CLI_RAMO = G.RAMO_CODIGO
+   AND A.CLI_CANAL = H.CAN_CODIGO
+   AND A.CLI_FREC_VISITA_SEMANAL = 'S'
+   AND CLI_EMPR = D.FCAT_EMPR
+   AND CLI_EMPR = CAN_EMPR
+   AND CLI_EMPR = ZONA_EMPR
+   AND CLI_EMPR =  $P{P_EMPRESA}
+   AND CLI_EMPR = RAMO_EMPR
+   AND CLI_EMPR = F.FCAT_EMPR
+    AND CLI_EMPR =  FH.HOL_EMPR
+   AND CLI_EST_CLI = 'A'
+             AND (CLI_CODIGO  = $P{P_CLI_CODIGO} or  $P{P_CLI_CODIGO} is null)
+             AND (CLI_VENDEDOR  = $P{P_CLI_VENDEDOR} or  $P{P_CLI_VENDEDOR} is null)
+            AND (F.FCAT_CODIGO  = $P{P_FCAT_CODIGO} or  $P{P_FCAT_CODIGO} is null)
+             AND (CLI_SUCURSAL = $P{P_CLI_SUCURSAL} or  $P{P_CLI_SUCURSAL} is null)
+         AND (A.CLI_FREC_VISITA_SEMANAL = $P!{P_VISITA_SEMANAL} or  $P!{P_VISITA_SEMANAL} is null )
+
+
+
+UNION
+
+SELECT 5,
+       'VIERNES-QUINCENAL',
+       D.FCAT_DESC,
+       A.CLI_CODIGO,
+       SUBSTR(A.CLI_NOM, 1, 35) CLI_NOM,
+       SUBSTR(E.ZONA_DESC, 1, 20) ZONA_DESC,
+       SUBSTR(A.CLI_DIR, 1, 30) CLI_DIR,
+       SUBSTR(A.CLI_TEL, 1, 15) CLI_TEL,
+       SUBSTR(CLI_PERS_CONTACTO, 1, 30) CLI_CONTACTO,
+       CLI_VENDEDOR,
+       A.CLI_ORDEN_VIER,
+
+       F.FCAT_CODIGO,
+       F.FCAT_DESC,
+       G.RAMO_CODIGO,
+       G.RAMO_DESC,
+       H.CAN_CODIGO,
+       H.CAN_DESC,
+       FH.HOL_OBS_FACT ,
+       DECODE(A.CLI_IND_EXHIBIDOR, 'S', 'S', NULL) CLI_IND_EXHIBIDOR,
+       A.CLI_NOM_FANTASIA,
+       NVL(A.CLI_FREC_VISITA_SEMANAL, 'N') SEMANAL,
+       NVL(A.CLI_FREC_VISITA_QUINCENAL, 'N') QUINCENAL
+
+  FROM FIN_CLIENTE     A,
+       FAC_CATEGORIA   D,
+       FAC_ZONA        E,
+       FAC_CATEGORIA   F,
+       FIN_RAMO        G,
+       FAC_CANAL_VENTA H,
+       FIN_FICHA_HOLDING FH
+ WHERE A.CLI_CATEG = D.FCAT_CODIGO
+ AND  A.CLI_COD_FICHA_HOLDING = FH.HOL_CODIGO
+   AND A.CLI_ZONA = E.ZONA_CODIGO
+   AND NVL(A.CLI_DIA_VIERNES, 'N') = 'S'
+
+   AND A.CLI_CATEG = F.FCAT_CODIGO
+   AND A.CLI_RAMO = G.RAMO_CODIGO
+   AND A.CLI_CANAL = H.CAN_CODIGO
+   AND A.CLI_FREC_VISITA_QUINCENAL = 'S'
+   AND CLI_EMPR = D.FCAT_EMPR
+   AND CLI_EMPR = CAN_EMPR
+   AND CLI_EMPR = ZONA_EMPR
+   AND CLI_EMPR =  $P{P_EMPRESA}
+   AND CLI_EMPR = RAMO_EMPR
+   AND CLI_EMPR = F.FCAT_EMPR
+    AND CLI_EMPR =  FH.HOL_EMPR
+   AND CLI_EST_CLI = 'A'
+             AND (CLI_CODIGO  = $P{P_CLI_CODIGO} or  $P{P_CLI_CODIGO} is null)
+             AND (CLI_VENDEDOR  = $P{P_CLI_VENDEDOR} or  $P{P_CLI_VENDEDOR} is null)
+            AND (F.FCAT_CODIGO  = $P{P_FCAT_CODIGO} or  $P{P_FCAT_CODIGO} is null)
+             AND (CLI_SUCURSAL = $P{P_CLI_SUCURSAL} or  $P{P_CLI_SUCURSAL} is null)
+         AND (A.CLI_FREC_VISITA_SEMANAL = $P!{P_VISITA_SEMANAL} or  $P!{P_VISITA_SEMANAL} is null )
+
+
+
+UNION
+SELECT 6,
+       'SÁBADO-SEMANAL',
+       D.FCAT_DESC,
+       A.CLI_CODIGO,
+       SUBSTR(A.CLI_NOM, 1, 35) CLI_NOM,
+       SUBSTR(E.ZONA_DESC, 1, 20) ZONA_DESC,
+       SUBSTR(A.CLI_DIR, 1, 30) CLI_DIR,
+       SUBSTR(A.CLI_TEL, 1, 15) CLI_TEL,
+       SUBSTR(CLI_PERS_CONTACTO, 1, 30) CLI_CONTACTO,
+       CLI_VENDEDOR,
+       A.CLI_ORDEN_SAB ORDEN,
+
+       F.FCAT_CODIGO,
+       F.FCAT_DESC,
+       G.RAMO_CODIGO,
+       G.RAMO_DESC,
+       H.CAN_CODIGO,
+       H.CAN_DESC,
+       FH.HOL_OBS_FACT ,
+       DECODE(A.CLI_IND_EXHIBIDOR, 'S', 'S', NULL) CLI_IND_EXHIBIDOR,
+       A.CLI_NOM_FANTASIA,
+       NVL(A.CLI_FREC_VISITA_SEMANAL, 'N') SEMANAL,
+       NVL(A.CLI_FREC_VISITA_QUINCENAL, 'N') QUINCENAL
+
+  FROM FIN_CLIENTE     A,
+       FAC_CATEGORIA   D,
+       FAC_ZONA        E,
+       FAC_CATEGORIA   F,
+       FIN_RAMO        G,
+       FAC_CANAL_VENTA H,
+       FIN_FICHA_HOLDING FH
+ WHERE A.CLI_CATEG = D.FCAT_CODIGO
+ AND  A.CLI_COD_FICHA_HOLDING = FH.HOL_CODIGO
+   AND A.CLI_ZONA = E.ZONA_CODIGO
+   AND NVL(A.CLI_DIA_SABADO, 'N') = 'S'
+
+   AND A.CLI_CATEG = F.FCAT_CODIGO
+   AND A.CLI_RAMO = G.RAMO_CODIGO
+   AND A.CLI_CANAL = H.CAN_CODIGO
+   AND A.CLI_FREC_VISITA_SEMANAL = 'S'
+   AND CLI_EMPR = D.FCAT_EMPR
+   AND CLI_EMPR = CAN_EMPR
+   AND CLI_EMPR = ZONA_EMPR
+   AND CLI_EMPR =  $P{P_EMPRESA}
+   AND CLI_EMPR = RAMO_EMPR
+   AND CLI_EMPR = F.FCAT_EMPR
+    AND CLI_EMPR =  FH.HOL_EMPR
+   AND CLI_EST_CLI = 'A'
+        AND (CLI_CODIGO  = $P{P_CLI_CODIGO} or  $P{P_CLI_CODIGO} is null)
+            AND (CLI_VENDEDOR  = $P{P_CLI_VENDEDOR} or  $P{P_CLI_VENDEDOR} is null)
+        AND (F.FCAT_CODIGO  = $P{P_FCAT_CODIGO} or  $P{P_FCAT_CODIGO} is null)
+           AND (CLI_SUCURSAL = $P{P_CLI_SUCURSAL} or  $P{P_CLI_SUCURSAL} is null)
+       AND (A.CLI_FREC_VISITA_SEMANAL = $P!{P_VISITA_SEMANAL} or  $P!{P_VISITA_SEMANAL} is null )
+
+
+
+UNION
+
+SELECT 6,
+       'SÁBADO-QUINCENAL',
+       D.FCAT_DESC,
+       A.CLI_CODIGO,
+       SUBSTR(A.CLI_NOM, 1, 35) CLI_NOM,
+       SUBSTR(E.ZONA_DESC, 1, 20) ZONA_DESC,
+       SUBSTR(A.CLI_DIR, 1, 30) CLI_DIR,
+       SUBSTR(A.CLI_TEL, 1, 15) CLI_TEL,
+       SUBSTR(CLI_PERS_CONTACTO, 1, 30) CLI_CONTACTO,
+       CLI_VENDEDOR,
+       A.CLI_ORDEN_SAB ORDEN,
+
+       F.FCAT_CODIGO,
+       F.FCAT_DESC,
+       G.RAMO_CODIGO,
+       G.RAMO_DESC,
+       H.CAN_CODIGO,
+       H.CAN_DESC,
+       FH.HOL_OBS_FACT ,
+       DECODE(A.CLI_IND_EXHIBIDOR, 'S', 'S', NULL) CLI_IND_EXHIBIDOR,
+       A.CLI_NOM_FANTASIA,
+       NVL(A.CLI_FREC_VISITA_SEMANAL, 'N') SEMANAL,
+       NVL(A.CLI_FREC_VISITA_QUINCENAL, 'N') QUINCENAL
+
+  FROM FIN_CLIENTE     A,
+       FAC_CATEGORIA   D,
+       FAC_ZONA        E,
+       FAC_CATEGORIA   F,
+       FIN_RAMO        G,
+       FAC_CANAL_VENTA H ,
+       FIN_FICHA_HOLDING FH
+ WHERE A.CLI_CATEG = D.FCAT_CODIGO
+ AND  A.CLI_COD_FICHA_HOLDING = FH.HOL_CODIGO
+   AND A.CLI_ZONA = E.ZONA_CODIGO
+   AND NVL(A.CLI_DIA_SABADO, 'N') = 'S'
+
+   AND A.CLI_CATEG = F.FCAT_CODIGO
+   AND A.CLI_RAMO = G.RAMO_CODIGO
+   AND A.CLI_CANAL = H.CAN_CODIGO
+   AND A.CLI_FREC_VISITA_QUINCENAL = 'S'
+   AND CLI_EMPR = D.FCAT_EMPR
+   AND CLI_EMPR = CAN_EMPR
+   AND CLI_EMPR = ZONA_EMPR
+   AND CLI_EMPR =  $P{P_EMPRESA}
+   AND CLI_EMPR = RAMO_EMPR
+   AND CLI_EMPR = F.FCAT_EMPR
+    AND CLI_EMPR =  FH.HOL_EMPR
+   AND CLI_EST_CLI = 'A'
+             AND (CLI_CODIGO  = $P{P_CLI_CODIGO} or  $P{P_CLI_CODIGO} is null)
+             AND (CLI_VENDEDOR  = $P{P_CLI_VENDEDOR} or  $P{P_CLI_VENDEDOR} is null)
+           AND (F.FCAT_CODIGO  = $P{P_FCAT_CODIGO} or  $P{P_FCAT_CODIGO} is null)
+             AND (CLI_SUCURSAL = $P{P_CLI_SUCURSAL} or  $P{P_CLI_SUCURSAL} is null)
+         AND (A.CLI_FREC_VISITA_SEMANAL = $P!{P_VISITA_SEMANAL} or  $P!{P_VISITA_SEMANAL} is null )
+
+
+
+UNION
+SELECT 99,
+       'SIN DIA',
+       D.FCAT_DESC,
+       A.CLI_CODIGO,
+       SUBSTR(A.CLI_NOM, 1, 35) CLI_NOM,
+       SUBSTR(E.ZONA_DESC, 1, 20) ZONA_DESC,
+       SUBSTR(A.CLI_DIR, 1, 30) CLI_DIR,
+       SUBSTR(A.CLI_TEL, 1, 15) CLI_TEL,
+       SUBSTR(CLI_PERS_CONTACTO, 1, 30) CLI_CONTACTO,
+       CLI_VENDEDOR,
+       A.CLI_ORDEN_SAB ORDEN,
+
+       F.FCAT_CODIGO,
+       F.FCAT_DESC,
+       G.RAMO_CODIGO,
+       G.RAMO_DESC,
+       H.CAN_CODIGO,
+       H.CAN_DESC,
+       FH.HOL_OBS_FACT ,
+       DECODE(A.CLI_IND_EXHIBIDOR, 'S', 'S', NULL) CLI_IND_EXHIBIDOR,
+       A.CLI_NOM_FANTASIA,
+       NVL(A.CLI_FREC_VISITA_SEMANAL, 'N') SEMANAL,
+       NVL(A.CLI_FREC_VISITA_QUINCENAL, 'N') QUINCENAL
+
+  FROM FIN_CLIENTE     A,
+       FAC_CATEGORIA   D,
+        FAC_ZONA        E,
+       FAC_CATEGORIA   F,
+       FIN_RAMO        G,
+       FAC_CANAL_VENTA H ,
+       FIN_FICHA_HOLDING FH
+ WHERE A.CLI_CATEG = D.FCAT_CODIGO
+ AND  A.CLI_COD_FICHA_HOLDING = FH.HOL_CODIGO
+   AND A.CLI_ZONA = E.ZONA_CODIGO
+   AND NVL(A.CLI_DIA_LUNES, 'N') = 'N'
+   AND NVL(A.CLI_DIA_MARTES, 'N') = 'N'
+   AND NVL(A.CLI_DIA_MIERCOLES, 'N') = 'N'
+   AND NVL(A.CLI_DIA_JUEVES, 'N') = 'N'
+   AND NVL(A.CLI_DIA_VIERNES, 'N') = 'N'
+   AND NVL(A.CLI_DIA_SABADO, 'N') = 'N'
+
+   AND A.CLI_CATEG = F.FCAT_CODIGO
+   AND A.CLI_RAMO = G.RAMO_CODIGO
+   AND A.CLI_CANAL = H.CAN_CODIGO
+   AND CLI_EMPR = D.FCAT_EMPR
+   AND CLI_EMPR = CAN_EMPR
+   AND CLI_EMPR = ZONA_EMPR
+   AND CLI_EMPR =  $P{P_EMPRESA}
+   AND CLI_EMPR = RAMO_EMPR
+   AND CLI_EMPR = F.FCAT_EMPR
+   AND CLI_EMPR =  FH.HOL_EMPR
+   AND CLI_EST_CLI = 'A'
+   AND (CLI_CODIGO  = $P{P_CLI_CODIGO} or  $P{P_CLI_CODIGO} is null)
+           AND (CLI_VENDEDOR  = $P{P_CLI_VENDEDOR} or  $P{P_CLI_VENDEDOR} is null)
+          AND (F.FCAT_CODIGO  = $P{P_FCAT_CODIGO} or  $P{P_FCAT_CODIGO} is null)
+          AND (CLI_SUCURSAL = $P{P_CLI_SUCURSAL} or  $P{P_CLI_SUCURSAL} is null)
+  AND (A.CLI_FREC_VISITA_SEMANAL = $P!{P_VISITA_SEMANAL} or  $P!{P_VISITA_SEMANAL} is null )
+
+
+ ORDER BY 1, 11 ASC]]>
+	</queryString>
+	<field name="ITEM" class="java.math.BigDecimal"/>
+	<field name="DIA" class="java.lang.String"/>
+	<field name="FCAT_DESC" class="java.lang.String"/>
+	<field name="CLI_CODIGO" class="java.math.BigDecimal"/>
+	<field name="CLI_NOM" class="java.lang.String"/>
+	<field name="ZONA_DESC" class="java.lang.String"/>
+	<field name="CLI_DIR" class="java.lang.String"/>
+	<field name="CLI_TEL" class="java.lang.String"/>
+	<field name="CLI_CONTACTO" class="java.lang.String"/>
+	<field name="CLI_VENDEDOR" class="java.math.BigDecimal"/>
+	<field name="ORDEN" class="java.math.BigDecimal"/>
+	<field name="FCAT_CODIGO" class="java.math.BigDecimal"/>
+	<field name="RAMO_CODIGO" class="java.math.BigDecimal"/>
+	<field name="RAMO_DESC" class="java.lang.String"/>
+	<field name="CAN_CODIGO" class="java.math.BigDecimal"/>
+	<field name="CAN_DESC" class="java.lang.String"/>
+	<field name="HOL_OBS_FACT" class="java.lang.String"/>
+	<field name="CLI_IND_EXHIBIDOR" class="java.lang.String"/>
+	<field name="CLI_NOM_FANTASIA" class="java.lang.String"/>
+	<field name="SEMANAL" class="java.lang.String"/>
+	<field name="QUINCENAL" class="java.lang.String"/>
+	<variable name="CLI_CODIGO_1" class="java.lang.Integer" resetType="Group" resetGroup="FECHA" calculation="Count">
+		<variableExpression><![CDATA[$F{CLI_CODIGO}]]></variableExpression>
+	</variable>
+	<variable name="ITEM_1" class="java.lang.Integer" resetType="Group" resetGroup="VENDEDOR" calculation="Count">
+		<variableExpression><![CDATA[$F{ITEM}]]></variableExpression>
+	</variable>
+	<variable name="ITEM_2" class="java.lang.Integer" resetType="Group" resetGroup="VENDEDOR" calculation="Count">
+		<variableExpression><![CDATA[$F{ITEM}]]></variableExpression>
+	</variable>
+	<variable name="CLI_VENDEDOR_1" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$F{CLI_VENDEDOR}]]></variableExpression>
+	</variable>
+	<group name="VENDEDOR">
+		<groupExpression><![CDATA[$F{ITEM}]]></groupExpression>
+		<groupHeader>
+			<band height="41">
+				<textField>
+					<reportElement x="56" y="15" width="26" height="11" uuid="13d29b18-0f62-4733-9838-04ba832b04ed"/>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CLI_VENDEDOR}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="84" y="14" width="171" height="11" uuid="2ba08033-03fe-4216-9ac0-2c4d2cded25e"/>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{P_EMPL_NOMBRE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="11" y="16" width="40" height="11" uuid="a281e00e-0852-432b-a0c0-232b8c0c659c"/>
+					<textElement>
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Vendedor:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="283" y="13" width="80" height="11" uuid="be279517-689a-4255-938f-dc9b8fb09692"/>
+					<textElement>
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Cantidad Vendedor:]]></text>
+				</staticText>
+				<textField evaluationTime="Group" evaluationGroup="VENDEDOR">
+					<reportElement x="365" y="13" width="100" height="20" uuid="ee6a4177-f006-4c5a-a0aa-78041c63a8dd"/>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{ITEM_1}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="50"/>
+		</groupFooter>
+	</group>
+	<group name="FECHA">
+		<groupExpression><![CDATA[$F{ITEM}]]></groupExpression>
+		<groupHeader>
+			<band height="33">
+				<staticText>
+					<reportElement x="10" y="10" width="40" height="11" uuid="a471d923-f254-4f27-8ad3-191e485e515b"/>
+					<textElement>
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Dia :]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="60" y="10" width="101" height="11" uuid="a3b6d073-3e2c-4a25-8335-16517262f1f4"/>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DIA}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="202" y="11" width="80" height="11" uuid="eb61ab0c-cf8d-497d-8686-a0136b1fa144"/>
+					<textElement>
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Cantidad por Dia :]]></text>
+				</staticText>
+				<textField evaluationTime="Group" evaluationGroup="FECHA">
+					<reportElement x="283" y="10" width="100" height="20" uuid="1fdf389a-b6ed-4f75-9d3c-8a1df1d4d678"/>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CLI_CODIGO_1}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="50"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="115" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Transparent" x="6" y="50" width="41" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="e24c6e78-ef4a-439e-baba-381534affbca"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Cliente :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="62" y="50" width="46" height="11" uuid="d0fc3ce3-4def-4174-9314-f50b34d537e7"/>
+				<textFieldExpression><![CDATA[$P{P_CLI_CODIGO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="62" y="71" width="46" height="11" uuid="ef2e9a09-9b11-4b25-b730-a3bbb58fc446"/>
+				<textFieldExpression><![CDATA[$P{P_CLI_VENDEDOR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="423" y="10" width="40" height="13" uuid="45ae0a2f-a681-4bf4-9274-27cdb7ced241"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="465" y="10" width="58" height="13" uuid="1101ef84-c69e-43ad-a266-96f35c565f75"/>
+				<textElement textAlignment="Left">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de "]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="110" y="50" width="97" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="33ccb546-74e4-4825-97da-2ea7d66ef238"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="6" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_CLI_NOM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="6" y="92" width="41" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="2ce4e6de-7cf5-40cf-852b-502ecff731c4"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Categoria : ]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="113" y="92" width="97" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="a01fe206-2a42-450f-ad0a-bf6056139e31"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="6" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_CATEG_DESC}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="7" y="71" width="41" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="0dc95b14-7a6f-496c-acb7-5d1964b1af1c"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Vendedor :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="7" y="23" width="116" height="13" uuid="d2aaafd8-508b-465a-b989-2329155fa1cb"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="63" y="92" width="46" height="11" uuid="eb6218eb-9e15-4f7a-998b-31528857b666"/>
+				<textFieldExpression><![CDATA[$P{P_FCAT_CODIGO}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement x="524" y="10" width="30" height="13" uuid="00d2dce2-b722-4beb-91d0-197b6af34eb8"/>
+				<textElement>
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="111" y="71" width="97" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="bb6a923a-de2a-4e14-a8e3-097869400e7c"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="6" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_EMPL_NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="7" y="5" width="116" height="13" uuid="c06d3e0e-579e-4b41-9231-74f4b4df89a9"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_EMPRESA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy h.mm a" isBlankWhenNull="true">
+				<reportElement x="464" y="26" width="88" height="13" uuid="2260b2a8-2aca-4fbb-b952-3c24280ab1ad"/>
+				<textElement>
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="151" y="23" width="268" height="15" uuid="4f9c20af-c089-4560-925c-bf571ec246a4"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="25" splitType="Stretch">
+			<staticText>
+				<reportElement x="348" y="7" width="45" height="11" uuid="a1eed4b7-5f4b-4dc2-9f9c-0c3432d6f7c4"/>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Telefono]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="297" y="7" width="45" height="11" uuid="cc63263d-4307-4420-a003-dd480618e6ff"/>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Direccion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="209" y="8" width="45" height="12" uuid="5409edc1-f3af-4d33-867e-ffa91be2dfc1"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Localidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="56" y="9" width="86" height="12" uuid="b252318f-b004-43ee-b844-50512fd19a05"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cliente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="395" y="7" width="45" height="11" uuid="9370f668-c794-4f53-915a-03b31c41cde1"/>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Actividad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="148" y="9" width="61" height="12" uuid="08b66312-9ea3-4efc-ad33-65f0bdce699f"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cond. Venta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="444" y="7" width="30" height="11" uuid="541a7d86-0957-475e-b015-e19e2276e972"/>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Canal ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="473" y="7" width="30" height="11" uuid="3256b9aa-e5d5-4a68-8151-5c1698039d46"/>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Exhib]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="255" y="8" width="40" height="12" uuid="f8281a15-4f2c-479d-9c7d-6b7cf7ecda46"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Contac]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="503" y="7" width="51" height="11" uuid="20665722-95a1-495a-9a5a-2af6f3a398e4"/>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nom Fantasia]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="11" y="9" width="42" height="12" uuid="158308ee-5267-4223-96f8-66b5808036e1"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Orden]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="33" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="227" y="6" width="47" height="11" uuid="065910c8-4b4d-49d2-9846-fae7ba641ca5"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CLI_CONTACTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="274" y="6" width="67" height="11" uuid="927c736e-c364-4fc1-8bb3-ad1a034376db"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CLI_DIR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="10" y="6" width="12" height="11" uuid="47d5019a-f652-435e-936e-d4fb2724ebe8"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDEN}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="475" y="6" width="20" height="11" uuid="b75354a0-b94e-472e-a054-d9a5a4f6c939"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CLI_IND_EXHIBIDOR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="47" y="6" width="60" height="11" uuid="f0cfb185-ba3c-46b4-8056-6a2606508108"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CLI_NOM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="456" y="6" width="11" height="11" uuid="386c377a-e109-4891-a63e-9d05fe203cb5"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAN_CODIGO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="341" y="6" width="41" height="11" uuid="9069bbd8-9c69-4d55-8019-ed27f3f29e3c"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CLI_TEL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="504" y="6" width="47" height="11" uuid="6c768fef-e089-41ad-b3e4-774cad5f18e5"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CLI_NOM_FANTASIA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="383" y="6" width="3" height="11" uuid="f2f6ada4-fb86-4b6c-b55a-cef1959dc64f"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RAMO_CODIGO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="388" y="6" width="67" height="11" uuid="118feb6d-0622-4fe3-b179-3ff75b101caa"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RAMO_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="110" y="6" width="46" height="11" uuid="423f22ec-f09b-4751-9e94-e36c0868119a"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HOL_OBS_FACT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="156" y="6" width="71" height="11" uuid="35cdabb1-60b5-49ae-8166-eafadd98859b"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ZONA_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="28" y="6" width="19" height="11" uuid="c35a393a-7c4c-4a88-8f27-e25b7676a8ea"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CLI_CODIGO}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="VENDEDOR">
+				<reportElement x="4" y="7" width="100" height="20" uuid="634c545e-996a-49a8-8670-8f5f8d14de1c"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{ITEM_2}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch">
+			<staticText>
+				<reportElement x="23" y="13" width="100" height="19" uuid="68db2fdf-233b-4862-8428-ea8baa5ffccb"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fin Del Reporte .]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="144" y="13" width="80" height="11" uuid="7a2ac475-f761-46e5-8a8f-46b561f4ee95"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cantidad General :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="241" y="12" width="100" height="20" uuid="f48f11ca-0d0b-48f5-9010-ed6e2b26dc80"/>
+				<textFieldExpression><![CDATA[$V{CLI_VENDEDOR_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

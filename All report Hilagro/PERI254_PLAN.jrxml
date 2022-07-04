@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERI254_PLAN" language="groovy" pageWidth="595" pageHeight="842" columnWidth="455" leftMargin="70" rightMargin="70" topMargin="70" bottomMargin="70" uuid="21be2439-d8ae-48bb-b488-ec0907bc7b38">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_LEGAJO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NUMERO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT T.PMOP_MONTO MONTO,
+       T.PMOP_MONEDA,
+       T.PMOP_INT_ANUAL INTERES,
+       DECODE(T.PMOP_TIPO_VENCIMIENTO,
+              30,
+              'Mensual',
+              90,
+              'Trimestral',
+              180,
+              'Semestral',
+              'Anual') TIPO_VENCIMIENTO,
+       T.PMOP_FECHA_DESEMBOLSO FECHA_DESEMBOLSO,
+       T.PMOP_PRIMER_VENCIMIENTO PRIMER_VENCIMIENTO,
+       T.PMOP_CANT_CUOTAS PLAZO,
+       DECODE(T.PMOP_SISTEMA_CALC,0,'Cuotas Fijas', 1,'Interés sobre Saldos',2,'Personalizadas' ) TIPO,
+       T.PMOP_CTABCO,
+       T.PMOP_DESTINO,
+       T.PMOP_FEC_DOC--Cabecera
+      , --Detalles
+       c.pmopd_cuota_nro         Cuota_Nro,
+       c.pmopd_vencimiento       Cuo_Vencimiento,
+       c.pmopd_saldo_capital     Cuo_Saldo_Capital,
+       c.pmopd_capital           Cuo_Capital,
+       c.pmopd_interes           Cuo_Interes,
+       c.pmopd_cuota             Cuo_Cuota
+  from per_prestamos          a,
+       per_prestamos_plan     t,
+       per_prestamos_plan_det c,
+       per_empleado           e
+ where pmoe_legajo = e.empl_legajo
+   and pmoe_empr = empl_empresa
+   and pmoe_legajo = pmop_legajo
+   and pmoe_empr = pmop_empr
+   and pmoe_nro = pmop_nro
+   and pmop_legajo = pmopd_legajo
+   and pmop_empr = pmopd_empr
+   and pmop_nro = pmopd_nro
+   and pmoe_empr = $P!{P_EMPRESA}
+   and pmoe_legajo = $P!{P_LEGAJO}
+   and pmoe_nro = $P!{P_NUMERO}
+ order by pmopd_cuota_nro]]>
+	</queryString>
+	<field name="MONTO" class="java.math.BigDecimal"/>
+	<field name="PMOP_MONEDA" class="java.math.BigDecimal"/>
+	<field name="INTERES" class="java.math.BigDecimal"/>
+	<field name="TIPO_VENCIMIENTO" class="java.lang.String"/>
+	<field name="FECHA_DESEMBOLSO" class="java.sql.Timestamp"/>
+	<field name="PRIMER_VENCIMIENTO" class="java.sql.Timestamp"/>
+	<field name="PLAZO" class="java.math.BigDecimal"/>
+	<field name="TIPO" class="java.lang.String"/>
+	<field name="PMOP_CTABCO" class="java.math.BigDecimal"/>
+	<field name="PMOP_DESTINO" class="java.lang.String"/>
+	<field name="PMOP_FEC_DOC" class="java.sql.Timestamp"/>
+	<field name="CUOTA_NRO" class="java.math.BigDecimal"/>
+	<field name="CUO_VENCIMIENTO" class="java.sql.Timestamp"/>
+	<field name="CUO_SALDO_CAPITAL" class="java.math.BigDecimal"/>
+	<field name="CUO_CAPITAL" class="java.math.BigDecimal"/>
+	<field name="CUO_INTERES" class="java.math.BigDecimal"/>
+	<field name="CUO_CUOTA" class="java.math.BigDecimal"/>
+	<variable name="CUO_CAPITAL_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CUO_CAPITAL}]]></variableExpression>
+	</variable>
+	<variable name="CUO_INTERES_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CUO_INTERES}]]></variableExpression>
+	</variable>
+	<variable name="CUO_CUOTA_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CUO_CUOTA}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="68" splitType="Stretch">
+			<staticText>
+				<reportElement x="-1" y="26" width="455" height="29" uuid="0c334079-e0c1-464d-bf9f-786faaa6ad1b"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PLAN DE PAGO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="0" width="1" height="68" uuid="b6dd4d24-572a-4f12-a27d-bb65d1670f68"/>
+			</line>
+			<line>
+				<reportElement x="454" y="0" width="1" height="68" uuid="c8af57f3-49ff-4a26-aead-2d9afd3601da"/>
+			</line>
+			<line>
+				<reportElement x="1" y="-1" width="453" height="1" uuid="b6073433-32c4-4c05-946d-49dcea68aafb"/>
+			</line>
+			<image>
+				<reportElement x="16" y="4" width="179" height="64" uuid="362e17e4-ce7e-4332-a611-1ca88b8f5c53"/>
+				<imageExpression><![CDATA["logo_t.jpg"]]></imageExpression>
+			</image>
+			<line>
+				<reportElement x="1" y="58" width="453" height="1" uuid="320f51ca-d64b-4512-a42c-14c75c9d5235"/>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="92" splitType="Stretch">
+			<textField>
+				<reportElement x="120" y="0" width="335" height="13" uuid="ae8cb3c4-49a1-4ddb-b5aa-6de1832c9e78"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MONTO}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{PMOP_MONEDA}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<staticText>
+				<reportElement x="19" y="0" width="120" height="13" uuid="1d9f962c-ed57-4ade-9333-69f547b63706"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Capital:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="120" y="13" width="335" height="13" uuid="7466b182-c228-487f-841b-6ffaf57dfc9a"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO_VENCIMIENTO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="19" y="13" width="120" height="13" uuid="fe94762d-9dd1-4188-9bec-92aea4cf0efb"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo Vencimiento:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="120" y="26" width="335" height="13" uuid="fdbda644-1a86-462f-81b2-939459c34d46"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INTERES}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="19" y="26" width="120" height="13" uuid="06e4e48f-ffe0-4cc3-9e07-85dba41d16f8"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Interes:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="120" y="39" width="335" height="13" uuid="c45d9fbf-0e0a-4be7-8f49-900d7c7c775f"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRIMER_VENCIMIENTO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="19" y="39" width="120" height="13" uuid="0e27e9e0-516c-4d85-98ba-c2f7ec7739f0"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Primer Vencimiento:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="120" y="52" width="335" height="13" uuid="468e41a4-15ff-4f65-a365-e93494c1203c"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_DESEMBOLSO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="19" y="52" width="109" height="13" uuid="9a667d26-9591-492f-8867-df3db81fbf76"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Desembolso:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="120" y="65" width="335" height="13" uuid="97aec298-b33e-44f2-963e-dcc4d7cabed3"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="19" y="65" width="109" height="13" uuid="482dd8bb-3f82-4209-ab21-94f0fa996d51"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="120" y="78" width="335" height="13" uuid="91eae5ff-cd04-4d33-b92b-d1f8c9797a7f"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PLAZO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="19" y="78" width="109" height="13" uuid="24dd9ad9-fca5-4e2c-922d-1554a5101120"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plazo:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="454" y="0" width="1" height="91" uuid="d0ec922b-04c9-4c6b-8e18-7940d5be22e3"/>
+			</line>
+			<line>
+				<reportElement x="0" y="0" width="1" height="92" uuid="587fb7f1-a267-4518-a229-72c50e08d0f2"/>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="7" width="32" height="13" uuid="23caafff-c7b8-42dc-8c60-74e55fd4aaf7"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Item]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="55" y="8" width="65" height="13" uuid="04f0a709-faf0-4af4-98d6-bf8bf0275a82"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Vencimiento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="133" y="8" width="74" height="13" uuid="00a920e0-f684-46d7-a887-ef376286280d"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saldo Capital]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="219" y="8" width="74" height="13" uuid="e21d21da-f9c8-487a-a1e6-33215c7bebc2"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Capital]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="297" y="8" width="74" height="13" uuid="7048f296-d8f6-4b68-939f-b48e56d9c967"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Interes]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="371" y="8" width="74" height="13" uuid="bf24e4a7-5f34-455a-8331-71538bd5df27"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cuota]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="20" width="455" height="1" uuid="8c760bb4-4470-4519-8419-384d243e15dd"/>
+			</line>
+			<line>
+				<reportElement x="454" y="-1" width="1" height="22" uuid="0855593a-bfc8-4f2e-9060-52b14908e313"/>
+			</line>
+			<line>
+				<reportElement x="0" y="0" width="1" height="21" uuid="f3e4acf4-7b43-4c73-af21-3cf42bd10d29"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="33" height="13" uuid="e87cbc09-406f-4c83-80c9-c15f7668e3b7"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUOTA_NRO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="55" y="0" width="65" height="13" uuid="c86358dc-185d-447e-9b82-896b9c93ed71"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUO_VENCIMIENTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="133" y="0" width="74" height="13" uuid="6982d635-770b-4e36-9339-31480d45d521"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUO_SALDO_CAPITAL}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{PMOP_MONEDA}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<textField>
+				<reportElement x="219" y="0" width="74" height="13" uuid="7d3b0de3-cd63-4c98-ac3a-d6dda4cdc695"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUO_CAPITAL}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{PMOP_MONEDA}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<textField>
+				<reportElement x="297" y="0" width="74" height="13" uuid="7e0a6480-5bdb-40f7-bf49-0ece1a26479d"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUO_INTERES}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{PMOP_MONEDA}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="371" y="0" width="74" height="13" uuid="29aca9ef-da36-4e7f-8a45-a23e3742bece"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUO_CUOTA}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{PMOP_MONEDA}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="1" height="15" uuid="f868c7d5-17b4-4d5f-88c7-85f7b6575ecb"/>
+			</line>
+			<line>
+				<reportElement x="454" y="0" width="1" height="15" uuid="43d776d7-2a6a-4e4e-9dc6-cb937db068d9"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="44" splitType="Stretch">
+			<staticText>
+				<reportElement x="129" y="2" width="74" height="13" uuid="3d28bb24-4eb0-49bc-8b34-61d5f0690066"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="216" y="0" width="229" height="1" uuid="3423337c-d7de-4daa-820c-f72850393df3"/>
+			</line>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="1" y="30" width="154" height="14" uuid="ad082365-dee6-4c5d-b6b2-b74e1b7e4668"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="17" width="454" height="1" uuid="2c06ab97-1e2b-420f-b6b1-7348d28c4d9e"/>
+			</line>
+			<line>
+				<reportElement x="454" y="1" width="1" height="16" uuid="14613d3e-0e32-438a-8578-67273b5b0155"/>
+			</line>
+			<line>
+				<reportElement x="0" y="-1" width="1" height="18" uuid="75ae2959-09dd-43b7-86b1-36fe86402574"/>
+			</line>
+			<line>
+				<reportElement x="1" y="23" width="454" height="1" uuid="597fae9a-3562-44cf-b690-0c85b91d5be4"/>
+			</line>
+			<textField>
+				<reportElement x="219" y="2" width="74" height="13" uuid="febbf7db-81fc-4451-9e95-c4067394f028"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{CUO_CAPITAL_1}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{PMOP_MONEDA}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<textField>
+				<reportElement x="299" y="2" width="74" height="13" uuid="4e3c755c-1b53-455b-9dd1-e839c2fdf4a4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{CUO_INTERES_1}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{PMOP_MONEDA}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<textField>
+				<reportElement x="374" y="2" width="74" height="13" uuid="2abc28a7-f3b4-4a91-87e6-e5b1a7d868e2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{CUO_CUOTA_1}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{PMOP_MONEDA}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

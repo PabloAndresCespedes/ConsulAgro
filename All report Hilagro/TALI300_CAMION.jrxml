@@ -1,0 +1,769 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TALI300_CAMION" language="groovy" pageWidth="530" pageHeight="802" columnWidth="530" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="2d84e71f-f9ed-4e72-9df6-1dd8becc9fd4">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="CAM_E1" uuid="67611082-287e-4d65-b1e0-ed60b3c4085d">
+		<parameter name="P_CAMION" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT *
+  FROM ((SELECT TRAN_EJE, TRAN_RUEDA, TRAN_SERIE, TRAN_CARRETA, TRAN_CAMION
+           FROM TRA_NEUMATICO_CAMION
+          WHERE TRAN_EMPR = $P{P_EMPRESA})
+        PIVOT(MIN(TRAN_SERIE) FOR TRAN_RUEDA IN (0, 1, 2, 3, 4)))
+ WHERE TRAN_EJE = 1
+   AND TRAN_CAMION = $P{P_CAMION}
+   AND TRAN_CARRETA = 0]]>
+		</queryString>
+		<field name="TRAN_EJE" class="java.lang.String"/>
+		<field name="TRAN_CARRETA" class="java.math.BigDecimal"/>
+		<field name="TRAN_CAMION" class="java.math.BigDecimal"/>
+		<field name="0" class="java.lang.String"/>
+		<field name="1" class="java.lang.String"/>
+		<field name="2" class="java.lang.String"/>
+		<field name="3" class="java.lang.String"/>
+		<field name="4" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="CAM_E2" uuid="d97c898c-1a61-415d-a32c-cecc50e84dbe">
+		<parameter name="P_CAMION" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT *
+  FROM ((SELECT TRAN_EJE, TRAN_RUEDA, TRAN_SERIE, TRAN_CARRETA, TRAN_CAMION
+           FROM TRA_NEUMATICO_CAMION
+          WHERE TRAN_EMPR = $P{P_EMPRESA})
+        PIVOT(MIN(TRAN_SERIE) FOR TRAN_RUEDA IN (0, 1, 2, 3, 4)))
+ WHERE TRAN_EJE = 2
+   AND TRAN_CAMION = $P{P_CAMION}
+   AND TRAN_CARRETA = 0]]>
+		</queryString>
+		<field name="TRAN_EJE" class="java.lang.String"/>
+		<field name="TRAN_CARRETA" class="java.math.BigDecimal"/>
+		<field name="TRAN_CAMION" class="java.math.BigDecimal"/>
+		<field name="0" class="java.lang.String"/>
+		<field name="1" class="java.lang.String"/>
+		<field name="2" class="java.lang.String"/>
+		<field name="3" class="java.lang.String"/>
+		<field name="4" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="CAM_E3" uuid="c39e5822-4252-4e3e-9a4e-ce7878e873d5">
+		<parameter name="P_CAMION" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT *
+  FROM ((SELECT TRAN_EJE, TRAN_RUEDA, TRAN_SERIE, TRAN_CARRETA, TRAN_CAMION
+           FROM TRA_NEUMATICO_CAMION
+          WHERE TRAN_EMPR =  $P{P_EMPRESA})
+        PIVOT(MIN(TRAN_SERIE) FOR TRAN_RUEDA IN (0, 1, 2, 3, 4)))
+ WHERE TRAN_EJE = 3
+   AND TRAN_CAMION = $P{P_CAMION}
+   AND TRAN_CARRETA = 0]]>
+		</queryString>
+		<field name="TRAN_EJE" class="java.lang.String"/>
+		<field name="TRAN_CARRETA" class="java.math.BigDecimal"/>
+		<field name="TRAN_CAMION" class="java.math.BigDecimal"/>
+		<field name="0" class="java.lang.String"/>
+		<field name="1" class="java.lang.String"/>
+		<field name="2" class="java.lang.String"/>
+		<field name="3" class="java.lang.String"/>
+		<field name="4" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="CAM_RESERVA" uuid="6eab1e81-a678-446d-be3e-bc2fdd7d7f83">
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_CAMION" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT *
+  FROM ((SELECT TRAN_EJE, TRAN_RUEDA, TRAN_SERIE, TRAN_CARRETA, TRAN_CAMION
+           FROM TRA_NEUMATICO_CAMION
+          WHERE TRAN_EMPR = $P{P_EMPRESA})
+        PIVOT(MIN(TRAN_SERIE) FOR TRAN_RUEDA IN (0, 1, 2, 3, 4)))
+ WHERE TRAN_EJE = 0
+   AND TRAN_CAMION =  nvl($P{P_CAMION},1)
+   AND TRAN_CARRETA = 0]]>
+		</queryString>
+		<field name="TRAN_EJE" class="java.lang.String"/>
+		<field name="TRAN_CARRETA" class="java.math.BigDecimal"/>
+		<field name="TRAN_CAMION" class="java.math.BigDecimal"/>
+		<field name="0" class="java.lang.String"/>
+		<field name="1" class="java.lang.String"/>
+		<field name="2" class="java.lang.String"/>
+		<field name="3" class="java.lang.String"/>
+		<field name="4" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="CAMION_IMAGEN" uuid="17ea527d-1f40-43a9-a5f9-5c9291dc8c4b">
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_CAMION" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select cam_tipo, ttip_img
+  from tra_camion, tra_tipo_camion
+ where ttip_codigo = cam_tipo
+   and ttip_empr = cam_empr
+   and cam_empr = $P{P_EMPRESA}
+   and cam_codigo = $P{P_CAMION}]]>
+		</queryString>
+		<field name="CAM_TIPO" class="java.math.BigDecimal"/>
+		<field name="TTIP_IMG" class="java.io.InputStream"/>
+	</subDataset>
+	<subDataset name="CARRETA_IMAGEN" uuid="24b0bfbd-4d08-45ef-8855-e6887a12abf6">
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_CAMION" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT T.TTIP_CODIGO, TTIP_IMG
+  FROM TRA_TIPO_CAMION T
+ WHERE TTIP_CODIGO = 2
+   AND TTIP_EMPR = $P{P_EMPRESA}]]>
+		</queryString>
+		<field name="TTIP_CODIGO" class="java.math.BigDecimal"/>
+		<field name="TTIP_IMG" class="java.io.InputStream"/>
+	</subDataset>
+	<subDataset name="CAR_E1" uuid="f697ac00-550c-4440-8275-09f118619171">
+		<parameter name="P_CAMION" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_CARRETA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select *
+  from ((select tran_eje, tran_rueda, tran_serie, tran_carreta, tran_camion
+           from tra_neumatico_camion where tran_empr = $P{P_EMPRESA})
+        pivot(min(tran_serie) for tran_rueda in (0, 1, 2, 3, 4)))
+ where tran_eje = 1
+   and tran_camion = $P{P_CAMION}
+   and tran_carreta = $P{P_CARRETA}]]>
+		</queryString>
+		<field name="TRAN_EJE" class="java.lang.String"/>
+		<field name="TRAN_CARRETA" class="java.math.BigDecimal"/>
+		<field name="TRAN_CAMION" class="java.math.BigDecimal"/>
+		<field name="0" class="java.lang.String"/>
+		<field name="1" class="java.lang.String"/>
+		<field name="2" class="java.lang.String"/>
+		<field name="3" class="java.lang.String"/>
+		<field name="4" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="CAR_E2" uuid="e9c9d860-da27-4b8e-8910-db26fc785415">
+		<parameter name="P_CAMION" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_CARRETA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select *
+  from ((select tran_eje, tran_rueda, tran_serie, tran_carreta, tran_camion
+           from tra_neumatico_camion where tran_empr = $P{P_EMPRESA})
+        pivot(min(tran_serie) for tran_rueda in (0, 1, 2, 3, 4)))
+ where tran_eje = 2
+   and tran_camion = $P{P_CAMION}
+   and tran_carreta = $P{P_CARRETA}]]>
+		</queryString>
+		<field name="TRAN_EJE" class="java.lang.String"/>
+		<field name="TRAN_CARRETA" class="java.math.BigDecimal"/>
+		<field name="TRAN_CAMION" class="java.math.BigDecimal"/>
+		<field name="0" class="java.lang.String"/>
+		<field name="1" class="java.lang.String"/>
+		<field name="2" class="java.lang.String"/>
+		<field name="3" class="java.lang.String"/>
+		<field name="4" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="CAR_E3" uuid="cf5819b2-7fce-489b-9835-62f97a6f8c11">
+		<parameter name="P_CAMION" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_CARRETA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select *
+  from ((select tran_eje, tran_rueda, tran_serie, tran_carreta, tran_camion
+           from tra_neumatico_camion where tran_empr = $P{P_EMPRESA})
+        pivot(min(tran_serie) for tran_rueda in (0, 1, 2, 3, 4)))
+ where tran_eje = 3
+   and tran_camion =  $P{P_CAMION}
+   and tran_carreta = $P{P_CARRETA}]]>
+		</queryString>
+		<field name="TRAN_EJE" class="java.lang.String"/>
+		<field name="TRAN_CARRETA" class="java.math.BigDecimal"/>
+		<field name="TRAN_CAMION" class="java.math.BigDecimal"/>
+		<field name="0" class="java.lang.String"/>
+		<field name="1" class="java.lang.String"/>
+		<field name="2" class="java.lang.String"/>
+		<field name="3" class="java.lang.String"/>
+		<field name="4" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="CAR_RESERVA" uuid="c925aa3f-34ba-4407-9ac9-a6984a5b30cf">
+		<parameter name="P_CAMION" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_CARRETA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select *
+  from ((select tran_eje, tran_rueda, tran_serie, tran_carreta, tran_camion
+           from tra_neumatico_camion where tran_empr = $P{P_EMPRESA} )
+        pivot(min(tran_serie) for tran_rueda in (0, 1, 2, 3, 4)))
+ where tran_eje =0
+   and tran_camion =  $P{P_CAMION}
+   and tran_carreta =  $P{P_CARRETA}]]>
+		</queryString>
+		<field name="TRAN_EJE" class="java.lang.String"/>
+		<field name="TRAN_CARRETA" class="java.math.BigDecimal"/>
+		<field name="TRAN_CAMION" class="java.math.BigDecimal"/>
+		<field name="0" class="java.lang.String"/>
+		<field name="1" class="java.lang.String"/>
+		<field name="2" class="java.lang.String"/>
+		<field name="3" class="java.lang.String"/>
+		<field name="4" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CAMION" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CARRETA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT 'X' FROM DUAL]]>
+	</queryString>
+	<field name="&apos;X&apos;" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="218" splitType="Stretch">
+			<componentElement>
+				<reportElement key="table 2" x="4" y="27" width="292" height="191" uuid="cf486355-4d63-4ebf-b927-0471bf57585b"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="CAMION_IMAGEN" uuid="cfb1172c-f95b-4efe-8161-479fdda66785">
+						<datasetParameter name="P_EMPRESA">
+							<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_CAMION">
+							<datasetParameterExpression><![CDATA[$P{P_CAMION}]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="323" uuid="3a1ba90d-0e6c-4731-8bd3-ca46c41aae65">
+						<jr:detailCell height="166" rowSpan="1">
+							<image hAlign="Left">
+								<reportElement x="0" y="0" width="294" height="166" uuid="6ab008ca-84bd-432b-8d28-9966a1366f83"/>
+								<imageExpression><![CDATA[$F{TTIP_IMG}]]></imageExpression>
+							</image>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<componentElement>
+				<reportElement key="table" x="27" y="37" width="100" height="171" uuid="d02c8fb3-93ba-4e99-93c0-5dc64c028d1a"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="CAM_E1" uuid="af0113d8-6d7a-4540-bcc0-4e26d04c585d">
+						<datasetParameter name="P_CAMION">
+							<datasetParameterExpression><![CDATA[$P{P_CAMION}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_EMPRESA">
+							<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="65" uuid="8e378347-3c38-427c-a8c7-80e831e7cabb">
+						<jr:detailCell height="166" rowSpan="1">
+							<box>
+								<topPen lineWidth="0.0"/>
+								<leftPen lineWidth="0.0"/>
+								<bottomPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+							<textField isBlankWhenNull="true">
+								<reportElement x="4" y="0" width="54" height="10" uuid="984b1795-9025-499e-8650-f86630538931"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{1}]]></textFieldExpression>
+							</textField>
+							<textField isBlankWhenNull="true">
+								<reportElement x="3" y="91" width="55" height="10" uuid="21ba7c87-b162-4643-8bca-67871dcda7f7"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{2}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<componentElement>
+				<reportElement key="table 1" x="164" y="35" width="65" height="171" uuid="78b4e01a-2806-4bd6-afb9-1376112b8891"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="CAM_E2" uuid="e3e25e71-5fc1-4ade-a625-bab354c69a58">
+						<datasetParameter name="P_CAMION">
+							<datasetParameterExpression><![CDATA[$P{P_CAMION}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_EMPRESA">
+							<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="90" uuid="4c31fc99-b050-4b2b-9b67-ff770880dad2">
+						<jr:detailCell height="170" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="90" height="10" uuid="24c5d667-2e43-42ed-af5f-e3c3a3e7f3d8"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{1}]]></textFieldExpression>
+							</textField>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="15" width="90" height="12" uuid="76d55806-ec63-4f94-b278-a80ecead519c"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{2}]]></textFieldExpression>
+							</textField>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="80" width="90" height="10" uuid="6ef23a66-4911-4ac5-9b93-d84a2108062c"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{3}]]></textFieldExpression>
+							</textField>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="96" width="90" height="10" uuid="a1460610-7f1c-4461-b4ce-e09e36ec5649"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{4}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<componentElement>
+				<reportElement key="table 1" x="214" y="35" width="65" height="171" uuid="60d51d49-20d2-47b2-ac1b-d9f5f0cd1f92"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="CAM_E3" uuid="34600e84-b91a-43af-93e7-9f4300d7d201">
+						<datasetParameter name="P_CAMION">
+							<datasetParameterExpression><![CDATA[$P{P_CAMION}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_EMPRESA">
+							<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="90" uuid="2d47ebde-466b-468c-b3d0-ee04584c10cd">
+						<jr:detailCell height="170" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="90" height="10" uuid="a56e1e90-0574-4b13-8fbd-85ad91227c33"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{1}]]></textFieldExpression>
+							</textField>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="15" width="90" height="12" uuid="18c747a9-d05d-422e-b899-12c5c905b521"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{2}]]></textFieldExpression>
+							</textField>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="80" width="90" height="10" uuid="b9164c96-4fc4-46c5-961b-5b98ff4d12d2"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{3}]]></textFieldExpression>
+							</textField>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="96" width="90" height="10" uuid="6f38336f-174b-448a-b0b5-a9e842db9b9f"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{4}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<componentElement>
+				<reportElement key="table 2" x="288" y="27" width="227" height="191" uuid="6f9f0af5-d167-4b52-9be9-296991664c96"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="CARRETA_IMAGEN" uuid="996734e2-5774-4b01-9a0a-241e192b2e8b">
+						<datasetParameter name="P_EMPRESA">
+							<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_CAMION">
+							<datasetParameterExpression><![CDATA[$P{P_CAMION}]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="260" uuid="b3be333d-e6cd-449c-8ed6-b226e5ce2e6e">
+						<jr:detailCell height="166" rowSpan="1">
+							<image hAlign="Left">
+								<reportElement x="0" y="0" width="260" height="166" uuid="1e809fde-2c10-417e-a25e-7eb71dc5741e"/>
+								<imageExpression><![CDATA[$F{TTIP_IMG}]]></imageExpression>
+							</image>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<image>
+				<reportElement x="293" y="119" width="107" height="62" uuid="bfbec1ad-9e73-4de1-9499-eeb4a8af4802"/>
+				<imageExpression><![CDATA["TALI300_RESERVA.png"]]></imageExpression>
+			</image>
+			<componentElement>
+				<reportElement key="table" x="390" y="30" width="43" height="120" uuid="c4e8aeb9-5513-48be-b06d-1e793286393d"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="CAR_E1" uuid="1d772d1a-4b5b-425d-9487-fdcc5a413368">
+						<datasetParameter name="P_CAMION">
+							<datasetParameterExpression><![CDATA[$P{P_CAMION}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_EMPRESA">
+							<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_CARRETA">
+							<datasetParameterExpression><![CDATA[$P{P_CARRETA}]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="93" uuid="fcc7d2e8-29c2-4ab1-8745-3ae8b365019b">
+						<jr:detailCell height="104" rowSpan="1">
+							<box>
+								<topPen lineWidth="0.0"/>
+								<leftPen lineWidth="0.0"/>
+								<bottomPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="3" width="93" height="10" uuid="404b16a4-a49f-4ab7-98f9-915feb0b7931"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{1}]]></textFieldExpression>
+							</textField>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="17" width="93" height="10" uuid="1d72b692-c314-4b55-8183-f31c690f898f"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{2}]]></textFieldExpression>
+							</textField>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="80" width="93" height="10" uuid="9e035dbf-5cf5-4aa1-813e-40dd47077b62"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{3}]]></textFieldExpression>
+							</textField>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="94" width="93" height="10" uuid="86758af6-f09a-4e0c-93b2-a4df49d51daf"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{4}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<componentElement>
+				<reportElement key="table" x="439" y="30" width="43" height="120" uuid="584864db-938d-4411-ad96-b67ede58f51e"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="CAR_E2" uuid="1c32af34-fb4e-491c-b6de-45c5b4b1e081">
+						<datasetParameter name="P_CAMION">
+							<datasetParameterExpression><![CDATA[$P{P_CAMION}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_EMPRESA">
+							<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_CARRETA">
+							<datasetParameterExpression><![CDATA[$P{P_CARRETA}]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="93" uuid="9f89d853-55ee-4ec0-8955-845a82f93f18">
+						<jr:detailCell height="104" rowSpan="1">
+							<box>
+								<topPen lineWidth="0.0"/>
+								<leftPen lineWidth="0.0"/>
+								<bottomPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="3" width="93" height="10" uuid="d178629c-e02c-4b29-b626-cbb1256ee7ba"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{1}]]></textFieldExpression>
+							</textField>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="17" width="93" height="10" uuid="7931fbdc-7d52-47c8-be60-0797fcc738ea"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{2}]]></textFieldExpression>
+							</textField>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="80" width="93" height="10" uuid="fea801b8-a58a-452c-86e0-746814a46fe0"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{3}]]></textFieldExpression>
+							</textField>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="94" width="93" height="10" uuid="207d7906-a3e7-45a8-ab56-78debc08a9bd"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{4}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<componentElement>
+				<reportElement key="table" x="484" y="30" width="43" height="120" uuid="b76b8e85-19af-4eed-9986-534c20e7eec6"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="CAR_E3" uuid="966fd4b8-13f4-493a-aeb8-7a1c3bc599d8">
+						<datasetParameter name="P_CAMION">
+							<datasetParameterExpression><![CDATA[$P{P_CAMION}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_EMPRESA">
+							<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_CARRETA">
+							<datasetParameterExpression><![CDATA[$P{P_CARRETA}]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="93" uuid="8258839f-e6b2-46aa-b408-d2ecf6ce50b9">
+						<jr:detailCell height="104" rowSpan="1">
+							<box>
+								<topPen lineWidth="0.0"/>
+								<leftPen lineWidth="0.0"/>
+								<bottomPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="3" width="93" height="10" uuid="e211f391-9716-459c-b510-5c27cb710d79"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{1}]]></textFieldExpression>
+							</textField>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="15" width="93" height="10" uuid="97b64270-49d3-43e8-85f5-195f2879fa7d"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{2}]]></textFieldExpression>
+							</textField>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="80" width="93" height="10" uuid="460e1d94-abba-4560-8039-44aa3286127e"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{3}]]></textFieldExpression>
+							</textField>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="94" width="93" height="10" uuid="faf27d97-ed8d-40a2-b257-b17e884396f7"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{4}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<componentElement>
+				<reportElement key="table 2" x="277" y="178" width="57" height="10" uuid="7af58311-7359-4249-baf7-80affb7ef8b9"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="CAM_RESERVA" uuid="e98e1f2d-7fcc-4e34-a664-101ff9396e23">
+						<datasetParameter name="P_EMPRESA">
+							<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_CAMION">
+							<datasetParameterExpression><![CDATA[$P{P_CAMION}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="60" uuid="c5fe547f-5391-48ff-92ae-ff1fecdc9293">
+						<jr:detailCell style="table 2_TD" height="10" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="60" height="10" uuid="fa1fe7dd-7f49-42ed-9284-b4dc23525978"/>
+								<textElement>
+									<font fontName="Arial" size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{0}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<componentElement>
+				<reportElement key="table 3" x="351" y="178" width="55" height="10" uuid="2f1a64d8-cf76-46aa-826a-0871053bd3fa"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="CAR_RESERVA" uuid="cf0dabe0-b96a-4a14-a2e1-d3cd89112f8b">
+						<datasetParameter name="P_CAMION">
+							<datasetParameterExpression><![CDATA[$P{P_CAMION}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_CARRETA">
+							<datasetParameterExpression><![CDATA[$P{P_CARRETA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_EMPRESA">
+							<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="49" uuid="e0cc144e-fc6a-41b8-85f8-7d309f6c989c">
+						<jr:detailCell style="table 3_TD" height="10" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="49" height="10" uuid="636d9bdb-8b67-4ca8-a180-884f044fbf39"/>
+								<textElement>
+									<font fontName="Arial" size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{0}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</summary>
+</jasperReport>

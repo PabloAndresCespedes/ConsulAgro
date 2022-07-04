@@ -1,0 +1,745 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ACOL227" language="groovy" pageWidth="593" pageHeight="842" columnWidth="553" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1efe7723-af20-4c4f-b3c8-a3d8e67e2e07">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESCRIP_EMPR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCU_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_MON_LOC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_MON_US" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_INI" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_FIN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROD_CODIGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROD_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLI_COD" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLI_NOM" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROV_CODIGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROV_RAZON_SOCIAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCU" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_IND_TIPO_FIJ" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_ETIQUETA_COL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SESSION_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT FIJ_FEC_EMIS,
+       FIJ_NRO,
+       FIJ_MONEDA,
+       FIJ_TASA,
+       CODIGO,
+       NOMBRE,
+       NVL(FIJ_CANTIDAD, 0) FIJ_CANTIDAD,
+       NVL(FIJ_CBOT, 0) FIJ_CBOT,
+       NVL(FIJ_PREMIO, 0) FIJ_PREMIO,
+       NVL(FIJ_PRECIO, 0) FIJ_PRECIO,
+       NVL(BONO, 0) BONO,
+       NVL(P_FINAL, 0) P_FINAL,
+       SUC_ABREV,
+       CON_FECHA_EN_CHICAGO,
+       NVL(CON_CANTIDAD, 0) CON_CANTIDAD,
+       FIJ_EMPR,
+       SUC_CODIGO,
+       EMPR,
+       SESSION_ID,
+
+       DECODE(ACOL227.CF_CANT_PREMIOFORMULA(FIJ_PREMIO   => FIJ_PREMIO,
+                                            FIJ_CANTIDAD => FIJ_CANTIDAD),
+              0,
+              1,
+              ACOL227.CF_CANT_PREMIOFORMULA(FIJ_PREMIO   => FIJ_PREMIO,
+                                            FIJ_CANTIDAD => FIJ_CANTIDAD)) CF_PREMIO,
+       DECODE(ACOL227.CF_CANT_CBOTFORMULA(FIJ_CBOT     => NVL(FIJ_CBOT, 0),
+                                          FIJ_CANTIDAD => NVL(FIJ_CANTIDAD, 0)),
+              0,
+              1,
+              ACOL227.CF_CANT_CBOTFORMULA(FIJ_CBOT     => NVL(FIJ_CBOT, 0),
+                                          FIJ_CANTIDAD => NVL(FIJ_CANTIDAD, 0))) CF_CBOT,
+       DECODE(ACOL227.CF_CANT_PRECIOFORMULA(FIJ_PRECIO   => NVL(FIJ_PRECIO,
+                                                                0),
+                                            FIJ_CANTIDAD => NVL(FIJ_CANTIDAD,
+                                                                0)),
+              0,
+              1,
+              ACOL227.CF_CANT_PRECIOFORMULA(FIJ_PRECIO   => NVL(FIJ_PRECIO, 0),
+                                            FIJ_CANTIDAD => NVL(FIJ_CANTIDAD,
+                                                                0))) CF_PRECIO,
+       DECODE(ACOL227.CF_TOT_PRECIOFINFORMULA(P_FINAL      => NVL(P_FINAL, 0),
+                                              FIJ_CANTIDAD => NVL(FIJ_CANTIDAD,
+                                                                  0)),
+              0,
+              1,
+              ACOL227.CF_TOT_PRECIOFINFORMULA(P_FINAL      => NVL(P_FINAL, 0),
+                                              FIJ_CANTIDAD => NVL(FIJ_CANTIDAD,
+                                                                  0))) CF_PRECIOFIN,
+
+       DECODE(ACOL227.CF_CANT_FIJACION(CAMPO        => FIJ_CBOT,
+                                       FIJ_CANTIDAD => FIJ_CANTIDAD),
+              0,
+              1,
+              ACOL227.CF_CANT_FIJACION(CAMPO        => FIJ_CBOT,
+                                       FIJ_CANTIDAD => FIJ_CANTIDAD)) CANT_CBOT,
+
+       DECODE(ACOL227.CF_CANT_FIJACION(CAMPO        => FIJ_PREMIO,
+                                       FIJ_CANTIDAD => FIJ_CANTIDAD),
+              0,
+              1,
+              ACOL227.CF_CANT_FIJACION(CAMPO        => FIJ_PREMIO,
+                                       FIJ_CANTIDAD => FIJ_CANTIDAD)) CANT_PREMIO,
+
+       DECODE(ACOL227.CF_CANT_FIJACION(CAMPO        => FIJ_PRECIO,
+                                       FIJ_CANTIDAD => FIJ_CANTIDAD),
+              0,
+              1,
+              ACOL227.CF_CANT_FIJACION(CAMPO        => FIJ_PRECIO,
+                                       FIJ_CANTIDAD => FIJ_CANTIDAD)) CANT_PRECIO,
+
+       DECODE(ACOL227.CF_CANT_FIJACION(CAMPO        => P_FINAL,
+                                       FIJ_CANTIDAD => FIJ_CANTIDAD),
+              0,
+              1,
+              ACOL227.CF_CANT_FIJACION(CAMPO        => FIJ_PRECIO,
+                                       FIJ_CANTIDAD => FIJ_CANTIDAD)) CANT_PRECIO_FIN
+  FROM ACO_ACOL227_TEMP
+ WHERE SESSION_ID = $P{P_SESSION_ID}
+   AND EMPR = $P{P_EMPRESA}
+ ORDER BY FIJ_NRO ASC
+]]>
+	</queryString>
+	<field name="FIJ_FEC_EMIS" class="java.sql.Timestamp"/>
+	<field name="FIJ_NRO" class="java.math.BigDecimal"/>
+	<field name="FIJ_MONEDA" class="java.math.BigDecimal"/>
+	<field name="FIJ_TASA" class="java.math.BigDecimal"/>
+	<field name="CODIGO" class="java.math.BigDecimal"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="FIJ_CANTIDAD" class="java.math.BigDecimal"/>
+	<field name="FIJ_CBOT" class="java.math.BigDecimal"/>
+	<field name="FIJ_PREMIO" class="java.math.BigDecimal"/>
+	<field name="FIJ_PRECIO" class="java.math.BigDecimal"/>
+	<field name="BONO" class="java.math.BigDecimal"/>
+	<field name="P_FINAL" class="java.math.BigDecimal"/>
+	<field name="SUC_ABREV" class="java.lang.String"/>
+	<field name="CON_FECHA_EN_CHICAGO" class="java.lang.String"/>
+	<field name="CON_CANTIDAD" class="java.math.BigDecimal"/>
+	<field name="FIJ_EMPR" class="java.math.BigDecimal"/>
+	<field name="SUC_CODIGO" class="java.math.BigDecimal"/>
+	<field name="EMPR" class="java.math.BigDecimal"/>
+	<field name="SESSION_ID" class="java.math.BigDecimal"/>
+	<field name="CF_PREMIO" class="java.math.BigDecimal"/>
+	<field name="CF_CBOT" class="java.math.BigDecimal"/>
+	<field name="CF_PRECIO" class="java.math.BigDecimal"/>
+	<field name="CF_PRECIOFIN" class="java.math.BigDecimal"/>
+	<field name="CANT_CBOT" class="java.math.BigDecimal"/>
+	<field name="CANT_PREMIO" class="java.math.BigDecimal"/>
+	<field name="CANT_PRECIO" class="java.math.BigDecimal"/>
+	<field name="CANT_PRECIO_FIN" class="java.math.BigDecimal"/>
+	<variable name="FIJ_CANTIDAD_1" class="java.math.BigDecimal" resetType="Group" resetGroup="FECHA" calculation="Sum">
+		<variableExpression><![CDATA[$F{FIJ_CANTIDAD}]]></variableExpression>
+	</variable>
+	<variable name="CF_TOT_CBOT_FEC" class="java.math.BigDecimal" resetType="Group" resetGroup="FECHA" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_CBOT}]]></variableExpression>
+	</variable>
+	<variable name="CF_TOT_PREMIO_FEC" class="java.math.BigDecimal" resetType="Group" resetGroup="FECHA" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_PREMIO}]]></variableExpression>
+	</variable>
+	<variable name="CF_TOT_PRECIO_FEC" class="java.math.BigDecimal" resetType="Group" resetGroup="FECHA" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_PRECIO}]]></variableExpression>
+	</variable>
+	<variable name="CF_TOT_PRECIOFIN_FEC" class="java.math.BigDecimal" resetType="Group" resetGroup="FECHA" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_PRECIOFIN}]]></variableExpression>
+	</variable>
+	<variable name="FIJ_CANTIDAD_2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{FIJ_CANTIDAD}]]></variableExpression>
+	</variable>
+	<variable name="CF_TOT_CBOT_GEN" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_CBOT}]]></variableExpression>
+	</variable>
+	<variable name="CF_TOT_PREMIO_GEN" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_PREMIO}]]></variableExpression>
+	</variable>
+	<variable name="CF_TOT_PRECIO_GEN" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_PRECIO}]]></variableExpression>
+	</variable>
+	<variable name="CF_TOT_PRECIOFIN_GEN" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_PRECIOFIN}]]></variableExpression>
+	</variable>
+	<variable name="FIJ_PREMIO_1" class="java.math.BigDecimal" resetType="Group" resetGroup="FECHA" calculation="Average">
+		<variableExpression><![CDATA[$F{FIJ_PREMIO}]]></variableExpression>
+	</variable>
+	<variable name="CANT_CBOT_FEC" class="java.math.BigDecimal" resetType="Group" resetGroup="FECHA" calculation="Sum">
+		<variableExpression><![CDATA[$F{CANT_CBOT}]]></variableExpression>
+	</variable>
+	<variable name="CANT_PREMIO_FEC" class="java.math.BigDecimal" resetType="Group" resetGroup="FECHA" calculation="Sum">
+		<variableExpression><![CDATA[$F{CANT_PREMIO}]]></variableExpression>
+	</variable>
+	<variable name="CANT_PRECIO_FEC" class="java.math.BigDecimal" resetType="Group" resetGroup="FECHA" calculation="Sum">
+		<variableExpression><![CDATA[$F{CANT_PRECIO}]]></variableExpression>
+	</variable>
+	<variable name="CANT_PRECIO_FIN_FEC" class="java.math.BigDecimal" resetType="Group" resetGroup="FECHA" calculation="Sum">
+		<variableExpression><![CDATA[$F{CANT_PRECIO_FIN}]]></variableExpression>
+	</variable>
+	<variable name="CANT_CBOT_GEN" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CANT_CBOT}]]></variableExpression>
+	</variable>
+	<variable name="CANT_PREMIO_GEN" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CANT_PREMIO}]]></variableExpression>
+	</variable>
+	<variable name="CANT_PRECIO_GEN" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CANT_PRECIO}]]></variableExpression>
+	</variable>
+	<variable name="CANT_PRECIO_FIN_GEN" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CANT_PRECIO_FIN}]]></variableExpression>
+	</variable>
+	<group name="FECHA">
+		<groupExpression><![CDATA[$F{FIJ_FEC_EMIS}]]></groupExpression>
+		<groupHeader>
+			<band height="13">
+				<staticText>
+					<reportElement x="12" y="2" width="31" height="8" uuid="47df9fc5-eae7-4cb2-b21d-b7dbd89efb49"/>
+					<textElement>
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Fecha:]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement x="43" y="2" width="100" height="8" uuid="720d16e9-507b-4211-8a91-a52ac0763b69"/>
+					<textElement>
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FIJ_FEC_EMIS}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="10">
+				<staticText>
+					<reportElement x="190" y="2" width="49" height="8" uuid="369c6d8e-e918-44a9-8e2f-e0d3e4d647be"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Promedio:]]></text>
+				</staticText>
+				<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+					<reportElement x="241" y="2" width="45" height="8" uuid="de311cfe-8b56-44c1-b93f-6fdb6bd3f88a"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{FIJ_CANTIDAD_1}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="336" y="2" width="45" height="8" uuid="a6bb3c19-b4a1-4938-9e18-8a4471ac97b4"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CF_TOT_CBOT_FEC}/$V{CANT_CBOT_FEC}]]></textFieldExpression>
+					<patternExpression><![CDATA[$F{FIJ_MONEDA}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="429" y="2" width="35" height="8" uuid="da0de7e7-678f-4f5c-b1f7-8bb1f34de39c"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CF_TOT_PRECIO_FEC}/$V{CANT_PRECIO_FEC}]]></textFieldExpression>
+					<patternExpression><![CDATA[$F{FIJ_MONEDA}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="502" y="2" width="37" height="8" uuid="ca3abcc6-1f2d-4baf-a7cf-1c35bfcb7700"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CF_TOT_PRECIOFIN_FEC}/$V{CANT_PRECIO_FIN_FEC}]]></textFieldExpression>
+					<patternExpression><![CDATA[$F{FIJ_MONEDA}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+				</textField>
+				<line>
+					<reportElement x="241" y="1" width="298" height="1" uuid="dd073ec7-1d74-498d-8200-bdb99b5d7af7"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="383" y="2" width="44" height="8" uuid="d95394fd-78ad-434d-9160-3f03ccb87bb0"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CF_TOT_PREMIO_FEC}/$V{CANT_PREMIO_FEC}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="106" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="4" y="2" width="123" height="11" uuid="875fce87-00da-430d-83d7-2f43af1c8811"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESCRIP_EMPR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="4" y="13" width="123" height="11" uuid="ad03205c-ae04-47a4-892f-abcb931c840a"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SUCU_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="127" y="24" width="347" height="10" uuid="2ff54e4f-fb9a-4c3a-ad7a-1dd09bd04990"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="478" y="2" width="74" height="11" uuid="ce77c6be-008a-4872-99f9-1d0f8d9c849d"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss" isBlankWhenNull="true">
+				<reportElement x="478" y="13" width="74" height="11" uuid="7d4d2c29-076d-467b-80cd-461462fd714c"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="6" y="54" width="37" height="10" uuid="35f57fba-e05e-4688-b011-f5c68c7f29ef"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Producto:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="6" y="64" width="59" height="10" uuid="9a1e59ae-c2b3-4422-ab68-cda894fab238"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Fecha Desde :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="179" y="64" width="30" height="10" uuid="775b131d-09d4-4e89-a894-44dc7c3ec968"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[hasta :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="6" y="74" width="47" height="10" uuid="d49b86a2-de09-41f4-9cfe-210b101c38f3"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Proveedor :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="6" y="84" width="37" height="10" uuid="6dffef85-ad1b-44ad-a8c3-1dce61cbfa90"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Cliente :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="6" y="94" width="37" height="10" uuid="4691af91-23e4-46af-bf7b-fadaeba225f6"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Sucursal :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="65" y="64" width="100" height="10" uuid="268ecbac-b58d-4aad-8e4d-b96769d64a97"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FEC_INI}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="209" y="64" width="100" height="10" uuid="6c08b0e7-ef5a-4989-9bb4-0256335a6f41"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FEC_FIN}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="43" y="54" width="36" height="10" uuid="0c8692da-83a3-4853-9136-03fbad875a69"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROD_CODIGO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="79" y="54" width="201" height="10" uuid="9c036745-5a49-4c1e-8a66-50c5526eef3a"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROD_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="43" y="84" width="36" height="10" uuid="6f318880-4acd-4ff0-a4a0-958d5616e2e9"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_CLI_COD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="79" y="84" width="201" height="10" uuid="65482bb9-df34-4f8e-b8c0-2bfb0501b930"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_CLI_NOM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="53" y="74" width="26" height="10" uuid="fa032888-ad7c-4e51-bc50-0b903ba5eca0"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROV_CODIGO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="79" y="74" width="201" height="10" uuid="d27ea585-f5e4-4b15-b111-c9db7a68339f"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROV_RAZON_SOCIAL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="43" y="94" width="237" height="10" uuid="76701bfc-8f61-47f2-b0c5-5798d7f5a044"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SUCU}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="18" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="2" width="552" height="15" backcolor="#EEEEEE" uuid="7e90f73e-d0aa-49c0-a15b-b43d3b241796"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<textField isBlankWhenNull="true">
+				<reportElement x="13" y="4" width="100" height="10" uuid="30cc42c3-4691-4a40-84cd-e75bac6ddf17"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_ETIQUETA_COL}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="157" y="2" width="1" height="15" uuid="d8d9ee48-6e27-4931-8ec8-c73e99205fba"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="160" y="4" width="30" height="10" uuid="5fd71963-134d-42ed-84c8-e46db1e78f95"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Sucursal]]></text>
+			</staticText>
+			<line>
+				<reportElement x="193" y="2" width="1" height="15" uuid="f181a1f8-9713-4254-8212-e29f23673479"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="196" y="4" width="43" height="10" uuid="44c8adad-7915-400c-91b3-9274d9b9bef5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Nro Fijacion]]></text>
+			</staticText>
+			<line>
+				<reportElement x="240" y="2" width="1" height="15" uuid="1d9b32a6-fe5f-476f-a8cb-97098ff85d19"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="241" y="4" width="45" height="10" uuid="3921ace4-6691-4610-a47a-1ca74af2d6fb"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Cantidad]]></text>
+			</staticText>
+			<line>
+				<reportElement x="287" y="2" width="1" height="15" uuid="af41f93c-f620-425e-ad40-654b75c8e987"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="289" y="4" width="45" height="10" uuid="de3e8d30-d9b0-4e89-8ce9-d80f0fc75744"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Base]]></text>
+			</staticText>
+			<line>
+				<reportElement x="335" y="2" width="1" height="15" uuid="ed29e2d2-e764-4867-b25e-0267ebbfa110"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="335" y="4" width="45" height="10" uuid="a7dd0c84-b570-4571-a8ac-e59e5b3eb52a"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Cbot]]></text>
+			</staticText>
+			<line>
+				<reportElement x="381" y="2" width="1" height="15" uuid="5c9ab45a-4c1f-43ea-9977-fa52a713beed"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="382" y="4" width="45" height="10" uuid="ce0f5cc9-e5e1-4480-986e-ec25c2574d61"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Premio]]></text>
+			</staticText>
+			<line>
+				<reportElement x="427" y="2" width="1" height="15" uuid="2c836f2f-a4a6-4ca2-9280-7c7429f73050"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="429" y="4" width="35" height="10" uuid="67c8e94a-9a96-4c27-b266-9cf5f684573b"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Precio]]></text>
+			</staticText>
+			<line>
+				<reportElement x="464" y="2" width="1" height="15" uuid="3e5b1a0d-3527-406d-a401-dcad8fd0bb74"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="466" y="4" width="31" height="10" uuid="3e1645f7-c40d-4734-ad7e-4dd4ec6146e0"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Bono]]></text>
+			</staticText>
+			<line>
+				<reportElement x="498" y="2" width="1" height="15" uuid="41f6de8d-ddd2-4839-a689-1b4141c2e753"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="502" y="4" width="37" height="10" uuid="0c00bc2d-b766-4a46-a165-7419e6192a52"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[PrecioFinal]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="11" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="3" width="42" height="8" uuid="e8ee8ffa-d98c-4b3b-8b39-52e39ec8e9d1"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CODIGO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="43" y="3" width="114" height="8" uuid="b1b52205-8434-4a9a-93c8-801833e15585"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="160" y="3" width="30" height="8" uuid="63848cd7-443c-455b-a85c-900417edc3ee"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SUC_ABREV}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="196" y="3" width="43" height="8" uuid="fb44c16d-7dfe-4ce8-b590-e5cba620b77f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FIJ_NRO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement x="241" y="3" width="45" height="8" uuid="c180be41-f62d-4e06-bad6-af44cd2b8668"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FIJ_CANTIDAD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="289" y="3" width="45" height="8" uuid="b568b290-dbfe-4ab2-8f13-eef7e29ed897"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CON_FECHA_EN_CHICAGO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="335" y="3" width="45" height="8" uuid="e81683f3-5f45-412f-a82c-fe4934aba411"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FIJ_CBOT}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{FIJ_MONEDA}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="382" y="3" width="45" height="8" uuid="e4ee100d-25a3-457d-90db-bcb8e2681796"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FIJ_PREMIO}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{FIJ_MONEDA}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="429" y="3" width="35" height="8" uuid="8668a7ee-88f0-4430-b85a-476e849f77dc"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FIJ_PRECIO}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{FIJ_MONEDA}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="466" y="3" width="31" height="8" uuid="f8652e0b-b2f4-4377-aef5-1c4fa0600ddd"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BONO}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{FIJ_MONEDA}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="502" y="3" width="37" height="7" uuid="2e1a9ca3-bccd-42fc-b6db-bd67ac28268b"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{P_FINAL}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{FIJ_MONEDA}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="10" width="540" height="1" forecolor="#CCCCCC" uuid="32257419-5b41-4db0-af28-e2e0509c805a"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="9" splitType="Stretch">
+			<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement x="241" y="1" width="45" height="8" uuid="0fc15a9d-5445-447b-bd2e-281240a519c5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{FIJ_CANTIDAD_2}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="336" y="1" width="45" height="8" uuid="9a370a14-eb2f-4622-a86f-6f6026857f33"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{CF_TOT_CBOT_GEN}/$V{CANT_CBOT_GEN}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{FIJ_MONEDA}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="382" y="1" width="45" height="8" uuid="0b64add0-fbeb-4a8f-ae66-d227c0d80b64"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{CF_TOT_PREMIO_GEN}/$V{CANT_PREMIO_GEN}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{FIJ_MONEDA}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="429" y="1" width="35" height="8" uuid="6e0eb14b-782d-4106-911b-5337c0dfc2d0"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{CF_TOT_PRECIO_GEN}/$V{CANT_PRECIO_GEN}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{FIJ_MONEDA}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="502" y="1" width="37" height="8" uuid="dc2c0ac6-95d2-4e2d-ad43-9a614332a6e1"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{CF_TOT_PRECIOFIN_GEN}/$V{CANT_PRECIO_FIN_GEN}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{FIJ_MONEDA}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<staticText>
+				<reportElement x="180" y="1" width="59" height="8" uuid="b51308ac-6c97-4d36-8ef6-bdba3054fdab"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Promedio Gral:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="241" y="1" width="298" height="1" uuid="d4778852-fa2b-4bbb-971a-d28dac86649a"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

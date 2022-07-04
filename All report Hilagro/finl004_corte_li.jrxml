@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="finl004_corte_li" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="28fa673e-caf8-41ae-8087-cd00795067d2">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.one.page.per.sheet" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<style name="detalles" hAlign="Left" vAlign="Top" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman"/>
+	<style name="cabecera_columna" forecolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Top" fontSize="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="estilo_importes" hAlign="Right" pattern="( $P{P_MONEDA}==&quot;1&quot; ? &quot;#,##0;-#,##0&quot; : &quot;#,##0.00;-#,##0.00&quot; )" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FORMATO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USUARIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_WHERE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_MONEDA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_MONEDA" class="java.lang.String"/>
+	<parameter name="P_FILTRO_SUCURSAL" class="java.lang.String"/>
+	<parameter name="P_DESC_FILTRO_SUCURSAL" class="java.lang.String"/>
+	<parameter name="P_CATEGORIA" class="java.lang.String"/>
+	<parameter name="P_DESC_CATEGORIA" class="java.lang.String"/>
+	<parameter name="P_PLAN" class="java.lang.String"/>
+	<parameter name="P_DESC_PLAN" class="java.lang.String"/>
+	<parameter name="P_VENDEDOR" class="java.lang.String"/>
+	<parameter name="P_DESC_VENDEDOR" class="java.lang.String"/>
+	<parameter name="P_HOLDING" class="java.lang.String"/>
+	<parameter name="P_DESC_HOLDING" class="java.lang.String"/>
+	<parameter name="P_CLIENTE" class="java.lang.String"/>
+	<parameter name="P_DESC_CLIENTE" class="java.lang.String"/>
+	<parameter name="P_ZONA" class="java.lang.String"/>
+	<parameter name="P_DESC_ZONA" class="java.lang.String"/>
+	<parameter name="P_VEND_ASIG" class="java.lang.String"/>
+	<parameter name="P_DESC_VEND_ASIG" class="java.lang.String"/>
+	<parameter name="P_RUBRO" class="java.lang.String"/>
+	<parameter name="P_DESC_RUBRO" class="java.lang.String"/>
+	<parameter name="P_CLASIFICACION" class="java.lang.String"/>
+	<parameter name="P_DESC_CLASIFICACION" class="java.lang.String"/>
+	<parameter name="P_FEC_VTO" class="java.lang.String"/>
+	<parameter name="P_ESTADO" class="java.lang.String"/>
+	<parameter name="P_DESC_ESTADO" class="java.lang.String"/>
+	<parameter name="P_TIPO_MOV" class="java.lang.String"/>
+	<parameter name="P_DESC_TIPO_MOV" class="java.lang.String"/>
+	<parameter name="P_SALDO_CERO" class="java.lang.String"/>
+	<parameter name="P_IND_PER_SGTE" class="java.lang.String">
+		<defaultValueExpression><![CDATA["S"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select  NVL(LINEA, 'FINANCIERO') LINEA,
+       ROUND(SUM(A.ECC_SALDO * NVL(PORC, 1)), 0) IMPORTE
+  from fin_ext_cliente a,
+       (SELECT C.DOC_CLAVE,
+               C.DOC_EMPR,
+               F.LINEG_CODIGO || '-' || F.LINEG_DESC LINEA,
+               SUM(D.DET_NETO_LOC) / SLI PORC
+          FROM FIN_DOCUMENTO C,
+               FAC_DOCUMENTO_DET D,
+               STK_ARTICULO E,
+               STK_LINEA_NEGOCIO F,
+               GEN_TIPO_MOV G,
+               (SELECT D.DET_CLAVE_DOC, D.DET_EMPR, SUM(D.DET_NETO_LOC) SLI
+                  FROM FAC_DOCUMENTO_DET D
+                 GROUP BY D.DET_CLAVE_DOC, D.DET_EMPR) SI
+         WHERE C.DOC_CLAVE = D.DET_CLAVE_DOC
+           AND C.DOC_EMPR = D.DET_EMPR
+           AND D.DET_ART = E.ART_CODIGO
+           AND D.DET_EMPR = E.ART_EMPR
+           AND E.ART_LIN_NEGOCIO = F.LINEG_CODIGO
+           AND E.ART_EMPR = F.LINEG_EMPR
+           AND C.DOC_TIPO_MOV = G.TMOV_CODIGO
+           AND C.DOC_EMPR = G.TMOV_EMPR
+           AND TMOV_IND_AFECTA_SALDO = 'C'
+           AND C.DOC_CLAVE = SI.DET_CLAVE_DOC
+           AND C.DOC_EMPR = SI.DET_EMPR
+           AND SLI <> 0
+         GROUP BY C.DOC_CLAVE,
+                  C.DOC_EMPR,
+                  F.LINEG_CODIGO || '-' || F.LINEG_DESC,
+                  SLI) B,FIN_CLIENTE C
+ WHERE A.ECC_CLAVE_DOC = B.DOC_CLAVE
+   AND A.ECC_EMPR = B.DOC_EMPR
+   AND C.CLI_CODIGO=A.ECC_CLIENTE
+   AND C.CLI_EMPR=A.ECC_EMPR
+   and ECC_USER=$P{P_USUARIO}
+   $P!{P_WHERE}
+GROUP BY LINEA]]>
+	</queryString>
+	<field name="LINEA" class="java.lang.String"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<variable name="V_TOTAL_SALDO" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="14" splitType="Stretch">
+			<staticText>
+				<reportElement x="323" y="0" width="108" height="11" uuid="5169aba0-5830-4328-b73c-cfaf0c175e49"/>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saldo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="0" width="100" height="11" uuid="085628e9-612b-4886-bc35-8f4331d57b2a"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Linea]]></text>
+			</staticText>
+			<line>
+				<reportElement x="5" y="12" width="426" height="1" uuid="add70858-5943-4314-822e-1b514b12b1ad"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<textField>
+				<reportElement x="10" y="1" width="144" height="11" uuid="24e2c901-c092-48de-ade0-a58715a16cdd"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LINEA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="323" y="1" width="108" height="11" uuid="66760aea-a877-4815-ad70-af732a14526f"/>
+				<textElement textAlignment="Right">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE}]]></textFieldExpression>
+				<patternExpression><![CDATA[(  ($P{P_MONEDA}=="1") || ($P{P_MONEDA}=="0") ? "#,##0;-#,##0" : "#,##0.00;-#,##0.00" )]]></patternExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band height="15">
+			<textField>
+				<reportElement x="323" y="2" width="108" height="11" uuid="8a2ed093-091d-4b91-9f54-2adb1120082c"/>
+				<textElement textAlignment="Right">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_TOTAL_SALDO}]]></textFieldExpression>
+				<patternExpression><![CDATA[(  ($P{P_MONEDA}=="1") || ($P{P_MONEDA}=="0") ? "#,##0;-#,##0" : "#,##0.00;-#,##0.00" )]]></patternExpression>
+			</textField>
+			<staticText>
+				<reportElement x="246" y="2" width="38" height="11" uuid="dcdc4f67-6eba-4bf9-9f30-71d1c43740e8"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="323" y="0" width="108" height="1" uuid="681d62d0-1532-4ee8-8307-d3893c0bdaee"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

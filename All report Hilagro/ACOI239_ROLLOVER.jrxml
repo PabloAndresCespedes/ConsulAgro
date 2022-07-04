@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ACOI239_ROLLOVER" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3faff51d-769c-4022-bb8d-676f7aff4bf7">
+	<property name="ireport.zoom" value="1.9487171000000016"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="V_TIPO_CONTRATO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="V_BASE_CHICAGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="V_CONTRATO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="V_PRODUCTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="V_ANHO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select to_char(roll_grab, 'DD/MM/YYYY') fecha_grab,
+       roll_base base_chicago,
+       prod_codigo,
+       prod_desc producto,
+       r.roll_ind_contrato tipo_contrato,
+       r.roll_operacion operacion,
+       r.roll_premio premio,
+       r.roll_nro_contrato nro_contrato,
+       r.roll_anho_contrato anho
+  from aco_rollover r, aco_producto p
+ where r.roll_empr = p.prod_empr
+   and r.roll_producto = p.prod_codigo
+   and p.prod_grupo in (1,2)
+   and roll_empr = 2
+                 --------------------PARAMETROS--------------------
+   and (r.roll_ind_contrato = $P{V_TIPO_CONTRATO} or $P{V_TIPO_CONTRATO} is null)
+   and (regexp_replace(r.roll_base, '[^A-Z]') = $P{V_BASE_CHICAGO} or $P{V_BASE_CHICAGO} is null)
+   and (r.roll_nro_contrato = $P{V_CONTRATO} or $P{V_CONTRATO} is null)
+   and (r.roll_producto = $P{V_PRODUCTO} or $P{V_PRODUCTO} is null)
+   and (r.roll_anho_contrato = $P{V_ANHO} or $P{V_ANHO} is null)
+ group by roll_base,
+          prod_codigo,
+          roll_grab,
+          prod_desc,
+          roll_ind_contrato,
+          roll_operacion,
+          roll_premio,
+          roll_nro_contrato,
+          roll_anho_contrato
+ order by roll_grab desc]]>
+	</queryString>
+	<field name="FECHA_GRAB" class="java.lang.String"/>
+	<field name="BASE_CHICAGO" class="java.lang.String"/>
+	<field name="PROD_CODIGO" class="java.math.BigDecimal"/>
+	<field name="PRODUCTO" class="java.lang.String"/>
+	<field name="TIPO_CONTRATO" class="java.lang.String"/>
+	<field name="OPERACION" class="java.lang.String"/>
+	<field name="PREMIO" class="java.math.BigDecimal"/>
+	<field name="NRO_CONTRATO" class="java.math.BigDecimal"/>
+	<field name="ANHO" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="57" splitType="Stretch">
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="477" y="30" width="78" height="14" uuid="70190c57-041d-4f4d-986e-18d95622328e"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="515" y="0" width="41" height="18" uuid="20f38a23-8a9a-4857-bb4b-bb6bd2d7cd7c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[ACOI239]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="504" y="18" width="42" height="12" uuid="6c3e37c5-217c-4987-a402-b377c415eb42"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pág. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="530" y="18" width="23" height="12" uuid="6a96c0aa-0763-4425-a4e7-9f9a7986fe3e"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="168" y="24" width="220" height="20" uuid="b2e75c72-e842-4f17-9966-36176aca7a97"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<text><![CDATA[INFORME ROLLOVER]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="29" splitType="Stretch">
+			<staticText>
+				<reportElement x="424" y="0" width="127" height="20" uuid="09583b12-16e7-439e-9334-bee0702a045b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Detalles del contrato]]></text>
+			</staticText>
+			<line>
+				<reportElement x="422" y="23" width="131" height="1" uuid="73c0a673-bd96-4af5-9304-45947e051ff3"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="26" splitType="Stretch">
+			<staticText>
+				<reportElement x="4" y="0" width="51" height="20" uuid="320c06c1-de23-44b2-bb7a-db82f61e3602"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="62" y="0" width="73" height="20" uuid="842e339c-29bc-490a-a154-9c57badba3d8"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[BASE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="144" y="0" width="159" height="20" uuid="10316dab-786f-4ec9-bb37-4b13de252ddf"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[PRODUCTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="313" y="0" width="52" height="20" uuid="badb992e-b3fc-480a-a50d-b674887abc06"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[OPERACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="371" y="0" width="43" height="20" uuid="dbe1e60a-11c5-4dea-b668-01283f12caba"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[PREMIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="461" y="0" width="46" height="20" uuid="7af4dea7-f9a6-4e98-9079-bd2fb87c5e25"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[NUMERO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="516" y="0" width="33" height="20" uuid="baa82854-cc0d-427b-adc4-8de889d66da2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[AÑO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="428" y="0" width="23" height="20" uuid="3c1aa0d5-54ba-4143-855b-a28bd9e2b67a"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[TIPO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="20" width="555" height="1" uuid="384168d7-f24a-40e1-ac46-176d14c32c35"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="4" y="3" width="51" height="20" uuid="2e279a37-0d17-4356-88fe-54cc3b6ce6ee"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_GRAB}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="62" y="3" width="73" height="20" uuid="f7d16d0b-3b63-4262-b818-2653605400e6"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BASE_CHICAGO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="144" y="3" width="159" height="20" uuid="a870fa25-4393-483a-a620-ab5941cb1161"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRODUCTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="371" y="3" width="43" height="20" uuid="9147c250-4b1d-4728-a023-2b465bae4e2e"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PREMIO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="461" y="3" width="46" height="20" uuid="b89fcd29-91b9-4151-b6e8-50ae048d8f52"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_CONTRATO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="313" y="3" width="52" height="20" uuid="708ac178-de68-42bf-9fb7-510c6acea0c6"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OPERACION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="516" y="3" width="33" height="20" uuid="cbbd76d1-885f-422c-b27c-24dbb74fb554"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ANHO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="428" y="3" width="23" height="20" uuid="88a0be5e-c8b9-4cd7-9406-7b9f3593a8d6"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO_CONTRATO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="15" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="19" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="15" splitType="Stretch"/>
+	</summary>
+</jasperReport>

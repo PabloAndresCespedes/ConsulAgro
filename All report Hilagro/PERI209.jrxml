@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERI209" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ce1ae59e-237c-48bd-bed1-f11c55e03bc4">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_WHERE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DIAS_VACACIONES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FORMA_PAGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_IMPORTE_VAC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_IMPORTE_IPS" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_IMPORTE_AMH" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_IPS_AMH" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT PER_EMPLEADO.EMPL_LEGAJO,
+       PER_EMPLEADO.EMPL_NOMBRE || ' ' || PER_EMPLEADO.EMPL_APE NOMBRE,
+       'Dr.J.E.Estigarribia, ' || TO_CHAR(PDOC_FEC, 'dd') || ' de ' ||
+       LTRIM(RTRIM(TO_CHAR(PDOC_FEC, 'month','nls_date_language=spanish'))) || ' de ' ||
+       TO_CHAR(PDOC_FEC, 'yyyy') FECHA,
+       UPPER(DECODE(PCON_CLAVE,
+                    6,
+                    'Vacaciones ' || $P{P_DIAS_VACACIONES} || ' dias',
+                    PER_CONCEPTO.PCON_DESC)) PCON_DESC,
+       DECODE(FIN_CONCEPTO.FCON_TIPO_SALDO,
+              'C',
+              PER_DOCUMENTO_DET.PDDET_IMP,
+              -PER_DOCUMENTO_DET.PDDET_IMP) IMPORTE,
+       PDOC_MON,
+       PDOC_CLAVE_FIN,
+ PERI009.CF_RECIBIMOSFORMULA(I_EMPRESA => $P{P_EMPRESA}) CF_RECIBIMOS,
+ PERI009.CF_TOTAL_IMPORTEFORMULA(I_FORMA_PAGO => $P{P_FORMA_PAGO},
+                                             I_IMPORTE_VAC => $P{P_IMPORTE_VAC},
+                                             I_IMPORTE_AMH => $P{P_IMPORTE_AMH},
+                                             I_IMPORTE_IPS => $P{P_IMPORTE_IPS}) CF_TOTAL_IMPORTE,
+PERI009.CF_COTIZACIONFORMULA(I_PDOC_CLAVE_FIN => PDOC_CLAVE_FIN,
+                                          I_EMPRESA        => $P{P_EMPRESA}) CF_COTIZACION,
+PERI009.CF_SIMBOLO_MONFORMULA(I_PDOC_MON => PDOC_MON,
+                                           I_EMPRESA => $P{P_EMPRESA}) CF_SIMBOLO_MON,
+PERI009.CF_DESCRIPCION_VACACIONESFORMU(I_DIAS_VACACIONES => $P{P_DIAS_VACACIONES}) CF_DESCRIPCION_VACACIONES,
+TO_CHAR($P{P_IMPORTE_AMH}, '999G999G999G999') IMPORTE_AMH,
+TO_CHAR($P{P_IMPORTE_VAC},'999G999G999G999') IMPORTE_VAC
+  FROM PER_DOCUMENTO,
+       PER_DOCUMENTO_DET,
+       PER_CONCEPTO,
+       PER_DPTO_CONC,
+       PER_EMPLEADO,
+       FIN_CONCEPTO,
+       PER_PERIODO
+ WHERE PER_DOCUMENTO.PDOC_CLAVE = PER_DOCUMENTO_DET.PDDET_CLAVE_DOC
+   AND PDOC_EMPR = PDDET_EMPR
+   AND PER_CONCEPTO.PCON_CLAVE = PER_DOCUMENTO_DET.PDDET_CLAVE_CONCEPTO
+   AND PCON_EMPR = PDDET_EMPR
+   AND PER_CONCEPTO.PCON_CLAVE = PER_DPTO_CONC.DPTOC_PER_CONC
+   AND EMPL_EMPRESA = PDOC_EMPR
+   AND PER_EMPLEADO.EMPL_LEGAJO = PER_DOCUMENTO.PDOC_EMPLEADO
+   AND EMPL_EMPRESA = PDOC_EMPR
+   AND PER_EMPLEADO.EMPL_DEPARTAMENTO = PER_DPTO_CONC.DPTOC_DPTO
+   AND EMPL_EMPRESA = DPTOC_EMPR
+   AND FIN_CONCEPTO.FCON_CLAVE = PER_DPTO_CONC.DPTOC_FIN_CONC
+   AND FCON_EMPR = DPTOC_EMPR
+   AND FCON_EMPR = $P{P_EMPRESA}
+   AND PDOC_EMPR = PERI_EMPR
+   AND PER_DOCUMENTO.PDOC_PERIODO = PERI_CODIGO
+$P!{P_WHERE}
+ ORDER BY PER_EMPLEADO.EMPL_NOMBRE || ' ' || PER_EMPLEADO.EMPL_APE,
+          PER_DOCUMENTO.PDOC_CLAVE,
+          FIN_CONCEPTO.FCON_TIPO_SALDO]]>
+	</queryString>
+	<field name="EMPL_LEGAJO" class="java.math.BigDecimal"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="FECHA" class="java.lang.String"/>
+	<field name="PCON_DESC" class="java.lang.String"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<field name="PDOC_MON" class="java.math.BigDecimal"/>
+	<field name="PDOC_CLAVE_FIN" class="java.math.BigDecimal"/>
+	<field name="CF_RECIBIMOS" class="java.lang.String"/>
+	<field name="CF_TOTAL_IMPORTE" class="java.math.BigDecimal"/>
+	<field name="CF_COTIZACION" class="java.math.BigDecimal"/>
+	<field name="CF_SIMBOLO_MON" class="java.lang.String"/>
+	<field name="CF_DESCRIPCION_VACACIONES" class="java.lang.String"/>
+	<field name="IMPORTE_AMH" class="java.lang.String"/>
+	<field name="IMPORTE_VAC" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="273" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="184" y="3" width="341" height="20" uuid="97cda185-97dd-45e9-9113-666e5d14d8ff"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="67" y="28" width="437" height="20" uuid="c616562a-e468-4ef3-a0cd-743607da9c50"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_RECIBIMOS}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="152" y="54" width="89" height="20" uuid="59ff57a6-bc19-4cbe-9f74-3e96ee79b2ec"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[En concepto de:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="242" y="74" width="147" height="20" uuid="e3bdef97-bd46-4edd-a8ba-e09d0c119a0f"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_DESCRIPCION_VACACIONES}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="294" y="122" width="47" height="20" uuid="a1edb34b-353f-480a-8a86-742b046156bc"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="342" y="122" width="48" height="20" uuid="36f3f7ac-45ba-412e-a4f3-af2c3761270e"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_SIMBOLO_MON}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement x="391" y="122" width="100" height="20" uuid="b93859ee-832a-4767-b32d-bbab562032ed"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_TOTAL_IMPORTE}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="203" y="248" width="322" height="1" uuid="b6474dc5-85d1-4d8d-bf8f-88f91d8296dc"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="221" y="250" width="283" height="20" uuid="e8d312d7-4a3f-402e-8ad5-ef91c97214c4"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="242" y="98" width="147" height="20" uuid="23d208da-a105-448e-b7e9-994f0f5a0e54"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_IPS_AMH}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement x="390" y="74" width="100" height="20" uuid="3bf92101-9dc2-4868-9c32-be19ca773f3e"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_VAC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement x="390" y="98" width="100" height="20" uuid="720b3ecd-9337-4c9b-8ac7-9287dc33e2e1"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_AMH}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="338" splitType="Stretch">
+			<staticText>
+				<reportElement x="294" y="164" width="47" height="20" uuid="3e5be2f7-130f-4568-96d9-28b3008d2d20"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="184" y="20" width="341" height="20" uuid="cbbf8468-4aed-490a-b056-7fc267b301ef"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="342" y="164" width="48" height="20" uuid="d58a061b-f2d8-4185-becd-2bd480eaf15a"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_SIMBOLO_MON}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="221" y="295" width="283" height="20" uuid="e032199f-00c3-4bf9-8b24-b3eba5ad541f"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="241" y="119" width="148" height="20" uuid="192624ba-a7e7-4054-9391-0a06335493e4"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_DESCRIPCION_VACACIONES}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="152" y="99" width="89" height="20" uuid="a081c841-524f-4c59-8789-c2a22ee2545e"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[En concepto de:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="203" y="292" width="322" height="1" uuid="44b215d7-34c4-48f0-acb3-089f4d04c106"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="67" y="45" width="437" height="20" uuid="8aa7da01-b9b9-4aa5-b2ab-fc30b670e2b9"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_RECIBIMOS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement x="391" y="164" width="100" height="20" uuid="aef795c3-f259-47c1-9c7c-d9a8aa2b2e54"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_TOTAL_IMPORTE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="241" y="142" width="148" height="20" uuid="a4892e53-50d0-4a49-a3b2-b5012bf7f87e"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_IPS_AMH}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement x="390" y="119" width="100" height="20" uuid="19bb6d95-0db1-4d2e-89c1-516f876e7dc1"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_VAC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement x="391" y="142" width="100" height="20" uuid="eb628465-015c-4dc0-a9fe-61b9195a8736"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_AMH}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="1" width="554" height="1" uuid="0df60e24-8860-4816-a37b-7ddbd88badc1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

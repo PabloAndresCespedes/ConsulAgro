@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="C_PERL200" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8a714f94-6a3b-4ce4-8a9f-04bf30f1a550">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_SESSION" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CONCEPTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_DES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_HAS" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT T_PDOC_EMPLEADO,
+       T_EMPL_NOMBRE,
+       T_EMPL_SUCURSAL,
+       T_SUC_DESC,
+       T_PDOC_DEPARTAMENTO,
+       T_DPTO_DESC,
+       T_PDDET_CLAVE_CONCEPTO,
+       T_PCON_DESC,
+       T_EMPL_FORMA_PAGO,
+       T_FORMA_DESC,
+       T_PCON_IND_DBCR,
+       T_PCON_IND_AGUINALDO,
+       T_PCON_IND_IPS,
+       T_EMPL_SITUACION,
+       T_PDOC_PERIODO,
+       T_PDOC_FEC,
+       CASE  WHEN T_PCON_IND_DBCR='C' THEN T_PDDET_IMP
+             WHEN T_PCON_IND_DBCR='D' THEN - T_PDDET_IMP
+             ELSE NULL
+       END IMPORTE,
+       T_P_LOGIN,
+       T_P_EMPRESA
+  FROM C_PERL200_TEMP
+ WHERE T_P_SESSION = $P!{P_SESSION}
+order by T_SUC_DESC, T_EMPL_NOMBRE]]>
+	</queryString>
+	<field name="T_PDOC_EMPLEADO" class="java.math.BigDecimal"/>
+	<field name="T_EMPL_NOMBRE" class="java.lang.String"/>
+	<field name="T_EMPL_SUCURSAL" class="java.math.BigDecimal"/>
+	<field name="T_SUC_DESC" class="java.lang.String"/>
+	<field name="T_PDOC_DEPARTAMENTO" class="java.math.BigDecimal"/>
+	<field name="T_DPTO_DESC" class="java.lang.String"/>
+	<field name="T_PDDET_CLAVE_CONCEPTO" class="java.math.BigDecimal"/>
+	<field name="T_PCON_DESC" class="java.lang.String"/>
+	<field name="T_EMPL_FORMA_PAGO" class="java.math.BigDecimal"/>
+	<field name="T_FORMA_DESC" class="java.lang.String"/>
+	<field name="T_PCON_IND_DBCR" class="java.lang.String"/>
+	<field name="T_PCON_IND_AGUINALDO" class="java.lang.String"/>
+	<field name="T_PCON_IND_IPS" class="java.lang.String"/>
+	<field name="T_EMPL_SITUACION" class="java.lang.String"/>
+	<field name="T_PDOC_PERIODO" class="java.math.BigDecimal"/>
+	<field name="T_PDOC_FEC" class="java.sql.Timestamp"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<field name="T_P_LOGIN" class="java.lang.String"/>
+	<field name="T_P_EMPRESA" class="java.math.BigDecimal"/>
+	<variable name="T_EMPL_NOMBRE_1" class="java.lang.Integer" resetType="Group" resetGroup="Empleado" calculation="DistinctCount">
+		<variableExpression><![CDATA[$F{T_EMPL_NOMBRE}]]></variableExpression>
+	</variable>
+	<group name="Sucursal">
+		<groupExpression><![CDATA[$F{T_EMPL_SUCURSAL}]]></groupExpression>
+		<groupHeader>
+			<band height="30">
+				<textField>
+					<reportElement x="113" y="0" width="108" height="20" uuid="cbf33b97-4131-4cab-abf4-7e800bf966d0"/>
+					<textElement>
+						<font size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{T_SUC_DESC}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="54" height="20" uuid="06b3daa7-c0f9-4021-b8eb-6a36ae1de072"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Sucursal]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="65" y="0" width="26" height="20" uuid="65032f4c-08c6-4d13-ad81-07b1a3e5fa7a"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{T_EMPL_SUCURSAL}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="50"/>
+		</groupFooter>
+	</group>
+	<group name="Empleado">
+		<groupExpression><![CDATA[$F{T_EMPL_NOMBRE}]]></groupExpression>
+		<groupHeader>
+			<band height="48">
+				<staticText>
+					<reportElement x="135" y="31" width="75" height="17" uuid="c71c9cbb-3973-4cd1-b9dd-2e816bd4deb2"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Departamento]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="272" y="32" width="53" height="16" uuid="4b5e8430-fccb-494b-85a5-535f87f2a64c"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Concepto]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="357" y="30" width="83" height="16" uuid="09ee2c16-479d-4b6c-be8f-899f1e03a32e"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Forma de Pago]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="466" y="31" width="63" height="16" uuid="cf479650-c759-4ecc-93e5-1244bad27989"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Importe]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="54" y="0" width="47" height="20" uuid="890aba26-e14a-4610-82eb-7e227fa3b1bd"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{T_PDOC_EMPLEADO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="101" y="0" width="123" height="20" uuid="64fb99f5-e39d-4190-80b5-3451b004639a"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{T_EMPL_NOMBRE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="52" y="30" width="39" height="17" uuid="fc72cc21-3e12-4b18-9c56-1972895ab31f"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Fecha]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="50"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="27" splitType="Stretch">
+			<staticText>
+				<reportElement x="200" y="0" width="139" height="27" uuid="12171e3f-3a61-478d-afba-cd4f4ad581ca"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Planilla Salarial]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="30" splitType="Stretch">
+			<staticText>
+				<reportElement x="65" y="0" width="59" height="20" uuid="88b4eb8e-dd5a-4dd4-9c5e-7c4ee15fc3b8"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Periodo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="155" y="0" width="45" height="20" uuid="ff02542e-2709-4038-9cd7-1007c14316a1"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Desde :   ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="323" y="0" width="45" height="20" uuid="49d18eb6-b6d5-4000-a463-998ed7c02cdd"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Desde :   ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="200" y="0" width="100" height="20" uuid="a8366171-54a2-4a5e-8381-0ccb218627bb"/>
+				<textFieldExpression><![CDATA[$P{P_FEC_DES}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="366" y="0" width="100" height="20" uuid="78df3b84-432d-487c-8a74-d5dc53d2f23c"/>
+				<textFieldExpression><![CDATA[$P{P_FEC_HAS}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="41" splitType="Stretch">
+			<textField>
+				<reportElement x="135" y="2" width="112" height="19" uuid="d3471196-755b-438a-9e04-79c8803e1d87"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{T_DPTO_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="32" y="0" width="92" height="20" uuid="7790cf39-cfc5-4745-8952-8565ae9726c8"/>
+				<textFieldExpression><![CDATA[$F{T_PDOC_FEC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="466" y="0" width="86" height="20" uuid="ef0f7cb3-027a-4adc-a402-2b2ddd6639cb"/>
+				<textFieldExpression><![CDATA[$F{IMPORTE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="368" y="2" width="72" height="19" uuid="4c6418fb-7ece-4857-a6b3-3ecbebf55764"/>
+				<textFieldExpression><![CDATA[$F{T_FORMA_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="257" y="2" width="100" height="19" uuid="5bbdeedd-ca0e-4990-8d75-b3d10794430e"/>
+				<textFieldExpression><![CDATA[$F{T_PCON_DESC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

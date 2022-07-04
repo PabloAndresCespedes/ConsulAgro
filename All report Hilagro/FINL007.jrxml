@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINL007" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a2e4de92-f186-4ca7-b234-a2760952dc2a">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_SUCURSAL" class="java.lang.String"/>
+	<parameter name="P_FECHA_DESDE" class="java.lang.String"/>
+	<parameter name="P_FECHA_HASTA" class="java.lang.String"/>
+	<parameter name="P_TIPO_MOV" class="java.lang.String"/>
+	<parameter name="P_CAJA" class="java.lang.String"/>
+	<parameter name="P_SUC_DESC" class="java.lang.String"/>
+	<parameter name="P_EMPR_DESC" class="java.lang.String"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FORMATO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT TRUNC(DOC_FEC_DOC)DOC_FEC_DOC,
+       DOC_NRO_DOC,
+       CASE
+         WHEN DOC_NRO_DOC - LAG(DOC_NRO_DOC) OVER(ORDER BY DOC_NRO_DOC) <> 1 THEN
+          ' * '
+         ELSE
+          ' '
+       END DOC_SALTO,
+       ' INGRESADO ' ESTADO,
+       TMOV_DESC
+  FROM GEN_TIPO_MOV, FIN_DOCUMENTO
+ WHERE TMOV_CODIGO = DOC_TIPO_MOV
+   AND TMOV_EMPR = $P!{P_EMPRESA}
+   AND TMOV_EMPR = DOC_EMPR
+   AND DOC_FEC_DOC BETWEEN $P{P_FECHA_DESDE} AND $P{P_FECHA_HASTA}
+   AND DOC_EMPR = $P!{P_EMPRESA}
+   AND (DOC_SUC = $P!{P_SUCURSAL} OR $P!{P_SUCURSAL} IS NULL)
+   AND DOC_TIPO_MOV IN ($P!{P_TIPO_MOV})
+   AND (DOC_CTA_BCO = $P!{P_CAJA} OR $P!{P_CAJA} IS NULL)
+
+UNION ALL
+
+SELECT TRUNC(ANUL_FEC_DOC),
+       ANUL_NRO_DOC,
+       CASE
+         WHEN ANUL_NRO_DOC - LAG(ANUL_NRO_DOC)
+          OVER(ORDER BY ANUL_NRO_DOC) <> 1 THEN
+          '*'
+         ELSE
+          ' '
+       END DOC_SALTO,
+       'ANULADO' ESTADO,
+       TMOV_DESC
+  FROM GEN_TIPO_MOV, FIN_DOC_ANULADO
+ WHERE TMOV_CODIGO = ANUL_TIPO_MOV
+   AND TMOV_EMPR = ANUL_EMPR
+   AND TMOV_EMPR = $P!{P_EMPRESA}
+   AND ANUL_FEC_DOC BETWEEN $P{P_FECHA_DESDE} AND $P{P_FECHA_HASTA}
+   AND ANUL_EMPR = $P!{P_EMPRESA}
+   AND (ANUL_SUC = $P!{P_SUCURSAL} OR $P!{P_SUCURSAL} IS NULL)
+   AND ANUL_TIPO_MOV IN ($P!{P_TIPO_MOV})
+]]>
+	</queryString>
+	<field name="DOC_FEC_DOC" class="java.sql.Timestamp"/>
+	<field name="DOC_NRO_DOC" class="java.math.BigDecimal"/>
+	<field name="DOC_SALTO" class="java.lang.String"/>
+	<field name="ESTADO" class="java.lang.String"/>
+	<field name="TMOV_DESC" class="java.lang.String"/>
+	<group name="ESTADO">
+		<groupExpression><![CDATA[$F{ESTADO}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<staticText>
+					<reportElement x="8" y="2" width="40" height="10" uuid="23633fd3-fc8e-4d2d-a941-00ff8dbfe9b6"/>
+					<textElement>
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Estado   : ]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="55" y="2" width="65" height="10" uuid="4f1ce1fd-3229-435f-bec1-063edcf07842"/>
+					<textElement>
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ESTADO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="107" splitType="Stretch">
+			<textField>
+				<reportElement x="9" y="12" width="100" height="10" uuid="ce03a9c9-5925-423d-826c-fe749ae00a54"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SUC_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="9" y="0" width="100" height="10" uuid="53d238f8-44b1-43a7-9712-ea73e8019bb0"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_EMPR_DESC}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="458" y="6" width="27" height="10" uuid="fe93d136-582b-4918-94b9-5073a79a0127"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pag:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="490" y="7" width="57" height="10" uuid="87af5197-17d2-4818-b205-65b037bd85b1"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement x="448" y="19" width="100" height="10" uuid="97acca70-acae-40eb-ad62-9b1d126a3a3f"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="404" y="6" width="44" height="10" uuid="4874c5ac-0897-4dfe-9586-888ec50a290b"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FINL007]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="158" y="19" width="162" height="20" uuid="77cf7e0b-f8e3-43ce-bb7d-6324c48f41d0"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[INVENTARIO DE DOCUMENTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="15" y="45" width="56" height="14" uuid="085a9523-4ce1-45dd-a759-73ef3f84fbdd"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sucursal  : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-436" y="48" width="50" height="15" uuid="f74f3168-6e07-4c44-97f4-7b45d3487273"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Sucursal  : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="15" y="60" width="83" height="15" uuid="9991e48f-033b-4e64-b753-01f8d2177597"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo de Movimiento : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="16" y="78" width="32" height="10" uuid="d5386b3a-38f4-4235-83b0-09a84f61118b"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="240" y="77" width="25" height="13" uuid="67883c30-3696-435b-95ce-0f44c78e146c"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Caja : ]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="108" y="48" width="105" height="11" uuid="dd7fde21-15af-49c4-9c1c-3b2501115cd9"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="108" y="60" width="100" height="15" uuid="4e79716e-a2eb-4267-be02-cbc9b3af5d61"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_TIPO_MOV}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="58" y="78" width="62" height="10" uuid="feaa7743-9a3b-46a6-bb0c-f35f6ad3992d"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FECHA_DESDE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="126" y="78" width="15" height="10" uuid="dc928508-d9bb-4db8-a175-7b3692827bb4"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[ -]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="155" y="78" width="58" height="10" uuid="d4cc2416-b01c-42ab-beba-c9c02f0f1cc9"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FECHA_HASTA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="276" y="77" width="66" height="11" uuid="780c98f7-f703-4d72-95ed-6abb0cb4c93e"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_CAJA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="16" y="93" width="55" height="12" uuid="fd9e07c4-3620-4a10-94bf-cc0acc78d234"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Comprob.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="137" y="93" width="100" height="12" uuid="7389dc69-3c68-46fb-be0c-9a9012565d07"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fec.Doc ]]></text>
+			</staticText>
+			<line>
+				<reportElement x="8" y="106" width="539" height="1" uuid="8749732d-ff94-490a-9038-fa2d889596c2"/>
+			</line>
+			<staticText>
+				<reportElement x="253" y="92" width="100" height="15" uuid="be354ae0-f26e-46c0-ab90-34d5d5b74b53"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[T.Mov ]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="11" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="136" y="0" width="100" height="11" uuid="129661f6-88ab-4ea5-86d3-ca790157f707"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOC_FEC_DOC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="0" width="82" height="11" uuid="6367231e-62c5-4211-856d-d346798f97de"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOC_NRO_DOC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="253" y="0" width="100" height="11" uuid="72b9e874-95a9-4e6a-9129-0cbece356953"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TMOV_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="85" y="0" width="19" height="11" uuid="1e73384b-1db2-4611-9557-0e9a6d0eaa5c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOC_SALTO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

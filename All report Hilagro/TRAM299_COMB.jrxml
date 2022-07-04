@@ -1,0 +1,639 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TRAM299_COMB" language="groovy" pageWidth="421" pageHeight="595" columnWidth="381" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3c7cb014-baef-4a8d-b2a3-80118f4ac507">
+	<property name="ireport.zoom" value="2.0526324729228267"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLAVE_OC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_LOCAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT C.OCA_CODIGO,
+       C.OCA_MOTIVO OCA_MOTIVO,
+       C.OCA_FEC_SAL,
+       T.CAM_TER_COD,
+       T.CAM_CHAPA CAM_TER_CHAPA,
+       T.CAM_PROPIO_COD,
+       T.CAM_MARCA,
+       T.CAM_MODELO,
+       DECODE(T.CAM_PROPIO_COD, NULL, NULL, T.CAM_CHAPA) CAM_PROP_CHAPA,
+       A.CAR_CODIGO,
+       A.CAR_MODELO CAR_MARCA,
+       A.CAR_MODELO || '-' || A.CAR_ANO CAR_MODELO,
+       DECODE(A.CAR_CHAPA, NULL, T.CAM_CAR_CHAPA, A.CAR_CHAPA) CAR_CHAPA,
+       F.COF_CODIGO,
+       DECODE(F.COF_CODIGO, NULL, OCA_CHOFER_NOM, F.COF_NOMBRE) COF_NOMBRE,
+       DECODE(F.COF_CODIGO, NULL, OCA_CHOFER_CI, F.COF_CIP) OCA_CHOFER_CI,
+       OCA_LOGIN,
+
+       'SUCURSAL ' || S.SUC_CODIGO || ' : ' SUCU_CODI,
+       S.SUC_DIR || ' TEL:' || S.SUC_TEL SUCURSAL,
+       S.SUC_IND_CASA_CENTRAL,
+       C.OCA_PRECIO_COMB,
+       C.OCA_CANT_COMB,
+       NVL(C.OCA_PRECIO_COMB, 0) * NVL(C.OCA_CANT_COMB, 0) TOTAL,
+       C.OCA_CHOFER_NOM || ' - ' || C.OCA_CHOFER_CI CHOF_FIRMA,
+       'FIRMA AUTORIZADA(' || O.OPER_NOMBRE || ')' FIRMA,
+       OPER_IMG_BLOB,
+       P.PROV_RAZON_SOCIAL,
+       P.PROV_DIR,
+       P.PROV_TEL,
+       P.PROV_RUC,
+       C.OCA_FEC_GRAB,
+       OCA_VTO_COM,
+       C.OCA_EMBLEMA
+  FROM TRA_ORDEN_CARGA C,
+       TRA_CHOFER      F,
+       FIN_PROVEEDOR   P,
+       TRA_CAMION      T,
+       TRA_CARRETA     A,
+       GEN_OPERADOR    O,
+       GEN_SUCURSAL    S
+ WHERE C.OCA_SUC = S.SUC_CODIGO
+   AND C.OCA_EMPR = S.SUC_EMPR
+
+   AND C.OCA_COF_CODIGO = F.COF_CODIGO(+)
+   AND C.OCA_EMPR = F.COF_EMPR(+)
+
+   AND C.OCA_CAMION = T.CAM_CODIGO
+   AND C.OCA_EMPR = T.CAM_EMPR
+
+   AND T.CAM_CAR_CODIGO = A.CAR_CODIGO(+)
+   AND T.CAM_EMPR = A.CAR_EMPR(+)
+
+   AND NVL(C.OCA_PROV_COMB,C.OCA_CLI) = P.PROV_CODIGO
+   AND C.OCA_EMPR = P.PROV_EMPR
+
+   AND C.OCA_EMPR = $P{P_EMPRESA}
+
+   AND C.OCA_CLAVE = $P{P_CLAVE_OC}
+   AND C.OCA_LOGIN = O.OPER_LOGIN]]>
+	</queryString>
+	<field name="OCA_CODIGO" class="java.math.BigDecimal"/>
+	<field name="OCA_MOTIVO" class="java.math.BigDecimal"/>
+	<field name="OCA_FEC_SAL" class="java.sql.Timestamp"/>
+	<field name="CAM_TER_COD" class="java.math.BigDecimal"/>
+	<field name="CAM_TER_CHAPA" class="java.lang.String"/>
+	<field name="CAM_PROPIO_COD" class="java.math.BigDecimal"/>
+	<field name="CAM_MARCA" class="java.lang.String"/>
+	<field name="CAM_MODELO" class="java.lang.String"/>
+	<field name="CAM_PROP_CHAPA" class="java.lang.String"/>
+	<field name="CAR_CODIGO" class="java.math.BigDecimal"/>
+	<field name="CAR_MARCA" class="java.lang.String"/>
+	<field name="CAR_MODELO" class="java.lang.String"/>
+	<field name="CAR_CHAPA" class="java.lang.String"/>
+	<field name="COF_CODIGO" class="java.math.BigDecimal"/>
+	<field name="COF_NOMBRE" class="java.lang.String"/>
+	<field name="OCA_CHOFER_CI" class="java.lang.String"/>
+	<field name="OCA_LOGIN" class="java.lang.String"/>
+	<field name="SUCU_CODI" class="java.lang.String"/>
+	<field name="SUCURSAL" class="java.lang.String"/>
+	<field name="SUC_IND_CASA_CENTRAL" class="java.lang.String"/>
+	<field name="OCA_PRECIO_COMB" class="java.math.BigDecimal"/>
+	<field name="OCA_CANT_COMB" class="java.math.BigDecimal"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<field name="CHOF_FIRMA" class="java.lang.String"/>
+	<field name="FIRMA" class="java.lang.String"/>
+	<field name="OPER_IMG_BLOB" class="java.io.InputStream"/>
+	<field name="PROV_RAZON_SOCIAL" class="java.lang.String"/>
+	<field name="PROV_DIR" class="java.lang.String"/>
+	<field name="PROV_TEL" class="java.lang.String"/>
+	<field name="PROV_RUC" class="java.lang.String"/>
+	<field name="OCA_FEC_GRAB" class="java.sql.Timestamp"/>
+	<field name="OCA_VTO_COM" class="java.sql.Timestamp"/>
+	<field name="OCA_EMBLEMA" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="555" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="381" height="555" uuid="0c165902-7c80-47a7-a952-e5a997130f42"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</rectangle>
+			<image>
+				<reportElement x="5" y="2" width="89" height="57" uuid="7524d487-7001-4ddc-81ce-8d43a2de1cca"/>
+				<imageExpression><![CDATA["logo_transagro.png"]]></imageExpression>
+			</image>
+			<line>
+				<reportElement x="297" y="0" width="1" height="85" uuid="dc18fb8b-4515-4c5a-b397-da0617d60294"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="300" y="23" width="29" height="10" uuid="bcc9647f-38ee-4d96-af90-54fab93fe608"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[N°:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="300" y="35" width="30" height="10" uuid="4231d020-e9f0-4c3f-9bf7-f991d4cfc027"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[FECHA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="300" y="47" width="29" height="10" uuid="715e6281-b43f-45e6-8108-1182281a6a45"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[VENC.:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="300" y="58" width="29" height="10" uuid="301b5ebe-2480-47ee-b709-a445f0ee98d3"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[LOCAL:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="330" y="23" width="50" height="10" uuid="8f7e6a02-1afb-4e5e-9081-eff9e79ba7fd"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OCA_CODIGO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="330" y="35" width="50" height="10" uuid="aed903d7-1827-458c-a100-5c8f66239433"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OCA_FEC_GRAB}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="330" y="47" width="50" height="10" uuid="a4c8bdda-3ef3-4c3e-9435-d87e6be07169"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OCA_VTO_COM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="97" y="24" width="172" height="14" uuid="487cbc21-6f1f-40ef-a142-8575f5e026ee"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[TRANSAGRO S.A.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="187" y="38" width="92" height="21" uuid="054b67b8-65d5-458d-9d9f-99696a68329c"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="5"/>
+				</textElement>
+				<text><![CDATA[VENTA DE INSUMOS AGRICOLAS
+VENTA DE COMBUSTIBLES
+TIENDA DE REPUESTOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="97" y="38" width="90" height="21" uuid="02f0432a-047b-4d3d-b322-cda56ac21345"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="5" isBold="false"/>
+				</textElement>
+				<text><![CDATA[COMPRA Y VENTA DE GRANOS
+ACOPIO DE GRANOS
+SERVIOS DE TRANSPORTES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="54" y="66" width="233" height="8" uuid="256b4524-8415-4661-a8bc-d89d2c49313f"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="5" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CALLE 1RA. LINEA  J. EULOGIO ESTIGARRIBIA -TEL (0528) 222995 - CAAGUAZU - PARAGUAY]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="11" y="66" width="43" height="8" uuid="0ed39655-7959-474b-8903-e1307bd8093c"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CASA CENTRAL : ]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="85" width="381" height="1" uuid="b53a6efd-bec1-4d20-8b5b-04545e96b777"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="11" y="74" width="43" height="9" uuid="e4c37f94-7121-4664-ad1a-94f25a6666bf">
+					<printWhenExpression><![CDATA[$F{SUC_IND_CASA_CENTRAL} != "S"]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SUCU_CODI}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="55" y="74" width="232" height="9" uuid="4552e777-080a-4e0c-8fdf-8a08126a4b4d">
+					<printWhenExpression><![CDATA[$F{SUC_IND_CASA_CENTRAL} != "S"]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="156" width="381" height="1" uuid="11e4e41f-a750-48b7-8854-2a7d6d620ea5"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="6" y="176" width="68" height="9" uuid="90465616-2099-4516-bce9-d343082a2dd4"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CHAPA TRACTO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="163" y="176" width="40" height="9" uuid="9cfd5ddf-c1d7-4368-882a-9dbb73eb7f0c"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MARCA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="6" y="143" width="66" height="9" uuid="202ed249-cbe8-420a-b75a-78e7b803fed2"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONDUCTOR:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="279" y="143" width="50" height="9" uuid="7d87c137-e783-4583-9051-d21fa1722d92"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[C.I.:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="10" width="380" height="20" uuid="cb5a81e8-6677-4c09-b990-fd6884698a0e"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ORDEN DE COMBUSTIBLE]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="299" y="143" width="82" height="9" uuid="4e8f4b90-9b0d-440d-8c26-8016cfd1dc58"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OCA_CHOFER_CI}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="122" width="381" height="1" uuid="8a2314ec-36ab-4b21-9df0-885622447a68"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="5" y="88" width="50" height="9" uuid="a92c7004-c4f1-4aad-9e28-3de5e0d31f05"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROVEEDOR:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="100" width="51" height="9" uuid="7f74595d-13b5-4583-be91-4b9a04abf6d5"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RUC:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="112" width="51" height="9" uuid="1860d1b2-31d9-4efd-8024-a031934b61f6"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DIRECCION:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="224" y="88" width="49" height="9" uuid="39273742-3fd4-457c-a34f-5e8ab70607ac"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EMBLEMA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="224" y="104" width="50" height="9" uuid="d148208a-ff82-4a5f-abfa-ac99f199bbd0"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LOCALIDAD:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="59" y="88" width="158" height="11" uuid="df606bd4-cbf9-4043-9ebf-0d1f287b61c2"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROV_RAZON_SOCIAL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="29" y="100" width="100" height="11" uuid="93ffa2bb-890a-4916-b8c5-fc3f160b0913"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROV_RUC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="54" y="112" width="281" height="9" uuid="7dc6a7d2-92c5-4018-b6b8-07c39c6747a7"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROV_DIR}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="72" y="222" width="259" height="29" uuid="9a6aa388-765d-4a89-9aac-1af79710c82c"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</rectangle>
+			<line>
+				<reportElement x="72" y="239" width="259" height="1" uuid="9c1adaf7-739f-4a48-8816-f3af8ffe11e1"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="136" y="222" width="1" height="29" uuid="e92c8f16-dc7a-4293-bc06-73a47e3c26ac"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="202" y="222" width="1" height="29" uuid="28d28771-61c5-4caa-82f7-c7e0a5b2727c"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="269" y="222" width="1" height="29" uuid="9c7c1b68-04db-4b44-8332-1efd07daa1ad"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="74" y="226" width="60" height="10" uuid="98550bd0-d1a9-4b65-9595-f150ee9488ac"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="137" y="226" width="65" height="10" uuid="d1abc561-8f4b-441c-88a7-898670b31743"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[CANTIDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="202" y="226" width="67" height="10" uuid="376ece9a-deff-43c9-888b-cfb01ddb2a76"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[UNITARIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="270" y="226" width="60" height="10" uuid="eef2bdf8-d29c-4ad0-94f8-ba4191ff3d7d"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="72" y="241" width="65" height="10" uuid="4ba02fe9-433d-456f-91a1-a65b58220bef"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[DIESEL]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="137" y="241" width="65" height="10" uuid="6afb13ed-63a4-480b-9fee-b1f98f011330"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OCA_CANT_COMB}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="202" y="241" width="67" height="10" uuid="44b6a5b7-92d9-4488-ba9b-d946063b8b74"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OCA_PRECIO_COMB}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="270" y="241" width="60" height="10" uuid="90811e2d-6e42-446a-ba84-7d7c4040a0eb"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="4" y="478" width="159" height="1" uuid="1991141e-e6ec-415d-8f8b-5aae3935e93e"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="223" y="478" width="155" height="1" uuid="be47af72-e846-45ba-9558-d3729d5816d5"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="224" y="479" width="155" height="20" uuid="edacc14f-f8cf-4b51-ba79-53b5670b1b65"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CHOF_FIRMA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="6" y="479" width="157" height="20" uuid="c80c620c-a377-41ae-bdf5-66f75b57eebc"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FIRMA}]]></textFieldExpression>
+			</textField>
+			<image hAlign="Center">
+				<reportElement x="6" y="444" width="157" height="33" uuid="87426b34-a4fb-4fbc-b928-f78a3c7df177"/>
+				<imageExpression><![CDATA[$F{OPER_IMG_BLOB}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="8" y="295" width="367" height="151" uuid="e08c33c1-0826-451b-bde2-5cb022550482"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[A la fecha de vencimiento de este documento; Pagaré(mos) la suma recibida a mi(nuestra) entera satisfacción, por tanto, queda, expresamente convencido que la falta de pago del mismo producirá el decaimiento automático de los demás plazos, sin necesidad de interpelación judicial o entra judicial alguna , lo cual  tomara exigible la totalidad de la obligación, devengándose durante el tiempo de la mora un interés de ….......% mensual y un interés unitario de …....% mensual por el simple retardo, sin que este implique prorroga del plazo de la obligación. El simple vencimiento estable-sera la mora, autorizando a la consulta  como a la inclusión a la base de datos de informaciones comerciales conforme a lo establecido en la Ley 1682/01 y su modificación Ley 1969/02, como  también para que se pueda proveer la información a terceros interesados. A los efectos Legales y Procesales nos sometemos a la Jurisdicción de los tribunales del departamento de…............................................................................y renunciando a cualquier otra que pudiera corresponder.]]></text>
+			</staticText>
+			<line>
+				<reportElement x="91" y="135" width="196" height="1" uuid="462ea1ea-00fc-4102-ba33-a245e77b4ae3"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="124" width="380" height="12" uuid="235947a6-28d1-4e15-88df-0338655eb62e"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATOS DEL CHOFER]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="160" width="381" height="12" uuid="87e2bbe1-7e1c-4984-b903-7bab4e996176"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATOS DEL MOVIL]]></text>
+			</staticText>
+			<line>
+				<reportElement x="91" y="171" width="196" height="1" uuid="82ba8b6e-c092-48b6-b1a1-1426100376fb"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="270" y="176" width="41" height="9" uuid="134fc3f6-8387-4637-8e17-20bc20efaa18"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[MODELO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="6" y="187" width="68" height="9" uuid="213d8aec-53d5-4b8c-af50-9c535c59f3cf"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CHAPA CARRETA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="163" y="187" width="40" height="9" uuid="561521df-1767-483a-b6cf-0b0dab13007b"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MARCA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="270" y="187" width="41" height="9" uuid="e4f322e0-43f6-44e1-b73a-425006ee2b4c"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[MODELO:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="72" y="187" width="70" height="9" uuid="357d638f-5ec1-4b29-b3a0-fc3e49451f04"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAR_CHAPA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="72" y="176" width="70" height="9" uuid="8ced58e9-df8e-4dda-be93-8649ad98d782"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAM_TER_CHAPA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="194" y="187" width="56" height="9" uuid="f4feaa3d-6851-4e9a-bedd-cffb434aec6f"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAR_MARCA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="306" y="187" width="74" height="9" uuid="35a4a76c-cbf3-4a36-a0ca-a1b6cecb4334"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAR_MODELO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="194" y="176" width="56" height="9" uuid="405e2808-db2f-4912-a95e-329ed60c5d4f"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAM_MARCA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="306" y="175" width="75" height="10" uuid="8f0cca55-2d83-4540-95a4-9b096fc73734"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAM_MODELO}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="196" width="381" height="1" uuid="a65e0992-0470-486a-8232-796df6e5b32d"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="58" y="143" width="211" height="9" uuid="f43d889d-6db2-42ba-92b3-95347c74945b"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COF_NOMBRE}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="293" width="381" height="1" uuid="c1e73179-694c-4ffb-9dd8-1901437f16ad"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="262" y="87" width="118" height="20" uuid="da27b33b-4ad9-411e-b52c-4d6b6f17dbea"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OCA_EMBLEMA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

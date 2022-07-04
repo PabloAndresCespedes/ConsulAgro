@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="comi035_Recep_Mercan_Sub" language="groovy" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="097bc691-54f1-4604-88b2-2639575ae07b">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String"/>
+	<parameter name="P_ORDEN_COD" class="java.lang.String"/>
+	<parameter name="P_NRO_RECEP" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT C.*,
+       CASE
+         WHEN C.ESTADO_REC = 'C' THEN
+             0
+         WHEN (C.CANT_SOL - CANT_ENTRE) >= 0 THEN
+              C.CANT_SOL - CANT_ENTRE
+           ELSE
+              0
+          END CANT_PEND
+  FROM (
+SELECT T.ENTMERDET_ORDEN ORDEN,
+       DECODE(SODE.OCOMD_ART,NULL,FC.FCON_DESC,SA.ART_DESC) ART_CONC,
+       T.ENTMERDET_ITEM  ITEM ,
+       T.ENTMERDET_NUM   NUME,
+       T.ENTMERDET_EMPR  EMPR,
+       T.ENTMERDET_CANT  CANT_REC,
+       (SELECT OCO.OCOM_ESTADO_ENT
+          FROM STK_ORDEN_COMPRA OCO
+         WHERE OCO.OCOM_EMPR = T.ENTMERDET_EMPR
+           AND OCO.OCOM_CLAVE = T.ENTMERDET_ORDEN) ESTADO_REC,
+       (SELECT SUM(OC.OCOMD_CANTIDAD)
+          FROM STK_ORDEN_COMPRA_DET OC
+         WHERE OC.OCOMD_CLAVE_OCOM = T.ENTMERDET_ORDEN
+           AND OC.OCOMD_NRO_ITEM = T.ENTMERDET_ITEM
+           AND OC.OCOMD_EMPR = T.ENTMERDET_EMPR) CANT_SOL,
+       (SELECT SUM(ENDET.ENTMERDET_CANT)
+          FROM STK_ENTRADA_MERC_DET ENDET
+         WHERE ENDET.ENTMERDET_ORDEN = T.ENTMERDET_ORDEN
+           AND ENDET.ENTMERDET_ITEM = T.ENTMERDET_ITEM
+           AND ENDET.ENTMERDET_EMPR = T.ENTMERDET_EMPR) CANT_ENTRE
+  FROM STK_ENTRADA_MERC_DET t,STK_ORDEN_COMPRA_DET SODE,STK_ARTICULO SA,FIN_CONCEPTO FC
+ WHERE T.ENTMERDET_ORDEN = $P{P_ORDEN_COD}
+   AND T.ENTMERDET_NUM   = $P{P_NRO_RECEP}
+   AND T.ENTMERDET_EMPR  = $P{P_EMPRESA}
+   AND T.ENTMERDET_ORDEN = SODE.OCOMD_CLAVE_OCOM (+)
+   AND T.ENTMERDET_ITEM  = SODE.OCOMD_NRO_ITEM (+)
+   AND T.ENTMERDET_EMPR  = SODE.OCOMD_EMPR (+)
+   AND SODE.OCOMD_EMPR = SA.ART_EMPR  (+)
+   AND SODE.OCOMD_ART = SA.ART_CODIGO (+)
+   AND SODE.OCOMD_EMPR = FC.FCON_EMPR (+)
+   AND SODE.OCOMD_CLAVE_CONCEPTO = FC.FCON_CLAVE (+))C
+   ORDER BY C.ITEM]]>
+	</queryString>
+	<field name="ORDEN" class="java.math.BigDecimal"/>
+	<field name="ART_CONC" class="java.lang.String"/>
+	<field name="ITEM" class="java.math.BigDecimal"/>
+	<field name="NUME" class="java.math.BigDecimal"/>
+	<field name="EMPR" class="java.math.BigDecimal"/>
+	<field name="CANT_REC" class="java.math.BigDecimal"/>
+	<field name="ESTADO_REC" class="java.lang.String"/>
+	<field name="CANT_SOL" class="java.math.BigDecimal"/>
+	<field name="CANT_ENTRE" class="java.math.BigDecimal"/>
+	<field name="CANT_PEND" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="16">
+			<textField>
+				<reportElement x="12" y="1" width="171" height="15" uuid="8d038f6e-4c8e-404a-8e08-3bb4fcd1a293"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ART_CONC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="187" y="1" width="74" height="15" uuid="214ba682-8f93-4969-9de6-b0c42f9d0103"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANT_SOL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="283" y="2" width="78" height="14" uuid="8ea7b1c9-208a-4d0b-9749-590f76da9609"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANT_REC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="390" y="2" width="71" height="14" uuid="53795f86-c681-4cf1-9a9e-7edc5f460cc6"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANT_PEND}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

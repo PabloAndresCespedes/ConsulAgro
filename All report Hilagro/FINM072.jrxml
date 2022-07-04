@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINM072" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3963cf2c-f6e1-475a-a362-c7fd6b609aa2">
+	<property name="ireport.zoom" value="1.7715610000000017"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="V_SESION" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="V_LOGIN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT CLAVE,
+       NUMERO_ANULADO,
+       FECHA_ANULADO,
+       RETIRADO_POR,
+       LOGIN,
+       FECHA_RETIRO,
+       SUCURSAL,
+       CODIGO_TALONARIO,
+       MES,
+       ANHO,
+       decode(TIPO_MOVIMIENTO,6,' ','Timbrado') Timbrado_desc,
+       decode(TIPO_MOVIMIENTO,6,' ',Timbrado) Timbrado_nro,
+       DECODE(TIPO_MOVIMIENTO,6,'RECIBOS ANULADOS', 'NOTA DE CREDITOS ANULADOS') DESCRIPCION_MOVIMIENTO
+  FROM FIN_FINM072_TEMP
+WHERE SESION = $P{V_SESION}
+AND LOGIN_APEX = $P{V_LOGIN}
+
+ORDER BY MES]]>
+	</queryString>
+	<field name="CLAVE" class="java.math.BigDecimal"/>
+	<field name="NUMERO_ANULADO" class="java.math.BigDecimal"/>
+	<field name="FECHA_ANULADO" class="java.sql.Timestamp"/>
+	<field name="RETIRADO_POR" class="java.lang.String"/>
+	<field name="LOGIN" class="java.lang.String"/>
+	<field name="FECHA_RETIRO" class="java.sql.Timestamp"/>
+	<field name="SUCURSAL" class="java.lang.String"/>
+	<field name="CODIGO_TALONARIO" class="java.math.BigDecimal"/>
+	<field name="MES" class="java.lang.String"/>
+	<field name="ANHO" class="java.math.BigDecimal"/>
+	<field name="TIMBRADO_DESC" class="java.lang.String"/>
+	<field name="TIMBRADO_NRO" class="java.lang.String"/>
+	<field name="DESCRIPCION_MOVIMIENTO" class="java.lang.String"/>
+	<group name="Meses">
+		<groupExpression><![CDATA[$F{MES}]]></groupExpression>
+		<groupHeader>
+			<band height="35">
+				<line>
+					<reportElement x="0" y="33" width="553" height="1" uuid="1b2fab4c-1219-4c63-ae90-ab5316b1b909"/>
+					<graphicElement>
+						<pen lineWidth="0.25"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement x="107" y="23" width="79" height="11" uuid="0f84b94f-dbf9-46d8-9d3e-c13a5c7b0e92"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nro. Anulado]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="25" y="23" width="79" height="11" uuid="6c0e7b5d-5378-4ed9-9f07-22510a7c3289"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Fecha Anulado]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="197" y="22" width="79" height="11" uuid="e203c5da-9a0b-471c-beb9-a0b94e85825f"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Sucursal]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="0" y="0" width="100" height="19" uuid="5f68365e-f58d-448e-9a16-40c57502cefc"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{MES}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="286" y="21" width="100" height="12" uuid="9a5e7ae3-cdf6-4e49-90f3-aee626b582d2"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TIMBRADO_DESC}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="488" y="0" width="22" height="8" uuid="172bbed2-74cb-4800-9079-c34eaf09a235"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[Mes:]]></text>
+			</staticText>
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="507" y="0" width="48" height="8" uuid="d6374538-e743-4035-a2b9-61f7307f27e4"/>
+				<textElement verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="101" y="0" width="286" height="20" uuid="a3712b45-9d92-42b2-9962-1a830fff1d3f"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRIPCION_MOVIMIENTO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="25" y="0" width="79" height="12" uuid="7b5044fb-83d9-4f09-a6bf-397c33baa698"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_ANULADO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="105" y="1" width="80" height="11" uuid="c1421c51-9b57-4073-a696-fc3a1af8afed"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NUMERO_ANULADO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="196" y="0" width="79" height="12" uuid="2192f6ab-0435-46cd-856b-7456537f158c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="287" y="0" width="99" height="12" uuid="97924c35-e207-4b60-b542-6d1e1df1d3c9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIMBRADO_NRO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

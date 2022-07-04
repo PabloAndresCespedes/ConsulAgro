@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINI250_RC" language="groovy" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="8984e130-7476-444e-8402-aa1a1f02de18">
+	<property name="ireport.zoom" value="3.8906136901500252"/>
+	<property name="ireport.x" value="949"/>
+	<property name="ireport.y" value="0"/>
+	<subDataset name="logo" uuid="c7a00bf6-b356-4d91-9c98-10e5d1b5b0f5">
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select EMPR_LOGO logo from gen_empresa WHERE EMPR_CODIGO = $P{P_EMPRESA}]]>
+		</queryString>
+		<field name="LOGO" class="java.io.InputStream"/>
+	</subDataset>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLAVE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[26670101]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select RC.REC_EMPR                     RECO_EMPR          ,
+       RC.REC_SOLICITUD                RECO_SOLICITUD     ,
+       GP.GRUP_CODIGO                  RECO_PROD_GRUPO    ,
+       PD.PROD_CODIGO                  RECO_PROD_CODIGO   ,
+       PD.PROD_DESC                    RECO_PROD_DESC     ,
+       PD.PROD_ZAFRA_ACTUAL            RECO_PROD_ZAFRA    ,
+
+       RC.REC_VOL_CONTRATO             RECO_VOL_CONTRATO  ,
+       RC.REC_VOL_RECIBIDO             RECO_VOL_RECIBIDO  ,
+       RC.REC_VOL_PENDIENTE            RECO_VOL_PENDIENTE ,
+       RC.REC_VOL_LIQUIDADO            RECO_VOL_LIQUIDADO ,
+       RC.REC_VOL_ALIQUIDAR            RECO_VOL_ALIQUIDAR
+
+  from FIN_SOL_CREDITO          SC,
+       ACO_GRUPO_PRODUCTO       GP,
+       ACO_PRODUCTO             PD,
+       FIN_SOL_CRED_RE_CON      RC
+
+ WHERE SC.SOL_EMPR         =   RC.REC_EMPR
+   AND SC.SOL_CLAVE        =   RC.REC_SOLICITUD
+
+   AND GP.GRUP_EMPR(+)     =   PD.PROD_EMPR
+   AND GP.GRUP_CODIGO(+)   =   PD.PROD_GRUPO
+
+   AND PD.PROD_EMPR        =   RC.REC_EMPR
+   AND PD.PROD_CLAVE       =   RC.REC_COSECHA
+
+   AND SC.SOL_EMPR         =   $P{P_EMPRESA}
+   AND SC.SOL_CLAVE        =   $P{P_CLAVE}]]>
+	</queryString>
+	<field name="RECO_EMPR" class="java.math.BigDecimal"/>
+	<field name="RECO_SOLICITUD" class="java.math.BigDecimal"/>
+	<field name="RECO_PROD_GRUPO" class="java.math.BigDecimal"/>
+	<field name="RECO_PROD_CODIGO" class="java.math.BigDecimal"/>
+	<field name="RECO_PROD_DESC" class="java.lang.String"/>
+	<field name="RECO_PROD_ZAFRA" class="java.math.BigDecimal"/>
+	<field name="RECO_VOL_CONTRATO" class="java.math.BigDecimal"/>
+	<field name="RECO_VOL_RECIBIDO" class="java.math.BigDecimal"/>
+	<field name="RECO_VOL_PENDIENTE" class="java.math.BigDecimal"/>
+	<field name="RECO_VOL_LIQUIDADO" class="java.math.BigDecimal"/>
+	<field name="RECO_VOL_ALIQUIDAR" class="java.math.BigDecimal"/>
+	<variable name="SOLD_MONTO_PROD_SUM" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[11]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<columnHeader>
+		<band height="26" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Opaque" x="1" y="12" width="554" height="12" backcolor="#FAFAFA" uuid="c76dd234-9696-4004-9010-4d2ab5a8a4b0"/>
+				<graphicElement>
+					<pen lineWidth="0.3" lineColor="#999999"/>
+				</graphicElement>
+			</rectangle>
+			<line>
+				<reportElement x="1" y="25" width="554" height="1" uuid="d46ad133-0ab1-49e9-8868-818dd8e99c73"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="2" y="14" width="122" height="9" uuid="c52140fb-cf82-4ba5-a3ea-0e359511f8b2"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[COSECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="498" y="14" width="50" height="9" uuid="09fa45c8-82e7-45ca-af1d-ce38ebe21013"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[A LIQUIDAR]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="2" y="1" width="153" height="9" uuid="2e280f0b-cbf9-4a02-976c-39fab6302c98"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["RESUMEN DE CONTRATOS - VOLUMEN"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="441" y="14" width="50" height="9" uuid="38a6e79e-e5a9-4107-bd53-4edd4847154f"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[LIQUIDADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="383" y="14" width="50" height="9" uuid="9f983b88-92f9-4bdc-811f-8b18b4f327fe"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[PENDIENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="327" y="14" width="50" height="9" uuid="eb0a53e4-87d5-4903-b46f-d349b8c11370"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[RECIBIDO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="271" y="14" width="50" height="9" uuid="05fe3f5e-6c3e-4fa8-8047-7c05d32063aa"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CONTRATADO]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="2" y="1" width="176" height="11" uuid="0de6953a-e19d-4079-9d53-cc8993002471"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph lineSpacing="Proportional"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECO_PROD_DESC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="498" y="1" width="50" height="11" uuid="88a17b4d-6ad9-4374-a217-0eb5b384175f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECO_VOL_ALIQUIDAR}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="12" width="554" height="1" uuid="646087eb-ac65-4502-9cab-e72dd1ec54db"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="0" width="1" height="13" uuid="cdb90861-b106-4d5b-88d9-1d93d541b5ef"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="266" y="0" width="1" height="12" uuid="c785f9c9-7458-4b17-89b4-20e6c13b0ccf"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="494" y="0" width="1" height="13" uuid="d59f5aaa-d563-42e5-878c-eea4e5b9eb82"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="555" y="0" width="1" height="13" uuid="557e2975-8525-41bd-8452-bf21931757b4"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="441" y="1" width="50" height="11" uuid="76594e40-ffad-42d8-a9ef-8bfcd7f9ac81"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECO_VOL_LIQUIDADO}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="383" y="1" width="50" height="11" uuid="f8da51b8-3fe6-4824-a917-0847e0e750d1"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECO_VOL_PENDIENTE}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="327" y="1" width="50" height="11" uuid="e952e6e0-3f15-4fe3-9ab6-6983ad9b674b"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECO_VOL_RECIBIDO}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="271" y="1" width="50" height="11" uuid="71e6e4cb-090e-4736-b74c-e02525bae627"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECO_VOL_CONTRATO}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<line>
+				<reportElement x="324" y="0" width="1" height="12" uuid="ba119db3-b763-4039-8f95-30e495e89426"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="435" y="0" width="1" height="13" uuid="c9fb9768-4512-443c-bd9e-3569c41f33e0"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="380" y="0" width="1" height="13" uuid="e1bfa54b-4a73-46d6-a2dc-37f415fa060c"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="4" splitType="Stretch"/>
+	</summary>
+</jasperReport>

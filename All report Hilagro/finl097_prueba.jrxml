@@ -1,0 +1,972 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="finl097_res" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="28fa673e-caf8-41ae-8087-cd00795067d2">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.one.page.per.sheet" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="ireport.callouts" value="##Fri Jul 06 16:54:39 PYT 2018"/>
+	<style name="detalles" hAlign="Left" vAlign="Top" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman"/>
+	<style name="cabecera_columna" forecolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Top" fontSize="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FORMATO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_COD_CLIENTE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_RAZON_SOCIAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NRO_FACTURA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_DESDE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_HASTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT NRO_CUMPLIDO_EMB,
+       FECHA_CUMPLIDO_EMB,
+       DOC_CLAVE          CLAVE_FACT,
+       CLI_CODIGO,
+       CLI_NOM,
+       DOC_EMPR,
+       DOC_NRO_DOC        NRO_FACTURA,
+       DOC_FEC_DOC        FEC_FACTURA,
+       DOC_TIMBRADO       NRO_TIMBRADO,
+       FIN.DET_ART        ART_CODIGO,
+       FIN.ART_DESC,
+       -- CANTIDAD_FACT,
+       -- CANTIDAD_KG_FACT,
+       CASE
+         WHEN ART_TIPO = 4 THEN
+          0
+         ELSE
+          CANTIDAD_FACT
+       END CANTIDAD_FACT,
+       CASE
+         WHEN ART_TIPO = 4 THEN
+          0
+         ELSE
+          CANTIDAD_KG_FACT
+       END CANTIDAD_KG_FACT,
+       SUM(CASE
+             WHEN ART_TIPO = 4 THEN
+              0
+             ELSE
+              DECODE(AFECTA_STOCK, 'N', CANTIDAD, CANTIDAD_FACT)
+           END) CANT_REMISION,
+       SUM(CASE
+             WHEN ART_TIPO = 4 THEN
+              0
+             ELSE
+
+              DECODE(AFECTA_STOCK, 'N', CANTIDAD_KG, CANTIDAD_KG_FACT)
+           END) CANT_KG_REMISION,
+       --   SUM(DECODE(AFECTA_STOCK, 'N', CANTIDAD, CANTIDAD_FACT)) CANT_REMISION,
+       --  NVL(SUM(DECODE(AFECTA_STOCK, 'N', CANTIDAD_KG, CANTIDAD_KG_FACT)), 0) CANT_KG_REMISION,
+       IMPORTE_FACT,
+       SUM(DISTINCT DECODE(AFECTA_STOCK, 'N', IMPORTE_FACT, IMPORTE_REM)) IMPORTE_REM,
+       IMPORTE_NCR,
+       NRO_PROFORMA
+
+  FROM (SELECT DECODE(D.CEE_NRO_CUMPLIDO,
+                      NULL,
+                      'SIN CUMPLIDO',
+                      D.CEE_NRO_CUMPLIDO) NRO_CUMPLIDO_EMB,
+               DECODE(D.CEE_FECHA_CUMPLIDO,
+                      NULL,
+                      'SIN CUMPLIDO',
+                      D.CEE_FECHA_CUMPLIDO) FECHA_CUMPLIDO_EMB,
+               DOC_CLAVE,
+               FP.PRO_NRO NRO_PROFORMA,
+               CLI_CODIGO,
+               CLI_NOM,
+               DOC_EMPR,
+               DOC_NRO_DOC,
+               DOC_FEC_DOC,
+               DOC_TIMBRADO,
+               DET_NRO_ITEM,
+               DET_ART,
+               ART_DESC,
+               SUM(DET_CANT) CANTIDAD_FACT,
+               SUM(NVL(B.DET_NETO_LOC, 0) + NVL(B.DET_IVA_LOC, 0)) IMPORTE_FACT,
+               NVL(NCR_TOTAL, 0) IMPORTE_NCR,
+               SUM(DET_CANT) * NVL(C.ART_KG_CONTENIDO, 1) CANTIDAD_KG_FACT,
+               DECODE(DOC_CLAVE_STK, NULL, 'N', 'S') AFECTA_STOCK,
+               ART_TIPO
+          FROM FIN_DOCUMENTO A,
+               FAC_DOCUMENTO_DET B,
+               STK_ARTICULO C,
+                (SELECT A.CEE_NRO_CUMPLIDO,
+                       A.CEE_FECHA_CUMPLIDO,
+                       A.CEE_TASA,
+                       A.CEE_CLAVE_FACT,
+                       A.CEE_EMPR
+                  FROM FIN_CUMP_EMB_EXPORT A
+                 WHERE CEE_EMPR = 1
+                 GROUP BY A.CEE_NRO_CUMPLIDO,
+                          A.CEE_FECHA_CUMPLIDO,
+                          A.CEE_TASA,
+                          A.CEE_CLAVE_FACT,
+                          A.CEE_EMPR)  D,
+               FIN_CLIENTE E,
+               FAC_PROFORMA FP,
+               (SELECT DOC_EMPR EMPRESA_ANUL, DOC_CLAVE_PADRE PADRE_ANUL
+                  FROM FIN_DOCUMENTO
+                 WHERE DOC_EMPR = 1
+                   AND DOC_TIPO_MOV IN (47)) ANUL_FAC,
+               (SELECT A.DOC_EMPR NCR_CLAVE_EMPR,
+                       A.DOC_CLAVE NCR_CLAVE_FACTURA,
+                       ROUND(SUM(NVL((E.DOC_NETO_EXEN_LOC +
+                                     E.DOC_NETO_GRAV_LOC + E.DOC_IVA_LOC),
+                                     0)) /
+                             (SELECT COUNT(DET_NRO_ITEM)
+                                FROM FAC_DOCUMENTO_DET
+                               WHERE DET_CLAVE_DOC = A.DOC_CLAVE
+                                 AND DET_EMPR = A.DOC_EMPR),
+                             0) NCR_TOTAL
+                  FROM FIN_DOCUMENTO A,
+                       FIN_UNION_PAGO B,
+                       FIN_DOCUMENTO C,
+                       FIN_UNION_PAGO D,
+                       FIN_DOCUMENTO E,
+                       FIN_DOC_CONCEPTO F,
+                       (SELECT DOC_EMPR        EMPRESA_ANUL,
+                               DOC_CLAVE_PADRE PADRE_ANUL
+                          FROM FIN_DOCUMENTO
+                         WHERE DOC_EMPR = 1
+                           AND DOC_TIPO_MOV IN (48)) ANULS
+                 WHERE A.DOC_CLAVE = B.PAG_CLAVE_DOC
+                   AND A.DOC_EMPR = B.PAG_EMPR
+                   AND B.PAG_EMPR = C.DOC_EMPR
+                   AND B.PAG_CLAVE_PAGO = C.DOC_CLAVE
+                   AND A.DOC_IND_EXPORT = 'S'
+                   AND A.DOC_CLAVE_STK IS NULL
+                   AND C.DOC_CLAVE_PADRE = D.PAG_CLAVE_PAGO
+                   AND D.PAG_EMPR = E.DOC_EMPR
+                   AND D.PAG_CLAVE_DOC = E.DOC_CLAVE
+                   AND E.DOC_CLAVE = DCON_CLAVE_DOC
+                   AND E.DOC_EMPR = DCON_EMPR
+                   AND DCON_CLAVE_CTACO IN (2650, 7, 2716, 2713) --CUENTAS DE EMBARQUES
+                   AND E.DOC_TIPO_MOV IN (16, 46)
+                   AND A.DOC_CLAVE = ANULS.PADRE_ANUL(+)
+                   AND A.DOC_EMPR = ANULS.EMPRESA_ANUL(+)
+                   AND ANULS.PADRE_ANUL IS NULL
+                 GROUP BY A.DOC_EMPR, A.DOC_CLAVE) NCR
+         WHERE A.DOC_CLAVE = DET_CLAVE_DOC
+           AND DOC_EMPR = DET_EMPR
+           AND DET_ART = ART_CODIGO
+           AND DET_EMPR = ART_EMPR
+           AND DOC_CLAVE = D.CEE_CLAVE_FACT(+)
+           AND DOC_EMPR = D.CEE_EMPR(+)
+           AND DOC_CLI = CLI_CODIGO
+           AND DOC_EMPR = CLI_EMPR
+           AND DOC_IND_EXPORT = 'S'
+           AND DOC_EMPR = NCR_CLAVE_EMPR(+)
+           AND DOC_CLAVE = NCR_CLAVE_FACTURA(+)
+           AND A.DOC_EXP_PROFORMA = FP.PRO_CLAVE(+)
+           AND A.DOC_EMPR = FP.PRO_EMPR(+)
+           AND A.DOC_CLAVE = ANUL_FAC.PADRE_ANUL(+)
+           AND A.DOC_EMPR = ANUL_FAC.EMPRESA_ANUL(+)
+           AND ANUL_FAC.PADRE_ANUL IS NULL
+         GROUP BY DOC_CLAVE,
+                  DOC_EMPR,
+                  DOC_NRO_DOC,
+                  DOC_FEC_DOC,
+                  DOC_TIMBRADO,
+                  DET_ART,
+                  ART_DESC,
+                  ART_TIPO,
+                  DECODE(DOC_CLAVE_STK, NULL, 'N', 'S'),
+                  C.ART_KG_CONTENIDO,
+                  DECODE(D.CEE_NRO_CUMPLIDO,
+                         NULL,
+                         'SIN CUMPLIDO',
+                         D.CEE_NRO_CUMPLIDO),
+                  DECODE(D.CEE_FECHA_CUMPLIDO,
+                         NULL,
+                         'SIN CUMPLIDO',
+                         D.CEE_FECHA_CUMPLIDO),
+                  CLI_NOM,
+                  CLI_CODIGO,
+                  NCR_TOTAL,
+                  FP.PRO_NRO,
+                  DET_NRO_ITEM) FIN,
+
+       (SELECT DOCU_CLAVE_FIN,
+               DOCU_CLAVE,
+               DOCU_NRO_DOC,
+               DOCU_TIMBRADO,
+               DOCU_FEC_EMIS,
+               DOCU_EMPR,
+               DETA_DET_NRO_ITEM,
+               DETA_ART,
+               ART_DESC,
+               SUM(DETA_CANT) CANTIDAD,
+               SUM(NVL(DETA_IMP_NETO_LOC, 0) + NVL(DETA_IVA_LOC, 0)) IMPORTE_REM,
+               SUM(DETA_CANT) * NVL(C.ART_KG_CONTENIDO, 1) CANTIDAD_KG
+          FROM STK_DOCUMENTO A,
+               STK_DOCUMENTO_DET B,
+               STK_ARTICULO C,
+               (SELECT DOCU_CLAVE_PADRE PADRE_STK, DOCU_EMPR EMPRESA_STK
+                  FROM STK_DOCUMENTO D
+                 WHERE D.DOCU_CODIGO_OPER IN (14, 34)
+                   AND D.DOCU_EMPR = 1) ANUL_STK
+         WHERE A.DOCU_CLAVE = DETA_CLAVE_DOC
+           AND DOCU_EMPR = DETA_EMPR
+           AND DETA_ART = ART_CODIGO
+           AND DETA_EMPR = ART_EMPR
+           AND DOCU_CLAVE_FIN IS NOT NULL
+           AND A.DOCU_CLAVE = ANUL_STK.PADRE_STK(+)
+           AND A.DOCU_EMPR = ANUL_STK.EMPRESA_STK(+)
+           AND ANUL_STK.PADRE_STK IS NULL
+         GROUP BY DOCU_CLAVE,
+                  DOCU_EMPR,
+                  DETA_ART,
+                  ART_DESC,
+                  C.ART_KG_CONTENIDO,
+                  DOCU_NRO_DOC,
+                  DOCU_TIMBRADO,
+                  DOCU_FEC_EMIS,
+                  DOCU_CLAVE_FIN,
+                  DETA_DET_NRO_ITEM,
+                  DOCU_NRO_DOC,
+                  DOCU_TIMBRADO,
+                  DOCU_FEC_EMIS
+        UNION ALL
+        SELECT DOCU_CLAVE_FIN,
+               DOCU_CLAVE,
+               DOCU_NRO_DOC,
+               DOCU_TIMBRADO,
+               DOCU_FEC_EMIS,
+               DOCU_EMPR,
+               DET_NRO_ITEM,
+               E.PRO_ARTIC_COD DETA_ART,
+               NULL,
+               SUM(DETA_CANT * NVL(C.ART_KG_CONTENIDO, 1)) CANTIDAD,
+               ROUND(SUM(DETA_CANT * NVL(C.ART_KG_CONTENIDO, 1)) *
+                     ((F.DET_NETO_LOC) / DET_CANT)) IMPORTE_REM,
+               SUM(DETA_CANT * NVL(C.ART_KG_CONTENIDO, 1)) CANTIDAD_KG
+          FROM STK_DOCUMENTO A,
+               STK_DOCUMENTO_DET B,
+               STK_ARTICULO C,
+               FIN_DOCUMENTO D,
+               FAC_PROFORMA E,
+               FAC_DOCUMENTO_DET F,
+               (SELECT DOC_EMPR EMPRESA_ANUL, DOC_CLAVE_PADRE PADRE_ANUL
+                  FROM FIN_DOCUMENTO
+                 WHERE DOC_EMPR = 1
+                   AND DOC_TIPO_MOV IN (47)) ANUL_FAC
+         WHERE A.DOCU_CLAVE = DETA_CLAVE_DOC
+           AND DOCU_EMPR = DETA_EMPR
+           AND DETA_ART = ART_CODIGO
+           AND DETA_EMPR = ART_EMPR
+           AND DOCU_CLAVE_FIN = DOC_CLAVE
+           AND DOCU_EMPR = DOC_EMPR
+           AND D.DOC_EXP_PROFORMA = E.PRO_CLAVE
+           AND DOC_EMPR = E.PRO_EMPR
+           AND DOC_CLAVE = DET_CLAVE_DOC
+           AND DOC_EMPR = DET_EMPR
+           AND DET_ART = E.PRO_ARTIC_COD
+           AND D.DOC_CLAVE = ANUL_FAC.PADRE_ANUL(+)
+           AND D.DOC_EMPR = ANUL_FAC.EMPRESA_ANUL(+)
+           AND ANUL_FAC.PADRE_ANUL IS NULL
+        --  AND DOCU_CLAVE=19140450101
+         GROUP BY DOCU_CLAVE,
+                  DOCU_EMPR,
+                  DOCU_NRO_DOC,
+                  E.PRO_FREIGHT_PRICE,
+                  DOC_TASA,
+                  DOCU_TIMBRADO,
+                  DOCU_FEC_EMIS,
+                  DOCU_CLAVE_FIN,
+                  E.PRO_ARTIC_COD,
+                  ((F.DET_NETO_LOC) / DET_CANT),
+                  DET_NRO_ITEM
+
+        ) STK
+ WHERE DOC_CLAVE = DOCU_CLAVE_FIN(+)
+   AND DOC_EMPR = DOCU_EMPR(+)
+   AND DET_ART = DETA_ART(+)
+   AND DET_NRO_ITEM = DETA_DET_NRO_ITEM(+)
+   AND DOC_EMPR =$P{P_EMPRESA}
+   AND (DOC_NRO_DOC = $P{P_NRO_FACTURA} OR $P{P_NRO_FACTURA}  IS NULL)
+   AND DOC_FEC_DOC BETWEEN  TO_DATE($P{P_FEC_DESDE},'DD/MM/YYYY') AND TO_DATE($P{P_FEC_HASTA},'DD/MM/YYYY')
+   AND (DOCU_FEC_EMIS BETWEEN TO_DATE($P{P_FEC_DESDE},'DD/MM/YYYY') AND TO_DATE($P{P_FEC_HASTA},'DD/MM/YYYY') OR   TO_DATE(DOCU_FEC_EMIS,'DD/MM/YYYY') IS NULL)
+   AND (CLI_CODIGO = $P{P_COD_CLIENTE} OR $P{P_COD_CLIENTE}  IS NULL)
+ GROUP BY NRO_CUMPLIDO_EMB,
+          FECHA_CUMPLIDO_EMB,
+          DOC_CLAVE,
+          CLI_CODIGO,
+          CLI_NOM,
+          DOC_EMPR,
+          ART_TIPO,
+          DOC_NRO_DOC,
+          DOC_FEC_DOC,
+          DOC_TIMBRADO,
+          FIN.DET_ART,
+          FIN.ART_DESC,
+          CANTIDAD_FACT,
+          CANTIDAD_KG_FACT,
+          IMPORTE_FACT,
+          IMPORTE_NCR,
+          NRO_PROFORMA,
+          AFECTA_STOCK --,
+-- IMPORTE_REM
+ ORDER BY 8 DESC , 7 DESC
+]]>
+	</queryString>
+	<field name="NRO_CUMPLIDO_EMB" class="java.lang.String"/>
+	<field name="FECHA_CUMPLIDO_EMB" class="java.lang.String"/>
+	<field name="CLAVE_FACT" class="java.math.BigDecimal"/>
+	<field name="CLI_CODIGO" class="java.math.BigDecimal"/>
+	<field name="CLI_NOM" class="java.lang.String"/>
+	<field name="DOC_EMPR" class="java.math.BigDecimal"/>
+	<field name="NRO_FACTURA" class="java.math.BigDecimal"/>
+	<field name="FEC_FACTURA" class="java.sql.Timestamp"/>
+	<field name="NRO_TIMBRADO" class="java.math.BigDecimal"/>
+	<field name="ART_CODIGO" class="java.math.BigDecimal"/>
+	<field name="ART_DESC" class="java.lang.String"/>
+	<field name="CANTIDAD_FACT" class="java.math.BigDecimal"/>
+	<field name="CANTIDAD_KG_FACT" class="java.math.BigDecimal"/>
+	<field name="CANT_REMISION" class="java.math.BigDecimal"/>
+	<field name="CANT_KG_REMISION" class="java.math.BigDecimal"/>
+	<field name="IMPORTE_FACT" class="java.math.BigDecimal"/>
+	<field name="IMPORTE_REM" class="java.math.BigDecimal"/>
+	<field name="IMPORTE_NCR" class="java.math.BigDecimal"/>
+	<field name="NRO_PROFORMA" class="java.math.BigDecimal"/>
+	<variable name="V_ART_SAL_KG" class="java.lang.Double" resetType="Column">
+		<variableExpression><![CDATA[$F{CANTIDAD_KG_FACT}-$F{CANT_KG_REMISION}]]></variableExpression>
+	</variable>
+	<variable name="V_SAL_ART_IMP" class="java.lang.Double" resetType="Column">
+		<variableExpression><![CDATA[$F{IMPORTE_FACT}-($F{IMPORTE_REM}+$F{IMPORTE_NCR})]]></variableExpression>
+	</variable>
+	<variable name="V_TOT_FAC_KG_FACT" class="java.lang.Double" resetType="Group" resetGroup="Factura" calculation="Sum">
+		<variableExpression><![CDATA[$F{CANTIDAD_KG_FACT}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="V_TOT_FAC_IMP_FACT" class="java.lang.Double" resetType="Group" resetGroup="Factura" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_FACT}]]></variableExpression>
+	</variable>
+	<variable name="V_TOT_FAC_IMP_NCR" class="java.lang.Double" resetType="Group" resetGroup="Factura" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_NCR}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="V_TOT_FAC_KG_REM" class="java.lang.Double" resetType="Group" resetGroup="Factura" calculation="Sum">
+		<variableExpression><![CDATA[$F{CANT_KG_REMISION}]]></variableExpression>
+	</variable>
+	<variable name="V_TOT_FAC_IMP_REM" class="java.lang.Double" resetType="Group" resetGroup="Factura" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_REM}]]></variableExpression>
+	</variable>
+	<variable name="V_TOT_FAC_SAL_KG" class="java.lang.Double">
+		<variableExpression><![CDATA[$V{V_TOT_FAC_KG_FACT}-$V{V_TOT_FAC_KG_REM}]]></variableExpression>
+	</variable>
+	<variable name="V_TOT_FAC_SAL_GS" class="java.lang.Double">
+		<variableExpression><![CDATA[$V{V_TOT_FAC_IMP_FACT}-($V{V_TOT_FAC_IMP_REM}+ $V{V_TOT_FAC_IMP_NCR})]]></variableExpression>
+	</variable>
+	<variable name="V_TOT_KG_FAC" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{CANTIDAD_KG_FACT}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="V_TOT_FAC_IMP" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_FACT}]]></variableExpression>
+	</variable>
+	<variable name="V_TOT_IMP_NCR" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_NCR}]]></variableExpression>
+	</variable>
+	<variable name="V_TOT_KG_REM" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{CANT_KG_REMISION}]]></variableExpression>
+	</variable>
+	<variable name="V_TOT_IMP_REM" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_REM}]]></variableExpression>
+	</variable>
+	<variable name="V_TOT_SAL_KG" class="java.lang.Double">
+		<variableExpression><![CDATA[$V{V_TOT_KG_FAC}-  $V{V_TOT_KG_REM}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="V_TOT_SAL_GS" class="java.lang.Double">
+		<variableExpression><![CDATA[$V{V_TOT_FAC_IMP}-($V{V_TOT_IMP_REM}+$V{V_TOT_IMP_NCR})]]></variableExpression>
+	</variable>
+	<variable name="V_CONTADOR_ART" class="java.lang.Double" resetType="Group" resetGroup="Factura" calculation="Count">
+		<variableExpression><![CDATA[$F{ART_CODIGO}]]></variableExpression>
+	</variable>
+	<group name="Cliente">
+		<groupExpression><![CDATA[$F{CLI_CODIGO}]]></groupExpression>
+		<groupHeader>
+			<band height="13">
+				<textField>
+					<reportElement x="4" y="2" width="21" height="11" uuid="7d4ab6bb-0b9d-4178-b64f-3c0a6d6b51fc"/>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CLI_CODIGO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="25" y="2" width="133" height="11" uuid="fb1a7cbc-f594-4d19-ae42-280cca4c9ad7"/>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CLI_NOM}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="3" y="1" width="533" height="1" uuid="2c8deb45-ad88-451d-b64f-019e73dab0b5"/>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="Factura">
+		<groupExpression><![CDATA[$F{NRO_FACTURA}]]></groupExpression>
+		<groupHeader>
+			<band height="22">
+				<textField>
+					<reportElement x="42" y="0" width="56" height="11" uuid="203d79cb-216c-49dc-85d7-6ab824525816"/>
+					<textElement>
+						<font size="7" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NRO_CUMPLIDO_EMB}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="107" y="0" width="56" height="11" uuid="091a7c97-4905-4755-9063-f5e8dced1faa"/>
+					<textElement>
+						<font size="7" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA_CUMPLIDO_EMB}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="165" y="0" width="60" height="11" uuid="13fac6f8-a4a4-40c8-a5a0-31ea6386b0cc"/>
+					<textElement>
+						<font size="7" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NRO_FACTURA}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="226" y="0" width="53" height="11" uuid="d8d8c921-3eee-4c08-a20f-8d674336b165"/>
+					<textElement>
+						<font size="7" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FEC_FACTURA}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="28" y="11" width="42" height="10" uuid="e47d9628-1f9c-4fbe-a16d-98270ac9129c"/>
+					<textElement>
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Articulo]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="193" y="11" width="47" height="10" uuid="aef64266-8bfc-4524-99b8-d18c956d14b5"/>
+					<textElement textAlignment="Center">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Kg. Fact.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="347" y="11" width="47" height="10" uuid="88697b02-8e6b-470e-8a08-8cbb83bbaca7"/>
+					<textElement textAlignment="Center">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Kg. Remitido]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="242" y="11" width="53" height="10" uuid="6cea8fe3-8d66-42b6-8741-e5de6c482180"/>
+					<textElement textAlignment="Center">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Imp. Fact. Gs]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="396" y="11" width="51" height="10" uuid="de5c7834-f70b-49af-9eb9-00e378e49bfc"/>
+					<textElement textAlignment="Center">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Imp. Rem. Gs.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="452" y="11" width="46" height="10" uuid="a06594e1-6334-4da2-a1b7-91cd5b8f74c1"/>
+					<textElement textAlignment="Center">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Saldo Kg.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="498" y="11" width="56" height="10" uuid="00f90812-759f-41da-9dd0-6fad33da3d7e"/>
+					<textElement textAlignment="Center">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Saldo Gs.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="298" y="11" width="46" height="10" uuid="bde88e70-a418-4cc8-980b-8d98bf3e2211"/>
+					<textElement textAlignment="Center">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Imp. Ncr. Gs]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="12">
+				<rectangle>
+					<reportElement mode="Transparent" x="129" y="0" width="426" height="10" uuid="10faf52b-2622-43ac-a3f5-cf5954d55588"/>
+				</rectangle>
+				<staticText>
+					<reportElement x="133" y="0" width="53" height="10" uuid="32c4e36b-22c6-4e21-a569-3a8dc6a919ba"/>
+					<textElement>
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Factura:]]></text>
+				</staticText>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="499" y="0" width="55" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="ec16a90c-0b97-4df6-9c78-1790203c16e3"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_TOT_FAC_SAL_GS}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="396" y="0" width="51" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="b48c9c54-328c-4f91-a79d-201a4c7927b0"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_TOT_FAC_IMP_REM}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="242" y="0" width="53" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="8bcb07bb-c3ac-4db9-a0ac-07500fc57cf0"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_TOT_FAC_IMP_FACT}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.#" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="193" y="0" width="47" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="1760130e-d598-40d9-9253-10a951da87cb"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_TOT_FAC_KG_FACT}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="298" y="0" width="46" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="d523569a-d5a1-4418-8a39-26678aa31322"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_TOT_FAC_IMP_NCR}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.#" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="347" y="0" width="47" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="8889d1a3-2026-421f-aeb3-78dadcb398f8"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_TOT_FAC_KG_REM}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.#" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="452" y="0" width="46" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="8783f3d5-bb57-4126-a7c2-0f9d6f39a479"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_TOT_FAC_SAL_KG}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="67" splitType="Stretch">
+			<rectangle>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="555" height="65" uuid="95ed4190-89f6-423a-9fcb-91fc28b8fd4f"/>
+			</rectangle>
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement x="460" y="23" width="88" height="13" uuid="75f6fa54-4608-4166-b474-f6dbae9b42b4"/>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="460" y="8" width="58" height="13" uuid="2cca577a-32e4-4964-aa99-27e919f2d7ec"/>
+				<textElement textAlignment="Left">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="518" y="8" width="30" height="13" uuid="f3bc2329-59a0-4a58-838d-44c82110bbe5"/>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="7" y="8" width="116" height="13" uuid="f08b058e-094d-44c3-8bed-c8b53c44c6be"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_EMPRESA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="7" y="23" width="100" height="13" uuid="5ea0f3c4-cda4-4938-9be7-d2bea69c0a1f"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="145" y="18" width="227" height="15" uuid="76abd782-10fb-402f-be38-0bb73e77659b"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="417" y="8" width="40" height="13" uuid="83a8f4c5-375b-4f5b-8967-351e7c645ac7"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="14" y="48" width="59" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="a60a5ef5-942f-4893-b938-aec0997eca90"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Fecha desde:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="149" y="48" width="37" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="12f22e80-9c19-4c75-ad71-d263a421e314"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Hasta:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="14" y="37" width="40" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="858e209d-308a-4127-b055-5ca446941593"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Cliente:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="78" y="36" width="26" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="e8e24a1e-11d3-40bb-a986-2f2413ae0d54"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_COD_CLIENTE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="107" y="36" width="145" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="61f8132e-e152-42f6-a4d4-46972fd61b55"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_RAZON_SOCIAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="78" y="49" width="45" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="ae400c70-2446-4193-88b9-17158fe1dd56"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FEC_DESDE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="200" y="49" width="52" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="df13e086-d942-4b0e-b1a4-b3eff0ed413b"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FEC_HASTA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="18" splitType="Stretch">
+			<staticText>
+				<reportElement x="42" y="4" width="59" height="11" uuid="b11dd075-732b-4a39-ae3f-274b05eddf22"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro. Cumplido]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="101" y="4" width="62" height="11" uuid="c4a052ee-0f97-4651-9352-20b93b194b65"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fec. Cumplido]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="164" y="4" width="60" height="11" uuid="4dc67431-1771-4e8f-9501-a6cbf956b390"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro. Factura]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="225" y="4" width="54" height="11" uuid="e7c822f4-69a5-46e4-a310-6919c420309e"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="4" width="37" height="11" uuid="dc4f8061-f2bc-48c4-9e56-3d318a2e2281"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cliente]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="11" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="28" y="0" width="29" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="f5a45808-4903-4d1b-8e98-7766f430220f"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ART_CODIGO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="61" y="0" width="125" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="33a3d692-b3f6-4419-862f-309c82be842e"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ART_DESC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.#" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="193" y="0" width="47" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="8bccf8dd-ca2c-4de0-98c0-65a4111281b2"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANTIDAD_KG_FACT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.#" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="347" y="0" width="47" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="fc1c0ebb-34ea-4a7d-821c-c1af78464195"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANT_KG_REMISION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="396" y="0" width="51" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="493576a2-71e8-4cc1-aa2b-84a66417b6d7"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_REM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.#" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="452" y="0" width="46" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="c19c29a5-ab9b-4e57-9ec3-87d83afc6c7d"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_ART_SAL_KG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="499" y="0" width="56" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="0bcfb82a-f6c7-4217-b332-9bed1b67e924"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_SAL_ART_IMP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="242" y="0" width="53" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="eb2f857c-3d91-400d-a672-105e3736678c"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_FACT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="3" y="1" width="16" height="9" forecolor="#000000" backcolor="#FFFFFF" uuid="e24049b5-2ac4-4cb7-912e-7d10a84d1070"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_CONTADOR_ART}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="298" y="0" width="46" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="905b3ea2-391c-4a22-9c07-0b37c48de806"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_NCR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="77">
+			<rectangle>
+				<reportElement mode="Transparent" x="1" y="25" width="554" height="29" uuid="98253053-8594-4353-b209-edcdc454765b"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="7" y="62" width="100" height="11" uuid="e7f340a1-9d26-46ec-8ae5-1ec7050e0813"/>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Fin del listado...]]></text>
+			</staticText>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="104" y="40" width="83" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="8539298c-3212-452b-a817-54d5edf283a2"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_TOT_FAC_IMP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="194" y="40" width="68" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="8ffaf703-0956-444e-a239-d2bbd9195a94"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_TOT_IMP_NCR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="476" y="40" width="69" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="ebb87f1d-259f-43f1-ad18-da47112561c4"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_TOT_SAL_GS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.#" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="262" y="40" width="73" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="6d5b56c1-0595-48ae-879a-2bdb18a49a6a"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_TOT_KG_REM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.#" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="419" y="40" width="55" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="8861d347-4012-494f-964b-14a95b3b1723"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_TOT_SAL_KG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.#" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="41" y="40" width="60" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="3af82b78-d01f-4294-ad30-efdb8fa40c77"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_TOT_KG_FAC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="40" width="76" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="b78e9478-1fd1-4558-8433-eb2cc0f779d6"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_TOT_IMP_REM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="43" y="26" width="58" height="10" uuid="ed973a5c-2432-4051-974e-abe144c312f4"/>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Kg. Facturado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="105" y="26" width="82" height="10" uuid="653a6b08-29ad-4a93-bf7d-020963030d85"/>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Imp. Facturado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="193" y="26" width="69" height="10" uuid="a47794ab-fe2f-4e33-bcc9-9b0dc9b40921"/>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Imp. Nota. Credito]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="263" y="26" width="72" height="10" uuid="b180c7c6-28ad-43cd-9ede-d1bf01dc7b69"/>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Kg Remitido]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="337" y="26" width="72" height="10" uuid="ce7a3166-e07a-4170-8dbb-e66bf36b1134"/>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Imp. Remitido Gs]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="419" y="26" width="55" height="10" uuid="b61b7c64-fc20-4286-9be1-370446fcf739"/>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saldo Kg]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="476" y="26" width="55" height="10" uuid="34a33c4e-0220-4001-800f-d3e5013e3185"/>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saldo Gs.]]></text>
+			</staticText>
+			<line>
+				<reportElement x="43" y="39" width="502" height="1" uuid="b4ebafbf-d80f-44b0-b00e-a40453501101"/>
+			</line>
+			<staticText>
+				<reportElement x="1" y="10" width="554" height="15" uuid="481d20c5-de76-4b8f-bc1d-6ab77ba97475"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RESUMEN GENERAL DE MOVIMIENTOS]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Linea_de_negocio_stkl012" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="806cfd75-f49f-44e3-8e7c-77a36b008ad9">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_LINEA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_MARCA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_GRUPO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PERIODO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="p_existencia" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT LINEG_DESC,
+       SUM(AEP_TOT_EXIST * AEP_COSTO_PROM_LOC) TOT_LOC
+  FROM STK_MARCA,
+       STK_LINEA,
+       STK_GRUPO,
+       STK_ARTICULO,
+       GEN_EMPRESA,
+       STK_ART_EMPR_PERI,
+       STK_LINEA_NEGOCIO
+ WHERE ART_CODIGO = AEP_ART
+   AND MARC_CODIGO = ART_MARCA
+   AND (LIN_CODIGO = ART_LINEA)
+   AND GRUP_LINEA = ART_LINEA
+   AND GRUP_CODIGO = ART_GRUPO
+   AND EMPR_CODIGO = AEP_EMPR
+   AND AEP_EMPR = MARC_EMPR
+   AND MARC_EMPR = LIN_EMPR
+   AND LIN_EMPR = GRUP_EMPR
+   AND GRUP_EMPR = ART_EMPR
+   AND STK_ARTICULO.ART_LIN_NEGOCIO = STK_LINEA_NEGOCIO.LINEG_CODIGO
+   AND STK_ARTICULO.ART_EMPR = STK_LINEA_NEGOCIO.LINEG_EMPR
+   AND EMPR_CODIGO=$P{P_EMPRESA}
+   AND AEP_PERIODO = $P{P_PERIODO}
+   and art_tipo<>4
+   AND(MARC_CODIGO = $P{P_MARCA} OR $P{P_MARCA} IS NULL)
+   AND (ART_LINEA =$P{P_LINEA} OR $P{P_LINEA}  IS NULL)
+   AND (ART_GRUPO =$P{P_GRUPO} OR $P{P_GRUPO} IS NULL)
+   and (AEP_TOT_EXIST <>$P!{p_existencia} or $P!{p_existencia} is null)
+GROUP BY LINEG_CODIGO, LINEG_DESC
+ORDER BY LINEG_CODIGO]]>
+	</queryString>
+	<field name="LINEG_DESC" class="java.lang.String"/>
+	<field name="TOT_LOC" class="java.math.BigDecimal"/>
+	<variable name="TOT_LOC_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_LOC}]]></variableExpression>
+	</variable>
+	<background>
+		<band height="152" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="518" height="152" uuid="e916aa6a-8b1b-4318-accb-b86fb229946c"/>
+			</rectangle>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement x="47" y="3" width="100" height="13" uuid="fa5606bd-643a-4b6c-a2a5-ad483722e8fe"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Linea de Negocio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="361" y="3" width="100" height="13" uuid="e55156a4-c0f4-42e8-acdd-ab7c15ca83fc"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Importes]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="16" width="518" height="1" uuid="635d057f-a996-4d73-b17b-c679b7967a0e"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField>
+				<reportElement x="47" y="-1" width="100" height="13" uuid="f034303d-07cb-435c-98ea-3436394cc032"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LINEG_DESC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="361" y="1" width="100" height="11" uuid="35834378-11f2-43ac-97a2-6ed88dbe624d"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOT_LOC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="30">
+			<staticText>
+				<reportElement x="289" y="0" width="39" height="13" uuid="6a021bb1-9eff-4700-aa6e-021ba8a29428"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="#,##0">
+				<reportElement x="361" y="1" width="100" height="11" uuid="d6a2954d-434a-431d-ab1a-af309b8aab71"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOT_LOC_1}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="361" y="0" width="100" height="1" uuid="fbebeb09-d37b-4faa-8752-ab16ebbcb5ba"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

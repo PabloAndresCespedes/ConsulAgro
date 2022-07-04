@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINI004CEDEC" language="groovy" columnCount="2" pageWidth="595" pageHeight="842" columnWidth="277" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="03183969-67f9-4fb7-b83f-4e9bf28b0d43">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_CLAVE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT E.EMPR_RAZON_SOCIAL EMPRESA,
+       A.DOC_NRO_DOC       NRO_RECIBO,
+       A.DOC_FEC_DOC       FECHA_RECIBO,
+      G.CLI_NOM,
+       A.DOC_NETO_EXEN_MON IMPORTE_RECIBO,
+       F.MON_SIMBOLO       MONEDA,
+       F.MON_CODIGO,
+       NVL(G.CLI_ACA_NOM_FAC, G.CLI_NOM)   CLIENTE_NOM,
+       G.CLI_ACA_RUC_FAC   CLIENTE_RUC,
+       D.DOC_NRO_DOC       FACTURA,
+       SUM(B.PAG_IMP_MON)  PAGO_FACT,
+       FINI003.CF_TEXTO(MONEDA => F.MON_CODIGO,
+                        IMPORTE_RECIBO => A.DOC_NETO_EXEN_MON,
+ 		    MON_SIMBOLO  => MON_SIMBOLO)CF_TEXTO,
+       fp_formato_nro_fac (A.DOC_NRO_DOC) NRO_RECIBO_FOR
+  FROM FIN_DOCUMENTO A, FIN_PAGO B, FIN_DOCUMENTO D, GEN_EMPRESA E, GEN_MONEDA F, FIN_CLIENTE G
+ WHERE A.DOC_EMPR =  $P{P_EMPRESA}
+   AND A.DOC_CLAVE =  $P{P_CLAVE}
+   AND A.DOC_CLAVE = B.PAG_CLAVE_PAGO
+   AND A.DOC_EMPR = B.PAG_EMPR
+   AND B.PAG_CLAVE_DOC = D.DOC_CLAVE
+  AND B.PAG_EMPR =  D.DOC_EMPR
+   AND A.DOC_EMPR = E.EMPR_CODIGO
+   AND A.DOC_MON = F.MON_CODIGO
+   AND A.DOC_EMPR = F.MON_EMPR
+   AND A.DOC_CLI = G.CLI_CODIGO
+   AND A.DOC_EMPR = G.CLI_EMPR
+GROUP BY E.EMPR_RAZON_SOCIAL,
+       A.DOC_NRO_DOC        ,
+       A.DOC_FEC_DOC        ,
+       A.DOC_NETO_EXEN_MON  ,
+       F.MON_SIMBOLO        ,
+       G.CLI_ACA_NOM_FAC    ,
+       G.CLI_ACA_RUC_FAC    ,
+       D.DOC_NRO_DOC,
+       G.CLI_NOM  ,
+       F.MON_CODIGO
+ ORDER BY 1 DESC
+
+]]>
+	</queryString>
+	<field name="EMPRESA" class="java.lang.String"/>
+	<field name="NRO_RECIBO" class="java.math.BigDecimal"/>
+	<field name="FECHA_RECIBO" class="java.sql.Timestamp"/>
+	<field name="CLI_NOM" class="java.lang.String"/>
+	<field name="IMPORTE_RECIBO" class="java.math.BigDecimal"/>
+	<field name="MONEDA" class="java.lang.String"/>
+	<field name="MON_CODIGO" class="java.math.BigDecimal"/>
+	<field name="CLIENTE_NOM" class="java.lang.String"/>
+	<field name="CLIENTE_RUC" class="java.lang.String"/>
+	<field name="FACTURA" class="java.math.BigDecimal"/>
+	<field name="PAGO_FACT" class="java.math.BigDecimal"/>
+	<field name="CF_TEXTO" class="java.lang.String"/>
+	<field name="NRO_RECIBO_FOR" class="java.lang.String"/>
+	<background>
+		<band height="477" splitType="Stretch">
+			<rectangle>
+				<reportElement x="1" y="1" width="553" height="429" uuid="8a0b0350-971c-4f4d-9c9b-75383aaabaa9"/>
+			</rectangle>
+		</band>
+	</background>
+	<title>
+		<band height="228" splitType="Stretch">
+			<image>
+				<reportElement x="5" y="8" width="227" height="84" uuid="d3435ecc-800b-4a19-93c3-acc9e4b1b245"/>
+				<imageExpression><![CDATA["cedec.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="6" y="93" width="226" height="20" uuid="76a2d042-abf9-4ab9-87f1-288780f11fc3"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ENTIDAD SIN FINES DE LUCRO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="117" width="308" height="10" uuid="46ad9810-3467-47d9-887a-2e47499572d3"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true" isItalic="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[INSCRIPTO BAJO N° 189, FOLIO 2298, SERIE "D", EN FECHA 19/MARZO/2010 ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="27" y="131" width="285" height="26" uuid="65982c37-f455-4156-9eb8-57a782b150db"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Jose Asuncion Flores N° 1381 y 12 de junio (B° San Francisco)
+Tel.: (0528) 222 777  J.E.Estigarribia (Campo 9) - Paraguay]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="16" y="162" width="64" height="10" uuid="a55f2920-9e93-4eae-bb66-b9eb68b8cdf5"/>
+				<textElement>
+					<font fontName="Arial" size="8" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Recibi(mos) de :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="80" y="162" width="232" height="10" uuid="92657812-69c7-401f-84d4-0a6057fcfc10"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CLI_NOM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="319" y="163" width="57" height="10" uuid="91145961-7889-4618-ab69-4b700650fd3e"/>
+				<textElement>
+					<font fontName="Arial" size="8" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[RUC/CI:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="377" y="163" width="100" height="10" uuid="56a1c28c-dea1-4203-be69-153f992090c7"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CLIENTE_RUC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="16" y="177" width="461" height="36" uuid="0a8e133e-3fac-428a-977d-b6339ca61b46"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_TEXTO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="16" y="218" width="237" height="10" uuid="9677748c-90b4-43de-9fde-ec6b9ce6bb87"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[En concepto de cobro de facturas:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="395" y="34" width="34" height="10" uuid="97631de3-3aa6-4db8-a25b-dd474fd10039"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MONEDA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="430" y="33" width="100" height="11" uuid="cdce32e6-13c7-4b18-b614-f35cd67a4c8e"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_RECIBO}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="394" y="46" width="136" height="1" uuid="64d1e399-053e-434b-aa84-65fba8ba1e08"/>
+			</line>
+			<staticText>
+				<reportElement x="408" y="52" width="100" height="10" uuid="bf5ed74e-b14c-400b-b0b7-584a7a51c467"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[RUC: 80059934-9]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="394" y="72" width="136" height="20" uuid="a5fc58c3-9201-4bef-972b-9a8a18fea2b9"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RECIBO DE DINERO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="391" y="97" width="48" height="10" uuid="f645b5a1-d34d-4bcc-a621-8b5aba7bcd5c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Recibo Nro.:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="440" y="97" width="100" height="10" uuid="d288a554-e0bf-4485-b268-5efb9dc41f19"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_RECIBO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField>
+				<reportElement x="4" y="4" width="100" height="10" uuid="564a0cbc-0586-4a91-b978-57fed548e1b1"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FACTURA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="132" y="4" width="100" height="10" uuid="23600d08-6b76-4689-b0c5-e416358c82d5"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PAGO_FACT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="104" splitType="Stretch">
+			<staticText>
+				<reportElement x="27" y="53" width="132" height="10" uuid="593e4401-f979-4a93-b5f6-ccb27eee7634"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="377" y="53" width="121" height="10" uuid="2e98286e-2efe-4a6c-9216-e69f1d66d972"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Firma]]></text>
+			</staticText>
+			<line>
+				<reportElement x="27" y="50" width="132" height="1" uuid="4bc843be-1dcf-4c35-a4bd-88cae3237e17"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="376" y="50" width="122" height="1" uuid="f36e7af2-7c92-49cf-ad06-67aba9229a56"/>
+				<graphicElement>
+					<pen lineWidth="1.0" lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="432" y="82" width="100" height="10" uuid="a8aad4e2-d7d3-4a90-b58a-117d81f1a8fb"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Original: Cliente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="432" y="92" width="123" height="10" uuid="a8497fa8-f9ed-4bcc-ace4-6f6cbf3c25a5"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Duplicado: Arch. Tributario]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

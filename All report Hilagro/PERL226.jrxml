@@ -1,0 +1,765 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERL226" language="groovy" pageWidth="612" pageHeight="1008" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c2acb1f9-b6da-45e0-8599-a0bc347c1cc5">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUC_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DPTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DPTO_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_LEGAJO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_TIPO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_DESDE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_HASTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPR_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_WHERE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_WHERE2" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select p.marc_empleado,
+       upper(empl_ape || ' ' || empl_nombre) empleado,
+       p.marc_fecha || ' - ' || TO_CHAR(p.marc_fecha, 'Day') fecha,
+       p.marc_fecha,
+       to_date(to_char(p.marc_fecha, 'dd-mm-yyyy') || ' ' ||
+               to_char(empl_hora_entrada, 'hh24:mi'),
+               'dd-mm-yyyy hh24:mi') HE,
+       to_date(to_char(p.marc_fecha, 'dd-mm-yyyy') || ' ' ||
+               to_char(empl_hora_salida, 'hh24:mi'),
+               'dd-mm-yyyy hh24:mi') HS,
+       to_date(to_char(p.marc_fecha, 'dd-mm-yyyy') || ' ' ||
+               to_char(empl_hora_sab_entrada, 'hh24:mi'),
+               'dd-mm-yyyy hh24:mi') HES,
+       to_date(to_char(p.marc_fecha, 'dd-mm-yyyy') || ' ' ||
+               to_char(empl_hora_sab_salida, 'hh24:mi'),
+               'dd-mm-yyyy hh24:mi') HSS,
+       to_date(to_char(p.marc_fecha, 'dd-mm-yyyy') || ' ' ||
+               to_char(empl_hora_dom_entrada, 'hh24:mi'),
+               'dd-mm-yyyy hh24:mi') HED,
+       to_date(to_char(p.marc_fecha, 'dd-mm-yyyy') || ' ' ||
+               to_char(empl_hora_dom_salida, 'hh24:mi'),
+               'dd-mm-yyyy hh24:mi') HSD,
+
+       to_date(to_char(p.marc_fecha, 'dd-mm-yyyy') || ' ' ||
+               to_char(C.CONF_TURNO_DIURNO_INI, 'hh24:mi'),
+               'dd-mm-yyyy hh24:mi') HEDIURNO,
+       to_date(to_char(p.marc_fecha, 'dd-mm-yyyy') || ' ' ||
+               to_char(C.CONF_TURNO_DIURNO_FIN, 'hh24:mi'),
+               'dd-mm-yyyy hh24:mi') HSDIURNO,
+       to_date(to_char(p.marc_fecha, 'dd-mm-yyyy') || ' ' ||
+               to_char(C.CONF_TURNO_MIXTO_INI, 'hh24:mi'),
+               'dd-mm-yyyy hh24:mi') HEMIXTO,
+       to_date(to_char(p.marc_fecha, 'dd-mm-yyyy') || ' ' ||
+               to_char(C.CONF_TURNO_MIXTO_FIN, 'hh24:mi'),
+               'dd-mm-yyyy hh24:mi') HSMIXTO,
+       to_date(to_char(p.marc_fecha, 'dd-mm-yyyy') || ' ' ||
+               to_char(C.CONF_TURNO_NOCTURNO_INI, 'hh24:mi'),
+               'dd-mm-yyyy hh24:mi') HENOCTURNO,
+       to_date(to_char(p.marc_fecha, 'dd-mm-yyyy') || ' ' ||
+               to_char(C.CONF_TURNO_NOCTURNO_FIN, 'hh24:mi'),
+               'dd-mm-yyyy hh24:mi') HSNOCTURNO,
+
+       '*' MARCA,
+       NULL AUS_OBS,
+       nvl(MAX(CASE
+                 WHEN x.entrada = 1 THEN
+                  TO_DATE(TO_CHAR(x.MARC_HORA, 'DD/MM/YYYY HH24:MI'),
+                          'DD/MM/YYYY HH24:MI')
+               END),
+           null) ENT,
+       nvl(MAX(CASE
+                 WHEN y.salida = 1 THEN
+                  TO_DATE(TO_CHAR(y.MARC_HORA, 'DD/MM/YYYY HH24:MI'),
+                          'DD/MM/YYYY HH24:MI')
+               END),
+           null) SAL,
+       nvl(MAX(CASE
+                 WHEN x.entrada = 2  THEN
+                  TO_DATE(TO_CHAR(x.MARC_HORA, 'DD/MM/YYYY HH24:MI'),
+                          'DD/MM/YYYY HH24:MI')
+               END),
+           null) ENT1,
+       nvl(MAX(CASE
+                 WHEN y.salida = 2 THEN
+                  TO_DATE(TO_CHAR(y.MARC_HORA, 'DD/MM/YYYY HH24:MI'),
+                          'DD/MM/YYYY HH24:MI')
+               END),
+           null) SAL1,
+       nvl(MAX(CASE
+                 WHEN x.entrada = 3 THEN
+                  TO_DATE(TO_CHAR(x.MARC_HORA, 'DD/MM/YYYY HH24:MI'),
+                          'DD/MM/YYYY HH24:MI')
+               END),
+           null) ENT2,
+       nvl(MAX(CASE
+                 WHEN y.salida = 3 THEN
+                  TO_DATE(TO_CHAR(y.MARC_HORA, 'DD/MM/YYYY HH24:MI'),
+                          'DD/MM/YYYY HH24:MI')
+               END),
+           null) SAL2,
+       nvl(MAX(CASE
+                 WHEN x.entrada = 4 THEN
+                  TO_DATE(TO_CHAR(x.MARC_HORA, 'DD/MM/YYYY HH24:MI'),
+                          'DD/MM/YYYY HH24:MI')
+               END),
+           null) ENT3,
+       nvl(MAX(CASE
+                 WHEN y.salida = 4 THEN
+                  TO_DATE(TO_CHAR(y.MARC_HORA, 'DD/MM/YYYY HH24:MI'),
+                          'DD/MM/YYYY HH24:MI')
+               END),
+           null) SAL3,
+       nvl(MAX(CASE
+                 WHEN x.entrada = 5 THEN
+                  TO_DATE(TO_CHAR(x.MARC_HORA, 'DD/MM/YYYY HH24:MI'),
+                          'DD/MM/YYYY HH24:MI')
+               END),
+           null) ENT4,
+       nvl(MAX(CASE
+                 WHEN y.salida = 5 THEN
+                  TO_DATE(TO_CHAR(y.MARC_HORA, 'DD/MM/YYYY HH24:MI'),
+                          'DD/MM/YYYY HH24:MI')
+               END),
+           null) SAL4,
+       nvl(MAX(CASE
+                 WHEN x.entrada = 6 THEN
+                  TO_DATE(TO_CHAR(x.MARC_HORA, 'DD/MM/YYYY HH24:MI'),
+                          'DD/MM/YYYY HH24:MI')
+               END),
+           null) ENT5,
+       nvl(MAX(CASE
+                 WHEN y.salida = 6 THEN
+                  TO_DATE(TO_CHAR(y.MARC_HORA, 'DD/MM/YYYY HH24:MI'),
+                          'DD/MM/YYYY HH24:MI')
+               END),
+           null) SAL5,
+       nvl(MAX(CASE
+                 WHEN x.entrada = 7 THEN
+                  TO_DATE(TO_CHAR(x.MARC_HORA, 'DD/MM/YYYY HH24:MI'),
+                          'DD/MM/YYYY HH24:MI')
+               END),
+           null) ENT6,
+       nvl(MAX(CASE
+                 WHEN y.salida = 7 THEN
+                  TO_DATE(TO_CHAR(y.MARC_HORA, 'DD/MM/YYYY HH24:MI'),
+                          'DD/MM/YYYY HH24:MI')
+               END),
+           null) SAL6,
+       nvl(MAX(CASE
+                 WHEN x.entrada = 8 THEN
+                  TO_DATE(TO_CHAR(x.MARC_HORA, 'DD/MM/YYYY HH24:MI'),
+                          'DD/MM/YYYY HH24:MI')
+               END),
+           null) ENT7,
+       nvl(MAX(CASE
+                 WHEN y.salida = 8 THEN
+                  TO_DATE(TO_CHAR(y.MARC_HORA, 'DD/MM/YYYY HH24:MI'),
+                          'DD/MM/YYYY HH24:MI')
+               END),
+           null) SAL7,
+       nvl(MAX(CASE
+                 WHEN x.entrada = 9 THEN
+                  TO_DATE(TO_CHAR(x.MARC_HORA, 'DD/MM/YYYY HH24:MI'),
+                          'DD/MM/YYYY HH24:MI')
+               END),
+           null) ENT8,
+       nvl(MAX(CASE
+                 WHEN y.salida = 9 THEN
+                  TO_DATE(TO_CHAR(y.MARC_HORA, 'DD/MM/YYYY HH24:MI'),
+                          'DD/MM/YYYY HH24:MI')
+               END),
+           null) SAL8,
+       nvl(MAX(CASE
+                 WHEN x.entrada = 10 THEN
+                  TO_DATE(TO_CHAR(x.MARC_HORA, 'DD/MM/YYYY HH24:MI'),
+                          'DD/MM/YYYY HH24:MI')
+               END),
+           null) ENT9,
+       nvl(MAX(CASE
+                 WHEN y.salida = 10 THEN
+                  TO_DATE(TO_CHAR(y.MARC_HORA, 'DD/MM/YYYY HH24:MI'),
+                          'DD/MM/YYYY HH24:MI')
+               END),
+           null) SAL9,
+       to_char(p.marc_fecha, 'dd/mm/yyyy') fec_ent,
+       empl_legajo,
+       empl_hora_sab_entrada,
+       empl_hora_dom_entrada,
+       empl_hora_entrada,
+       empl_hora_sab_salida,
+       empl_hora_dom_salida,
+       empl_hora_salida,
+       nvl(e.empl_desc_tiemp_alm, 'N') empl_desc_tiemp_alm,
+       nvl(e.empl_tiempo_alm, '0') empl_tiempo_alm,
+       nvl(e.empl_calc_hr_ext, 'S') empl_calc_hr_ext
+
+  from per_marcacion_diaria p, per_empleado e, PER_CONFIGURACION C, (select marc_empleado,
+                                                                          marc_fecha, marc_hora,
+                                                                    RANK() OVER (PARTITION BY marc_fecha, marc_empleado ORDER BY marc_hora) AS Entrada,
+                                                                    marc_empr
+                                                                     from per_marcacion_diaria m
+                                                                     where marc_evento='E'
+                                                                    order by marc_empleado, marc_hora) x,
+                                                                    (select marc_empleado,
+                                                                          marc_fecha, marc_hora,
+                                                                    RANK() OVER (PARTITION BY marc_fecha, marc_empleado ORDER BY marc_hora) AS Salida,
+                                                                    marc_empr
+                                                                     from per_marcacion_diaria m
+                                                                     where marc_evento='S'
+                                                                    order by marc_empleado, marc_hora)y
+ where p.marc_empleado = empl_legajo
+   AND p.marc_empr = empl_empresa
+
+   AND CONF_EMPR = $P!{P_EMPRESA}
+   AND CONF_EMPR = empl_empresa
+
+   AND EMPL_SITUACION = 'A'
+
+  AND p.MARC_FECHA =x.MARC_FECHA
+  AND p.MARC_FECHA =y.MARC_FECHA
+  and p.marc_empr = x.marc_empr
+  and p.marc_empr = y.marc_empr
+  and p.marc_empleado = x.marc_empleado
+  and p.marc_empleado = y.marc_empleado
+ $P!{P_WHERE}
+  AND P.MARC_FECHA   BETWEEN $P{P_FEC_DESDE} AND $P{P_FEC_DESDE}
+
+
+ GROUP BY p.marc_empleado,
+          p.marc_fecha,
+          upper(empl_ape || ' ' || empl_nombre),
+          empl_hora_entrada,
+          empl_hora_salida,
+          empl_legajo,
+          empl_hora_sab_entrada,
+          empl_hora_dom_entrada,
+          empl_hora_entrada,
+          empl_hora_sab_salida,
+          empl_hora_dom_salida,
+          empl_hora_salida,
+          to_date(to_char(p.marc_fecha, 'dd-mm-yyyy') || ' ' ||
+                  to_char(C.CONF_TURNO_DIURNO_INI, 'hh24:mi'),
+                  'dd-mm-yyyy hh24:mi'),
+          to_date(to_char(p.marc_fecha, 'dd-mm-yyyy') || ' ' ||
+                  to_char(C.CONF_TURNO_DIURNO_FIN, 'hh24:mi'),
+                  'dd-mm-yyyy hh24:mi'),
+          to_date(to_char(p.marc_fecha, 'dd-mm-yyyy') || ' ' ||
+                  to_char(C.CONF_TURNO_MIXTO_INI, 'hh24:mi'),
+                  'dd-mm-yyyy hh24:mi'),
+          to_date(to_char(p.marc_fecha, 'dd-mm-yyyy') || ' ' ||
+                  to_char(C.CONF_TURNO_MIXTO_FIN, 'hh24:mi'),
+                  'dd-mm-yyyy hh24:mi'),
+          to_date(to_char(p.marc_fecha, 'dd-mm-yyyy') || ' ' ||
+                  to_char(C.CONF_TURNO_NOCTURNO_INI, 'hh24:mi'),
+                  'dd-mm-yyyy hh24:mi'),
+          to_date(to_char(p.marc_fecha, 'dd-mm-yyyy') || ' ' ||
+                  to_char(C.CONF_TURNO_NOCTURNO_FIN, 'hh24:mi'),
+                  'dd-mm-yyyy hh24:mi'),
+          e.empl_desc_tiemp_alm,
+          e.empl_tiempo_alm,
+          e.empl_calc_hr_ext
+
+
+UNION ALL
+
+SELECT AUS_LEGAJO MARC_EMPLEADO,
+       UPPER(EMPL_APE || ' ' || EMPL_NOMBRE) EMPLEADO,
+       AUS_FECHA || ' - ' || TO_CHAR(AUS_FECHA, 'Day') FECHA,
+       AUS_FECHA MARC_FECHA,
+       NULL HE,
+       NULL HS,
+       NULL HES,
+       NULL HSS,
+       NULL HED,
+       NULL HSD,
+
+       NULL HEDIURNO,
+       NULL HSDIURNO,
+       NULL HEMIXTO,
+       NULL HSMIXTO,
+       NULL HENOCTURNO,
+       NULL HSNOCTURNO,
+
+       '**' MARCA,
+       AUS_OBS,
+       NULL ENT,
+       NULL SAL,
+       NULL ENT1,
+       NULL SAL1,
+       NULL ENT2,
+       NULL SAL2,
+       NULL ENT3,
+       NULL SAL3,
+       NULL ENT4,
+       NULL SAL4,
+       NULL ENT5,
+       NULL SAL5,
+       NULL ENT6,
+       NULL SAL6,
+       NULL ENT7,
+       NULL SAL7,
+       NULL ENT8,
+       NULL SAL8,
+       NULL ENT9,
+       NULL SAL9,
+       to_char(aus_fecha, 'dd/mm/yyyy') fec_ent,
+       empl_legajo,
+       null empl_hora_sab_entrada,
+       null empl_hora_dom_entrada,
+       null empl_hora_entrada,
+       null empl_hora_sab_salida,
+       null empl_hora_dom_salida,
+       null empl_hora_salida,
+       null empl_desc_tiemp_alm,
+       null empl_tiempo_alm,
+       null empl_calc_hr_ext
+  FROM PER_AUSENCIAS, PER_EMPLEADO
+ WHERE AUS_LEGAJO = EMPL_LEGAJO
+ AND AUS_EMPR = EMPL_EMPRESA
+ AND AUS_EMPR = $P!{P_EMPRESA}
+$P!{P_WHERE2}
+ AND AUS_FECHA BETWEEN $P{P_FEC_DESDE} ANd $P{P_FEC_HASTA}
+ ORDER BY EMPL_LEGAJO,MARC_FECHA]]>
+	</queryString>
+	<field name="MARC_EMPLEADO" class="java.math.BigDecimal"/>
+	<field name="EMPLEADO" class="java.lang.String"/>
+	<field name="FECHA" class="java.lang.String"/>
+	<field name="MARC_FECHA" class="java.sql.Timestamp"/>
+	<field name="HE" class="java.sql.Timestamp"/>
+	<field name="HS" class="java.sql.Timestamp"/>
+	<field name="HES" class="java.sql.Timestamp"/>
+	<field name="HSS" class="java.sql.Timestamp"/>
+	<field name="HED" class="java.sql.Timestamp"/>
+	<field name="HSD" class="java.sql.Timestamp"/>
+	<field name="HEDIURNO" class="java.sql.Timestamp"/>
+	<field name="HSDIURNO" class="java.sql.Timestamp"/>
+	<field name="HEMIXTO" class="java.sql.Timestamp"/>
+	<field name="HSMIXTO" class="java.sql.Timestamp"/>
+	<field name="HENOCTURNO" class="java.sql.Timestamp"/>
+	<field name="HSNOCTURNO" class="java.sql.Timestamp"/>
+	<field name="MARCA" class="java.lang.String"/>
+	<field name="AUS_OBS" class="java.lang.String"/>
+	<field name="ENT" class="java.sql.Timestamp"/>
+	<field name="SAL" class="java.sql.Timestamp"/>
+	<field name="ENT1" class="java.sql.Timestamp"/>
+	<field name="SAL1" class="java.sql.Timestamp"/>
+	<field name="ENT2" class="java.sql.Timestamp"/>
+	<field name="SAL2" class="java.sql.Timestamp"/>
+	<field name="ENT3" class="java.sql.Timestamp"/>
+	<field name="SAL3" class="java.sql.Timestamp"/>
+	<field name="ENT4" class="java.sql.Timestamp"/>
+	<field name="SAL4" class="java.sql.Timestamp"/>
+	<field name="ENT5" class="java.sql.Timestamp"/>
+	<field name="SAL5" class="java.sql.Timestamp"/>
+	<field name="ENT6" class="java.sql.Timestamp"/>
+	<field name="SAL6" class="java.sql.Timestamp"/>
+	<field name="ENT7" class="java.sql.Timestamp"/>
+	<field name="SAL7" class="java.sql.Timestamp"/>
+	<field name="ENT8" class="java.sql.Timestamp"/>
+	<field name="SAL8" class="java.sql.Timestamp"/>
+	<field name="ENT9" class="java.sql.Timestamp"/>
+	<field name="SAL9" class="java.sql.Timestamp"/>
+	<field name="FEC_ENT" class="java.lang.String"/>
+	<field name="EMPL_LEGAJO" class="java.math.BigDecimal"/>
+	<field name="EMPL_HORA_SAB_ENTRADA" class="java.sql.Timestamp"/>
+	<field name="EMPL_HORA_DOM_ENTRADA" class="java.sql.Timestamp"/>
+	<field name="EMPL_HORA_ENTRADA" class="java.sql.Timestamp"/>
+	<field name="EMPL_HORA_SAB_SALIDA" class="java.sql.Timestamp"/>
+	<field name="EMPL_HORA_DOM_SALIDA" class="java.sql.Timestamp"/>
+	<field name="EMPL_HORA_SALIDA" class="java.sql.Timestamp"/>
+	<field name="EMPL_DESC_TIEMP_ALM" class="java.lang.String"/>
+	<field name="EMPL_TIEMPO_ALM" class="java.math.BigDecimal"/>
+	<field name="EMPL_CALC_HR_EXT" class="java.lang.String"/>
+	<group name="EMPLEADO">
+		<groupExpression><![CDATA[$F{MARC_EMPLEADO}]]></groupExpression>
+		<groupHeader>
+			<band height="50">
+				<textField>
+					<reportElement x="56" y="0" width="44" height="13" uuid="71ce7723-ad32-4e8c-95c2-3be5bc29d2d6"/>
+					<textFieldExpression><![CDATA[$F{MARC_EMPLEADO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="100" y="0" width="203" height="13" uuid="4ab6a9ad-5f85-4618-a349-56a95a3aae73"/>
+					<textFieldExpression><![CDATA[$F{EMPLEADO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="100" height="13" uuid="053fd88a-400c-4616-ba3d-77e192f022fc"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Empleado:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="37" width="117" height="13" uuid="af64c6ff-8029-4f3d-8b7b-b09272856bb9"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Fecha]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="117" y="37" width="35" height="13" uuid="c4a7191f-a1f9-46a6-ae6d-5dd715116b64"/>
+					<textElement verticalAlignment="Bottom">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Turno]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="157" y="24" width="25" height="26" uuid="a9860483-0fed-44e5-8ede-a1656905bcd9"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Hr. Ent.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="182" y="24" width="25" height="26" uuid="1c732f6a-880c-4fce-8a87-9fe4a28cba86"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Hr. Sal.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="207" y="24" width="25" height="26" uuid="9f81dd4a-12e4-41fa-8fa6-793fab9c4597"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Ent.1]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="232" y="24" width="27" height="26" uuid="459020f2-f471-4ef3-ba5e-8600d4a78eb8"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Sal.1]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="284" y="24" width="26" height="26" uuid="fc3a8ba3-4a6f-4cbb-bd92-885210eb4895"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Sal.2]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="259" y="24" width="25" height="26" uuid="ee9bbac1-bd8f-4270-958c-15af656e210b"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Ent.2]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="335" y="24" width="28" height="26" uuid="804d248a-dbc1-4aba-98b8-c0499a2c8f32"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Sal.3]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="310" y="24" width="25" height="26" uuid="a3814539-d65c-49ef-b26e-9221a70d79b4"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Ent.3]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="363" y="24" width="36" height="26" uuid="b61a9c7a-a0ad-407b-b2fc-26ef511d598c"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Tot.hs.tr.br]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="399" y="24" width="36" height="26" uuid="320b3d61-0185-443e-8ea7-72910071ce42"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Tot.hs.tr.D]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="435" y="24" width="52" height="26" uuid="02ee83bb-4868-499c-9e75-ee312e7ee517"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Adicional
+30%]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="487" y="24" width="45" height="26" uuid="40425a04-b137-4b5f-819a-22c4af6e53f7"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Hs. Ext.50%]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="532" y="24" width="40" height="26" uuid="7c253f08-1a97-4a4a-b5b8-d483a6f9b7c0"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Hs. Ext.100%]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="11"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="68" splitType="Stretch">
+			<staticText>
+				<reportElement x="117" y="39" width="298" height="20" uuid="b8bf62b4-b837-491b-a448-94df3da23431"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[LISTADO DE MARCACION DAIRA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="389" y="0" width="155" height="20" uuid="62814f0c-2d49-44a3-8e1f-245fab77864c"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[PERL226 Hoja N°:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="512" y="0" width="32" height="20" uuid="7a4e9a11-fd63-4095-afc1-6759d8cd0ec1"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="389" y="19" width="155" height="20" uuid="e49ed41a-b8e0-46c5-a812-a6cbfc5a4b5c"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="257" height="20" uuid="b9029eb1-49ba-406d-abf0-806eb5aa994b"/>
+				<textFieldExpression><![CDATA[$P{P_EMPR_DESC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="66" splitType="Stretch">
+			<textField>
+				<reportElement x="76" y="0" width="424" height="13" uuid="511c1d1b-1555-47ca-8d61-658d80f5f96e"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FEC_DESDE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="76" y="13" width="424" height="13" uuid="59a4cc1d-5055-4386-9786-7753e400b1c3"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FEC_HASTA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="13" uuid="eaeb92b4-c4a4-4512-9bf9-98e2d8c08ba2"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Desde:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="13" width="100" height="13" uuid="5a20f816-4cb3-45f6-80e1-0e1b56702cb3"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Hasta:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="26" width="100" height="13" uuid="2545218f-b865-46d0-bdd6-360b0538e531"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sucursal:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="39" width="100" height="13" uuid="93569361-2893-45eb-b08b-68f0f0db635c"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Deparamento:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="52" width="100" height="13" uuid="78cd37f7-ed7f-48e5-89e1-399bc6b2f2c3"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Opcion Listado:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="76" y="26" width="424" height="13" uuid="a21a0d98-7e0a-4518-8bea-4c87b4df0606"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SUC_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="76" y="39" width="424" height="13" uuid="2df1f32f-6cad-41f2-8fde-8efd69ba41ad"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DPTO_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="76" y="52" width="424" height="13" uuid="7076a2ab-f70d-4c56-808e-e7c7f52e1e94"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_TIPO}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="64" width="572" height="1" uuid="b5c200d4-0473-4dc5-b778-3384d408d50a"/>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement x="0" y="0" width="117" height="13" uuid="7418111e-db34-45a4-b659-d62fd8e24668"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="117" y="0" width="17" height="13" uuid="3905099f-dceb-4a9b-888a-37660d0cd68c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MARCA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm" isBlankWhenNull="true">
+				<reportElement x="207" y="0" width="25" height="13" uuid="a9670f14-3456-46f0-b18d-139d6761ce37"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ENT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm" isBlankWhenNull="true">
+				<reportElement x="232" y="0" width="25" height="13" uuid="3c3ae6f5-290e-456e-bb36-318d877d1a11"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm" isBlankWhenNull="true">
+				<reportElement x="284" y="0" width="25" height="13" uuid="cba05e27-34cb-440a-a1be-eb9b6fed26da"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SAL1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm" isBlankWhenNull="true">
+				<reportElement x="259" y="0" width="25" height="13" uuid="2ee0208c-519e-44a3-873e-d762a9d79ab9"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ENT1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm" isBlankWhenNull="true">
+				<reportElement x="335" y="0" width="25" height="13" uuid="820f5259-9029-4da4-91ce-f594da5a865e"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SAL2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm" isBlankWhenNull="true">
+				<reportElement x="310" y="0" width="25" height="13" uuid="b1748e58-8c14-4383-aa4c-6255912eaba0"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ENT2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="134" y="0" width="23" height="13" uuid="f84749da-fcdf-4460-a2cd-43c1d1b2f15f">
+					<printWhenExpression><![CDATA[$F{ENT} != '']]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[S/T]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="366" y="0" width="33" height="13" uuid="8df74ccf-1186-4da7-8199-b8fe356d32a5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[0.00]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="402" y="0" width="33" height="13" uuid="4490f54b-8376-4b0c-bd6d-b65bf6629ac0"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[0.00]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="454" y="0" width="33" height="13" uuid="eaebade4-88d8-4c57-a822-dad7ea92cf70"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[0.00]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="499" y="0" width="33" height="13" uuid="97276673-cfb9-472d-a105-f89db9933fe4"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[0.00]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="539" y="0" width="33" height="13" uuid="dfe720f6-1dca-44fd-afad-7ce332284c3f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[0.00]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="155" y="0" width="25" height="13" uuid="4e455429-26e7-446b-a250-0c8d9dd6c9fb"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[00:00]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="0" width="25" height="13" uuid="39bd9ed4-75f8-47c3-8825-57c419daa929"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[00:00]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINC055" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3a128429-b22f-4d7d-8215-d3bac29df96a">
+	<property name="ireport.zoom" value="3.1384283767210093"/>
+	<property name="ireport.x" value="478"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_DOCU_TIPO_MOV" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_DESDE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_HASTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT H.DOC_CLAVE CLAVE,
+       H.DOC_NRO_DOC NRO_COD,
+       H.DOC_CLI||'-'||H.DOC_CLI_NOM CLIENTE,
+       H.DOC_FEC_DOC FECHA,
+       H.DOC_OBS OBS,
+       NVL(DOC_NETO_EXEN_MON, 0) + NVL(DOC_NETO_GRAV_MON, 0) +
+       NVL(DOC_IVA_MON, 0) TOTAL,
+       DOC_IND_VERIFI_DOCU VERIFICADO,
+       (SELECT T.TMOV_DESC FROM GEN_TIPO_MOV T WHERE T.TMOV_CODIGO = $P!{P_DOCU_TIPO_MOV} AND T.TMOV_EMPR = $P!{P_EMPRESA}) TIPO_COMPROBANTE,
+       MAX(H.DOC_FEC_DOC) OVER() FECHA_MAXIMA,
+       MIN(H.DOC_FEC_DOC) OVER() FECHA_MINIMA,
+       (SELECT SUC_CODIGO||'-'||SUC_DESC FROM GEN_SUCURSAL WHERE SUC_EMPR = DOC_EMPR AND SUC_CODIGO = H.DOC_SUC) SUCURSAL
+  FROM FIN_DOCUMENTO H
+ WHERE H.DOC_TIPO_MOV = $P!{P_DOCU_TIPO_MOV}
+   AND H.DOC_EMPR = $P!{P_EMPRESA}
+   AND H.DOC_FEC_DOC BETWEEN TO_DATE($P!{P_FECHA_DESDE},'DD/MM/YYYY') AND TO_DATE($P!{P_FECHA_HASTA},'DD/MM/YYYY')
+   AND DOC_IND_VERIFI_DOCU IS NOT NULL
+ORDER BY TO_DATE($P!{P_FECHA_DESDE},'DD/MM/YYYY') DESC]]>
+	</queryString>
+	<field name="CLAVE" class="java.math.BigDecimal"/>
+	<field name="NRO_COD" class="java.math.BigDecimal"/>
+	<field name="CLIENTE" class="java.lang.String"/>
+	<field name="FECHA" class="java.sql.Timestamp"/>
+	<field name="OBS" class="java.lang.String"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<field name="VERIFICADO" class="java.lang.String"/>
+	<field name="TIPO_COMPROBANTE" class="java.lang.String"/>
+	<field name="FECHA_MAXIMA" class="java.sql.Timestamp"/>
+	<field name="FECHA_MINIMA" class="java.sql.Timestamp"/>
+	<field name="SUCURSAL" class="java.lang.String"/>
+	<variable name="TOTAL_1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="64" splitType="Stretch">
+			<staticText>
+				<reportElement x="525" y="0" width="30" height="10" uuid="18ad1f71-acd3-48fc-ae11-85236c9c3880"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FINC055]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="438" y="9" width="78" height="11" uuid="f4509c60-0f17-41c7-83bc-e821820cc283"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pág. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="515" y="9" width="40" height="11" uuid="85fff0e4-4363-46e9-8bdd-0ee639d36920"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="139" y="10" width="263" height="20" forecolor="#000000" uuid="23441f43-a6d3-4c50-a4a8-178b2ee3e1eb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CONTROL DE " + $F{TIPO_COMPROBANTE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="72" height="20" uuid="2b9b5839-3593-428b-8aa7-6f9782c39dc7"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HILAGRO S.A.]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="56" y="30" width="65" height="11" uuid="332a14f2-b9d7-48d9-b9d8-17d2dc4de2e5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_MINIMA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="56" y="41" width="65" height="11" uuid="a8df8e17-8bb5-4675-a81d-b350d622ca8e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_MAXIMA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="30" width="56" height="11" uuid="07ce95a2-a290-4d87-982e-7b469baa3f34"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Desde:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="41" width="56" height="11" uuid="922c8550-1a77-4b17-a0ca-a8b06f7fb81d"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Hasta:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="57" y="52" width="82" height="12" uuid="ceae24f7-00c1-46d4-8203-1cc71e70d48e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="52" width="56" height="11" uuid="4244d654-8928-4a11-a2ad-818b670b576d"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Sucursal:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="11" splitType="Stretch">
+			<staticText>
+				<reportElement x="488" y="0" width="64" height="11" forecolor="#000000" uuid="49c86513-9215-4f9a-bf6a-5f2eac4b9adf"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Verificado Por]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="421" y="0" width="68" height="11" forecolor="#000000" uuid="245d23a8-6799-4750-814c-3977b0fe2c5a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="295" y="0" width="95" height="11" forecolor="#000000" uuid="76f0d9b5-7a24-4585-ac54-033fae9c68da"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Observación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="193" y="0" width="49" height="11" forecolor="#000000" uuid="ef394926-a833-4f6b-8458-a44fc7950429"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="72" y="0" width="121" height="11" forecolor="#000000" uuid="a5d6b925-f3a3-4547-9ac0-06b4cf1cd292"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cliente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="62" height="11" forecolor="#000000" uuid="3f92d79f-f276-4322-a171-bcf242036843"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro Comprobante]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="10" width="552" height="1" uuid="9ccf9b64-b050-412c-b653-cd26e46adb8e"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField>
+				<reportElement x="488" y="0" width="64" height="11" uuid="3b8e94f7-4d42-4e91-858f-35fb7ab2e0a0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VERIFICADO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="421" y="0" width="68" height="11" uuid="54e7f2e2-e72a-495f-9ded-95319d806c36"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="258" y="0" width="163" height="11" isPrintWhenDetailOverflows="true" uuid="3e97bb4b-37a5-418b-9b83-29d4f266dd43"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OBS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="195" y="0" width="47" height="11" uuid="fd8fce25-32dd-476c-ad9c-87029bbe8c6f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="72" y="0" width="121" height="11" uuid="2b818fd1-d464-4a45-a254-ba07917c4a36"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CLIENTE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="62" height="11" uuid="db791535-103d-407a-ac9f-0dd60b2db327"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_COD}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="1" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="0" width="552" height="1" uuid="d43585d7-6cc9-4445-b42d-2320adb8bbd6"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement mode="Transparent" x="377" y="1" width="45" height="11" forecolor="#000000" uuid="1b44c1e7-8bbb-4240-9470-dacb1402187e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Gral.]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement x="422" y="1" width="68" height="11" uuid="eec244a9-3459-4fd2-bfa5-14f0680134a3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_2}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

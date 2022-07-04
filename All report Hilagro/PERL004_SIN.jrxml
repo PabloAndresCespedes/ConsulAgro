@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERL004_SIN" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="52db90b7-91cf-4369-8f10-e8cbd6be7ce5">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\PRO4\\Desktop\\TRABAJOS2021\\20210319_perl004_ahora\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_LOGIN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SESSION" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT T.NOMBRE,
+       T.LEGAJO EMPL_LEGAJO,
+       MOSTAR_MARC
+FROM PERL004_TEMP T
+WHERE T.P_LOGIN = $P{P_LOGIN}
+  AND T.P_SESSION =$P{P_SESSION}
+  AND T.P_TIPO_RECIBO = 'SALARIO'
+  group by T.NOMBRE,
+           T.LEGAJO,
+           MOSTAR_MARC,
+           T.P_LOGIN,
+           T.P_SESSION
+ORDER BY 1]]>
+	</queryString>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="EMPL_LEGAJO" class="java.math.BigDecimal"/>
+	<field name="MOSTAR_MARC" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="63" splitType="Immediate">
+			<subreport>
+				<reportElement x="0" y="0" width="802" height="24" uuid="3356810d-4265-4e6a-b853-ef6950a63be6"/>
+				<subreportParameter name="P_LOGIN">
+					<subreportParameterExpression><![CDATA[$P{P_LOGIN}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUBREPORT_DIR"/>
+				<subreportParameter name="P_DOC_CLAVE"/>
+				<subreportParameter name="P_PERIODO"/>
+				<subreportParameter name="P_MONEDA"/>
+				<subreportParameter name="P_EMPRESA"/>
+				<subreportParameter name="P_LEGAJO">
+					<subreportParameterExpression><![CDATA[$F{EMPL_LEGAJO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_FEC_INI"/>
+				<subreportParameter name="P_FEC_FIN"/>
+				<subreportParameter name="P_SESSION">
+					<subreportParameterExpression><![CDATA[$P{P_SESSION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_SUCURSAL"/>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "PERL004B.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

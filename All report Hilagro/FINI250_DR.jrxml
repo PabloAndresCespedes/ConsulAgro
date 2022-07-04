@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINI250_DR" language="groovy" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="8984e130-7476-444e-8402-aa1a1f02de18">
+	<property name="ireport.zoom" value="2.415765000000015"/>
+	<property name="ireport.x" value="429"/>
+	<property name="ireport.y" value="0"/>
+	<subDataset name="Nota Dictamen" uuid="c7a00bf6-b356-4d91-9c98-10e5d1b5b0f5">
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_CLAVE" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT SOLD_CLAVE                         DIC_SOLD_CLAVE           ,
+       SOLD_ITEM                          DIC_SOLD_ITEM            ,
+       SOLD_COSECHA                       DIC_SOLD_COSECHA         ,
+       SOLD_COSECHA_COD                   DIC_SOLD_COSECHA_COD     ,
+       COSECHA_NOM                        DIC_COSECHA_NOM          ,
+
+       SOLD_NOTA_APROBADOR                 DIC_NOTA_DICTAMEN
+
+  FROM FINI250_DE_PED_V DE
+ WHERE SOLD_EMPR             =        $P{P_EMPRESA}
+   AND DE.SOLD_CLAVE         =        $P{P_CLAVE}
+
+ ORDER BY DE.SOLD_COSECHA_ANHO]]>
+		</queryString>
+		<field name="DIC_SOLD_CLAVE" class="java.math.BigDecimal"/>
+		<field name="DIC_SOLD_ITEM" class="java.math.BigDecimal"/>
+		<field name="DIC_SOLD_COSECHA" class="java.math.BigDecimal"/>
+		<field name="DIC_SOLD_COSECHA_COD" class="java.math.BigDecimal"/>
+		<field name="DIC_COSECHA_NOM" class="java.lang.String"/>
+		<field name="DIC_NOTA_DICTAMEN" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLAVE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[26670101]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT SOLD_CLAVE                         DIC_SOLD_CLAVE           ,
+       SOLD_ITEM                          DIC_SOLD_ITEM            ,
+       SOLD_COSECHA                       DIC_SOLD_COSECHA         ,
+       SOLD_COSECHA_COD                   DIC_SOLD_COSECHA_COD     ,
+       COSECHA_NOM                        DIC_COSECHA_NOM          ,
+
+       SOLD_RESOL_EFECT_AP                DIC_IMPORTE_AP_EFECT     ,
+       SOLD_RESOL_COMBU_AP                DIC_IMPORTE_AP_COMBU     ,
+       SOLD_RESOL_INSUM_AP                DIC_IMPORTE_AP_INSUM     ,
+       SOLD_RESOL_OTROS_AP                DIC_IMPORTE_AP_OTROS     ,
+       SOLD_RESOL_TOTAL_AP                DIC_IMPORTE_AP_TOTAL     ,
+
+       DE.SOLD_NOTA_APROBADOR              DIC_NOTA_DICTAMEN        ,
+       CASE DE.SOLD_IND_AP_APROBADOR
+       WHEN 'A' THEN 'APROBADO'
+       WHEN 'R' THEN 'RECHAZADO'
+       ELSE 'PENDIENTE'
+       END                                DIC_IND_APROBADO         ,
+       SOLD_NOMBRE_APROBADOR               DIC_NOMBRE_APROBADOR
+
+  FROM FINI250_DE_PED_V DE
+ WHERE SOLD_EMPR             =        $P{P_EMPRESA}
+   AND DE.SOLD_CLAVE         =        $P{P_CLAVE}
+
+ ORDER BY DE.SOLD_COSECHA_ANHO]]>
+	</queryString>
+	<field name="DIC_SOLD_CLAVE" class="java.math.BigDecimal"/>
+	<field name="DIC_SOLD_ITEM" class="java.math.BigDecimal"/>
+	<field name="DIC_SOLD_COSECHA" class="java.math.BigDecimal"/>
+	<field name="DIC_SOLD_COSECHA_COD" class="java.math.BigDecimal"/>
+	<field name="DIC_COSECHA_NOM" class="java.lang.String"/>
+	<field name="DIC_IMPORTE_AP_EFECT" class="java.math.BigDecimal"/>
+	<field name="DIC_IMPORTE_AP_COMBU" class="java.math.BigDecimal"/>
+	<field name="DIC_IMPORTE_AP_INSUM" class="java.math.BigDecimal"/>
+	<field name="DIC_IMPORTE_AP_OTROS" class="java.math.BigDecimal"/>
+	<field name="DIC_IMPORTE_AP_TOTAL" class="java.math.BigDecimal"/>
+	<field name="DIC_NOTA_DICTAMEN" class="java.lang.String"/>
+	<field name="DIC_IND_APROBADO" class="java.lang.String"/>
+	<field name="DIC_NOMBRE_APROBADOR" class="java.lang.String"/>
+	<variable name="DIC_IMPORTE_AP_EFECT_SUM " class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DIC_IMPORTE_AP_EFECT}]]></variableExpression>
+	</variable>
+	<variable name="DIC_IMPORTE_AP_INSUM_SUM" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DIC_IMPORTE_AP_INSUM}]]></variableExpression>
+	</variable>
+	<variable name="DIC_IMPORTE_AP_COMBU_SUM" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DIC_IMPORTE_AP_COMBU}]]></variableExpression>
+	</variable>
+	<variable name="DIC_IMPORTE_AP_OTROS_SUM" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DIC_IMPORTE_AP_OTROS}]]></variableExpression>
+	</variable>
+	<variable name="DIC_IMPORTE_AP_TOTAL_SUM" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DIC_IMPORTE_AP_TOTAL}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<columnHeader>
+		<band height="26" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Opaque" x="1" y="12" width="554" height="12" backcolor="#FAFAFA" uuid="c76dd234-9696-4004-9010-4d2ab5a8a4b0"/>
+				<graphicElement>
+					<pen lineWidth="0.3" lineColor="#999999"/>
+				</graphicElement>
+			</rectangle>
+			<line>
+				<reportElement x="1" y="25" width="554" height="1" uuid="d46ad133-0ab1-49e9-8868-818dd8e99c73"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="2" y="14" width="122" height="9" uuid="c52140fb-cf82-4ba5-a3ea-0e359511f8b2"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[COSECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="498" y="14" width="50" height="9" uuid="09fa45c8-82e7-45ca-af1d-ce38ebe21013"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="2" y="1" width="138" height="9" uuid="2e280f0b-cbf9-4a02-976c-39fab6302c98"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["RESOLUCION APROBADOR"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="436" y="14" width="58" height="9" uuid="38a6e79e-e5a9-4107-bd53-4edd4847154f"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[OTROS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="383" y="14" width="50" height="9" uuid="9f983b88-92f9-4bdc-811f-8b18b4f327fe"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[COMBUSTIB]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="327" y="14" width="56" height="9" uuid="eb0a53e4-87d5-4903-b46f-d349b8c11370"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[INSUMO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="271" y="14" width="56" height="9" uuid="05fe3f5e-6c3e-4fa8-8047-7c05d32063aa"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[EFECTIVO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="212" y="14" width="50" height="9" uuid="6fe122cc-71f6-4a9d-a50d-028a60073af9"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[RESOLUCION]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="2" y="1" width="176" height="11" uuid="0de6953a-e19d-4079-9d53-cc8993002471"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph lineSpacing="Proportional"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIC_COSECHA_NOM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="498" y="1" width="50" height="11" uuid="88a17b4d-6ad9-4374-a217-0eb5b384175f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIC_IMPORTE_AP_TOTAL}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="12" width="554" height="1" uuid="646087eb-ac65-4502-9cab-e72dd1ec54db"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="0" width="1" height="13" uuid="cdb90861-b106-4d5b-88d9-1d93d541b5ef"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="266" y="0" width="1" height="12" uuid="c785f9c9-7458-4b17-89b4-20e6c13b0ccf"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="494" y="0" width="1" height="13" uuid="d59f5aaa-d563-42e5-878c-eea4e5b9eb82"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="555" y="0" width="1" height="13" uuid="557e2975-8525-41bd-8452-bf21931757b4"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="441" y="1" width="50" height="11" uuid="76594e40-ffad-42d8-a9ef-8bfcd7f9ac81"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIC_IMPORTE_AP_OTROS}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="383" y="1" width="50" height="11" uuid="f8da51b8-3fe6-4824-a917-0847e0e750d1"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIC_IMPORTE_AP_COMBU}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="327" y="1" width="50" height="11" uuid="e952e6e0-3f15-4fe3-9ab6-6983ad9b674b"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIC_IMPORTE_AP_INSUM}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="271" y="1" width="50" height="11" uuid="71e6e4cb-090e-4736-b74c-e02525bae627"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIC_IMPORTE_AP_EFECT}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<line>
+				<reportElement x="324" y="0" width="1" height="12" uuid="ba119db3-b763-4039-8f95-30e495e89426"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="435" y="0" width="1" height="13" uuid="c9fb9768-4512-443c-bd9e-3569c41f33e0"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="380" y="0" width="1" height="13" uuid="e1bfa54b-4a73-46d6-a2dc-37f415fa060c"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="213" y="1" width="50" height="11" uuid="08a31f8a-106a-4b6f-9009-d67e3a9415fe"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIC_IND_APROBADO}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<line>
+				<reportElement x="209" y="0" width="1" height="12" uuid="e0214a7c-6b96-4823-ba10-7213b6312d55"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="49" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Opaque" x="210" y="3" width="345" height="12" backcolor="#FAFAFA" uuid="4466f08c-8027-4085-b705-a9f0c35aeeb6"/>
+				<graphicElement>
+					<pen lineWidth="0.3" lineColor="#EEEDED"/>
+				</graphicElement>
+			</rectangle>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="498" y="4" width="50" height="11" uuid="9d8a6fa8-d5c6-47bd-a468-6f5b5fc05ba6"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIC_IMPORTE_AP_TOTAL}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="441" y="4" width="50" height="11" uuid="521a96d8-309d-4fdc-9f51-6e8a1a4aef2a"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DIC_IMPORTE_AP_OTROS_SUM}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="383" y="4" width="50" height="11" uuid="43c73403-9ef9-469b-b560-8a27d7be2bc5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DIC_IMPORTE_AP_COMBU_SUM}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="327" y="4" width="50" height="11" uuid="c3443d0e-bcc9-4495-acfd-4cd5f6c55a94"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DIC_IMPORTE_AP_INSUM_SUM}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="271" y="4" width="50" height="11" uuid="775e1f7e-ce74-4d76-9646-dfaa33244782"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DIC_IMPORTE_AP_EFECT_SUM }]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<staticText>
+				<reportElement x="3" y="5" width="154" height="9" forecolor="#666666" uuid="f77dbd2c-433e-433b-b8b1-b97268e3f13d"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="false" isItalic="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[NOTAS EN DICTAMEN]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table 2" stretchType="RelativeToTallestObject" x="1" y="17" width="552" height="12" uuid="4a21d42e-cacf-40ab-a635-da80cbf81ad6"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Nota Dictamen" uuid="b8c2edd8-baa2-43e6-b8f1-7ba8f2fd92f1">
+						<datasetParameter name="P_EMPRESA">
+							<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_CLAVE">
+							<datasetParameterExpression><![CDATA[$P{P_CLAVE}]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="0" uuid="98fc8e7d-2f37-4de5-baa0-1f71143f7617">
+						<jr:detailCell height="9" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="2" uuid="4d6df769-2bb1-4741-b01c-eaa6229ab555">
+						<jr:columnFooter height="0" rowSpan="1"/>
+						<jr:detailCell height="9" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="126" uuid="3ffb7c13-3eed-4e3d-b0a8-73c6154cd5d9">
+						<jr:columnFooter height="0" rowSpan="1"/>
+						<jr:detailCell height="9" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="126" height="9" forecolor="#666666" uuid="faceaa2b-8ee5-4537-9b66-b35136c99b8d"/>
+								<textElement>
+									<font size="6" isItalic="false" isUnderline="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{DIC_COSECHA_NOM}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="423" uuid="11dd26aa-c2ee-4a69-bee7-3c98cf08192b">
+						<jr:columnFooter height="0" rowSpan="1"/>
+						<jr:detailCell height="9" rowSpan="1">
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="419" height="9" forecolor="#666666" uuid="311b909e-7a85-4fbd-bd78-277609486cfa"/>
+								<textElement>
+									<font size="6" isItalic="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{DIC_NOTA_DICTAMEN}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<textField>
+				<reportElement positionType="Float" x="3" y="34" width="84" height="9" uuid="d77195be-672c-4a50-9d08-5dd6cab58adf"/>
+				<textElement>
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Nombre del Aprobador"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="Float" x="5" y="44" width="249" height="1" uuid="89b6894f-690c-4fb8-bc34-74e3a877e37a"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineStyle="Dashed" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="92" y="34" width="162" height="9" uuid="1a18d9de-f432-4be6-88a8-78244994c998"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph lineSpacing="Proportional"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIC_NOMBRE_APROBADOR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

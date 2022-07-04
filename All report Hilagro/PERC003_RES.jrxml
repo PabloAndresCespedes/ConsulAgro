@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERC003" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="28fa673e-caf8-41ae-8087-cd00795067d2">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.one.page.per.sheet" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<style name="detalles" hAlign="Left" vAlign="Top" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman"/>
+	<style name="cabecera_columna" forecolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Top" fontSize="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="estilo_importes" hAlign="Right" pattern="( $P{P_MONEDA}==&quot;1&quot; ? &quot;#,##0;-#,##0&quot; : &quot;#,##0.00;-#,##0.00&quot; )" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FORMATO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_DESDE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_HASTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USUARIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_WHERE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[" AND 1=1 "]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPLEADO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_MES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT SERP_LEGAJO, EMPL_NOMBRE||' '||EMPL_APE Nombre,
+      round(SUM(CASE
+             WHEN SERP_TIPO_SALDO = 'I' THEN
+              SERP_IMPORTE_LOC
+             ELSE
+              -SERP_IMPORTE_LOC
+           END)) SERP_IMPORTE_LOC,
+       SERP_MES
+  FROM PER_PAGO_SER_PERSONAL A, PER_EMPLEADO B
+ WHERE SERP_EMPR = $P{P_EMPRESA}
+   AND SERP_MES = $P{P_MES}
+   AND SERP_GUARDAR = 'S'
+   AND SERP_LEGAJO = B.EMPL_LEGAJO
+   AND SERP_EMPR = B.EMPL_EMPRESA
+ GROUP BY SERP_LEGAJO, SERP_MES,EMPL_NOMBRE||' '||EMPL_APE]]>
+	</queryString>
+	<field name="SERP_LEGAJO" class="java.math.BigDecimal"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="SERP_IMPORTE_LOC" class="java.math.BigDecimal"/>
+	<field name="SERP_MES" class="java.lang.String"/>
+	<variable name="SERP_IMPORTE_LOC_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{SERP_IMPORTE_LOC}]]></variableExpression>
+	</variable>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="64" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Transparent" x="0" y="0" width="555" height="55" uuid="73026c05-3c0c-4624-b270-f1d74c62010c"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="12" y="42" width="52" height="13" uuid="ff2a5455-04fb-4ff8-8046-75361db5b6b5"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="64" y="42" width="116" height="13" uuid="6e212d03-7fd9-4c46-ac18-23278d08e804"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FEC_HASTA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="22" width="353" height="20" uuid="e2461286-00ed-49cd-93a4-3377cb14e0a8"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="521" y="10" width="30" height="13" uuid="8ed34b4a-2aa2-4f22-b2c6-b7d47a21d7c5"/>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="10" y="25" width="100" height="13" uuid="6bc5a853-2744-4328-9999-46cff76b9535"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="10" y="10" width="157" height="13" uuid="544b9922-cf6d-4bda-b664-ec7e9b4ce3c1"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_EMPRESA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="463" y="10" width="58" height="13" uuid="ccec19a4-8eab-48c9-acfa-13335a55f81d"/>
+				<textElement textAlignment="Left">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de "]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement x="463" y="25" width="88" height="13" uuid="a8988bb8-bd57-43b6-ae66-bc8119496517"/>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="420" y="10" width="40" height="13" uuid="e3372d9f-8ef8-4e81-a7e0-148319b5f08c"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROGRAMA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="18" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="1" width="74" height="13" uuid="22b493e4-192e-4320-99c2-1d00bf89f3fa"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="74" y="1" width="138" height="13" uuid="498917f3-b706-4d45-be75-d9f4312907a0"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE EMPLEADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="443" y="2" width="87" height="13" uuid="f9ade22c-f71c-4ffb-9e4b-550cc096f865"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IMPORTE A PERCIBIR]]></text>
+			</staticText>
+			<line>
+				<reportElement x="2" y="14" width="553" height="1" uuid="3c57fdeb-a587-4fd9-9e18-836c34f81228"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<textField>
+				<reportElement x="2" y="0" width="72" height="16" uuid="148b0a75-f09d-42fe-a3d6-817278a2b255"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SERP_MES}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="74" y="0" width="116" height="17" uuid="4e745764-b68c-4f53-b3fa-bf164ee92963"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="433" y="0" width="98" height="16" uuid="538af784-4d80-48c1-a6c6-7e1b98dd1f85"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SERP_IMPORTE_LOC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band height="33">
+			<staticText>
+				<reportElement x="370" y="8" width="63" height="13" uuid="7df37ca7-e305-4b18-bf4e-5aeb93d49ddb"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="2" y="0" width="553" height="1" uuid="32e0af5b-9828-4355-8e39-278f1a026f28"/>
+			</line>
+			<textField pattern="#,##0">
+				<reportElement x="433" y="8" width="97" height="13" uuid="a3d57487-2d8a-4afd-819b-5c8161e58759"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SERP_IMPORTE_LOC_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,674 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="STKL276DE" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a57b63a4-4b97-499d-9e12-cd39797be659">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="cross" uuid="57a534c2-7092-439c-bcf0-c2d38f66b687">
+		<parameter name="P_ARTICULO" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_DESCRIP_EMPR" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_PROGRAMA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_GRUPO" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_LINEA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_RUBRO" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_MARCA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_DESC_PROGRAMA" class="java.lang.String">
+			<defaultValueExpression><![CDATA["PLANILLA DE STOCK DE ARTICULO"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_DESC_SUCURSAL" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_SUCURSAL" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_CERO" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_FORMATO" class="java.lang.String"/>
+		<parameter name="P_ARTICULO_DET" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_SUCURSAL_DET" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_DESC_SUCURSAL2" class="java.lang.String"/>
+		<parameter name="P_SUCURSAL2" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[SELECT SUC_CODIGO,
+       SUC_ABREV SUCURSAL,
+       ART_CODIGO,
+       ART_GRUPO,
+       ART_LINEA,
+       ART_CODIGO || '-' || ART_DESC ARTICULO,
+       ART_UNID_MED UM,
+       TIPO,
+       SUM(VALOR) VALOR
+  FROM STK_ARTICULO ART,
+       GEN_SUCURSAL S,
+       (SELECT AD.ARDE_SUC SUCURSAL,
+               AR.ART_CODIGO ARTICULO,
+               NVL(AD.ARDE_CANT_ACT, 0) VALOR,
+               AR.ART_EMPR EMPRESA,
+               'Existencia' TIPO
+          FROM STK_ARTICULO AR, STK_ARTICULO_DEPOSITO AD
+         WHERE AR.ART_CODIGO = AD.ARDE_ART(+)
+           AND AR.ART_EMPR = AD.ARDE_EMPR(+)
+
+           AND AR.ART_TIPO NOT IN (4)
+
+         GROUP BY ART_CODIGO,
+                  ARDE_SUC,
+                  ARDE_CANT_ACT,
+                  ART_EMPR,
+                  'Existencia'
+        UNION ALL
+
+        SELECT SUC SUCURSAL,
+               PDET_ART ARTICULO,
+               SUM(VALOR) VALOR,
+               EMPRESA EMPRESA,
+               TIPO
+          FROM (SELECT PE.PED_SUC SUC,
+                       DE.PDET_ART,
+                       -SUM(DE.PDET_CANT_PED - DE.PDET_CANT_FACT) VALOR,
+                       PR.PROD_EMPR EMPRESA,
+                       'Entregar' TIPO
+                  FROM ACO_PRODUCTO PR, FAC_PEDIDO PE, FAC_PEDIDO_DET DE
+                 WHERE PR.PROD_CLAVE = PE.PED_PRODUCTO
+                   AND PR.PROD_EMPR = PE.PED_EMPR
+
+                   AND PE.PED_CLAVE = DE.PDET_CLAVE_PED
+                   AND PE.PED_EMPR = DE.PDET_EMPR
+
+                 GROUP BY DE.PDET_ART, PED_SUC, PR.PROD_EMPR, 'A_ENTREGAR'
+                UNION
+                SELECT PE.PED_SUC SUC,
+                       DE.PDET_ART,
+                       SUM(DE.PDET_CANT_PED - DE.PDET_CANT_REC) VALOR,
+                       PR.PROD_EMPR EMPRESA,
+                       'Recibir' TIPO
+                  FROM ACO_PRODUCTO PR, COM_PEDIDO PE, COM_PEDIDO_DET DE
+                 WHERE PR.PROD_CLAVE = PE.PED_PRODUCTO
+                   AND PR.PROD_EMPR = PE.PED_EMPR
+
+                   AND PE.PED_CLAVE = DE.PDET_CLAVE_PED
+                   AND PE.PED_EMPR = DE.PDET_EMPR
+
+                 GROUP BY DE.PDET_ART, PED_SUC, PR.PROD_EMPR, 'A_RECIBIR')
+
+         GROUP BY PDET_ART, SUC, EMPRESA, TIPO) DISPONIBILIDAD
+
+ WHERE SUC_CODIGO = SUCURSAL
+   AND SUC_EMPR = EMPRESA
+
+   AND ARTICULO = ART_CODIGO
+   AND EMPRESA = ART_EMPR
+
+   AND ART_EMPR =$P!{P_EMPRESA}
+   AND SUC_CODIGO =NVL($P!{P_SUCURSAL2}, SUC_CODIGO)
+   AND ART_CODIGO =$P!{P_ARTICULO_DET}
+
+ GROUP BY SUC_CODIGO,
+          SUCURSAL,
+          ARTICULO,
+          ART_CODIGO,
+          SUC_ABREV,
+          ART_GRUPO,
+          ART_LINEA,
+          ART_UNID_MED,
+          TIPO,
+          ART_CODIGO || '-' || ART_DESC
+
+HAVING $P{P_CERO}='S' OR
+      ($P{P_CERO}='N' AND NOT
+     (
+       (SELECT SUM(NVL(AD.ARDE_CANT_ACT, 0)) EXISTENCIA
+          FROM STK_ARTICULO AR, STK_ARTICULO_DEPOSITO AD
+         WHERE AR.ART_CODIGO = AD.ARDE_ART(+)
+           AND AR.ART_EMPR = AD.ARDE_EMPR(+)
+           AND ART_EMPR = 2
+           AND ART_CODIGO =$P{P_ARTICULO_DET}
+           AND AR.ART_TIPO NOT IN (4))= 0))]]>
+		</queryString>
+		<field name="SUC_CODIGO" class="java.math.BigDecimal"/>
+		<field name="SUCURSAL" class="java.lang.String"/>
+		<field name="ART_CODIGO" class="java.math.BigDecimal"/>
+		<field name="ART_GRUPO" class="java.math.BigDecimal"/>
+		<field name="ART_LINEA" class="java.math.BigDecimal"/>
+		<field name="ARTICULO" class="java.lang.String"/>
+		<field name="UM" class="java.lang.String"/>
+		<field name="TIPO" class="java.lang.String"/>
+		<field name="VALOR" class="java.math.BigDecimal"/>
+		<group name="ART_CODIGO">
+			<groupExpression><![CDATA[$F{ART_CODIGO}]]></groupExpression>
+		</group>
+	</subDataset>
+	<parameter name="P_CERO" class="java.lang.String">
+		<defaultValueExpression><![CDATA["HAVING SUM(TIPO)>0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_ARTICULO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA["PLANILLA DE STOCK DE ARTICULO"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_MARCA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_RUBRO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_LINEA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_GRUPO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESCRIP_EMPR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FORMATO" class="java.lang.String"/>
+	<parameter name="P_LINEA_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_GRUPO_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_RUBRO_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_MARCA_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_SUCURSAL2" class="java.lang.String"/>
+	<parameter name="P_SUCURSAL2" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT LIN_CODIGO || '-' || LIN_DESC LINEA,
+       GRUP_CODIGO || '-' || GRUP_DESC GRUPO,
+       ART_CODIGO,
+       ART_GRUPO,
+       ART_LINEA,
+       ART_CODIGO || '-' || ART_DESC ARTICULO,
+       ART_UNID_MED UM,
+       SUM(VALOR) VALOR
+  FROM STK_ARTICULO ART,
+       STK_MARCA,
+       STK_LINEA,
+       STK_GRUPO,
+       (SELECT SUC SUCURSAL,
+               PDET_ART ARTICULO,
+               SUM(VALOR) VALOR,
+               PDET_EMPR EMPRESA
+          FROM (SELECT PE.PED_SUC SUC,
+                       DE.PDET_ART,
+                       SUM(DE.PDET_CANT_PED - DE.PDET_CANT_FACT) VALOR,
+                       DE.PDET_EMPR
+                  FROM ACO_PRODUCTO PR, FAC_PEDIDO PE, FAC_PEDIDO_DET DE
+                 WHERE PR.PROD_CLAVE = PE.PED_PRODUCTO
+                   AND PR.PROD_EMPR = PE.PED_EMPR
+                   AND PE.PED_CLAVE = DE.PDET_CLAVE_PED
+                   AND PE.PED_EMPR = DE.PDET_EMPR
+                   AND PE.PED_EMPR = 2
+                 GROUP BY DE.PDET_ART, PED_SUC, PDET_EMPR
+                UNION ALL
+                SELECT PE.PED_SUC SUC,
+                       DE.PDET_ART,
+                       SUM(DE.PDET_CANT_PED - DE.PDET_CANT_REC) VALOR,
+                       DE.PDET_EMPR
+                  FROM ACO_PRODUCTO PR, COM_PEDIDO PE, COM_PEDIDO_DET DE
+                 WHERE PR.PROD_CLAVE = PE.PED_PRODUCTO
+                   AND PR.PROD_EMPR = PE.PED_EMPR
+                   AND PE.PED_CLAVE = DE.PDET_CLAVE_PED
+                   AND PE.PED_EMPR = DE.PDET_EMPR
+                 GROUP BY DE.PDET_ART, PED_SUC, PDET_EMPR)
+
+         GROUP BY PDET_ART, SUC, PDET_EMPR
+
+        UNION ALL
+
+        SELECT AD.ARDE_SUC SUCURSAL,
+               AR.ART_CODIGO ARTICULO,
+               NVL(AD.ARDE_CANT_ACT, 0) VALOR,
+               AR.ART_EMPR
+          FROM STK_ARTICULO AR, STK_ARTICULO_DEPOSITO AD
+         WHERE AR.ART_CODIGO = AD.ARDE_ART(+)
+           AND AR.ART_EMPR = AD.ARDE_EMPR(+)
+           AND AR.ART_TIPO NOT IN (4)
+         GROUP BY ART_CODIGO,
+                  ARDE_SUC,
+                  ARDE_CANT_ACT,
+                  ART_EMPR) DISPONIBILIDAD
+
+ WHERE ARTICULO = ART_CODIGO
+   AND EMPRESA = ART_EMPR
+
+   AND ART_MARCA = MARC_CODIGO
+   AND ART_EMPR = MARC_EMPR
+
+   AND LIN_CODIGO = ART_LINEA
+   AND LIN_EMPR = ART_EMPR
+
+   AND GRUP_LINEA = ART_LINEA
+   AND GRUP_EMPR = ART_EMPR
+
+   AND GRUP_CODIGO = ART_GRUPO
+   AND ART_EMPR =$P{P_EMPRESA}
+
+   AND SUCURSAL =NVL($P{P_SUCURSAL2},SUCURSAL)
+   AND GRUP_CODIGO =NVL($P{P_GRUPO},GRUP_CODIGO)
+   AND GRUP_LINEA =NVL($P{P_LINEA},GRUP_LINEA)
+   AND ART_MARCA =NVL($P{P_MARCA},ART_MARCA)
+   AND ART_RUBRO =NVL($P{P_RUBRO},ART_RUBRO)
+   AND ART_CODIGO =NVL($P{P_ARTICULO},ART_CODIGO)
+
+ GROUP BY ARTICULO,
+          ART_CODIGO,
+          ART_GRUPO,
+          ART_LINEA,
+          LIN_CODIGO || '-' || LIN_DESC,
+          GRUP_CODIGO || '-' || GRUP_DESC,
+          ART_CODIGO || '-' || ART_DESC,
+          ART_UNID_MED
+
+HAVING $P{P_CERO}='S' OR
+       ($P{P_CERO}='N' AND NOT
+     (
+       (SELECT SUM(NVL(AD.ARDE_CANT_ACT, 0)) EXISTENCIA
+          FROM STK_ARTICULO AR, STK_ARTICULO_DEPOSITO AD
+         WHERE AR.ART_CODIGO = AD.ARDE_ART(+)
+           AND AR.ART_EMPR = AD.ARDE_EMPR(+)
+           AND ART_EMPR = 2
+           AND ART_CODIGO = ART.ART_CODIGO
+           AND AR.ART_TIPO NOT IN (4))=0))
+--ORDER BY LINEA, GRUPO]]>
+	</queryString>
+	<field name="LINEA" class="java.lang.String"/>
+	<field name="GRUPO" class="java.lang.String"/>
+	<field name="ART_CODIGO" class="java.math.BigDecimal"/>
+	<field name="ART_GRUPO" class="java.math.BigDecimal"/>
+	<field name="ART_LINEA" class="java.math.BigDecimal"/>
+	<field name="ARTICULO" class="java.lang.String"/>
+	<field name="UM" class="java.lang.String"/>
+	<field name="VALOR" class="java.math.BigDecimal"/>
+	<group name="Linea">
+		<groupExpression><![CDATA[$F{ART_LINEA}]]></groupExpression>
+		<groupHeader>
+			<band height="8">
+				<textField>
+					<reportElement x="49" y="0" width="100" height="8" uuid="71584907-e670-4be2-bc8d-41cf8702c264"/>
+					<textElement>
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{LINEA}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="3" y="0" width="36" height="8" uuid="303ee215-afff-48c7-87d2-2ba8ae15d3a3"/>
+					<textElement>
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Línea :]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Grupo">
+		<groupExpression><![CDATA[$F{ART_GRUPO}]]></groupExpression>
+		<groupHeader>
+			<band height="9">
+				<textField>
+					<reportElement x="62" y="0" width="100" height="8" forecolor="#3333FF" uuid="ce414303-137a-422c-aace-35112ab39961"/>
+					<textElement>
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{GRUPO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="6" y="0" width="31" height="8" forecolor="#3333FF" uuid="dc29b01a-72b4-4f80-b365-31bdf4285822"/>
+					<textElement>
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Grupo :]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="77" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="56" width="43" height="14" uuid="10d5097d-ec1d-4fd2-afc3-217bba9ae5e6"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Linea :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="119" height="12" uuid="48c0c74f-d82d-4623-b509-dfe407cbaa80"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESCRIP_EMPR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="149" y="41" width="43" height="15" uuid="ba838771-58a4-4636-809e-63eaa6eb41f2"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Grupo :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="125" y="12" width="258" height="12" uuid="eacde6af-8927-4c45-9b53-6a8f3da533ed"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="149" y="56" width="43" height="14" uuid="521147d1-079e-475a-8523-92eee623c33b"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Rubro :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1" y="12" width="100" height="12" uuid="5aca6f74-a12b-4153-b576-3c348f2d789c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="41" width="43" height="15" uuid="9d25bac8-f86f-45a9-9cf0-366f7a33249d"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Marca :]]></text>
+			</staticText>
+			<textField evaluationTime="Report">
+				<reportElement x="519" y="0" width="30" height="12" uuid="155a7666-bb04-4304-81e0-b0693e8a2ba7"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="461" y="0" width="58" height="12" uuid="f61727c2-95e2-4039-a3b1-c78ed87dfa43"/>
+				<textElement textAlignment="Left">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de "]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement x="461" y="12" width="88" height="12" uuid="c1831d71-f740-407e-9638-06f4024ae880"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="387" y="0" width="73" height="12" uuid="79d994ef-85ab-49a7-abb8-0d64c46d627a"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="73" width="555" height="1" uuid="e0379122-3cf8-413a-b3f1-f16bb445cbc2"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="43" y="56" width="100" height="14" uuid="55cb4e2e-c5d1-4566-b20e-6bfd5316f6ce"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_LINEA_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="43" y="41" width="100" height="15" uuid="4f1a7a86-177b-4690-9431-108ff67d7b6c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_MARCA_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="192" y="41" width="100" height="15" uuid="41fc1c92-a097-4c92-b956-32642826937b"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_GRUPO_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="192" y="56" width="100" height="14" uuid="25ac255a-b1a4-4965-b7c3-043e185514a9"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_RUBRO_DESC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="35" splitType="Stretch">
+			<staticText>
+				<reportElement x="10" y="0" width="50" height="8" uuid="657a8d55-41a6-475b-8a84-c268207fe352"/>
+				<textElement>
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Articulo :]]></text>
+			</staticText>
+			<crosstab>
+				<reportElement x="10" y="11" width="539" height="20" uuid="6682932d-9502-41f7-a0ea-995a3d7b3d79"/>
+				<crosstabDataset>
+					<dataset>
+						<datasetRun subDataset="cross" uuid="e64462e6-4eba-4e8d-94f9-7478cd02ff10">
+							<datasetParameter name="P_SUCURSAL2">
+								<datasetParameterExpression><![CDATA[$P{P_SUCURSAL2}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_ARTICULO_DET">
+								<datasetParameterExpression><![CDATA[$F{ART_CODIGO}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_EMPRESA">
+								<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_CERO">
+								<datasetParameterExpression><![CDATA[$P{P_CERO}]]></datasetParameterExpression>
+							</datasetParameter>
+						</datasetRun>
+					</dataset>
+				</crosstabDataset>
+				<rowGroup name="TIPO" width="70" totalPosition="End">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{TIPO}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" mode="Transparent" x="0" y="0" width="70" height="8" backcolor="#E5E5E5" uuid="aae35d72-9865-4bea-bc59-667ad871595d"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{TIPO}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<staticText>
+								<reportElement style="Crosstab Data Text" mode="Transparent" x="0" y="0" width="70" height="8" backcolor="#E5E5E5" uuid="88faf042-2494-4dae-87f8-f28fc755a37a"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<text><![CDATA[Disponibilidad]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="SUCURSAL" height="9" totalPosition="End">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{SUCURSAL}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" mode="Transparent" x="0" y="0" width="50" height="8" backcolor="#E5E5E5" uuid="8798f4b4-c619-4c36-9548-db58c55400d6"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{SUCURSAL}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<staticText>
+								<reportElement style="Crosstab Data Text" mode="Transparent" x="0" y="0" width="50" height="8" backcolor="#E5E5E5" uuid="97a2158d-d629-4f78-962f-82875d50ca39"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<text><![CDATA[Total]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="VALORMeasure" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{VALOR}]]></measureExpression>
+				</measure>
+				<crosstabCell width="50" height="9">
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField isStretchWithOverflow="true">
+							<reportElement style="Crosstab Data Text" mode="Transparent" x="0" y="0" width="50" height="8" backcolor="#E5E5E5" uuid="60246d1e-0346-4b78-9a96-520dc803eac4"/>
+							<textElement>
+								<font fontName="Arial" size="6"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{VALORMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" height="9" rowTotalGroup="TIPO">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField isStretchWithOverflow="true">
+							<reportElement style="Crosstab Data Text" mode="Transparent" x="0" y="0" width="50" height="8" backcolor="#E5E5E5" uuid="bad303be-4a26-42ff-8704-77e53ecc6c54"/>
+							<textElement>
+								<font fontName="Arial" size="6"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{VALORMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" height="9" columnTotalGroup="SUCURSAL">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField isStretchWithOverflow="true">
+							<reportElement style="Crosstab Data Text" mode="Transparent" x="0" y="0" width="50" height="8" backcolor="#E5E5E5" uuid="d36be425-065c-45b6-8419-6cd7c4449782"/>
+							<textElement>
+								<font fontName="Arial" size="6"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{VALORMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="9" rowTotalGroup="TIPO" columnTotalGroup="SUCURSAL">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+							<reportElement style="Crosstab Data Text" mode="Transparent" x="0" y="0" width="50" height="8" backcolor="#E5E5E5" uuid="0d63f9d5-e6b1-425e-822e-8ef3c4ac4aad"/>
+							<textElement>
+								<font fontName="Arial" size="6"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{VALORMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+			<textField>
+				<reportElement x="62" y="0" width="263" height="8" uuid="aaffbed1-f2f8-4ffd-8933-9e9f7680f010"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ARTICULO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="10" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="10" uuid="50f89186-16f0-47bb-9f3a-bcbc9987fc5d"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fin del listado...]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

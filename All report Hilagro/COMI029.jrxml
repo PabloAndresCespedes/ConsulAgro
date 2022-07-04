@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report2" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="fe8d9554-e737-404c-bdb6-bdce096553d7">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<parameter name="empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="sucursal" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="legajo" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="periodo" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FECHA_D" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FECHA_H" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select suc_codigo||'-'||s.suc_abrev Suc, e.empl_ape||', '||e.empl_nombre Persona,ln.lin_desc Linea_Negocio, elp.emcp_porc,empr_razon_social, sysdate,$P{FECHA_D},$P{FECHA_H},$P{SUCURSAL}
+from per_empl_linea_peri elp, per_empleado e, per_periodo p, fac_linea_negocio ln, gen_sucursal s, gen_empresa gp
+where elp.emcp_empr=e.empl_empresa
+and elp.emcp_legajo=e.empl_legajo
+and elp.emcp_empr=p.peri_empr
+and elp.emcp_periodo=p.peri_codigo
+and elp.emcp_empr=p.peri_empr
+and elp.emcp_linea=ln.lin_codigo
+and e.empl_sucursal=suc_codigo
+and e.empl_empresa=suc_empr
+and e.empl_empresa= suc_empr
+and gp.empr_codigo = $P{empresa}
+and (s.suc_codigo = $P{sucursal} or $P{sucursal} is null)
+and (elp.emcp_legajo =$P{legajo} or $P{legajo} is null)
+and elp.emcp_periodo = $P{periodo}
+
+order by 2,3]]>
+	</queryString>
+	<field name="SUC" class="java.lang.String"/>
+	<field name="PERSONA" class="java.lang.String"/>
+	<field name="LINEA_NEGOCIO" class="java.lang.String"/>
+	<field name="EMCP_PORC" class="java.math.BigDecimal"/>
+	<field name="EMPR_RAZON_SOCIAL" class="java.lang.String"/>
+	<field name="SYSDATE" class="java.sql.Timestamp"/>
+	<field name=":1" class="java.lang.String"/>
+	<field name=":2" class="java.lang.String"/>
+	<field name=":3" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="27" splitType="Stretch">
+			<textField>
+				<reportElement x="22" y="4" width="100" height="20" uuid="7dddc14a-5a28-4ff7-b141-560f7811091f"/>
+				<textFieldExpression><![CDATA[$F{EMPR_RAZON_SOCIAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="500" y="3" width="26" height="20" uuid="5cee5226-d476-4dad-8ecb-b2b6e11822e3"/>
+				<text><![CDATA[Pag.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="526" y="3" width="53" height="20" uuid="01e0c5d1-1845-4fb6-9f61-de852ddd4800"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="99">
+			<rectangle>
+				<reportElement x="0" y="19" width="555" height="79" uuid="0074808a-6b85-472f-bf3f-5083f653daa3"/>
+			</rectangle>
+			<textField>
+				<reportElement x="455" y="20" width="100" height="20" uuid="45146926-3335-478c-8bb0-9d7fd723d2f8"/>
+				<textFieldExpression><![CDATA[$F{SYSDATE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="122" y="20" width="319" height="20" uuid="fddb18fd-eaec-401f-85d6-0558f5946442"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONSULTA DE  LINEA DE NEGOCIO  POR FUNCIONARIOS]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="61" y="57" width="61" height="20" uuid="71fd6f11-ef90-4f07-90c1-2f5f939ddb51"/>
+				<textFieldExpression><![CDATA[$P{periodo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="57" width="100" height="20" uuid="7b1013dc-338c-42c7-961e-63101add473f"/>
+				<text><![CDATA[PERIODO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="144" y="57" width="100" height="20" uuid="b08d5862-64b3-4fa3-b88f-12ec220a80ce"/>
+				<text><![CDATA[FECHA DESDE:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="388" y="55" width="100" height="20" uuid="5c1aa942-b8dd-4044-ba70-bf2e2db5b743"/>
+				<text><![CDATA[FECHA HASTA:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="466" y="55" width="100" height="20" uuid="eef8a7ae-c6a6-4548-a872-eff9f4435119"/>
+				<textFieldExpression><![CDATA[$P{FECHA_H}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="221" y="57" width="100" height="20" uuid="820f2fb3-28ad-4750-9551-ead640174076"/>
+				<textFieldExpression><![CDATA[$P{FECHA_D}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="10" y="20" width="100" height="20" uuid="76ce5d40-d8bf-4c10-b0f0-c413fa4f97be"/>
+				<textFieldExpression><![CDATA[$P{SUCURSAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<summary>
+		<band height="146" splitType="Stretch">
+			<crosstab>
+				<reportElement x="-18" y="0" width="644" height="146" uuid="1c19ed85-07b3-4685-8902-34d1d21d4b8f"/>
+				<crosstabHeaderCell>
+					<cellContents>
+						<line>
+							<reportElement style="Crosstab Data Text" x="0" y="30" width="139" height="1" uuid="1bc1a04a-e877-44ec-afac-9c3e0ed9bbda"/>
+						</line>
+						<staticText>
+							<reportElement style="Crosstab Data Text" x="108" y="0" width="30" height="30" uuid="193b9b0d-8deb-4102-ac1f-8ec0a6f321de"/>
+							<textElement verticalAlignment="Middle">
+								<font size="6" isBold="true"/>
+							</textElement>
+							<text><![CDATA[SC]]></text>
+						</staticText>
+						<staticText>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="108" height="30" uuid="25aeb7ce-b896-4edb-bbdb-8becf3a1af8c"/>
+							<textElement verticalAlignment="Middle">
+								<font size="6" isBold="true"/>
+							</textElement>
+							<text><![CDATA[PERSONA]]></text>
+						</staticText>
+					</cellContents>
+				</crosstabHeaderCell>
+				<rowGroup name="PERSONA" width="109">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{PERSONA}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="108" height="19" uuid="ddb95e4a-3106-4ec6-8947-a2537ff2b0e0"/>
+								<textElement textAlignment="Left" verticalAlignment="Middle">
+									<font size="6" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{PERSONA}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="SUC" width="30">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{SUC}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="28" height="19" uuid="fa584835-5a74-4ec6-ae95-94588d0e0fe6"/>
+								<textElement verticalAlignment="Middle">
+									<font size="6" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{SUC}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="LINEA_NEGOCIO" height="31" totalPosition="End">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{LINEA_NEGOCIO}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="30" uuid="c9383c93-dda6-4cb1-ad53-dd6f39c2d21d"/>
+								<textElement verticalAlignment="Middle">
+									<font size="6" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{LINEA_NEGOCIO}]]></textFieldExpression>
+							</textField>
+							<line>
+								<reportElement style="Crosstab Data Text" x="0" y="30" width="50" height="1" uuid="6bee8a00-d62d-4260-b980-d1b7a6ab7c63"/>
+							</line>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents backcolor="#FFBFBF" mode="Opaque">
+							<staticText>
+								<reportElement x="0" y="0" width="50" height="30" backcolor="#F0F0F0" uuid="5ffc6da7-3b3f-4031-8e34-6af7e388339a"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="6" isBold="true"/>
+									<paragraph lineSpacing="Single"/>
+								</textElement>
+								<text><![CDATA[TOTAL]]></text>
+							</staticText>
+							<line>
+								<reportElement style="Crosstab Data Text" x="0" y="30" width="50" height="1" uuid="ceccc7f6-4e27-4920-ac9a-ac27fdc2f6ea"/>
+							</line>
+						</cellContents>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="EMCP_PORCMeasure" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{EMCP_PORC}]]></measureExpression>
+				</measure>
+				<crosstabCell width="50" height="19">
+					<cellContents>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="19" uuid="dd0dd96b-a274-4bc1-9b32-37c68d906d59"/>
+							<textElement verticalAlignment="Middle">
+								<font size="6" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA[($V{EMCP_PORCMeasure}==null)?0:$V{EMCP_PORCMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="PERSONA">
+					<cellContents backcolor="#B30000" mode="Opaque">
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" forecolor="#FFFFFF" uuid="e20a3357-5eb2-44a1-a753-7e80940b2c34"/>
+							<textFieldExpression><![CDATA[$V{EMCP_PORCMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" height="19" columnTotalGroup="LINEA_NEGOCIO">
+					<cellContents backcolor="#FFBFBF" mode="Opaque">
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="19" uuid="2c24dbda-1432-4461-b6a0-cdc776f38cc6"/>
+							<textElement verticalAlignment="Middle">
+								<font size="6" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{EMCP_PORCMeasure_SUC_LINEA_NEGOCIO_ALL}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="PERSONA" columnTotalGroup="LINEA_NEGOCIO">
+					<cellContents backcolor="#B30000" mode="Opaque">
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" forecolor="#FFFFFF" uuid="4356aa3d-a295-4f1c-8300-77db9ce341f7"/>
+							<textFieldExpression><![CDATA[$V{EMCP_PORCMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="SUC">
+					<cellContents backcolor="#FFBFBF" mode="Opaque">
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="5114821b-6e3e-426c-a9a3-c0f49cf8a00b"/>
+							<textFieldExpression><![CDATA[$V{EMCP_PORCMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="SUC" columnTotalGroup="LINEA_NEGOCIO">
+					<cellContents backcolor="#FFBFBF" mode="Opaque">
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="85f124d2-1e93-4950-9973-58ad948587fc"/>
+							<textFieldExpression><![CDATA[$V{EMCP_PORCMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+		</band>
+	</summary>
+</jasperReport>

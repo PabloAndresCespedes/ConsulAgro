@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subreportSTKI034_subreport1" language="groovy" columnCount="2" pageWidth="332" pageHeight="127" columnWidth="166" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="66ef3e19-59d1-4640-bedd-187c27cc661b">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<subDataset name="MOTIVOS_1" uuid="a36535b9-74e6-4381-911e-52e320c0ecdf">
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_NOMBRE" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT UPPER(MOAN_CODIGO||' - '||MOAN_DESC) A, $P{P_NOMBRE} B
+  FROM GEN_MOTIVO_ANULACION
+ WHERE MOAN_EMPR = $P{P_EMPRESA}
+   AND MOAN_AFEC_OCARGA = 'S'
+    and MOAN_CODIGO is not null
+ ORDER BY MOAN_CODIGO]]>
+		</queryString>
+		<field name="A" class="java.lang.String"/>
+		<field name="B" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NOMBRE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT $P{P_NOMBRE} NOMBRE FROM DUAL]]>
+	</queryString>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<group name="NOMBRE" isStartNewColumn="true" isReprintHeaderOnEachPage="true" footerPosition="StackAtBottom">
+		<groupExpression><![CDATA[$F{NOMBRE}]]></groupExpression>
+		<groupHeader>
+			<band height="40" splitType="Stretch">
+				<crosstab isRepeatColumnHeaders="false" ignoreWidth="false">
+					<reportElement style="Crosstab Data Text" isPrintRepeatedValues="false" x="0" y="0" width="165" height="40" isRemoveLineWhenBlank="true" uuid="30c18898-05bc-4f2f-aa99-85449d3eadd8"/>
+					<crosstabDataset isDataPreSorted="true">
+						<dataset>
+							<datasetRun subDataset="MOTIVOS_1" uuid="049bb002-54b7-45be-ad39-03405ff52695">
+								<datasetParameter name="P_EMPRESA">
+									<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="P_NOMBRE">
+									<datasetParameterExpression><![CDATA[$F{NOMBRE}]]></datasetParameterExpression>
+								</datasetParameter>
+							</datasetRun>
+						</dataset>
+					</crosstabDataset>
+					<rowGroup name="A" width="0">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{A}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#F0F8FF" mode="Opaque"/>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<columnGroup name="B" height="0">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{B}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+							<cellContents backcolor="#F0F8FF" mode="Opaque">
+								<textField>
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="154" height="0" uuid="f0fa502f-3504-43df-9482-558bf47bf8f2"/>
+									<textFieldExpression><![CDATA[$V{B}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabColumnHeader>
+						<crosstabTotalColumnHeader>
+							<cellContents/>
+						</crosstabTotalColumnHeader>
+					</columnGroup>
+					<measure name="AMeasure" class="java.lang.String">
+						<measureExpression><![CDATA[$F{A}]]></measureExpression>
+					</measure>
+					<crosstabCell width="154" height="9">
+						<cellContents>
+							<textField isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="154" height="8" uuid="37b30eb8-d584-4e6c-8879-086d1ab7becf"/>
+								<textElement textAlignment="Left" verticalAlignment="Middle">
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{AMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell height="25" rowTotalGroup="A">
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="bb010bee-099f-4356-b897-f8568e3f55da"/>
+								<textFieldExpression><![CDATA[$V{AMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="50" columnTotalGroup="B">
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="ef1d0e9c-35e5-4440-a86f-55dcd4c6d873"/>
+								<textFieldExpression><![CDATA[$V{AMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="A" columnTotalGroup="B">
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="53ef286b-aca0-470c-917b-655423a92e53"/>
+								<textFieldExpression><![CDATA[$V{AMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+				</crosstab>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="51" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

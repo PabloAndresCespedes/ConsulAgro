@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERC003" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="28fa673e-caf8-41ae-8087-cd00795067d2">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.one.page.per.sheet" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<style name="detalles" hAlign="Left" vAlign="Top" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman"/>
+	<style name="cabecera_columna" forecolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Top" fontSize="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="estilo_importes" hAlign="Right" pattern="( $P{P_MONEDA}==&quot;1&quot; ? &quot;#,##0;-#,##0&quot; : &quot;#,##0.00;-#,##0.00&quot; )" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FORMATO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_DESDE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_HASTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USUARIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_WHERE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[" AND 1=1 "]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPLEADO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[
+
+select  NRO_DOCUMENTO,
+        DOC_PROV,
+        EMPL_LEGAJO,
+        nombre,
+        ci,
+        DOC_FEC_DOC,
+        ORIGEN,
+        TMOV_DESC,
+        CUO_FEC_VTO,
+        importe ,
+         NVL(DOC_OBS,'-')  doc_obs
+        from (
+SELECT TO_CHAR(DOC_NRO_DOC) NRO_DOCUMENTO,
+       DOC_PROV,
+       EMPL_LEGAJO,
+        EMPL_NOMBRE||' '||EMPL_APE NOMBRE,
+        EMPL_DOC_IDENT CI,
+       DOC_FEC_DOC,
+       doc_sist ORIGEN,
+       TMOV_DESC,
+       CUO_FEC_VTO,
+       (-1) * (B.cuo_imp_loc-nvl(importe_pago,0)) IMPORTE,
+       DOC_OBS,
+       EMPl_LEGAJO LEGAJO,
+       CUO_FEC_VTO FECHA,
+       DOC_EMPR
+  FROM FIN_DOCUMENTO A,
+       FIN_UNION_CUOTA B,
+       PER_EMPLEADO C,
+       GEN_TIPO_MOV D,
+       (select a.pag_clave_doc,
+               a.pag_fec_vto,
+               a.pag_fec_pago,
+               sum(a.pag_imp_loc) importe_pago,
+               pag_empr
+          from fin_union_pago a
+         where pag_fec_pago<= TO_DATE( $P{P_FEC_HASTA},'DD/MM/YYYY')
+         group by a.pag_clave_doc, a.pag_fec_vto, a.pag_fec_pago, pag_empr) pagos
+ WHERE A.DOC_CLAVE = CUO_cLAVE_DOC
+   AND A.DOC_EMPR = CUO_EMPR
+   AND A.DOC_PROV = C.EMPL_CODIGO_PROV
+   AND A.DOC_EMPR = C.EMPL_EMPRESA
+   AND A.DOC_TIPO_MOV = D.TMOV_CODIGO
+   AND DOC_EMPR = TMOV_EMPR
+   and cuo_clave_doc = pag_clave_doc(+)
+   and cuo_empr = pag_empr(+)
+   and b.cuo_fec_vto = pag_fec_vto(+)
+   AND C.EMPL_FORMA_PAGO = 3
+   AND DOC_TIPO_MOV IN (31, 81)
+
+UNION ALL
+SELECT TO_CHAR(LAST_DAY(TO_DATE(fecha,'DD/MM/YYYY')), 'DDMMYYYY') NRO_DOCUMENTO,
+       C.EMPL_CODIGO_PROV,
+       EMPL_LEGAJO,
+        EMPL_NOMBRE||' '||EMPL_APE NOMBRE,
+        EMPL_DOC_IDENT CI,
+       FECHA,
+       'FICHA FUNCIONARIO' sistema,
+       B.PCON_DESC,
+       NULL VTO,
+       DECODE(B.PCON_IND_DBCR,
+              'D',
+              (-1) * A.RPSD_IMPORTE,
+              'C',
+              A.RPSD_IMPORTE) IMPORTE,
+       A.RPSD_OBSERVACION OBSERVACION,
+       EMPl_LEGAJO LEGAJO,
+       FECHA,
+       pcon_empr empresa
+  FROM PER_REG_PERSONAL_SUPER_DET A, PER_CONCEPTO B, PER_EMPLEADO C,PERC003_TIPO_PAGO_V D
+ WHERE A.RPSD_EMPR = B.PCON_EMPR
+   AND A.RPSD_CONCEPTO = B.PCON_CLAVE
+   AND A.RPSD_LEGAJO = C.EMPL_LEGAJO
+   AND A.RPSD_EMPR = C.EMPL_EMPRESA
+   AND A.RPSD_TIPO_ADJUDICACION=D.TIPO
+ union all
+ SELECT TO_CHAR(DOC_NRO_DOC) NRO_DOCUMENTO,
+       DOC_PROV,
+       EMPL_LEGAJO,
+        EMPL_NOMBRE||' '||EMPL_APE NOMBRE,
+        EMPL_DOC_IDENT CI,
+       DOC_FEC_DOC,
+       doc_sist ORIGEN,
+       TMOV_DESC,
+       CUO_FEC_VTO,
+       case
+         when a.doc_tipo_saldo = 'D' then
+         (-1) * (B.cuo_imp_loc-nvl(importe_pago,0))
+         when a.doc_tipo_saldo = 'C' then
+         (B.cuo_imp_loc-nvl(importe_pago,0))
+       end IMPORTE,
+       DOC_OBS,
+       empl_legajo,
+       cuo_fec_vto fecha,
+       empl_empresa
+  FROM FIN_DOCUMENTO A, FIN_UNION_CUOTA B, PER_EMPLEADO C, GEN_TIPO_MOV D,
+       (select a.pag_clave_doc,
+               a.pag_fec_vto,
+               a.pag_fec_pago,
+               sum(a.pag_imp_loc) importe_pago,
+               pag_empr
+          from fin_union_pago a
+         where pag_fec_pago<= TO_DATE( $P{P_FEC_HASTA},'DD/MM/YYYY')
+         group by a.pag_clave_doc, a.pag_fec_vto, a.pag_fec_pago, pag_empr) pagos
+ WHERE A.DOC_CLAVE = CUO_cLAVE_DOC
+   AND A.DOC_EMPR = CUO_EMPR
+   AND A.DOC_cli = C.Empl_Cod_cliente
+   AND A.DOC_EMPR = C.EMPL_EMPRESA
+   AND A.DOC_TIPO_MOV = D.TMOV_CODIGO
+   AND DOC_EMPR = TMOV_EMPR
+   and cuo_clave_doc = pag_clave_doc(+)
+   and cuo_empr = pag_empr(+)
+   and b.cuo_fec_vto = pag_fec_vto(+)
+   AND C.EMPL_FORMA_PAGO = 3
+   and a.doc_TIPO_mOV IN (10, 16)
+        )
+
+  where (fecha BETWEEN TO_DATE($P{P_FEC_DESDE},'DD/MM/YYYY') AND TO_DATE( $P{P_FEC_HASTA},'DD/MM/YYYY') )
+   AND EMPL_LEGAJO =$P{P_EMPLEADO}
+   and doc_empr=  $P{P_EMPRESA}
+      and importe<>0
+
+ORDER BY 9,6]]>
+	</queryString>
+	<field name="NRO_DOCUMENTO" class="java.lang.String"/>
+	<field name="DOC_PROV" class="java.math.BigDecimal"/>
+	<field name="EMPL_LEGAJO" class="java.math.BigDecimal"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="CI" class="java.math.BigDecimal"/>
+	<field name="DOC_FEC_DOC" class="java.sql.Timestamp"/>
+	<field name="ORIGEN" class="java.lang.String"/>
+	<field name="TMOV_DESC" class="java.lang.String"/>
+	<field name="CUO_FEC_VTO" class="java.sql.Timestamp"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<field name="DOC_OBS" class="java.lang.String"/>
+	<variable name="V_TOTAL" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="104" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Transparent" x="0" y="0" width="555" height="93" uuid="73026c05-3c0c-4624-b270-f1d74c62010c"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="22" y="45" width="52" height="13" uuid="5d2ddeac-888a-435b-9c02-f47e8c200bc2"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="22" y="58" width="52" height="13" uuid="3d2744e4-3041-4872-a9bf-b758aa099d49"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[C.I. Nro.:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="22" y="74" width="52" height="13" uuid="ff2a5455-04fb-4ff8-8046-75361db5b6b5"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="74" y="57" width="116" height="14" uuid="e7488b27-4a83-45d2-8ef7-b807a5bfe27d"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CI}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="74" y="74" width="116" height="13" uuid="6e212d03-7fd9-4c46-ac18-23278d08e804"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FEC_HASTA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="74" y="45" width="323" height="13" uuid="650dfa89-319b-4f3c-b376-93663f290b1e"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="22" width="353" height="20" uuid="e2461286-00ed-49cd-93a4-3377cb14e0a8"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="521" y="10" width="30" height="13" uuid="8ed34b4a-2aa2-4f22-b2c6-b7d47a21d7c5"/>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="10" y="25" width="100" height="13" uuid="6bc5a853-2744-4328-9999-46cff76b9535"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="10" y="10" width="157" height="13" uuid="544b9922-cf6d-4bda-b664-ec7e9b4ce3c1"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_EMPRESA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="463" y="10" width="58" height="13" uuid="ccec19a4-8eab-48c9-acfa-13335a55f81d"/>
+				<textElement textAlignment="Left">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de "]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement x="463" y="25" width="88" height="13" uuid="a8988bb8-bd57-43b6-ae66-bc8119496517"/>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="420" y="10" width="40" height="13" uuid="e3372d9f-8ef8-4e81-a7e0-148319b5f08c"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROGRAMA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="18" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="1" width="74" height="13" uuid="22b493e4-192e-4320-99c2-1d00bf89f3fa"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro. Documento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="74" y="1" width="67" height="13" uuid="498917f3-b706-4d45-be75-d9f4312907a0"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fec. Documento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="141" y="1" width="143" height="13" uuid="15e8b7c5-b065-4469-b68b-c04c6a01c03a"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descripcion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="284" y="1" width="130" height="13" uuid="f9ade22c-f71c-4ffb-9e4b-550cc096f865"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Observacion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="414" y="1" width="61" height="13" uuid="2b12e145-40f2-4f4f-82e7-aa1cfbbace9d"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fec. Vto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="475" y="1" width="80" height="13" uuid="6b75d9da-61e9-4bb5-afea-88b73b4f5b22"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+			<line>
+				<reportElement x="2" y="14" width="553" height="1" uuid="3c57fdeb-a587-4fd9-9e18-836c34f81228"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="74" height="13" uuid="ca52640e-ac71-49bf-8495-b41198411858"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_DOCUMENTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="74" y="0" width="67" height="13" uuid="3d3f5fac-4801-4fae-8c61-d9e09e6d9958"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOC_FEC_DOC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="141" y="0" width="143" height="13" uuid="6138c26e-63f9-4f87-9d83-dc569ec3c22c"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TMOV_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="284" y="0" width="130" height="13" uuid="1b316226-84ea-469c-853b-e3b2bb2cd4ab"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOC_OBS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="414" y="0" width="61" height="13" uuid="b3493bda-cfe0-4c0b-a5dc-454feb19603d"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUO_FEC_VTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="475" y="0" width="80" height="13" uuid="de9f0ec7-745e-465a-8f24-5a45c7ed14b6"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band height="33">
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="431" y="8" width="124" height="13" uuid="61bc231c-373f-4c36-8b82-130cb441fd57"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_TOTAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="368" y="8" width="63" height="13" uuid="7df37ca7-e305-4b18-bf4e-5aeb93d49ddb"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="2" y="0" width="553" height="1" uuid="32e0af5b-9828-4355-8e39-278f1a026f28"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

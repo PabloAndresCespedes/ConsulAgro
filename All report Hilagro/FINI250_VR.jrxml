@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINI250_VR" language="groovy" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="8984e130-7476-444e-8402-aa1a1f02de18">
+	<property name="ireport.zoom" value="4.279675059165028"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<subDataset name="logo" uuid="c7a00bf6-b356-4d91-9c98-10e5d1b5b0f5">
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select EMPR_LOGO logo from gen_empresa WHERE EMPR_CODIGO = $P{P_EMPRESA}]]>
+		</queryString>
+		<field name="LOGO" class="java.io.InputStream"/>
+	</subDataset>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLAVE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[26670101]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT 'A'                                      SOLD_TIPO                ,
+       SOLD_CLAVE                               SOLD_CLAVE               ,
+       SOLD_ITEM                                SOLD_ITEM                ,
+       ----------------------------------------------------------------------------
+       SOLD_COSECHA                             SOLD_COSECHA             ,
+       SOLD_COSECHA_COD                         SOLD_COSECHA_COD         ,
+       SOLD_COSECHA_ANHO                        SOLD_COSECHA_ANHO        ,
+       COSECHA_NOM                              SOLD_COSECHA_NOM         ,
+       GRUP_CODIGO                              SOLD_GRUP_CODIGO         ,
+       GRUP_DESC                                SOLD_GRUP_DESC           ,
+       ----------------------------------------------------------------------------
+       --1) Porcentaje de financiación..
+       SOLD_PORC_FINAN_TOTAL                    SOLD_PORC_FINAN_TOTAL    ,
+       ----------------------------------------------------------------------------
+       --2) Crédito Solicitado..
+       DE.SOLD_NVA_LIN_TOTAL_PED                SOLD_IMP_NUEVA_LINEA     ,
+       ----------------------------------------------------------------------------
+       --3) Volumen Contratado..
+       SOLD_VOL_CONTRATO                        SOLD_VOL_CONTRATO        ,
+       ----------------------------------------------------------------------------
+       --4) Volumen Requerido..
+       ROUND (
+         100 * SOLD_NVA_LIN_TOTAL_PED	/
+         NULLIF(SOLD_PRECIO_TN,0)	/
+         NULLIF(SOLD_PORC_FINAN_TOTAL,0)
+          , 2
+        )                                       SOLD_VOL_REQUERIDO       ,
+       ----------------------------------------------------------------------------
+       --5) Lìmite Tecnico según Contrato..
+       ROUND(
+        SOLD_VOL_CONTRATO *
+        SOLD_PRECIO_TN *
+        NVL(SOLD_PORC_FINAN_TOTAL,0)
+        /	100, 2
+       )                                        SOLD_LIM_SEG_CONTRATO    ,
+       ----------------------------------------------------------------------------
+       --6) Lìmite Tecnico segùn Produccción..
+       ROUND(
+        SOLD_MONTO_PROD *
+        NVL(SOLD_PORC_FINAN_TOTAL,0)
+        /	100, 2
+       )                                        SOLD_LIM_SEG_PROD
+       ----------------------------------------------------------------------------
+
+  FROM FINI050_DE_PED_V DE
+ WHERE DE.SOLD_EMPR     =   $P{P_EMPRESA}
+   AND DE.SOLD_CLAVE    =   $P{P_CLAVE}
+
+UNION ALL
+
+-- Productos con línea de crédido, siempre que el producto esté activo aún..
+-- esto ocurre cuando la fecha de vencimiento es mayor o igual a la fecha de la solicitud de crédito..
+SELECT 'B'                                       SOLD_TIPO            ,
+       SOLC_CLAVE_SOL                            SOLD_CLAVE           ,
+       SOLC_ITEM                                 SOLD_ITEM            ,
+       ----------------------------------------------------------------------------
+       SOLC_COSECHA                              SOLD_COSECHA         ,
+       PD.PROD_CODIGO                            SOLD_COSECHA_COD     ,
+       PD.PROD_ZAFRA_ACTUAL                      COSECHA_ANHO         ,
+       PD.PROD_DESC                              COSECHA_NOM          ,
+       GRUP_CODIGO                               GRUP_CODIGO          ,
+       GRUP_DESC                                 GRUP_DESC            ,
+       ----------------------------------------------------------------------------
+       --1) Porcentaje de financiación..
+       PD.PROD_PORC_FINAN_TOTAL                  SOLD_PORC_FINAN_TOTAL   ,
+       ----------------------------------------------------------------------------
+       --2) Crédito Solicitado..
+       DC.SOLC_LINCR_ACT_TOTAL                   SOLD_IMP_NUEVA_LINEA    ,
+       ----------------------------------------------------------------------------
+       --3) Volumen Requerido..
+       RC.REC_VOL_CONTRATO                       SOLD_VOL_CONTRATO       ,
+
+       --4) Volumen Requerido..
+       ROUND
+       ( -----
+         100 * DC.SOLC_LINCR_ACT_TOTAL	  /
+         -----
+         NULLIF(PD.PROD_PRECIO_COM_USD,0)	/
+         -----
+         NULLIF(
+              NVL(PD.PROD_PORC_FINAN_TOTAL,
+                  GP.GRUP_PORC_FINAN_TOTAL )
+         ,0    )
+         -----
+          , 2
+       )                                       SOLD_VOL_REQUERIDO       ,
+       ----------------------------------------------------------------------------
+       --5) Lìmite Tecnico según Contrato..
+       ROUND(
+        RC.REC_VOL_CONTRATO *
+        PD.PROD_PRECIO_COM_USD *
+        NVL(PD.PROD_PORC_FINAN_TOTAL,
+            GP.GRUP_PORC_FINAN_TOTAL )
+        /	100, 2
+       )                                        SOLD_LIM_SEG_CONTRATO    ,
+       ----------------------------------------------------------------------------
+       --6) Lìmite Tecnico segùn Produccción..
+       ROUND(
+        FINI250_IMP_PROD_ANT
+        (    I_EMPRESA    =>   SOL_EMPR        ,
+              I_PERSONA    =>   SOL_PERSONA    ,
+              I_COSECHA    =>   SOLC_COSECHA   ,
+              I_CLAVE_SOL  =>   SO.SOL_CLAVE
+        )     -- SOLD_MONTO_PROD         ,
+        *
+        NVL(SOLD_PORC_FINAN_TOTAL,0)
+        /	100, 2
+       )                                        SOLD_LIM_SEG_PROD
+       -------------------------------------------------------------
+
+
+  FROM ACO_GRUPO_PRODUCTO        GP,
+       ACO_PRODUCTO              PD,
+       FIN_SOL_CREDITO           SO,
+       FIN_SOL_CRED_DET_CTA      DC,
+       FIN_SOL_CRED_RE_CON       RC,
+       FIN_SOL_CRED_DET_PED      DP
+
+ WHERE
+
+       GRUP_EMPR            =        PD.PROD_EMPR
+   AND GRUP_CODIGO          =        PD.PROD_GRUPO
+
+   AND PD.PROD_EMPR         =        DC.SOLC_EMPR
+   AND PD.PROD_CLAVE        =        DC.SOLC_COSECHA
+
+   AND SO.SOL_EMPR          =        DC.SOLC_EMPR
+   AND SO.SOL_CLAVE         =        DC.SOLC_CLAVE_SOL
+
+   AND RC.REC_EMPR(+)       =        DC.SOLC_EMPR
+   AND RC.REC_SOLICITUD(+)  =        DC.SOLC_CLAVE_SOL
+
+   AND RC.REC_EMPR(+)       =        DC.SOLC_EMPR
+   AND RC.REC_COSECHA(+)    =        DC.SOLC_COSECHA
+
+   AND DP.SOLD_EMPR(+)      =        DC.SOLC_EMPR
+   AND DP.SOLD_CLAVE(+)     =        DC.SOLC_CLAVE_SOL
+
+   AND DP.SOLD_EMPR(+)      =        DC.SOLC_EMPR
+   AND DP.SOLD_COSECHA(+)   =        DC.SOLC_COSECHA
+
+   AND DP.SOLD_COSECHA      IS       NULL
+
+   AND PD.PROD_FECVTO_FAC_IN > = SO.SOL_FECHA
+   AND DC.SOLC_EMPR          =       $P{P_EMPRESA}
+   AND DC.SOLC_CLAVE_SOL     =       $P{P_CLAVE}]]>
+	</queryString>
+	<field name="SOLD_TIPO" class="java.lang.String"/>
+	<field name="SOLD_CLAVE" class="java.math.BigDecimal"/>
+	<field name="SOLD_ITEM" class="java.math.BigDecimal"/>
+	<field name="SOLD_COSECHA" class="java.math.BigDecimal"/>
+	<field name="SOLD_COSECHA_COD" class="java.math.BigDecimal"/>
+	<field name="SOLD_COSECHA_ANHO" class="java.math.BigDecimal"/>
+	<field name="SOLD_COSECHA_NOM" class="java.lang.String"/>
+	<field name="SOLD_GRUP_CODIGO" class="java.math.BigDecimal"/>
+	<field name="SOLD_GRUP_DESC" class="java.lang.String"/>
+	<field name="SOLD_PORC_FINAN_TOTAL" class="java.math.BigDecimal"/>
+	<field name="SOLD_IMP_NUEVA_LINEA" class="java.math.BigDecimal"/>
+	<field name="SOLD_VOL_CONTRATO" class="java.math.BigDecimal"/>
+	<field name="SOLD_VOL_REQUERIDO" class="java.math.BigDecimal"/>
+	<field name="SOLD_LIM_SEG_CONTRATO" class="java.math.BigDecimal"/>
+	<field name="SOLD_LIM_SEG_PROD" class="java.math.BigDecimal"/>
+	<variable name="SOLD_LIM_SEG_CONTRATO_SUM" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{SOLD_LIM_SEG_CONTRATO}]]></variableExpression>
+	</variable>
+	<variable name="SOLD_LIM_SEG_PROD_SUM" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{SOLD_LIM_SEG_PROD}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<columnHeader>
+		<band height="26" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Opaque" x="1" y="12" width="554" height="12" backcolor="#FAFAFA" uuid="c76dd234-9696-4004-9010-4d2ab5a8a4b0"/>
+				<graphicElement>
+					<pen lineWidth="0.3" lineColor="#999999"/>
+				</graphicElement>
+			</rectangle>
+			<line>
+				<reportElement x="1" y="25" width="554" height="1" uuid="d46ad133-0ab1-49e9-8868-818dd8e99c73"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="2" y="14" width="122" height="9" uuid="c52140fb-cf82-4ba5-a3ea-0e359511f8b2"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[COSECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="498" y="14" width="50" height="9" uuid="09fa45c8-82e7-45ca-af1d-ce38ebe21013"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[SEG.PRODUC.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="2" y="1" width="138" height="9" uuid="2e280f0b-cbf9-4a02-976c-39fab6302c98"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["VOLUMEN REQUERIDO"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="436" y="14" width="58" height="9" uuid="38a6e79e-e5a9-4107-bd53-4edd4847154f"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[SEG.CONTRATO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="383" y="14" width="50" height="9" uuid="9f983b88-92f9-4bdc-811f-8b18b4f327fe"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[VOLUM.REQ.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="327" y="14" width="56" height="9" uuid="eb0a53e4-87d5-4903-b46f-d349b8c11370"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[VOL.CONTRATO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="271" y="14" width="56" height="9" uuid="05fe3f5e-6c3e-4fa8-8047-7c05d32063aa"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CRED. SOLIC.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="212" y="14" width="50" height="9" uuid="6fe122cc-71f6-4a9d-a50d-028a60073af9"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[% FINAN]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="436" y="3" width="112" height="9" uuid="93bf667b-dfe5-4344-97d4-997474255ab2"/>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="false" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["LIMITE TECNICO"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="2" y="1" width="176" height="11" uuid="0de6953a-e19d-4079-9d53-cc8993002471"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph lineSpacing="Proportional"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SOLD_COSECHA_NOM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="498" y="1" width="50" height="11" uuid="88a17b4d-6ad9-4374-a217-0eb5b384175f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SOLD_LIM_SEG_PROD}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="12" width="554" height="1" uuid="646087eb-ac65-4502-9cab-e72dd1ec54db"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="0" width="1" height="13" uuid="cdb90861-b106-4d5b-88d9-1d93d541b5ef"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="266" y="0" width="1" height="12" uuid="c785f9c9-7458-4b17-89b4-20e6c13b0ccf"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="494" y="0" width="1" height="13" uuid="d59f5aaa-d563-42e5-878c-eea4e5b9eb82"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="555" y="0" width="1" height="13" uuid="557e2975-8525-41bd-8452-bf21931757b4"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="441" y="1" width="50" height="11" uuid="76594e40-ffad-42d8-a9ef-8bfcd7f9ac81"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SOLD_LIM_SEG_CONTRATO}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="383" y="1" width="50" height="11" uuid="f8da51b8-3fe6-4824-a917-0847e0e750d1"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SOLD_VOL_REQUERIDO}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="327" y="1" width="50" height="11" uuid="e952e6e0-3f15-4fe3-9ab6-6983ad9b674b"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SOLD_VOL_CONTRATO}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="271" y="1" width="50" height="11" uuid="71e6e4cb-090e-4736-b74c-e02525bae627"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SOLD_IMP_NUEVA_LINEA}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<line>
+				<reportElement x="324" y="0" width="1" height="12" uuid="ba119db3-b763-4039-8f95-30e495e89426"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="435" y="0" width="1" height="13" uuid="c9fb9768-4512-443c-bd9e-3569c41f33e0"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="380" y="0" width="1" height="13" uuid="e1bfa54b-4a73-46d6-a2dc-37f415fa060c"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="213" y="1" width="50" height="11" uuid="08a31f8a-106a-4b6f-9009-d67e3a9415fe"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SOLD_PORC_FINAN_TOTAL}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<line>
+				<reportElement x="209" y="0" width="1" height="12" uuid="e0214a7c-6b96-4823-ba10-7213b6312d55"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Opaque" x="1" y="3" width="554" height="12" backcolor="#FAFAFA" uuid="4466f08c-8027-4085-b705-a9f0c35aeeb6"/>
+				<graphicElement>
+					<pen lineWidth="0.3" lineColor="#EEEDED"/>
+				</graphicElement>
+			</rectangle>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="498" y="4" width="50" height="11" uuid="9d8a6fa8-d5c6-47bd-a468-6f5b5fc05ba6"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SOLD_LIM_SEG_PROD_SUM}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="441" y="4" width="50" height="11" uuid="521a96d8-309d-4fdc-9f51-6e8a1a4aef2a"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SOLD_LIM_SEG_CONTRATO_SUM}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

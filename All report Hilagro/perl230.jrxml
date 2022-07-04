@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="perl230" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="055dfb6a-d6ec-4156-b34a-b75cc4c93f29">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PERIODO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT EMPL_LEGAJO,
+       EMPL_NOMBRE || ' ' || EMPL_APE NOMBRE,
+       HORA_SALIDA,
+       HORA_ENTRADA,
+       'ENTRADA' OPERACION
+  FROM (SELECT F.MARC_EMPLEADO, F.HORA_ENTRADA, F.HORA_SALIDA,E.PERI_EMPR
+          FROM PER_ERROR_MARC_ENT_V F,
+               (SELECT MARC_EMPLEADO, HORA_SALIDA,P.PERI_EMPR
+                  FROM PER_ERROR_MARC_ENT_V, PER_PERIODO P
+                 WHERE MARC_FECHA BETWEEN PERI_JORN_INI AND PERI_JORN_FIN
+                   AND MARC_EMPR = $P!{P_EMPRESA}
+                   AND MARC_EMPR = P.PERI_EMPR
+                  and P.PERI_CODIGO = $P!{P_PERIODO}
+                GROUP BY MARC_EMPLEADO, HORA_SALIDA,P.PERI_EMPR
+                HAVING COUNT(*) > 1) E
+         WHERE (F.MARC_EMPLEADO = E.MARC_EMPLEADO AND
+               (F.HORA_SALIDA = E.HORA_SALIDA))
+           AND F.MARC_EMPR = $P{P_EMPRESA}
+           AND F.MARC_EMPR = E.PERI_EMPR
+        UNION
+        SELECT MARC_EMPLEADO, HORA_ENTRADA, HORA_SALIDA,P.PERI_EMPR
+          FROM PER_ERROR_MARC_ENT_V, PER_PERIODO P
+         WHERE MARC_FECHA BETWEEN PERI_JORN_INI AND PERI_JORN_FIN
+           AND MARC_EMPR = $P{P_EMPRESA}
+           AND MARC_EMPR = P.PERI_EMPR
+           AND P.PERI_CODIGO = $P{P_PERIODO}
+           AND HORA_SALIDA IS NULL),
+       PER_EMPLEADO
+ WHERE MARC_EMPLEADO = EMPL_LEGAJO
+   AND PERI_EMPR = $P{P_EMPRESA}
+   AND PERI_EMPR = EMPL_EMPRESA
+
+   union all
+SELECT EMPL_LEGAJO,
+       EMPL_NOMBRE || ' ' || EMPL_APE NOMBRE,
+       HORA_ENTRADA,
+       HORA_SALIDA,
+       'SALIDA' OPERACION
+
+  FROM (SELECT F.MARC_EMPLEADO, F.HORA_ENTRADA, F.HORA_SALIDA,E.PERI_EMPR
+          FROM PER_ERROR_MARC_SAL_V F,
+               (SELECT MARC_EMPLEADO, HORA_ENTRADA,P.PERI_EMPR
+                  FROM PER_ERROR_MARC_SAL_V, PER_PERIODO P
+                 WHERE MARC_FECHA BETWEEN PERI_JORN_INI AND PERI_JORN_FIN
+                   AND MARC_EMPR = $P{P_EMPRESA}
+                   AND MARC_EMPR = P.PERI_EMPR
+                   and P.PERI_CODIGO = $P!{P_PERIODO}
+                 GROUP BY MARC_EMPLEADO, HORA_ENTRADA,P.PERI_EMPR
+                HAVING COUNT(*) > 1) E
+         WHERE (F.MARC_EMPLEADO = E.MARC_EMPLEADO AND
+               (F.HORA_ENTRADA = E.HORA_ENTRADA) AND
+               (F.MARC_EMPR = E.PERI_EMPR))
+           AND F.MARC_EMPR = $P{P_EMPRESA}
+          --- AND F.MARC_EMPR = E.PERI_EMPR
+        UNION
+        SELECT MARC_EMPLEADO, HORA_ENTRADA, HORA_SALIDA,P.PERI_EMPR
+          FROM PER_ERROR_MARC_ENT_V, PER_PERIODO P
+         WHERE MARC_FECHA BETWEEN PERI_JORN_INI AND PERI_JORN_FIN
+           AND MARC_EMPR = $P{P_EMPRESA}
+           AND MARC_EMPR = P.PERI_EMPR
+           and P.PERI_CODIGO = $P{P_PERIODO}
+           AND HORA_ENTRADA IS NULL),
+       PER_EMPLEADO
+ WHERE MARC_EMPLEADO = EMPL_LEGAJO
+   AND PERI_EMPR = $P{P_EMPRESA}
+   AND PERI_EMPR = EMPL_EMPRESA
+union all
+ select null, null, null, null, '2' from dual
+ ORDER BY 1, 2, 3]]>
+	</queryString>
+	<field name="EMPL_LEGAJO" class="java.math.BigDecimal"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="HORA_SALIDA" class="java.sql.Timestamp"/>
+	<field name="HORA_ENTRADA" class="java.sql.Timestamp"/>
+	<field name="OPERACION" class="java.lang.String"/>
+	<variable name="EMPL_LEGAJO_1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{EMPL_LEGAJO}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="60" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="60" uuid="0c0e0860-e051-40d5-ba72-a62b263302bc"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="456" y="13" width="21" height="13" uuid="46af6f49-9ab4-4d0d-bdcb-31f002814a6d"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Hoja:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="477" y="13" width="35" height="13" uuid="1c366d2f-7160-4794-b660-3ad62cf6d25d"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="132" y="26" width="266" height="26" uuid="b8b8672a-324b-4c90-918a-0343a72d164f"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="443" y="26" width="98" height="13" uuid="20310142-edbf-46e7-bfa4-a3d7503d364b"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="11" y="13" width="101" height="13" uuid="8e8f39e9-8b32-4a18-9906-ba7e6bbe1787"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_EMPRESA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="11" y="39" width="101" height="13" uuid="5302b84a-df0a-4627-a760-e3ac8a761338"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_SUCURSAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="13" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="32" splitType="Stretch">
+			<staticText>
+				<reportElement x="255" y="1" width="100" height="20" uuid="926dae16-0083-46ff-b7b2-98ecf45e26dc"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Hora Salida]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="405" y="1" width="100" height="20" uuid="f25283e6-76b6-4036-a098-63c2476dce2c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Hora Entrada]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1" y="20" width="554" height="1" uuid="beb82324-bf1c-49fa-914b-f86f057477ca"/>
+			</line>
+			<staticText>
+				<reportElement x="42" y="1" width="66" height="20" uuid="e45e518c-12f6-4675-9cea-069ad0c8a7cd"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Codigo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="140" y="1" width="100" height="20" uuid="9dac1b6c-3a39-43af-b579-a68536206158"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Empleado]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="140" y="0" width="100" height="14" uuid="e5354395-01ec-4d04-b511-074880b180e8"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="395" y="1" width="100" height="14" uuid="739cf312-cd3a-45d7-9a68-78a31da66296"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HORA_ENTRADA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="42" y="1" width="66" height="14" uuid="e6568229-ebd4-4961-8427-ab4549b73ce0"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EMPL_LEGAJO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="255" y="0" width="100" height="14" uuid="26a82951-2745-4757-a0ad-b783cb13b9ee"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HORA_SALIDA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch">
+			<staticText>
+				<reportElement x="12" y="34" width="100" height="20" uuid="16dd2332-6e34-4cf0-a94a-72322128df96"/>
+				<text><![CDATA[Fin Listado..]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

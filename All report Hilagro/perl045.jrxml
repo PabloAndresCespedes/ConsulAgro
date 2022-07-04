@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="perl045" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="85e1780e-3fa9-431f-8cb0-9290d120c2ab">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String"/>
+	<parameter name="P_DEP_DESC" class="java.lang.String"/>
+	<parameter name="P_EMPL_DESC" class="java.lang.String"/>
+	<parameter name="P_PRES_NRO" class="java.lang.String"/>
+	<parameter name="P_DEPART_COD" class="java.lang.String"/>
+	<parameter name="P_EMPL_COD" class="java.lang.String"/>
+	<parameter name="P_PREST_NRO" class="java.lang.String"/>
+	<parameter name="P_ESTADO_PRES" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT *
+  FROM
+(SELECT PE.EMPL_LEGAJO             LEGAJO,
+       PE.EMPL_NOMBRE             NOMBRE,
+       PE.EMPL_APE                APELLIDO,
+       PE.EMPL_SUCURSAL           SUCURSAL,
+       PE.EMPL_FEC_INGRESO        FECHA_INGRESO,
+       GD.DPTO_DESC               DEPARTAMENTO,
+       PC.CAR_DESC                CARGO,
+       PR.PMOE_NRO                NRO_PRESTAMO,
+       PR.PMOE_TOTAL              MONTO_TOTAL_PRES,
+       PP.PMOP_INT_ANUAL          INTERES_ANUAL,
+       PP.PMOP_FECHA_DESEMBOLSO   FECHA_DESEMB,
+       PP.PMOP_PRIMER_VENCIMIENTO FECHA_PRIMER_VENC,
+       PP.PMOP_CANT_CUOTAS        CANT_CUOTAS,
+       PP.PMOP_CTABCO             CAJA_BCO_SALIDA,
+       PP.PMOP_DESTINO            DESTINO,
+       PPD.PMOPD_CUOTA_NRO        NRO_CUOTA,
+       PPD.PMOPD_VENCIMIENTO      FECHA_VENC,
+       PPD.PMOPD_CAPITAL          CAPITAL,
+       PPD.PMOPD_INTERES          INTERES,
+       PPD.PMOPD_CUOTA            CUOTA,
+       FC.cuo_saldo_loc           SALDO,
+       CASE
+         WHEN D.DOC_SALDO_LOC > 0 THEN
+            'N'
+           ELSE
+            'S'
+             END SALDADO
+  FROM PER_PRESTAMOS PR,PER_PRESTAMOS_PLAN PP,PER_PRESTAMOS_PLAN_DET PPD,
+       FIN_DOCUMENTO D,FIN_UNION_CUOTA FC,PER_EMPLEADO PE,
+       PER_CARGO PC,GEN_DEPARTAMENTO GD
+ WHERE PR.PMOE_EMPR = 1
+   AND (PR.PMOE_LEGAJO = $P{P_EMPL_COD} OR  $P{P_EMPL_COD} IS NULL)
+   AND (PE.EMPL_DEPARTAMENTO = $P{P_DEPART_COD} OR  $P{P_DEPART_COD} IS NULL)
+   AND (PR.PMOE_NRO = $P{P_PREST_NRO} OR  $P{P_PREST_NRO} IS NULL)
+   AND (PR.PMOE_NRO = $P{P_PREST_NRO} OR  $P{P_PREST_NRO} IS NULL)
+   AND PR.PMOE_EMPR = PP.PMOP_EMPR
+   AND PR.PMOE_LEGAJO = PP.PMOP_LEGAJO
+   AND PR.PMOE_NRO = PP.PMOP_NRO
+   AND PP.PMOP_EMPR = PPD.PMOPD_EMPR
+   AND PP.PMOP_LEGAJO = PPD.PMOPD_LEGAJO
+   AND PP.PMOP_NRO = PPD.PMOPD_NRO
+   AND PPD.PMOPD_VENCIMIENTO = FC.cuo_fec_vto
+   AND PR.PMOE_EMPR = PE.EMPL_EMPRESA
+   AND PR.PMOE_LEGAJO = PE.EMPL_LEGAJO
+   AND PR.PMOE_EMPR = D.DOC_EMPR
+   AND PR.PMOE_CLAVE_FIN = D.DOC_CLAVE
+   AND PR.PMOE_EMPR = FC.cuo_empr
+   AND PR.PMOE_CLAVE_FIN = FC.cuo_clave_doc
+   AND PE.EMPL_EMPRESA = PC.CAR_EMPR
+   AND PE.EMPL_CARGO = PC.CAR_CODIGO
+   AND PE.EMPL_EMPRESA = GD.DPTO_EMPR
+   AND PE.EMPL_DEPARTAMENTO = GD.DPTO_CODIGO) T
+ WHERE (T.SALDADO = $P{P_ESTADO_PRES} OR  $P{P_ESTADO_PRES} IS NULL)
+ ORDER BY T.DEPARTAMENTO,T.LEGAJO,T.NRO_PRESTAMO,T.NRO_CUOTA]]>
+	</queryString>
+	<field name="LEGAJO" class="java.math.BigDecimal"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="APELLIDO" class="java.lang.String"/>
+	<field name="SUCURSAL" class="java.math.BigDecimal"/>
+	<field name="FECHA_INGRESO" class="java.sql.Timestamp"/>
+	<field name="DEPARTAMENTO" class="java.lang.String"/>
+	<field name="CARGO" class="java.lang.String"/>
+	<field name="NRO_PRESTAMO" class="java.math.BigDecimal"/>
+	<field name="MONTO_TOTAL_PRES" class="java.math.BigDecimal"/>
+	<field name="INTERES_ANUAL" class="java.math.BigDecimal"/>
+	<field name="FECHA_DESEMB" class="java.sql.Timestamp"/>
+	<field name="FECHA_PRIMER_VENC" class="java.sql.Timestamp"/>
+	<field name="CANT_CUOTAS" class="java.math.BigDecimal"/>
+	<field name="CAJA_BCO_SALIDA" class="java.math.BigDecimal"/>
+	<field name="DESTINO" class="java.lang.String"/>
+	<field name="NRO_CUOTA" class="java.math.BigDecimal"/>
+	<field name="FECHA_VENC" class="java.sql.Timestamp"/>
+	<field name="CAPITAL" class="java.math.BigDecimal"/>
+	<field name="INTERES" class="java.math.BigDecimal"/>
+	<field name="CUOTA" class="java.math.BigDecimal"/>
+	<field name="SALDO" class="java.math.BigDecimal"/>
+	<field name="SALDADO" class="java.lang.String"/>
+	<variable name="Sum_Cap_Prest" class="java.lang.String" resetType="Column" incrementType="Group" incrementGroup="NRO_PREST" calculation="Sum">
+		<variableExpression><![CDATA[$F{CAPITAL}]]></variableExpression>
+	</variable>
+	<variable name="Sum_Int_Prest" class="java.lang.String" resetType="Group" resetGroup="NRO_PREST" calculation="Sum">
+		<variableExpression><![CDATA[$F{INTERES}]]></variableExpression>
+	</variable>
+	<variable name="Sum_Cuo_Prest" class="java.lang.String" resetType="Group" resetGroup="NRO_PREST" calculation="Sum"/>
+	<variable name="Sum_Sald_Prest" class="java.lang.String" resetType="Group" resetGroup="NRO_PREST" calculation="Sum">
+		<variableExpression><![CDATA[$F{SALDO}]]></variableExpression>
+	</variable>
+	<variable name="CAPITAL_1" class="java.math.BigDecimal" resetType="Group" resetGroup="NRO_PREST" calculation="Sum">
+		<variableExpression><![CDATA[$F{CAPITAL}]]></variableExpression>
+	</variable>
+	<variable name="INTERES_1" class="java.math.BigDecimal" resetType="Group" resetGroup="NRO_PREST" calculation="Sum">
+		<variableExpression><![CDATA[$F{INTERES}]]></variableExpression>
+	</variable>
+	<variable name="CUOTA_1" class="java.math.BigDecimal" resetType="Group" resetGroup="NRO_PREST" calculation="Sum">
+		<variableExpression><![CDATA[$F{CUOTA}]]></variableExpression>
+	</variable>
+	<variable name="SALDO_1" class="java.math.BigDecimal" resetType="Group" resetGroup="NRO_PREST" calculation="Sum">
+		<variableExpression><![CDATA[$F{SALDO}]]></variableExpression>
+	</variable>
+	<variable name="CAPITAL_2" class="java.math.BigDecimal" resetType="Group" resetGroup="Empleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{CAPITAL}]]></variableExpression>
+	</variable>
+	<variable name="INTERES_2" class="java.math.BigDecimal" resetType="Group" resetGroup="Empleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{INTERES}]]></variableExpression>
+	</variable>
+	<variable name="CUOTA_2" class="java.math.BigDecimal" resetType="Group" resetGroup="Empleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{CUOTA}]]></variableExpression>
+	</variable>
+	<variable name="SALDO_2" class="java.math.BigDecimal" resetType="Group" resetGroup="Empleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{SALDO}]]></variableExpression>
+	</variable>
+	<variable name="CAPITAL_3" class="java.math.BigDecimal" resetType="Group" resetGroup="Departamento" calculation="Sum">
+		<variableExpression><![CDATA[$F{CAPITAL}]]></variableExpression>
+	</variable>
+	<variable name="INTERES_3" class="java.math.BigDecimal" resetType="Group" resetGroup="Departamento" calculation="Sum">
+		<variableExpression><![CDATA[$F{INTERES}]]></variableExpression>
+	</variable>
+	<variable name="CUOTA_3" class="java.math.BigDecimal" resetType="Group" resetGroup="Departamento" calculation="Sum">
+		<variableExpression><![CDATA[$F{CUOTA}]]></variableExpression>
+	</variable>
+	<variable name="SALDO_3" class="java.math.BigDecimal" resetType="Group" resetGroup="Departamento" calculation="Sum">
+		<variableExpression><![CDATA[$F{SALDO}]]></variableExpression>
+	</variable>
+	<group name="Departamento">
+		<groupExpression><![CDATA[$F{DEPARTAMENTO}]]></groupExpression>
+		<groupHeader>
+			<band height="17">
+				<staticText>
+					<reportElement x="2" y="2" width="59" height="13" uuid="23a60afc-fe5a-4a88-b722-e03c128510d6"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Departamento:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="61" y="2" width="100" height="13" uuid="f84a5f9c-4fab-41d7-9c90-44165db0e345"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DEPARTAMENTO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="23">
+				<staticText>
+					<reportElement x="84" y="7" width="89" height="13" uuid="5525023c-af4c-4537-9e04-7b92efe03f28"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Total Departamento]]></text>
+				</staticText>
+				<line>
+					<reportElement x="155" y="2" width="399" height="1" uuid="1b3dbcb9-7d6b-4784-8484-c2fdded67b4a"/>
+				</line>
+				<textField pattern="#,##0">
+					<reportElement x="300" y="7" width="52" height="14" uuid="8ae2c93f-5a52-45ca-8dcb-41de9288ac4c"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CAPITAL_3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="373" y="7" width="54" height="14" uuid="c503f65e-3e5a-45f2-a717-8d55a3acbe39"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{INTERES_3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="434" y="7" width="59" height="14" uuid="1548afa4-5037-4081-8674-72c0b9e34622"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CUOTA_3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="493" y="7" width="56" height="14" uuid="1a3d82ee-34c5-4374-a065-67ffe53bea47"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SALDO_3}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Empleado">
+		<groupExpression><![CDATA[$F{LEGAJO}]]></groupExpression>
+		<groupHeader>
+			<band height="17">
+				<staticText>
+					<reportElement x="20" y="0" width="45" height="13" uuid="5290f919-19a0-45ad-9b0a-8e2042e31c23"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Empleado :]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="65" y="0" width="100" height="13" uuid="8832c25d-3c99-4347-9d33-90a8a5902c35"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE} + " " + $F{APELLIDO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="167" y="0" width="31" height="13" uuid="28b7168b-6fe3-4019-9678-00329f57792b"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Cargo:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="196" y="0" width="71" height="13" uuid="15ea51ec-0959-49dd-b789-5165c2af0700"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CARGO}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="377" y="0" width="44" height="13" uuid="8f4231a3-1802-491c-bc48-09666c325382"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA_INGRESO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="302" y="0" width="71" height="13" uuid="edbcb9b3-a3f1-471b-bf4e-e75017eee0cd"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Fecha de Ingreso:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="22">
+				<staticText>
+					<reportElement x="84" y="6" width="71" height="13" uuid="ec976958-17d3-4233-b34f-2ee9fe7df1be"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Total Empleado]]></text>
+				</staticText>
+				<textField pattern="#,##0">
+					<reportElement x="297" y="6" width="54" height="13" uuid="b0a3f982-607d-4204-b68d-430523671835"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CAPITAL_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="373" y="6" width="54" height="13" uuid="2dc04446-f335-42c5-9337-40b3adb7fee1"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{INTERES_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="434" y="6" width="59" height="13" uuid="9d6d03ae-bab7-445a-b83b-afc0b9198e09"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CUOTA_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="493" y="6" width="56" height="13" uuid="9c2d87f4-d3e6-460c-994f-5967194a7712"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SALDO_2}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="155" y="2" width="399" height="1" uuid="b8eb19fb-ef92-43aa-9f74-e6c6ca3e8285"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="NRO_PREST">
+		<groupExpression><![CDATA[$F{NRO_PRESTAMO}]]></groupExpression>
+		<groupHeader>
+			<band height="17">
+				<staticText>
+					<reportElement x="39" y="0" width="45" height="13" uuid="54f39a56-a61e-4ad9-b243-0791391da136"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Pres. Nro. :]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="84" y="0" width="29" height="13" uuid="d3f4e177-3d47-4a26-8e96-727502e897fc"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NRO_PRESTAMO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="179" y="0" width="64" height="13" uuid="bb965e6b-5a1e-436d-899e-0bf14591cab3"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Fecha Desemb. : ]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="242" y="0" width="54" height="13" uuid="9f5d23b0-9054-4b4b-9458-17617bf96833"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA_DESEMB}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="321" y="0" width="34" height="13" uuid="3cebd4bf-71ec-45e3-853b-1ba5ca4eb8ee"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Destino:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="358" y="0" width="192" height="13" uuid="8cd37cc7-9733-4e61-8546-dda38f7f9239"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESTINO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="21">
+				<line>
+					<reportElement x="155" y="2" width="399" height="1" uuid="7b77de1c-233d-4b9e-942c-f290d8b1340a"/>
+				</line>
+				<staticText>
+					<reportElement x="84" y="6" width="71" height="13" uuid="007f2a21-b78f-4f54-940a-ec2c111a584a"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Total Prestamo]]></text>
+				</staticText>
+				<textField pattern="#,##0">
+					<reportElement x="296" y="6" width="54" height="13" uuid="787d9586-d9ca-4ce3-ba2a-34122b046148"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CAPITAL_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="373" y="6" width="54" height="13" uuid="00651ea8-3192-4090-baf5-e6bc702b7957"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{INTERES_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="434" y="6" width="59" height="13" uuid="8f6a60d9-764d-4f88-ba66-6710ca57bfbf"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CUOTA_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="493" y="6" width="57" height="13" uuid="5109e1d5-5ec9-4020-95d4-5269e72bc743"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SALDO_1}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="127" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="2" width="555" height="105" uuid="8de68683-7bea-4940-a4b0-3a4997fbd026"/>
+				<graphicElement>
+					<pen lineWidth="1.25" lineStyle="Solid"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="16" y="81" width="74" height="16" uuid="4ebd45ee-60a4-477f-b35b-521e3a00d32b"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Prestamo N.:]]></text>
+			</staticText>
+			<textField pattern="h.mm a">
+				<reportElement x="450" y="66" width="100" height="16" uuid="5299edbe-2ec2-4b03-bee0-12fbe3ca55ae"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="450" y="50" width="100" height="16" uuid="bcb20037-2aba-4989-9909-073f7a49aa05"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="94" y="49" width="162" height="16" uuid="9c55f08a-f9d3-4f15-8830-085991636014"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DEP_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="94" y="81" width="162" height="16" uuid="d4e876b7-90b5-47e2-8a4b-5c3fe0f0bf31"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PRES_NRO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="94" y="65" width="162" height="16" uuid="c27d457d-dead-4083-ac23-11a272733d4d"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_EMPL_DESC}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="16" y="65" width="74" height="16" uuid="c2dbc713-84fb-4e14-bd14-ddcfec35d06f"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Empleado:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="16" y="49" width="74" height="16" uuid="59113b5a-649b-4953-94c1-e60cbe2aa35f"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Departamento:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="157" y="11" width="277" height="20" uuid="b15f8988-abd3-4b68-873b-7bfc7aeb00a0"/>
+				<textElement>
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[ESTADO DE PRESTAMOS A EMPLEADOS]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="124" width="555" height="1" uuid="b4ffdb0e-c700-46d3-b078-2c80bcf02c5f"/>
+			</line>
+			<staticText>
+				<reportElement x="173" y="113" width="44" height="13" uuid="6c82c714-f167-4ade-93a1-f1fe62dd7b81"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Nro. Cuota ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="242" y="113" width="58" height="13" uuid="361394b9-f05a-47a0-820e-f29d4657c743"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Vencimiento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="320" y="113" width="38" height="13" uuid="6c5a1b69-4cb4-4e13-b7e1-6ab8809e7449"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Capital]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="394" y="113" width="38" height="13" uuid="10e6cb8d-3f22-42b6-adf5-20c60a94719d"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Interes]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="466" y="113" width="38" height="13" uuid="6e926bf2-19fb-4883-83a1-63595261d3ce"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Cuota]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="522" y="113" width="27" height="13" uuid="0ab00ca7-03c7-44f9-b408-e76de12fa965"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Saldo]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField pattern="#,##0">
+				<reportElement x="163" y="2" width="50" height="12" uuid="587e3db9-c3ca-4794-852c-19c3868f7f9a"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_CUOTA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="242" y="2" width="46" height="12" uuid="a6c9e5a5-c90d-4cfe-8374-18185a4f99d9"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_VENC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="305" y="2" width="46" height="12" uuid="e861c7dc-8f79-4610-bd89-fed5da4a100f"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAPITAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="381" y="2" width="46" height="12" uuid="8c44632f-b363-4d8b-a8b6-5fa82119dabe"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAPITAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="447" y="2" width="46" height="12" uuid="ea841acf-fff6-4ff8-89b0-66eb93e7b17b"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUOTA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="503" y="2" width="46" height="12" uuid="cc46d937-90b4-4516-98cd-26166d048c35"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SALDO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="454" y="4" width="100" height="13" uuid="f2fc8f0e-e6a1-4343-9d2e-9863dbedf3a7"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página  "+ $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

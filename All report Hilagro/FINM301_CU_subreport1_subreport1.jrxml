@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINM301_CU_subreport1_subreport1" language="groovy" pageWidth="600" pageHeight="802" columnWidth="600" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d1f2469f-c187-43ae-bc4d-3b2e24e3358e">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_CLAVE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT A.ART_DESC,
+               T.DETA_CANT,
+               NVL(T.DETA_IMP_NETO_MON + T.DETA_IVA_MON / DETA_CANT, 0) PRECIO,
+               NVL(T.DETA_IMP_NETO_MON + T.DETA_IVA_MON, 0) TOTAL,
+               DETA_CLAVE_DOC,
+               DOC_CLAVE,
+               (NVL(NVL(T.DETA_IMP_NETO_MON + T.DETA_IVA_MON / DETA_CANT, 0),
+                    0) / NVL(DETA_CANT, 0)) PRECIO_UNITARIO,DOC_MON
+          FROM STK_DOCUMENTO_DET T, STK_ARTICULO A, FIN_DOCUMENTO C
+         WHERE T.DETA_ART = A.ART_CODIGO
+           AND T.DETA_EMPR = A.ART_EMPR
+           AND C.DOC_CLAVE_STK = T.DETA_CLAVE_DOC
+           AND C.DOC_EMPR = T.DETA_EMPR
+           AND T.DETA_EMPR = 2
+           AND T.DETA_CLAVE_DOC = $P{P_CLAVE}]]>
+	</queryString>
+	<field name="ART_DESC" class="java.lang.String"/>
+	<field name="DETA_CANT" class="java.math.BigDecimal"/>
+	<field name="PRECIO" class="java.math.BigDecimal"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<field name="DETA_CLAVE_DOC" class="java.math.BigDecimal"/>
+	<field name="DOC_CLAVE" class="java.math.BigDecimal"/>
+	<field name="PRECIO_UNITARIO" class="java.math.BigDecimal"/>
+	<field name="DOC_MON" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="333" y="0" width="37" height="10" uuid="7fb178b6-3fa1-4264-aeaf-267da82ccaab"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DETA_CANT}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="406" y="0" width="50" height="10" uuid="f2e63a70-5cae-4a5b-8b0c-956f06e86336"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Precio:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="298" y="0" width="50" height="10" uuid="b111996b-77d8-4be7-8334-abd6fa21bb54"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Cantidad:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="432" y="0" width="50" height="10" uuid="6b31aecf-6022-4635-ab56-8f45a3a4203a"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRECIO_UNITARIO}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{DOC_MON}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<staticText>
+				<reportElement x="517" y="0" width="35" height="10" uuid="80008e91-2712-4a6a-b8b0-d37f9a258d2d"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="541" y="0" width="50" height="10" uuid="7c5454e8-66ca-4f00-8dcf-149472d6dccc"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{DOC_MON}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<staticText>
+				<reportElement x="4" y="0" width="50" height="10" uuid="3f2d4602-a1aa-4def-a077-455c0e519cda"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Articulo:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="54" y="0" width="233" height="10" uuid="a317e8b8-4964-40c0-b760-fd31f16a6099"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ART_DESC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERI088_A" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fe5d50e-21ca-4eaf-b283-7b38dc65a6c3">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="dataset1" uuid="9ea4e65d-8f6b-460c-a910-f75e6cb75727"/>
+	<subDataset name="dataset2" uuid="c9c9ef32-8b35-402a-bd73-494a7d76ab18"/>
+	<parameter name="P_CIUDAD_EMPR" class="java.lang.String"/>
+	<parameter name="P_DEPART_EMPR" class="java.lang.String"/>
+	<parameter name="P_REPUB_EMPR" class="java.lang.String"/>
+	<parameter name="P_GEN_GEN_NOMBRE" class="java.lang.String"/>
+	<parameter name="P_GEN_GEN_DOMIC" class="java.lang.String"/>
+	<parameter name="P_SR_NOMBRE_POSTUL" class="java.lang.String"/>
+	<parameter name="P_NACINALIDAD_POSTUL" class="java.lang.String"/>
+	<parameter name="P_DIR_POSTUL" class="java.lang.String"/>
+	<parameter name="P_NOMBRE_EMPLEADO" class="java.lang.String"/>
+	<parameter name="P_NOMBRE_EMPLEADOR" class="java.lang.String"/>
+	<parameter name="P_CI_EMPLEADO" class="java.lang.String"/>
+	<parameter name="P_CI_EMPLEADOR" class="java.lang.String"/>
+	<parameter name="P_GEN_GEN_CIUDAD" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NOMBRE_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CIUDAD_POST" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLAVE_POST" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CONT_EMPL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT CASE
+         WHEN PP.DOCPOS_EMPR = 1 THEN
+          PP.DOCPOS_NOMBRE || ' ' || PP.DOCPOS_APELLIDO
+         ELSE
+          INITCAP(PP.DOCPOS_NOMBRE || ' ' || PP.DOCPOS_APELLIDO)
+       END NOMBRE_POSTULANTE,
+       DECODE(PP.DOCPOS_SEXO, 'M', 'Masculino', 'F', 'Femenino') SEXO,
+       CASE
+         WHEN PP.DOCPOS_SEXO = 'M' THEN
+          'el sr. '
+         ELSE
+          'la sra. '
+       END TRATAMIENTO_POSTULANTE,
+       CASE
+         WHEN PP.DOCPOS_SEXO = 'M' THEN
+          CASE
+            WHEN PP.DOCPOS_ESTADO_CIV = 'C' THEN
+             'Casado'
+            ELSE
+             'Soltero'
+          END
+         ELSE
+          CASE
+            WHEN PP.DOCPOS_ESTADO_CIV = 'C' THEN
+             'Casada'
+            ELSE
+             'Soltera'
+          END
+       END ESTADO_CIVIL,
+       CASE
+         WHEN PP.DOCPOS_EMPR = 1 THEN
+          GP.PROF_DESC
+         ELSE
+          INITCAP(GP.PROF_DESC)
+       END PROFESION,
+       GPA.PAIS_NACIONALIDAD,
+       CASE
+         WHEN PP.DOCPOS_EMPR = 1 THEN
+          PP.DOCPOS_DOMICILIO
+         ELSE
+          INITCAP(FZ.ZONA_DESC)
+       END DOMICILIO,
+       CASE
+         WHEN PP.DOCPOS_EMPR = 1 THEN
+          PP.DOCPOS_DOMICILIO
+         ELSE
+          INITCAP(PP.DOCPOS_DOMICILIO)
+       END ZONA_DESC,
+       PP.DOCPOS_CEDULA_IDEN,
+    CASE
+         WHEN PP.DOCPOS_SEXO = 'M' THEN
+         'el Sr. '||INITCAP(PP.DOCPOS_NOMBRE || ' ' || PP.DOCPOS_APELLIDO)
+         else
+         'la Sra.'||INITCAP(PP.DOCPOS_NOMBRE || ' ' || PP.DOCPOS_APELLIDO)
+       END NOMBRE_POSTULANTE1
+
+  FROM PER_POSTULANTE_CARGO PP, GEN_PROFESION GP, GEN_PAIS GPA, FAC_ZONA FZ
+ WHERE PP.DOCPOS_EMPR = $P{P_EMPRESA}
+   AND PP.DOCPOS_CLAVE = $P{P_CLAVE_POST}
+   AND PP.DOCPOS_EMPR = GPA.PAIS_EMPR(+)
+   AND PP.DOCPOS_NACI = GPA.PAIS_CODIGO(+)
+   AND PP.DOCPOS_EMPR = GP.PROF_EMPR(+)
+   AND PP.DOCPOS_PROF = GP.PROF_CODIGO(+)
+   AND PP.DOCPOS_EMPR = FZ.ZONA_EMPR(+)
+   AND PP.DOCPOS_ZONA = FZ.ZONA_CODIGO(+)
+UNION ALL
+ SELECT C.EMPL_NOMBRE||' '||C.EMPL_APE NOMBRE,
+        decode(c.empl_sexo,'M', 'Masculino', 'F', 'Femenino')sexo,
+        CASE
+         WHEN empl_sexo = 'M' THEN
+          'el sr. '
+         ELSE
+          'la sra. '
+       END TRATAMIENTO_POSTULANTE,
+     CASE
+         WHEN empl_sexo = 'M' THEN
+          CASE
+            WHEN c.empl_est_civil = 'C' THEN
+             'Casado'
+            ELSE
+             'Soltero'
+          END
+         ELSE
+          CASE
+            WHEN c.empl_est_civil = 'C' THEN
+             'Casada'
+            ELSE
+             'Soltera'
+          END
+       END ESTADO_CIVIL,
+   CASE
+         WHEN a.pcon_empr = 1 THEN
+           P.PROF_DESC
+         ELSE
+          INITCAP(P.PROF_DESC)
+       END PROFESION,
+       S.PAIS_NACIONALIDAD,
+
+       CASE
+         WHEN pcon_empr = 1 THEN
+        l.loc_desc
+         ELSE
+          INITCAP(l.loc_desc)
+       END DOMICILIO,
+
+       CASE
+         WHEN pcon_empr = 1 THEN
+         A.PCON_DIRECCION
+         ELSE
+          INITCAP(A.PCON_DIRECCION)
+       END ZONA_DESC,
+       A.PCON_CI,
+    CASE
+         WHEN empl_sexo = 'M' THEN
+         'el Sr. '||INITCAP(C.EMPL_NOMBRE||' '||C.EMPL_APE)
+         else
+         'la Sra. '||INITCAP(C.EMPL_NOMBRE||' '||C.EMPL_APE)
+       END NOMBRE_POSTULANTE1
+    FROM PER_CONT_SIN_PROSELC A, PER_EMPLEADO C, GEN_PROFESION P, GEN_PAIS S, gen_localidad l
+     WHERE A.PCON_LEGAJO = C.EMPL_LEGAJO
+     AND A.PCON_EMPR = C.EMPL_EMPRESA
+     AND C.EMPL_NACIONALIDAD = S.PAIS_CODIGO(+)
+     AND C.EMPL_EMPRESA = S.PAIS_EMPR(+)
+     AND C.EMPL_PROF = P.PROF_CODIGO(+)
+      AND C.EMPL_EMPRESA = P.PROF_EMPR(+)
+      and c.EMPL_LOCALIDAD = l.loc_codigo(+)
+      and c.EMPL_EMPRESA = l.loc_empr(+)
+     AND A.PCON_EMPR = $P!{P_EMPRESA}
+     AND A.PCON_CODIGO =$P{P_CONT_EMPL}]]>
+	</queryString>
+	<field name="NOMBRE_POSTULANTE" class="java.lang.String"/>
+	<field name="SEXO" class="java.lang.String"/>
+	<field name="TRATAMIENTO_POSTULANTE" class="java.lang.String"/>
+	<field name="ESTADO_CIVIL" class="java.lang.String"/>
+	<field name="PROFESION" class="java.lang.String"/>
+	<field name="PAIS_NACIONALIDAD" class="java.lang.String"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="ZONA_DESC" class="java.lang.String"/>
+	<field name="DOCPOS_CEDULA_IDEN" class="java.math.BigDecimal"/>
+	<field name="NOMBRE_POSTULANTE1" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="51" splitType="Stretch">
+			<staticText>
+				<reportElement x="159" y="8" width="260" height="15" uuid="ce5a3c3e-02d8-4ae9-aa0a-74bdf812f5e6"/>
+				<textElement textAlignment="Center">
+					<font size="9" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[ANEXO I]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="32" y="34" width="504" height="12" uuid="944961d0-6b7b-47dc-87b8-7dbbdc831e3c"/>
+				<textElement textAlignment="Justified">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Entre " +$P{P_NOMBRE_EMPRESA}+ " con domicilio en " + $P{P_CIUDAD_EMPR} + ", representada por el Sr. " + $P{P_NOMBRE_EMPLEADOR} + " en su carácter de Presidente de “LA EMPRESA”, por una parte y " + $F{NOMBRE_POSTULANTE1} + " con C. I. N.º  " + $P{P_CI_EMPLEADO} + "  domiciliado en " + $P{P_DIR_POSTUL} + "  de la ciudad de  " + $F{DOMICILIO} + "  en adelante “El Empleado” o “El Trabajador”, por la otra, convienen en celebrar el presente Anexo, donde se detalla el costo y porcentaje de acuerdo a los destinos realizado que forma parte integrante del contrato individual de trabajo, firmado entre las partes. "]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="25">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="32" y="0" width="501" height="14" uuid="5101dc55-807a-4982-aa40-5f5b884eea66"/>
+				<textElement textAlignment="Justified">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Que de acuerdo a lo convenido en el contrato individual de trabajo firmado entre las partes, se expone en el presente Anexo circunscripto dentro de la libertad contractual y la libre concertación de sus condiciones, atendiendo los factores del mercado, la economía nacional, las altas y bajas del mercado y de precios, licitaciones, condiciones especiales, etc., por lo que las comisiones pactadas en la escala detallada, estarán sujetas a las variaciones de conformidad a cada situación en particular, situaciones de las que dependerá el mantenimiento o no de las mismas. "]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="303">
+			<image scaleImage="RealSize">
+				<reportElement mode="Transparent" x="32" y="4" width="507" height="293" uuid="26f6e64e-fb94-4d21-bf9e-09a3f634837b"/>
+				<imageExpression><![CDATA["Chofer_Anexo.png"]]></imageExpression>
+			</image>
+		</band>
+		<band height="71">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="32" y="0" width="499" height="16" uuid="c6731b5e-6783-4c50-ba91-9fa216db0c94"/>
+				<textElement textAlignment="Justified">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["En prueba de conformidad, previa lectura y ratificación del contenido, firman las partes en dos ejemplares de un mismo tenor y a un solo efecto. "]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="12" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="127" splitType="Stretch">
+			<staticText>
+				<reportElement x="41" y="3" width="218" height="12" uuid="9cabe6db-e833-4009-a934-80b7c2048705"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[...................................................................]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="55" y="42" width="192" height="12" uuid="c761df24-7841-4e14-b388-339196054967"/>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Empleado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="325" y="3" width="220" height="12" uuid="45d9b286-a04a-4ef8-8ba4-56d712e7e27f"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[....................................................................]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="55" y="16" width="192" height="12" uuid="087c558d-9281-4748-89d1-eda79cd268b7"/>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_POSTULANTE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="325" y="16" width="217" height="12" uuid="cbaa372b-3a77-492d-b5a5-3e02818b8b86"/>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_NOMBRE_EMPLEADOR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="55" y="29" width="192" height="12" uuid="7ebaa07d-034a-4e3b-a1b2-e9728c73b18d"/>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["C.I. N°   " + $P{P_CI_EMPLEADO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="335" y="29" width="198" height="12" uuid="28e7f7e6-e7d1-4fe1-9c3f-254f74664c34"/>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["C.I. N°   " + $P{P_CI_EMPLEADOR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="335" y="42" width="198" height="12" uuid="92140449-00bf-4cd1-8920-4855d66b8c6f"/>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Empleador " +$P{P_NOMBRE_EMPRESA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

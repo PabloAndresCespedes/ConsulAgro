@@ -1,0 +1,821 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FACL060" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="48b352e8-9365-4941-8f8d-88548d71c532">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="190"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SESSION_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_MARCA_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_LINEA_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_GRUPO_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_INI" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_FIN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLIENTE_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_MONEDA_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT A.ART_CODIGO,
+       A.ART_DESC,
+       A.LIN_CODIGO,
+       A.LIN_DESC,
+       A.GRUP_CODIGO,
+       A.GRUP_DESC,
+       A.MARC_CODIGO,
+       A.MARC_DESC,
+       SUM(A.DET_PESO_TT) DET_PESO_TT,
+       SUM(A.DET_KG_KANGO) DET_KG_KANGO,
+       SUM(A.DET_CANTIDAD) DET_CANTIDAD,
+       SUM(A.VENTA_LOC) VENTA_TOTAL_LOC,
+       SUM(A.VENTA_MON) VENTA_TOTAL_MON
+  FROM FAC_FACL060_TEMP A
+ WHERE A.SESSION_ID = $P{SESSION_ID}
+   AND A.EMPRESA = $P{P_EMPRESA}
+ GROUP BY A.ART_CODIGO,
+          A.ART_DESC,
+          A.LIN_CODIGO,
+          A.LIN_DESC,
+          A.GRUP_CODIGO,
+          A.GRUP_DESC,
+          A.MARC_CODIGO,
+          A.MARC_DESC
+ ORDER BY 4,6,8]]>
+	</queryString>
+	<field name="ART_CODIGO" class="java.math.BigDecimal"/>
+	<field name="ART_DESC" class="java.lang.String"/>
+	<field name="LIN_CODIGO" class="java.math.BigDecimal"/>
+	<field name="LIN_DESC" class="java.lang.String"/>
+	<field name="GRUP_CODIGO" class="java.math.BigDecimal"/>
+	<field name="GRUP_DESC" class="java.lang.String"/>
+	<field name="MARC_CODIGO" class="java.math.BigDecimal"/>
+	<field name="MARC_DESC" class="java.lang.String"/>
+	<field name="DET_PESO_TT" class="java.math.BigDecimal"/>
+	<field name="DET_KG_KANGO" class="java.math.BigDecimal"/>
+	<field name="DET_CANTIDAD" class="java.math.BigDecimal"/>
+	<field name="VENTA_TOTAL_LOC" class="java.math.BigDecimal"/>
+	<field name="VENTA_TOTAL_MON" class="java.math.BigDecimal"/>
+	<variable name="PESO_TOTAL2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DET_PESO_TT}]]></variableExpression>
+	</variable>
+	<variable name="KG_GANCHO2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DET_KG_KANGO}]]></variableExpression>
+	</variable>
+	<variable name="TT_GRUP" class="java.math.BigDecimal" resetType="Group" resetGroup="GRUPO" calculation="Sum">
+		<variableExpression><![CDATA[$F{DET_PESO_TT}]]></variableExpression>
+	</variable>
+	<variable name="TT_KG_GANCHO_GRUP" class="java.math.BigDecimal" resetType="Group" resetGroup="GRUPO" calculation="Sum">
+		<variableExpression><![CDATA[$F{DET_KG_KANGO}]]></variableExpression>
+	</variable>
+	<variable name="TT_RENDIMIENTO_GRUP" class="java.math.BigDecimal" resetType="Group" resetGroup="GRUPO">
+		<variableExpression><![CDATA[($V{TT_KG_GANCHO_GRUP}/$V{TT_GRUP}*100)]]></variableExpression>
+	</variable>
+	<variable name="TT_CANT_GRUP" class="java.math.BigDecimal" resetType="Group" resetGroup="GRUPO" calculation="Sum">
+		<variableExpression><![CDATA[$F{DET_CANTIDAD}]]></variableExpression>
+	</variable>
+	<variable name="TT_VENTASLOC_GRUP" class="java.math.BigDecimal" resetType="Group" resetGroup="GRUPO" calculation="Sum">
+		<variableExpression><![CDATA[$F{VENTA_TOTAL_LOC}]]></variableExpression>
+	</variable>
+	<variable name="TT_VENTASMON_GRUP" class="java.math.BigDecimal" resetType="Group" resetGroup="GRUPO" calculation="Sum">
+		<variableExpression><![CDATA[$F{VENTA_TOTAL_MON}]]></variableExpression>
+	</variable>
+	<variable name="TT_PROMGS_GRUP" class="java.math.BigDecimal" resetType="Group" resetGroup="GRUPO">
+		<variableExpression><![CDATA[($V{TT_VENTASLOC_GRUP}/$V{TT_CANT_GRUP})]]></variableExpression>
+	</variable>
+	<variable name="TT_PROMUSD_GRUP" class="java.math.BigDecimal" resetType="Group" resetGroup="GRUPO">
+		<variableExpression><![CDATA[($V{TT_VENTASMON_GRUP}/$V{TT_CANT_GRUP})]]></variableExpression>
+	</variable>
+	<variable name="TT_LIN" class="java.math.BigDecimal" resetType="Group" resetGroup="LINEA" calculation="Sum">
+		<variableExpression><![CDATA[$F{DET_PESO_TT}]]></variableExpression>
+	</variable>
+	<variable name="TT_KG_GANCHO_LIN" class="java.math.BigDecimal" resetType="Group" resetGroup="LINEA" calculation="Sum">
+		<variableExpression><![CDATA[$F{DET_KG_KANGO}]]></variableExpression>
+	</variable>
+	<variable name="TT_RENDIMIENTO_LIN" class="java.math.BigDecimal" resetType="Group" resetGroup="LINEA">
+		<variableExpression><![CDATA[($V{TT_KG_GANCHO_LIN}/$V{TT_LIN}*100)]]></variableExpression>
+	</variable>
+	<variable name="TT_CANT_LIN" class="java.math.BigDecimal" resetType="Group" resetGroup="LINEA" calculation="Sum">
+		<variableExpression><![CDATA[$F{DET_CANTIDAD}]]></variableExpression>
+	</variable>
+	<variable name="TT_VENTASLOC_LIN" class="java.math.BigDecimal" resetType="Group" resetGroup="LINEA" calculation="Sum">
+		<variableExpression><![CDATA[$F{VENTA_TOTAL_LOC}]]></variableExpression>
+	</variable>
+	<variable name="TT_VENTASMON_LIN" class="java.math.BigDecimal" resetType="Group" resetGroup="MARCA">
+		<variableExpression><![CDATA[$F{VENTA_TOTAL_MON}]]></variableExpression>
+	</variable>
+	<variable name="TT_PROMGS_LIN" class="java.math.BigDecimal" resetType="Group" resetGroup="LINEA">
+		<variableExpression><![CDATA[($V{TT_VENTASLOC_LIN}/$V{TT_CANT_LIN})]]></variableExpression>
+	</variable>
+	<variable name="TT_PROMUSD_LIN" class="java.math.BigDecimal" resetType="Group" resetGroup="LINEA">
+		<variableExpression><![CDATA[($V{TT_VENTASMON_LIN}/$V{TT_CANT_LIN})]]></variableExpression>
+	</variable>
+	<variable name="TT_MARC" class="java.math.BigDecimal" resetType="Group" resetGroup="MARCA" calculation="Sum">
+		<variableExpression><![CDATA[$F{DET_PESO_TT}]]></variableExpression>
+	</variable>
+	<variable name="TT_KG_GANCHO_MARC" class="java.math.BigDecimal" resetType="Group" resetGroup="MARCA" calculation="Sum">
+		<variableExpression><![CDATA[$F{DET_KG_KANGO}]]></variableExpression>
+	</variable>
+	<variable name="TT_RENDIMIENTO_MARC" class="java.math.BigDecimal" resetType="Group" resetGroup="MARCA">
+		<variableExpression><![CDATA[($V{TT_KG_GANCHO_MARC}/$V{TT_MARC}*100)]]></variableExpression>
+	</variable>
+	<variable name="TT_CANT_MARC" class="java.math.BigDecimal" resetType="Group" resetGroup="MARCA" calculation="Sum">
+		<variableExpression><![CDATA[$F{DET_CANTIDAD}]]></variableExpression>
+	</variable>
+	<variable name="TT_VENTASLOC_MARC" class="java.math.BigDecimal" resetType="Group" resetGroup="MARCA" calculation="Sum">
+		<variableExpression><![CDATA[$F{VENTA_TOTAL_LOC}]]></variableExpression>
+	</variable>
+	<variable name="TT_VENTASMON_MARC" class="java.math.BigDecimal" resetType="Group" resetGroup="MARCA" calculation="Sum">
+		<variableExpression><![CDATA[$F{VENTA_TOTAL_MON}]]></variableExpression>
+	</variable>
+	<variable name="TT_PROMGS_MARC" class="java.math.BigDecimal" resetType="Group" resetGroup="MARCA">
+		<variableExpression><![CDATA[($V{TT_VENTASLOC_MARC}/$V{TT_CANT_MARC})]]></variableExpression>
+	</variable>
+	<variable name="TT_PROMUSD_MARC" class="java.math.BigDecimal" resetType="Group" resetGroup="MARCA">
+		<variableExpression><![CDATA[($V{TT_VENTASMON_MARC}/$V{TT_CANT_MARC})]]></variableExpression>
+	</variable>
+	<variable name="TT_GENERAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DET_PESO_TT}]]></variableExpression>
+	</variable>
+	<variable name="TT_KG_GANCHO_GENERAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DET_KG_KANGO}]]></variableExpression>
+	</variable>
+	<variable name="TT_RENDIMIENTO_GENERAL" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[($V{TT_KG_GANCHO_GENERAL}/$V{TT_GENERAL}*100)]]></variableExpression>
+	</variable>
+	<variable name="TT_CANTIDAD_GENERAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DET_CANTIDAD}]]></variableExpression>
+	</variable>
+	<variable name="TT_VENTASLOC_GENERAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{VENTA_TOTAL_LOC}]]></variableExpression>
+	</variable>
+	<variable name="TT_VENTASMON_GENERAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{VENTA_TOTAL_MON}]]></variableExpression>
+	</variable>
+	<variable name="TT_PROMGS_GENERAL" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[($V{TT_VENTASLOC_GENERAL}/$V{TT_CANTIDAD_GENERAL})]]></variableExpression>
+	</variable>
+	<variable name="TT_PROMUSD_GENERAL" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[($V{TT_VENTASMON_GENERAL}/$V{TT_CANTIDAD_GENERAL})]]></variableExpression>
+	</variable>
+	<group name="MARCA">
+		<groupExpression><![CDATA[$F{MARC_CODIGO}]]></groupExpression>
+		<groupHeader>
+			<band height="21">
+				<staticText>
+					<reportElement x="10" y="5" width="40" height="14" uuid="ed4d9618-d4e1-4c3a-af87-8cd19418cb3f"/>
+					<textElement>
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Marca : ]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="59" y="5" width="269" height="14" uuid="e1f8be9e-f6c7-42aa-a321-ed6ea44c347d"/>
+					<textElement>
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{MARC_CODIGO}+'  '+$F{MARC_DESC}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<staticText>
+					<reportElement x="10" y="0" width="68" height="14" uuid="24d4d996-a44f-40e2-8071-cb9e12db9027"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Marca:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="69" y="0" width="269" height="14" uuid="f1965155-479e-4824-810b-c1113333ff01"/>
+					<textElement>
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{MARC_DESC}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="270" y="2" width="533" height="1" uuid="3fc5b59e-b49a-4097-b1cd-a29839e34b19"/>
+				</line>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="296" y="4" width="88" height="13" uuid="44345abb-ac3b-486b-8644-b818c7ffb51c"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_MARC}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="394" y="4" width="58" height="13" uuid="3c980743-483d-44bd-b7a0-6c1aa029a9ae"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_KG_GANCHO_MARC}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.0" isBlankWhenNull="true">
+					<reportElement x="470" y="4" width="45" height="13" uuid="f3e0678a-0847-4571-8634-6200c9d1fc27"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_RENDIMIENTO_MARC}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="false">
+					<reportElement x="215" y="4" width="100" height="13" uuid="f60748e5-da16-4bf4-98db-4d040bf9c325"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_CANT_MARC}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="538" y="4" width="77" height="13" uuid="fcd747f6-1f45-4984-ac57-a55c1fb41105"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_VENTASLOC_MARC}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="619" y="4" width="65" height="13" uuid="90576229-4358-4789-a8a6-b6e047e76b5a"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_VENTASMON_MARC}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="684" y="4" width="60" height="13" uuid="058c55b2-a2cf-4ba4-a46f-acc0529c804c"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_PROMGS_MARC}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="744" y="4" width="57" height="13" uuid="00975a61-91dd-4adb-94e7-1294e394f997"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_PROMUSD_MARC}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="LINEA">
+		<groupExpression><![CDATA[$F{LIN_CODIGO}]]></groupExpression>
+		<groupHeader>
+			<band height="18">
+				<textField isBlankWhenNull="true">
+					<reportElement x="72" y="3" width="256" height="13" uuid="7c7f55d5-7348-4bba-9fef-9388dfd56ffb"/>
+					<textElement>
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{LIN_CODIGO}+'  '+$F{LIN_DESC}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="23" y="3" width="40" height="13" uuid="7e21f875-3299-4356-bd3a-60919147f199"/>
+					<textElement>
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Linea : ]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="18">
+				<textField isBlankWhenNull="true">
+					<reportElement x="76" y="0" width="256" height="13" uuid="5cd13a83-31cd-4fb1-94d9-d8612e924105"/>
+					<textElement>
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{LIN_DESC}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="23" y="0" width="55" height="13" uuid="91c48781-4664-4918-b97a-5c3d97e29d87"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total linea:]]></text>
+				</staticText>
+				<line>
+					<reportElement x="270" y="2" width="533" height="1" uuid="35bc02cb-da4d-4bdd-b129-211661bc94a0"/>
+				</line>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="296" y="3" width="88" height="13" uuid="75ce7043-4876-443d-b64e-f624ce337224"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_LIN}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="394" y="3" width="58" height="13" uuid="dc342d88-80ec-4406-a73b-3ad689f43e3e"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_KG_GANCHO_LIN}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.0" isBlankWhenNull="true">
+					<reportElement x="470" y="3" width="45" height="13" uuid="ec869ab1-c855-49aa-b74c-89f22ee4b0a0"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_RENDIMIENTO_LIN}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="false">
+					<reportElement x="227" y="3" width="88" height="13" uuid="af8b462f-8c74-46b7-b666-0622083aa7db"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_CANT_LIN}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="619" y="3" width="65" height="13" uuid="0c847aa4-bc7c-4e03-91da-b78df05ca6d1"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_VENTASMON_LIN}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="538" y="3" width="77" height="13" uuid="46c7a0fb-266a-4d3c-ba1b-24066da95c83"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_VENTASLOC_LIN}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="684" y="3" width="60" height="13" uuid="b190914a-c431-43a6-8bad-e4d3a4697879"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_PROMGS_LIN}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="744" y="3" width="57" height="13" uuid="e7ea42a3-1e9d-452c-bb82-3e40d9c5ca10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_PROMUSD_LIN}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="GRUPO">
+		<groupExpression><![CDATA[$F{GRUP_CODIGO}]]></groupExpression>
+		<groupHeader>
+			<band height="23">
+				<staticText>
+					<reportElement x="38" y="5" width="40" height="13" uuid="1126d556-2349-4811-ad7d-352ffdfc4e05"/>
+					<textElement>
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Grupo:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="87" y="5" width="241" height="13" uuid="427c4491-ae4f-4c46-9742-8cd56ce20070"/>
+					<textElement>
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{GRUP_CODIGO}+'  '+$F{GRUP_DESC}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="17">
+				<staticText>
+					<reportElement x="38" y="0" width="62" height="13" uuid="f52edd0e-a659-459a-8406-2a9f0ad902b7"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Grupo:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="98" y="0" width="241" height="13" uuid="8269e97d-7b0f-4e50-9d4d-7b32a83a8f8b"/>
+					<textElement>
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{GRUP_DESC}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="269" y="1" width="534" height="1" uuid="5b31b0d3-b57c-44f7-bc40-f75dc509ba66"/>
+				</line>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="296" y="2" width="88" height="13" uuid="334916ef-72b0-4be4-b54c-ec33b381dd1f"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_GRUP}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="393" y="2" width="59" height="13" uuid="e096e75b-5cd9-46c8-940c-d3f67f65c24a"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_KG_GANCHO_GRUP}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.0" isBlankWhenNull="true">
+					<reportElement x="470" y="2" width="45" height="13" uuid="8f36c227-b5bb-450a-8307-3a5ae51b8178"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_RENDIMIENTO_GRUP}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="false">
+					<reportElement x="227" y="2" width="88" height="13" uuid="15434ac6-de5b-4e50-954d-cc9062cdad18"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_CANT_GRUP}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="538" y="2" width="77" height="13" uuid="77eee8b3-2614-415d-9d34-d73019f343c9"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_VENTASLOC_GRUP}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="619" y="2" width="65" height="13" uuid="266c2b3f-c3a5-46fa-93d0-2134a1d050c5"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_VENTASMON_GRUP}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="684" y="2" width="60" height="13" uuid="a0cc77c7-18c2-4e03-8b1a-66fb4d353412"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_PROMGS_GRUP}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="744" y="2" width="58" height="13" uuid="77522f6a-c62d-4a6f-a0d8-2ff40f5b6b94"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TT_PROMUSD_GRUP}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="85" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="802" height="31" uuid="7b06d26a-4a62-4523-a950-512e53de1f92"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE ACUERDO A LA FACTURACIÓN]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy HH.mm.ss" isBlankWhenNull="true">
+				<reportElement x="701" y="11" width="100" height="20" uuid="da13baa8-0894-4293-84c3-ce8479a5b42b"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="13" y="34" width="40" height="14" uuid="ee21d25f-6ead-4985-9a38-09bc8e792d45"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Marca : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="13" y="51" width="40" height="13" uuid="b2808fdf-0c2f-4734-8ad1-f488ac1453ef"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Linea : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="13" y="69" width="40" height="13" uuid="e7499b89-0e66-4c8c-89cf-732a98346198"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Grupo:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="62" y="34" width="250" height="14" uuid="650884a7-a9e9-4cd1-918e-a286ccc2cf89"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_MARCA_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="62" y="51" width="250" height="13" uuid="cc0b58aa-2055-46ee-9265-7cce650d3d88"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_LINEA_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="62" y="69" width="250" height="13" uuid="6f9b718e-102a-4200-90e4-b59d98eaa2f5"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_GRUPO_DESC}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="482" y="34" width="40" height="14" uuid="111ffea0-7e2c-467a-b7ae-e4ab7d6ca894"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Desde :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="584" y="34" width="40" height="14" uuid="cf678990-aae3-4679-bbec-e2938bc09c87"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[al]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="522" y="34" width="63" height="14" uuid="5a2af0c4-c4a3-4745-b9dd-037288d9c07b"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FECHA_INI}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="603" y="34" width="74" height="14" uuid="d146dc09-905e-44f2-bc1f-fa39dd61f525"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FECHA_FIN}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="4" y="11" width="116" height="20" uuid="365b0519-2b7c-4204-83df-f118826ad13f"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_EMPRESA_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="527" y="51" width="276" height="13" uuid="3f3130d6-f61c-43bf-a769-d04ad5a67737"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_CLIENTE_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="528" y="69" width="273" height="13" uuid="ff4e2775-0ffa-4ccb-87b2-f2f596ade746"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_MONEDA_DESC}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="482" y="51" width="38" height="13" uuid="967bf005-12a0-49cc-b5cd-665fdd19ea7f"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cliente:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="482" y="69" width="43" height="13" uuid="a9a260e9-b3df-4723-9875-f03efc0f15f3"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Moneda:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="27" splitType="Stretch">
+			<staticText>
+				<reportElement x="62" y="5" width="125" height="20" uuid="da1489a3-8354-42ac-845f-0bb9ac325978"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ARTICULO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="340" y="5" width="68" height="20" uuid="0563deeb-ea2d-45b3-8fd2-22bf40403e32"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[KG_TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="405" y="5" width="67" height="20" uuid="8151fdb7-56fc-4ee8-89ef-b8a64ae837a5"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[KG_GANCHO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="468" y="5" width="87" height="20" uuid="132d228d-c242-4bc8-9b85-e25b92050b02"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[%RENDIMIENTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="5" width="100" height="20" uuid="a399ea62-8866-4f61-b622-bdb6289466a6"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CODIGO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="23" width="802" height="1" uuid="55a49f1e-2885-4858-9bbb-869799f7c741"/>
+			</line>
+			<staticText>
+				<reportElement x="277" y="5" width="68" height="20" uuid="5aa77d5b-d50e-4698-bac3-8edc87c72765"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CANTIDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="549" y="0" width="73" height="25" uuid="8fce50b9-7c00-41d6-afef-15d331dfbd0e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VENTAS TOTAL GS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="701" y="5" width="59" height="20" uuid="a16f715a-3c37-4c2e-a9d7-cfcfc11f6635"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROM GS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="755" y="5" width="49" height="20" uuid="682d8622-908e-4df0-a03f-b8ebf1e09c6c"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROM USD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="624" y="0" width="73" height="25" uuid="792c9799-3c73-4df4-9639-bd4534fc9380"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VENTAS TOTAL USD]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="29">
+			<textField isBlankWhenNull="true">
+				<reportElement x="38" y="4" width="222" height="20" uuid="fccbc081-74f3-4c13-a619-0ad9d647ecef"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ART_DESC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="330" y="4" width="54" height="20" uuid="bf21da31-f663-45c7-917d-5a481ffde16e"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DET_PESO_TT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="393" y="4" width="59" height="20" uuid="f5e4f2ec-100a-47a2-8098-2a3e82d4e58d"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DET_KG_KANGO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.0" isBlankWhenNull="true">
+				<reportElement x="456" y="4" width="59" height="20" uuid="6fc488f5-100f-4403-9102-9b5a2f3d9392"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{DET_KG_KANGO}/$F{DET_PESO_TT}*100)]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="261" y="4" width="54" height="20" uuid="26ecc077-c610-431f-920d-ce72ce9d529f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DET_CANTIDAD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="556" y="4" width="59" height="20" uuid="71f33462-ee05-4f2f-aa47-19c99d5cffdc"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VENTA_TOTAL_LOC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="625" y="4" width="59" height="20" uuid="27c5d378-df0e-436b-8873-a7c3a8162661"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VENTA_TOTAL_MON}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="741" y="4" width="61" height="20" uuid="1b14f5c7-142b-47c6-855b-59b0dd5dc1e5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{VENTA_TOTAL_MON}/$F{DET_CANTIDAD})]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="685" y="4" width="59" height="20" uuid="3c9fa849-4ed9-4c93-b302-85e24eda0e81"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{VENTA_TOTAL_LOC}/$F{DET_CANTIDAD})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="28" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="6" width="75" height="14" uuid="bfc1f285-a0dc-4743-989c-4d9ee83b1d59"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total General:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="269" y="2" width="533" height="1" uuid="ab5f37f2-76dd-47d2-98fc-38a5f375a2da"/>
+			</line>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="296" y="6" width="88" height="13" uuid="bda36a4a-dbac-490e-95fc-96365933a9a1"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TT_GENERAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="394" y="6" width="58" height="13" uuid="66e7e7b3-21f4-4d3e-b6d9-ca9f9b2bdc1c"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TT_KG_GANCHO_GENERAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.0" isBlankWhenNull="true">
+				<reportElement x="470" y="6" width="45" height="13" uuid="ca32f6bf-8a03-4ec9-b9c5-1a85ea0be50c"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TT_RENDIMIENTO_GENERAL}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="215" y="6" width="100" height="13" uuid="b3ba6c46-ca85-4a27-927f-81d88c475a0a"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TT_CANTIDAD_GENERAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="538" y="6" width="77" height="13" uuid="9ec47961-7ce9-4cd2-92a5-cbfd8ed00cce"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TT_VENTASLOC_GENERAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="619" y="6" width="65" height="13" uuid="e3046027-8c4f-42bc-88b8-204a5252e25f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TT_VENTASMON_GENERAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="684" y="6" width="60" height="13" uuid="ab9d1fe3-8dd5-4ff6-8c5b-b0a87628413a"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TT_PROMGS_GENERAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="744" y="6" width="57" height="13" uuid="322d9e08-02a2-4bff-a1b4-0481803781a9"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TT_PROMUSD_GENERAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

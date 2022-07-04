@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERC002T" language="groovy" pageWidth="595" pageHeight="842" columnWidth="520" leftMargin="19" rightMargin="56" topMargin="20" bottomMargin="20" uuid="28fa673e-caf8-41ae-8087-cd00795067d2">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="192"/>
+	<property name="net.sf.jasperreports.export.xls.one.page.per.sheet" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FORMATO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_DESDE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_HASTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USUARIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_WHERE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[" AND 1=1 "]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPLEADO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLAVE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT C.RDE_CLAVE,
+       DECODE(RDE_TIPO_DESVINCULACION,
+              1,
+              'RENUNCIA',
+              2,
+              'DESPIDO INJUSTIFICADO',
+              3,
+              'DESPIDO JUSTIFICADO',
+              4,
+              'TERMINO DE CONTRATO') MOTIVO_SALIDA,
+       EMPL_LEGAJO,
+       A.EMPL_DOC_IDENT,
+       REPLACE( REPLACE( UPPER(CASE
+         WHEN DES_CON_DESC = 'AGUINALDO' THEN
+          'AGUINALDO PROPORCIONAL ' || TO_CHAR(RDE_FECHA, 'YYYY')
+         WHEN  DES_CON_DESC   = 'SALARIO' THEN
+          'SALARIO ' || TO_CHAR(RDE_FECHA,'Month YYYY','nls_date_language=spanish')
+           WHEN  DES_CON_COD   = 4 THEN
+          DES_CON_DESC||' 9%'
+         WHEN  DES_CON_COD   = 31 THEN
+          DES_CON_DESC||' 5%'
+          ELSE
+            DES_CON_DESC
+          END),'(-)',''),'(+)','')RDED_DESCRIPCION,
+          CASE WHEN PCON_IND_DBCR= 'C' AND A.PCON_FIN_TMOV <> 31 THEN
+            'Crédito'
+            ELSE
+            'Debito'
+            END TIPO,
+       CASE WHEN PCON_IND_DBCR= 'C' AND A.PCON_FIN_TMOV <> 31 THEN
+            'Crédito'
+            ELSE
+            'Debito'
+            END TIPO_DBCR,
+       SUM(T.DES_IMPORTE) IMPORTE,
+       EMPL_NOMBRE||' '||EMPL_APE NOMBRE,
+       EMPL_FEC_INGRESO FECHA_INGRESO,
+       RDE_FECHA FECHA_SALIDA,
+     --  LOWER(GENERAL.FP_CONV_NRO_TXT(V_NUMERO => TOTAL_NETO, V_MONEDA => 1)) || ')' TOTAL_EN_LETRAS,
+       rde_antiguedad  ANTIGUEDAD,
+      SUM(CASE WHEN PCON_IND_DBCR= 'C' AND A.PCON_FIN_TMOV <> 31 THEN
+        DES_IMPORTE
+        END)  CREDITO,
+       SUM(CASE WHEN (PCON_IND_DBCR= 'C' AND A.PCON_FIN_TMOV =  31) OR PCON_IND_DBCR = 'D' THEN
+                  DES_IMPORTE
+        END ) DEBITO,
+      replace(LTRIM(RTRIM(TO_CHAR(TRUNC(SUM(SUM(CASE WHEN PCON_IND_DBCR = 'D' OR A.PCON_FIN_TMOV =  31 THEN -DES_IMPORTE ELSE DES_IMPORTE END )) OVER (PARTITION BY EMPL_LEGAJO)),'999G999G990'))),',','.'),
+     '(Guaranies ' ||
+       LOWER(GENERAL.FP_CONV_NRO_TXT(V_NUMERO => TRUNC(SUM(SUM(CASE WHEN PCON_IND_DBCR = 'D'   THEN -DES_IMPORTE ELSE DES_IMPORTE END )) OVER (PARTITION BY EMPL_LEGAJO)) , V_MONEDA => 1)) || ')' TOTAL_EN_LETRAS,
+      CASE WHEN DES_CANT_PRO IS NOT NULL THEN
+           DES_DIAS
+           WHEN DES_CON_COD = 2 THEN
+             NULL
+           ELSE
+           DES_DIAS
+          END||
+          CASE  WHEN DES_CON_COD = 2 THEN
+             NULL
+        WHEN NVL(DES_DIAS,0)=1 THEN
+            ' DIA'
+        WHEN NVL(DES_DIAS,0)>1 THEN
+            ' DIAS'
+
+         END DES_DIAS,
+ CASE WHEN SUC_CODIGO IN (1,5) THEN
+         'Dr. Juan E. Estigarribia'
+WHEN SUC_CODIGO IN (10) THEN
+         'Caacupé'
+
+ WHEN SUC_CODIGO IN (6) THEN
+	'Santa Rosa del Aguaray'
+          ELSE
+
+          initcap(S.SUC_LOCALIDAD)
+         END||', '||to_char(rde_fecha,'DD')||' de '||LTRIM(RTRIM(to_char(rde_fecha,'month','nls_date_language=spanish')))||' del '||to_char(rde_fecha,'yyyy') fecha_desc,
+'Gs.' mon,
+RDE_FAC_CALIDAD EN_CALIDAD
+  FROM PER_DESVINCULACION_DETALLE T, PER_CONCEPTO A, PER_REGISTRO_DESVINC_EMPL C, PER_EMPLEADO A, GEN_SUCURSAL S
+ WHERE T.DES_EMPR = A.PCON_EMPR
+   AND T.DES_CON_COD = A.PCON_CLAVE
+   AND T.DES_CODIGO = C.RDE_CLAVE
+   AND T.DES_EMPR = C.RDE_EMPR
+   AND C.RDE_EMPLEADO = A.EMPL_LEGAJO
+   AND C.RDE_EMPR = A.EMPL_EMPRESA
+   AND C.RDE_SUCURSAL = S.SUC_CODIGO
+   AND C.RDE_EMPR = S.SUC_EMPR
+   AND T.DES_EMPR =$P{P_EMPRESA}
+   AND T.DES_LEGAJO =$P{P_EMPLEADO}
+   AND T.DES_CODIGO =$P{P_CLAVE}
+   AND T.DES_TIPO NOT IN (12,20,4)
+GROUP BY
+SUC_CODIGO,
+   C.RDE_CLAVE,
+       DECODE(RDE_TIPO_DESVINCULACION,
+              1,
+              'RENUNCIA',
+              2,
+              'DESPIDO INJUSTIFICADO',
+              3,
+              'DESPIDO JUSTIFICADO',
+              4,
+              'TERMINO DE CONTRATO'),
+       EMPL_LEGAJO,
+       EMPL_DOC_IDENT,
+SUC_LOCALIDAD,
+          REPLACE( UPPER(CASE
+         WHEN DES_CON_DESC = 'AGUINALDO' THEN
+          'AGUINALDO PROPORCIONAL ' || TO_CHAR(RDE_FECHA, 'YYYY')
+         WHEN  DES_CON_DESC   = 'SALARIO' THEN
+          'SALARIO ' || TO_CHAR(RDE_FECHA,'Month YYYY','nls_date_language=spanish')
+           WHEN  DES_CON_COD   = 4 THEN
+          DES_CON_DESC||' 9%'
+         WHEN  DES_CON_COD   = 31 THEN
+          DES_CON_DESC||' 5%'
+          ELSE
+            DES_CON_DESC
+          END),'(-)','') ,
+       EMPL_NOMBRE||' '||EMPL_APE ,
+       EMPL_FEC_INGRESO ,
+       RDE_FECHA ,
+     --  LOWER(GENERAL.FP_CONV_NRO_TXT(V_NUMERO => TOTAL_NETO, V_MONEDA => 1)) || ')' TOTAL_EN_LETRAS,
+       rde_antiguedad  ,
+ CASE WHEN PCON_IND_DBCR= 'C' AND A.PCON_FIN_TMOV <> 31 THEN
+            'Crédito'
+            ELSE
+            'Debito'
+            END,
+   CASE WHEN
+  DES_CANT_PRO IS NOT NULL THEN
+           DES_DIAS
+          WHEN DES_CON_COD = 2 THEN
+             NULL
+           ELSE
+           DES_DIAS
+          END||
+          CASE  WHEN DES_CON_COD = 2 THEN
+             NULL
+         WHEN NVL(DES_DIAS,0)=1 THEN
+            ' DIA'
+        WHEN NVL(DES_DIAS,0)>1 THEN
+            ' DIAS'
+         END,
+PCON_IND_DBCR,
+PCON_CLAVE,
+RDE_FAC_CALIDAD
+ORDER BY 6,PCON_CLAVE]]>
+	</queryString>
+	<field name="RDE_CLAVE" class="java.math.BigDecimal"/>
+	<field name="MOTIVO_SALIDA" class="java.lang.String"/>
+	<field name="EMPL_LEGAJO" class="java.math.BigDecimal"/>
+	<field name="EMPL_DOC_IDENT" class="java.math.BigDecimal"/>
+	<field name="RDED_DESCRIPCION" class="java.lang.String"/>
+	<field name="TIPO" class="java.lang.String"/>
+	<field name="TIPO_DBCR" class="java.lang.String"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="FECHA_INGRESO" class="java.util.Date"/>
+	<field name="FECHA_SALIDA" class="java.util.Date"/>
+	<field name="ANTIGUEDAD" class="java.lang.String"/>
+	<field name="CREDITO" class="java.math.BigDecimal"/>
+	<field name="DEBITO" class="java.math.BigDecimal"/>
+	<field name="TOTAL_NETO" class="java.lang.String"/>
+	<field name="TOTAL_EN_LETRAS" class="java.lang.String"/>
+	<field name="DES_DIAS" class="java.lang.String"/>
+	<field name="FECHA_DESC" class="java.lang.String"/>
+	<field name="MON" class="java.lang.String"/>
+	<field name="EN_CALIDAD" class="java.lang.String"/>
+	<variable name="V_SUBTOTAL_CONCEPTOS" class="java.lang.Double" resetType="Group" resetGroup="TIPO" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<variable name="V_TOTAL_CREDITO" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{CREDITO}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="V_TOTAL_DEBITO" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{DEBITO}]]></variableExpression>
+	</variable>
+	<group name="TIPO">
+		<groupExpression><![CDATA[$F{TIPO}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<textField isBlankWhenNull="true">
+					<reportElement x="19" y="1" width="176" height="13" uuid="bf58da52-8f55-45bc-aabe-e649afe31535"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TIPO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="16">
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="377" y="3" width="103" height="13" uuid="f815bdba-5793-4416-8e75-77903c7be5db"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_SUBTOTAL_CONCEPTOS}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="197" y="3" width="117" height="13" uuid="086f8190-6f55-4d52-8942-a5166c51233e"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Total "+$F{TIPO}+" Gs. "]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="377" y="1" width="103" height="1" uuid="85a7b55f-7046-441f-ac3f-60443153d394"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="169">
+			<staticText>
+				<reportElement x="20" y="35" width="483" height="20" uuid="5a834e0d-9caa-4b43-80ba-bb79e4640bf2"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="12" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[LIQUIDACIÓN FINAL POR FALLECIMIENTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="21" y="79" width="88" height="13" uuid="5d2ddeac-888a-435b-9c02-f47e8c200bc2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Nombre y Apellido:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="21" y="92" width="88" height="13" uuid="3d2744e4-3041-4872-a9bf-b758aa099d49"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[C.I.N°:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="21" y="118" width="88" height="13" uuid="ff2a5455-04fb-4ff8-8046-75361db5b6b5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Salida:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="21" y="105" width="88" height="13" uuid="27c7309d-7b94-443d-b72a-a7b0ff9ef4bf"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Entrada:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="21" y="131" width="88" height="13" uuid="d17de262-40ce-4799-b9c0-378a740b29f0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Motivo de Salida:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="21" y="144" width="88" height="13" uuid="39ec95bc-60ee-47cf-b9fd-c602078432d9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Antigüedad:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="109" y="131" width="287" height="13" uuid="25f7e6fa-5200-4d5c-ab47-147b741c5b86"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MOTIVO_SALIDA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="109" y="91" width="287" height="14" uuid="e7488b27-4a83-45d2-8ef7-b807a5bfe27d"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EMPL_DOC_IDENT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="109" y="105" width="287" height="13" uuid="f1701872-85db-43dd-8be3-b1c4fc0aff38"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_INGRESO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="109" y="118" width="287" height="13" uuid="6e212d03-7fd9-4c46-ac18-23278d08e804"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_SALIDA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="109" y="79" width="287" height="13" uuid="650dfa89-319b-4f3c-b376-93663f290b1e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="109" y="144" width="287" height="13" uuid="c1446609-4a91-47eb-a1a5-186d9567a325"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ANTIGUEDAD}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="15">
+			<textField isBlankWhenNull="true">
+				<reportElement x="20" y="2" width="201" height="13" uuid="3e0467ad-f2fa-481b-89ce-8d6095e76aa4"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RDED_DESCRIPCION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="360" y="2" width="119" height="13" uuid="80dd864f-6d63-4a0c-91d8-0e71a8e4a69f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="221" y="3" width="76" height="12" uuid="adba9a8e-44e3-4b19-8219-fa21c626e584"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DES_DIAS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="314" y="3" width="46" height="12" uuid="2abc79e7-fe07-4fe5-a0ba-778817bf9775"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MON}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="21"/>
+	</columnFooter>
+	<summary>
+		<band height="305">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="60" width="483" height="170" uuid="2a87e65e-b338-4d3e-b165-801f0e08803e"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" size="10" isBold="false"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Recibí conforme de  TRANSAGRO S.A., la suma de Gs."+$F{TOTAL_NETO}+$F{TOTAL_EN_LETRAS}+" en los conceptos expresados en la liquidación que antecede por el fallecimiento del Señor, "+$F{NOMBRE}+" acaecida en fecha "+$F{FECHA_SALIDA}+", en mi calidad de "+$F{EN_CALIDAD}+" conforme lo justifico la documentación respectiva, con C.I.Nº "+ $F{EMPL_DOC_IDENT}+" manifestando que los datos consignados sobre la antigüedad y salario del Señor "+$F{NOMBRE}+" son correctos y verdaderos. Dejo expresa constancia que no tengo nada más que reclamar a la Empresa TRANSAGRO S.A., sus directivos o representantes en ningún otro concepto judicial ni extrajudicialmente y que desisto de cualquier acción futura, laboral, penal, civil o de otra índole,  contra la empresa  por estar al día en todas sus obligaciones y no existir obligaciones pendientes entre el fallecido y la misma.- "]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="379" y="14" width="100" height="13" uuid="bc4d7cec-62e0-46b8-92f4-bb01f86eb0ea"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_TOTAL_CREDITO}-$V{V_TOTAL_DEBITO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="197" y="14" width="117" height="13" uuid="759242b4-b614-4a82-9f7d-5c97338c520e"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Neto a Percibir "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="40" width="357" height="20" uuid="48191c0e-6454-4833-a545-e394d3a973cf"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_DESC}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="105" y="13" width="375" height="1" uuid="ef489ab4-44e6-4bad-b3e8-ea6111d2e2fd"/>
+			</line>
+			<staticText>
+				<reportElement x="0" y="248" width="109" height="20" uuid="c381f626-2189-4513-bd39-a8644f717494"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Aclaración de firma]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="377" y="247" width="102" height="20" uuid="19e2f05e-1cba-43ae-a946-ea0c36b10b00"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Aclaración de firma]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="267" width="106" height="20" uuid="bf54fcec-484f-4b7c-923e-f7d1d088e3f7"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[C.I. Nº: .............................]]></text>
+			</staticText>
+			<line>
+				<reportElement x="4" y="246" width="101" height="1" uuid="d603f00d-1954-42f6-a3e1-e8311e621ef2"/>
+			</line>
+			<line>
+				<reportElement x="379" y="247" width="101" height="1" uuid="c968773c-d63f-4d67-a199-50beef0c2dfc"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

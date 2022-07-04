@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ACOM301_COMP" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" whenResourceMissingType="Error" uuid="eb0a0eac-68bf-4ce8-b6db-3b80857c042c">
+	<property name="ireport.zoom" value="1.3310000000000064"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="167"/>
+	<parameter name="EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\programacion15\\OneDrive - Grupo Hilagro\\Relevamiento de Datos\\Transagro\\1 - Control de Secado\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FECHA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+ACS.CSEC_CODIGO, ACS.CSEC_EMPR ||' - '||GE.EMPR_RAZON_SOCIAL EMPRESA, ACS.CSEC_SUC||' - '|| GS.SUC_DESC SUCURSAL ,
+ACS.CSEC_ARTICULO ||' - '|| AP.PROD_DESC PRODUCTO, TO_CHAR(ACS.CSEC_FECHA,'DD/MM/YYYY') CSEC_FECHA,
+ACS.CSEC_LOGIN, ACS.CSEC_EMPR COD_EMPR, ACS.CSEC_SUC COD_SUC, ACS.CSEC_CODIGO COD, ACS.CSEC_ARTICULO
+FROM ACO_CTRL_SECADO ACS,  ACO_PRODUCTO AP ,GEN_EMPRESA GE, GEN_SUCURSAL GS
+WHERE ACS.CSEC_EMPR = $P{EMPRESA}
+
+AND AP.PROD_CODIGO = ACS.CSEC_ARTICULO
+AND AP.PROD_EMPR = ACS.CSEC_EMPR
+
+AND GE.EMPR_CODIGO = ACS.CSEC_EMPR
+AND GS.SUC_EMPR = ACS.CSEC_EMPR
+AND GS.SUC_CODIGO = ACS.CSEC_SUC
+
+AND CSEC_FECHA = TO_DATE($P{FECHA},'DD/MM/YYYY')
+order by cod_suc asc]]>
+	</queryString>
+	<field name="CSEC_CODIGO" class="java.math.BigDecimal"/>
+	<field name="EMPRESA" class="java.lang.String"/>
+	<field name="SUCURSAL" class="java.lang.String"/>
+	<field name="PRODUCTO" class="java.lang.String"/>
+	<field name="CSEC_FECHA" class="java.lang.String"/>
+	<field name="CSEC_LOGIN" class="java.lang.String"/>
+	<field name="COD_EMPR" class="java.math.BigDecimal"/>
+	<field name="COD_SUC" class="java.math.BigDecimal"/>
+	<field name="COD" class="java.math.BigDecimal"/>
+	<field name="CSEC_ARTICULO" class="java.math.BigDecimal"/>
+	<group name="sucursal">
+		<groupExpression><![CDATA[$F{COD_SUC}]]></groupExpression>
+		<groupHeader>
+			<band height="140">
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement x="202" y="105" width="150" height="25" uuid="3659c644-43d3-4d9b-85fe-10e783aa3045"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{CSEC_FECHA}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="25" width="555" height="80" uuid="d8f6957b-5c2b-4ec4-8178-c3d1c5e61575"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="22" isBold="true"/>
+					</textElement>
+					<text><![CDATA[REPORTE DIARIO DE CONTROL DE SECADO, AMBIENTE Y DUCTOS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="455" y="0" width="100" height="25" uuid="26113c40-e909-42a7-b1fe-b8c8122baf9c"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[ACOM301]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<detail>
+		<band height="122" splitType="Immediate">
+			<subreport>
+				<reportElement x="-19" y="1" width="555" height="100" uuid="1956160f-897c-4732-900d-e7213d97fc30"/>
+				<subreportParameter name="EMPRESA">
+					<subreportParameterExpression><![CDATA[$F{COD_EMPR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUCURSAL">
+					<subreportParameterExpression><![CDATA[$F{COD_SUC}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CODIGO">
+					<subreportParameterExpression><![CDATA[$F{COD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "SUBREPORT_CTRL_SECADO.jasper"]]></subreportExpression>
+			</subreport>
+			<break>
+				<reportElement x="0" y="110" width="555" height="1" uuid="6ad5e0f1-fc31-4f43-9fe5-883de75c3784"/>
+			</break>
+		</band>
+		<band height="124" splitType="Immediate">
+			<subreport>
+				<reportElement x="-19" y="0" width="555" height="107" uuid="2a7b7a3a-e8d4-48ee-a989-e52a3361e2ca"/>
+				<subreportParameter name="EMPRESA">
+					<subreportParameterExpression><![CDATA[$F{COD_EMPR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUCURSAL">
+					<subreportParameterExpression><![CDATA[$F{COD_SUC}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CODIGO">
+					<subreportParameterExpression><![CDATA[$F{COD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "SUBREPORT_CTRL_AMBIENTE.jasper"]]></subreportExpression>
+			</subreport>
+			<break>
+				<reportElement x="0" y="115" width="555" height="1" uuid="ffaf23b2-96f0-4182-8842-f1f130988616"/>
+			</break>
+		</band>
+		<band height="91">
+			<subreport>
+				<reportElement x="-19" y="0" width="555" height="78" uuid="e406bcaa-d1b4-4a77-b3b4-abdc05a7f22b"/>
+				<subreportParameter name="SUCURSAL">
+					<subreportParameterExpression><![CDATA[$F{COD_SUC}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="FEC_CTRL">
+					<subreportParameterExpression><![CDATA[$F{CSEC_FECHA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="EMPRESA">
+					<subreportParameterExpression><![CDATA[$F{COD_EMPR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "SUBREPORT_CTRL_DUCTOS .jasper"]]></subreportExpression>
+			</subreport>
+			<break>
+				<reportElement x="0" y="86" width="555" height="1" uuid="d7dd98ba-a3d8-43bf-adea-110094ef1696"/>
+			</break>
+		</band>
+	</detail>
+	<noData>
+		<band height="50">
+			<staticText>
+				<reportElement x="0" y="0" width="553" height="50" uuid="70728263-ed0f-46e4-ae2a-1a041b065752"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="14"/>
+				</textElement>
+				<text><![CDATA[No hay datos de REPORTE DIARIO DE CONTROL DE SECADO, AMBIENTE Y DUCTOS para esta fecha ]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

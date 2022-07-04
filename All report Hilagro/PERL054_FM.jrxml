@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERL054_FM" pageWidth="612" pageHeight="1440" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="fb587251-d514-44e7-888e-246c6843d436">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="P_FECHA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="p_empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT FOTO, NOMBRE, APELLIDO, DEPARTAMENTO, DIA,EMPL_LEGAJO,cumple_diaT,EMPL_EMPRESA, imagen, dia1
+  FROM (SELECT A.EMPL_IMG_BLOB FOTO,
+               EMPL_NOMBRE NOMBRE,
+               EMPL_APE APELLIDO,
+               B.DPTO_DESC DEPARTAMENTO,
+               TO_CHAR(A.EMPL_FEC_NAC, 'dd/mm') DIA,
+               TO_CHAR(A.EMPL_FEC_NAC,'DD - Month','nls_date_language=spanish') cumple_diaT,
+               EMPL_EMPRESA EMPRESA,
+               EMPL_LEGAJO LEGAJO,
+EXTRACT(MONTH FROM TO_DATE(EMPL_FEC_NAC)) MES,
+             to_date(TO_CHAR(A.EMPL_FEC_NAC, 'dd/mm')||''||to_char(sysdate,'/yyyy'),'dd/mm/yyyy') dia1,
+      DECODE(dbms_lob.getlength(A.EMPL_IMG_BLOB),NULL,
+     (SELECT dbms_lob.getlength(C.FAC_IMAGEN_BLOB)
+              FROM COM_FACTURA_IMAGEN C WHERE C.FAC_CLAVE = 10053
+            AND C.FAC_ITEM = 1),dbms_lob.getlength(A.EMPL_IMG_BLOB)) imagen,
+               EMPL_EMPRESA,
+               A.EMPL_LEGAJO,
+               1 CANT
+          FROM PER_EMPLEADO A, GEN_DEPARTAMENTO B
+         WHERE A.EMPL_DEPARTAMENTO = B.DPTO_CODIGO
+           AND A.EMPL_EMPRESA = B.DPTO_EMPR
+           AND A.EMPL_EMPRESA = $P!{p_empresa}
+           AND A.EMPL_SITUACION = 'A') A
+ WHERE A.MES = $P{P_FECHA}
+ORDER BY dia1]]>
+	</queryString>
+	<field name="FOTO" class="java.io.InputStream"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="APELLIDO" class="java.lang.String"/>
+	<field name="DEPARTAMENTO" class="java.lang.String"/>
+	<field name="DIA" class="java.lang.String"/>
+	<field name="EMPL_LEGAJO" class="java.math.BigDecimal"/>
+	<field name="CUMPLE_DIAT" class="java.lang.String"/>
+	<field name="EMPL_EMPRESA" class="java.math.BigDecimal"/>
+	<field name="IMAGEN" class="java.math.BigDecimal"/>
+	<field name="DIA1" class="java.sql.Timestamp"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="68" splitType="Stretch">
+			<staticText>
+				<reportElement x="1" y="17" width="553" height="45" uuid="e76316e1-c04e-45c4-8980-1ce48ad95115"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CUMPLEAÑOS DE LA SEMANA]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="554" height="20" backcolor="#CCCCCC" uuid="bf684e17-f778-469b-af8b-0f0ea27ffea7"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="104" y="0" width="100" height="20" uuid="2fc67aad-aa4a-4205-8190-0a5d57e01ee2"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="217" y="0" width="117" height="20" uuid="2c391fab-e9ba-46fa-8031-98c1026f1782"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[APELLIDO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="487" y="0" width="66" height="20" uuid="eb547ce2-86fb-4fab-8b2e-aeb6a29bd90d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="340" y="0" width="100" height="20" uuid="8f3bd6f0-7323-44f7-9bb4-e92012b0ed3b"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DEPARTAMENTO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="97" y="0" width="1" height="20" uuid="48e02683-d259-4240-8274-8677cfb91de2"/>
+			</line>
+			<line>
+				<reportElement x="213" y="0" width="1" height="20" uuid="9d7845a0-8344-415c-a867-b8b672c907fa"/>
+			</line>
+			<line>
+				<reportElement x="335" y="0" width="1" height="20" uuid="a7600e8a-e9fb-4fa0-837e-6e8f58161564"/>
+			</line>
+			<line>
+				<reportElement x="487" y="0" width="1" height="20" uuid="20e30032-6cc7-4bab-9021-8d51f39ad36e"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="76" splitType="Stretch">
+			<image scaleImage="FillFrame" hAlign="Center">
+				<reportElement x="13" y="1" width="69" height="75" uuid="ca9a8402-6bc2-4c49-9dca-cf648f8e3fd8"/>
+				<imageExpression><![CDATA[$F{FOTO}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="103" y="0" width="110" height="76" uuid="ce34725e-813f-4daf-9a97-aac08f396a79"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="216" y="0" width="118" height="76" uuid="43ce48b6-3289-4b67-b2ff-e54bfb10e70d"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{APELLIDO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="488" y="0" width="65" height="76" uuid="ce9445c9-2965-4792-b9ea-5cb4bbacc549"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{CUMPLE_DIAT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="339" y="0" width="145" height="76" uuid="d3bb6da0-b67a-416d-9901-b0de62d906fc"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DEPARTAMENTO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

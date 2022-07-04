@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINM072_RECIBO_ANULADO" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1ffab51e-f9f2-40bd-be8a-5d4e70c393a1">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fecha_desde" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fecha_hasta" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT A.FINTALANU_CLAVE       CLAVE,
+       A.FINTALANU_NRO_ANULADO NUMERO_ANULADO,
+       A.FINTALOANU_FECHA      FECHA_ANULADO,
+       B.FINTA_RETIRADO_POR,
+       B.FINTA_ENTR_LOGIN,
+       B.FINTA_FECHA_RETIRO,
+       C.SUC_DESC,
+       D.FINTALO_CODIGO,
+       (SELECT (TO_CHAR(TO_dATE(A.FINTALOANU_FECHA),'MONTH'))FROM DUAL) MES,
+       (SELECT (TO_CHAR(TO_DATE(A.FINTALOANU_FECHA),'YYYY'))FROM DUAL) ANHO
+  FROM FIN_TALONARIO_ANULADO A,
+       FIN_TALONARIO_ENTREGA B,
+       GEN_SUCURSAL          C,
+       FIN_TALONARIO         D
+ WHERE A.FINTALANU_FINTA_CLAVE = B.FINTA_CLAVE
+   AND B.FINTA_TALONARIO = D.FINTALO_CODIGO
+   AND D.FINTALO_SUC = C.SUC_CODIGO
+   AND D.FINTALO_EMPR = C.SUC_EMPR
+   AND D.FINTALO_TIPO_MOV = 6
+   AND A.FINTALOANU_FECHA BETWEEN TO_DATE($P!{fecha_desde},'dd/mm/yyyy') AND TO_DATE($P!{fecha_hasta},'dd/mm/yyyy')
+ORDER BY 1 DESC]]>
+	</queryString>
+	<field name="CLAVE" class="java.math.BigDecimal"/>
+	<field name="NUMERO_ANULADO" class="java.math.BigDecimal"/>
+	<field name="FECHA_ANULADO" class="java.sql.Timestamp"/>
+	<field name="FINTA_RETIRADO_POR" class="java.lang.String"/>
+	<field name="FINTA_ENTR_LOGIN" class="java.lang.String"/>
+	<field name="FINTA_FECHA_RETIRO" class="java.sql.Timestamp"/>
+	<field name="SUC_DESC" class="java.lang.String"/>
+	<field name="FINTALO_CODIGO" class="java.math.BigDecimal"/>
+	<field name="MES" class="java.lang.String"/>
+	<field name="ANHO" class="java.lang.String"/>
+	<group name="Meses">
+		<groupExpression><![CDATA[$F{MES}]]></groupExpression>
+		<groupHeader>
+			<band height="31">
+				<staticText>
+					<reportElement x="69" y="17" width="96" height="14" uuid="79994a94-3d47-4de6-97ee-de09f29459e3"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nro. Anulado]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="165" y="17" width="80" height="14" uuid="42689f39-b877-422f-9bd9-87604771f10b"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Sucursal]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="5" y="17" width="64" height="14" uuid="f3757950-c6a5-48de-a70c-ad9422588f88"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Fecha Anulado]]></text>
+				</staticText>
+				<line>
+					<reportElement x="0" y="30" width="564" height="1" uuid="71c92675-53a5-40d8-b33b-5b268d5c4cb7"/>
+					<graphicElement>
+						<pen lineWidth="0.25"/>
+					</graphicElement>
+				</line>
+				<textField>
+					<reportElement x="0" y="0" width="120" height="17" uuid="d72d56e7-5946-4c70-8664-ea3be18c1e83"/>
+					<textElement verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{MES}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="23" splitType="Stretch">
+			<staticText>
+				<reportElement x="196" y="0" width="170" height="20" uuid="f7e311c3-e0a2-4f16-a62b-0ebf24597505"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[ RECIBOS ANULADOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="493" y="0" width="15" height="8" uuid="def005a7-62ce-4cb7-a7aa-fff654baa548"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[Mes:]]></text>
+			</staticText>
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="508" y="0" width="47" height="8" uuid="33bb2ca1-dcff-4fe7-bea3-2997ccd10187"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField>
+				<reportElement x="166" y="0" width="80" height="14" uuid="b87623ad-4528-410d-a4c0-3102ac00d8c2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SUC_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="69" y="0" width="96" height="14" uuid="8ecd68d1-1873-458b-87be-1574ed1cf96b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NUMERO_ANULADO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="3" y="0" width="66" height="14" uuid="ca5f3d2e-9b41-49c0-b3d7-025e8bcb8963"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_ANULADO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="50"/>
+	</summary>
+</jasperReport>

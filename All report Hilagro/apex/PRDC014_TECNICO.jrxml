@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PRDC014_TECNICO" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="548300d5-523a-433d-acdd-29018d430746">
+	<property name="ireport.zoom" value="1.4641000000000095"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_TECNICO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_DESDE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_HASTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_WHERE" class="java.lang.String">
+		<defaultValueExpression><![CDATA["AND 1=1"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT J.PETI_CLAVE                TICKET,
+       --J.PETI_DESARROLLADOR
+       $P{P_TECNICO}               TECNICO,
+       J.PETI_HORA_INICIO          FECHA_DESDE,
+       J.PETI_DESC                 DESCRIPCION,
+       T.EMPR_RAZON_SOCIAL         EMPRESA,
+       PO.PRD_DESCRIPCION          DESCRIPCION_SOLUCION,
+       PO.PRD_TOTAL_HORA           TOTAL_HORA,
+       PO.PRD_TOTAL_HORA_COBRABLES HORA_COBRABLE,
+       PO.PRD_OBJETO               OBJETO,
+       PO.PRD_TIPO_OBJETO          TIPO_OBJETO,
+       PO.PRD_PETI_PROG_COD        PROGRAMA_COD,
+       PO.PRD_SISTEMA_COD          SITEMAS_COD,
+       J.PETI_SISTEMA              SISTEMAS,
+       J.PETI_HORA_FIN             FECHA_HASTA,
+       J.PETI_EMPRESA              EMPRESAS
+  FROM PRD_PETICIONES J, PRD_PETICIONES_PROGRAMAS PO, GEN_EMPRESA T
+ WHERE J.PETI_CLAVE = PO.PRD_TICKET
+   AND J.PETI_EMPRESA = PO.PRD_EMPR
+   AND J.PETI_EMPRESA = T.EMPR_CODIGO
+   AND J.PETI_ESTADO  = 6
+   AND trunc(J.PETI_HORA_FIN) BETWEEN to_date($P!{P_FECHA_DESDE},'dd/mm/yyyy') AND to_date($P!{P_FECHA_HASTA},'dd/mm/yyyy')
+   $P!{P_WHERE}
+ORDER BY T.EMPR_RAZON_SOCIAL, FECHA_HASTA DESC]]>
+	</queryString>
+	<field name="TICKET" class="java.math.BigDecimal"/>
+	<field name="TECNICO" class="java.lang.String"/>
+	<field name="FECHA_DESDE" class="java.sql.Timestamp"/>
+	<field name="DESCRIPCION" class="java.lang.String"/>
+	<field name="EMPRESA" class="java.lang.String"/>
+	<field name="DESCRIPCION_SOLUCION" class="java.lang.String"/>
+	<field name="TOTAL_HORA" class="java.math.BigDecimal"/>
+	<field name="HORA_COBRABLE" class="java.math.BigDecimal"/>
+	<field name="OBJETO" class="java.lang.String"/>
+	<field name="TIPO_OBJETO" class="java.lang.String"/>
+	<field name="PROGRAMA_COD" class="java.math.BigDecimal"/>
+	<field name="SITEMAS_COD" class="java.math.BigDecimal"/>
+	<field name="SISTEMAS" class="java.math.BigDecimal"/>
+	<field name="FECHA_HASTA" class="java.sql.Timestamp"/>
+	<field name="EMPRESAS" class="java.math.BigDecimal"/>
+	<variable name="HORA_COBRABLE_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{HORA_COBRABLE}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_HORA_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL_HORA}]]></variableExpression>
+	</variable>
+	<variable name="sub_total_hora" class="java.math.BigDecimal" resetType="Group" resetGroup="Ticket" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL_HORA}]]></variableExpression>
+	</variable>
+	<variable name="sub_total_cobrable" class="java.math.BigDecimal" resetType="Group" resetGroup="Ticket" calculation="Sum">
+		<variableExpression><![CDATA[$F{HORA_COBRABLE}]]></variableExpression>
+	</variable>
+	<group name="Ticket">
+		<groupExpression><![CDATA[$F{EMPRESA}]]></groupExpression>
+		<groupHeader>
+			<band height="13">
+				<line>
+					<reportElement x="0" y="0" width="555" height="1" uuid="ec1edcb2-8c19-44a9-bdfe-5b2c28672da6"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<textField>
+					<reportElement x="1" y="2" width="117" height="11" uuid="f585f775-1748-4cf2-8a97-560d42b0a092"/>
+					<textElement>
+						<font fontName="Arial" size="7" isBold="true" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{EMPRESA}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="18">
+				<textField isBlankWhenNull="true">
+					<reportElement x="398" y="5" width="108" height="13" uuid="27154ae1-c6d1-4c18-80c9-439c8a7abfdb"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{sub_total_hora}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="510" y="5" width="45" height="13" uuid="61871eb0-065c-4455-8ae4-581d4c1cc651"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{sub_total_cobrable}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="350" y="5" width="48" height="13" uuid="0d823321-20bd-472f-a879-2eab774e1042"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Subtotales:]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<title>
+		<band height="46" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="455" y="22" width="100" height="17" uuid="48331ba6-e275-47d1-9e9f-76f51ed705f3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="178" y="14" width="195" height="20" uuid="9da6dbce-aa94-45f4-bdf6-86813a95dd51"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE DESARROLLADORES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="488" y="-1" width="67" height="12" uuid="3a81fd7e-ce95-4f49-a1eb-94ca9ba51146"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRDC014]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="471" y="10" width="65" height="13" uuid="28b60a89-90d5-4e85-9a2d-1b9bf2edb3a8"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pág. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="510" y="10" width="45" height="13" uuid="e16a18ea-8e6b-4683-be41-9dd3d1c9c97b"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="55" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="55" y="7" width="158" height="13" uuid="22b3e47a-7cea-406a-b37d-aa82b5fba25b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TECNICO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="67" y="21" width="100" height="13" uuid="1a140822-d5d6-4e96-96b3-a04c2a56d9c1"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FECHA_DESDE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="68" y="35" width="100" height="13" uuid="2c6da543-26b6-4ee8-9d95-979612eb9d74"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FECHA_HASTA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="7" width="55" height="13" uuid="da16b624-9882-4090-b04c-af06a714fff4"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Técnico/a:  ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="35" width="78" height="13" uuid="0ad2f802-9e6f-4048-8890-1eddd45068d0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Hasta:  ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="21" width="78" height="13" uuid="3abc1b51-9a2e-40ba-8f6d-504291ca9134"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Desde:  ]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="13" splitType="Stretch">
+			<staticText>
+				<reportElement x="298" y="0" width="160" height="13" uuid="0a6feab1-f1d8-4551-ae7f-3d35c3ff44b4"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Solución]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="458" y="0" width="48" height="13" uuid="94ddbc35-02d2-439a-b89c-09e191d2f5fd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Hora]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="506" y="0" width="65" height="13" uuid="9889889c-5ca1-49fa-9927-7e509d5925f0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora Cobrable]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="0" width="29" height="13" uuid="72f15c74-6eaa-4ba6-977b-8a3bf6ccf665"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ticket]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="168" y="0" width="128" height="13" uuid="2779498c-2387-4465-95b0-68727e137640"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descripción del Problema]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="0" width="48" height="13" uuid="ae174a2d-4046-48c8-9688-2cfeba662a94"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Inicio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="0" width="53" height="13" uuid="1d424468-998d-4d22-a097-7b9f1e1fa995"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Fin]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="488" y="0" width="18" height="13" uuid="0c4f2a57-b242-4bd8-8f92-9b93bae03032"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL_HORA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="510" y="0" width="45" height="13" uuid="21937979-53cb-4599-9b8e-1e308d2ee74a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HORA_COBRABLE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="298" y="0" width="160" height="13" uuid="35e02b79-f029-48bb-98a2-a73f7883644b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRIPCION_SOLUCION}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="168" y="0" width="129" height="13" uuid="180954eb-abf0-4f7a-be5d-b0ca3738f4a3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRIPCION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="0" width="29" height="13" uuid="3b223b36-fe98-42a2-a6cf-4e200c35e3e9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["#"+$F{TICKET}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="50" y="0" width="48" height="13" uuid="86638bc7-38b3-4100-a56d-502f103c4467"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_DESDE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="100" y="0" width="52" height="13" uuid="3e94757a-65ea-43f6-9734-097e07959fbe"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_HASTA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="17">
+			<line>
+				<reportElement x="364" y="1" width="191" height="1" uuid="4d2aaa6a-5609-41dd-9204-9c49b431642a"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="477" y="4" width="78" height="13" uuid="182d3436-caec-4854-9f4b-5b87d9f2e301"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{HORA_COBRABLE_1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="398" y="4" width="79" height="13" uuid="5d36d981-2196-41c1-b076-1238277d3188"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_HORA_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="364" y="4" width="34" height="13" uuid="cdc4f305-2c70-4c52-999b-2976f87e291c"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL:]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

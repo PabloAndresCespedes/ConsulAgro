@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINM301_CU_ARTICULO" language="groovy" pageWidth="550" pageHeight="10" columnWidth="550" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="ce95d076-0df8-4d77-9bd6-f3c19d25a4c3">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="217"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_CLAVE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SESSION_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT  B.*
+  FROM (SELECT FC.COMP_IND_PAG_CO,
+               FC.COMP_FEC_VTO,
+               FC.COMP_CATEG_NOM,
+               FC.COMP_FECHA,
+               FC.COMP_LIN_NEG_COD,
+               FC.COMP_CLAVE,
+               FC.COMP_NUMERO,
+               FC.COMP_TM_COD,
+               FC.COMP_TM_NOM,
+               FC.COMP_MON_COD,
+               FC.COMP_MON_SIMB,
+               FC.COMP_MON_DEC,
+               FC.COMP_SALDO_CUO,
+               FC.COMP_SALDO_CUO_GS,
+               FC.COMP_SALDO_CUO_US,
+               FC.COMP_PORC_INT,
+               FC.COMP_TIPO_FEC_INT,
+               FC.COMP_DIAS_INT,
+               FC.COMP_INTM,
+               FC.COMP_INTM_GS,
+               FC.COMP_INTM_US,
+               FC.COMP_INTM_CONS_US,
+               FC.COMP_OBS,
+               FC.COMP_CUO_IMP_MON,
+               FC.SESSION_ID,
+               FC.COMP_SALDO_CUO_CONS_US,
+               FC.COMP_GRUPO_NOM,
+               FC.COMP_EMPR,
+               M.TMOV_IND_DBCR_CTA
+          FROM FIN_FINC223_COMP FC, GEN_TIPO_MOV M
+         WHERE SESSION_ID = $P{P_SESSION_ID}
+            AND FC.COMP_TM_COD = M.TMOV_CODIGO
+           AND M.TMOV_EMPR = 2) G,
+
+       (SELECT A.ART_DESC,
+               T.DETA_CANT,
+               NVL(T.DETA_IMP_NETO_MON + T.DETA_IVA_MON / DETA_CANT, 0) PRECIO,
+               NVL(T.DETA_IMP_NETO_MON + T.DETA_IVA_MON, 0) TOTAL,
+               DETA_CLAVE_DOC,
+               DOC_CLAVE,
+               (NVL(NVL(T.DETA_IMP_NETO_MON + T.DETA_IVA_MON / DETA_CANT, 0),
+                    0) / NVL(DETA_CANT, 0)) PRECIO_UNITARIO,
+               DOC_MON
+          FROM STK_DOCUMENTO_DET T, STK_ARTICULO A, FIN_DOCUMENTO C
+         WHERE T.DETA_ART = A.ART_CODIGO
+           AND T.DETA_EMPR = A.ART_EMPR
+           AND C.DOC_CLAVE_STK = T.DETA_CLAVE_DOC
+           AND C.DOC_EMPR = T.DETA_EMPR
+           AND T.DETA_EMPR = 2) B
+ WHERE COMP_CLAVE = DOC_CLAVE(+)
+   AND COMP_CLAVE = $P{P_CLAVE}
+ ORDER BY COMP_TM_NOM, COMP_FEC_VTO, COMP_MON_SIMB, COMP_CUO_IMP_MON]]>
+	</queryString>
+	<field name="ART_DESC" class="java.lang.String"/>
+	<field name="DETA_CANT" class="java.math.BigDecimal"/>
+	<field name="PRECIO" class="java.math.BigDecimal"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<field name="DETA_CLAVE_DOC" class="java.math.BigDecimal"/>
+	<field name="DOC_CLAVE" class="java.math.BigDecimal"/>
+	<field name="PRECIO_UNITARIO" class="java.math.BigDecimal"/>
+	<field name="DOC_MON" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="9" splitType="Stretch">
+			<staticText>
+				<reportElement x="4" y="0" width="40" height="9" uuid="2e5a86ea-c45b-4785-b66c-82fb4483778d"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Articulo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="216" y="0" width="40" height="9" uuid="902fc875-8679-41c5-b9cd-83d5e03beae3"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Cantidad:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="354" y="0" width="40" height="9" uuid="f6a4d8f6-28a3-4870-a95c-1309008ac40b"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Precio:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="469" y="0" width="40" height="9" uuid="96e9782c-b6db-4861-8afd-9faa6ec90e55"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="45" y="0" width="159" height="9" uuid="44aff3f6-4671-4308-997b-7f22c34c7e56"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ART_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="248" y="0" width="62" height="9" uuid="ae21de13-69be-4c43-a3d8-17ae0a4e03bb"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DETA_CANT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="378" y="0" width="49" height="9" uuid="b4d250ff-97a6-4144-9b8d-0d022885cb1e"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRECIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="489" y="0" width="54" height="9" uuid="3d1ac34a-72da-40c3-8359-dd008a87dabb"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

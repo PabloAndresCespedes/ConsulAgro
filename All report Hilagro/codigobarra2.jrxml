@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="codigobarra" language="groovy" pageWidth="210" pageHeight="99" orientation="Landscape" columnWidth="210" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="65810e77-d364-47b4-a1c2-9e22620f9bf7">
+	<property name="ireport.zoom" value="0.7513148009015782"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String"/>
+	<parameter name="P_CLAVE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select art_codigo_fabrica, lpad(art_codigo,13,0) art_codigo, art_desc,
+marc_desc
+from stk_articulo t, stk_marca
+where art_codigo = $P{P_CLAVE}
+and art_marca = marc_codigo
+and art_empr = marc_empr
+and art_empr = $P{P_EMPRESA}]]>
+	</queryString>
+	<field name="ART_CODIGO_FABRICA" class="java.lang.String"/>
+	<field name="ART_CODIGO" class="java.lang.String"/>
+	<field name="ART_DESC" class="java.lang.String"/>
+	<field name="MARC_DESC" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<detail>
+		<band height="99">
+			<componentElement>
+				<reportElement x="40" y="2" width="157" height="36" uuid="d4ac3d97-6423-40ab-90ca-731b4a67d522"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="0" barHeight="0" evaluationTime="Report">
+					<jr:codeExpression><![CDATA[$F{ART_CODIGO}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField isBlankWhenNull="true">
+				<reportElement x="37" y="38" width="172" height="24" uuid="353c7499-1b5b-49e4-8808-aa18ddaa1499"/>
+				<textElement rotation="None">
+					<font size="10" isBold="true"/>
+					<paragraph tabStopWidth="40"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ART_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="76" y="64" width="133" height="17" uuid="11d0dabd-64ab-4abb-aa94-d81b49fd280c"/>
+				<textElement textAlignment="Left" rotation="None">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MARC_DESC}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="36" y="81" width="40" height="15" uuid="d1aeec6b-8980-4855-9ca2-837632d192cd"/>
+				<textElement rotation="None">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fabr:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="12" y="4" width="21" height="92" uuid="c2b2e8e5-09f9-42d2-b18a-85beaa419226"/>
+				<textElement rotation="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ART_CODIGO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="36" y="64" width="40" height="17" uuid="d0b2be24-edb3-42ce-8791-44b4cafed174"/>
+				<textElement rotation="None">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Marca:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="76" y="81" width="133" height="15" uuid="366635fe-0888-49f6-aff8-6f065f55ac5f"/>
+				<textElement rotation="None">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ART_CODIGO_FABRICA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

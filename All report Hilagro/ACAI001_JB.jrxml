@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ACAI001_JB" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="69e2ef41-f80b-466a-baf6-f8542ef7c7bb">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="48"/>
+	<parameter name="P_CLAVE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_LOGIN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT AA.ALUM_NOMBRE,
+       AA.ALUM_APELLIDO,
+       AA.ALUM_CI,
+       AA.ALUM_TELEFONO,
+       AA.ALUM_GENERO,
+       AA.ALUM_PAIS,
+       AC.CUR_DESCRIPCION,
+       AC.CUR_ANHO_ELECTIVO,
+       CF.MAT_DESCRIPCION,
+       AM.MAT_FECHA,
+       AM.MAT_DIRECTOR,
+       AM.MAT_CLAVE,
+       amd.MAT_DET_ITEM,
+       cf.MAT_DESCRIPCION,
+       ap.PROF_NOMBRE||' '||ap.PROF_APELLIDO director,
+       sa.SALA_DESC,
+       gp.PAIS_DESC,
+       AA.ALUM_IMG
+  FROM ACA_ALUMNOS_JR   AA,
+       ACA_PROFESOR_JR  AP,
+       ACA_MATRICULA_JR AM,
+       ACA_CURSOS_JR    AC,
+       ACA_MATERIA_JR   CF,
+       ACA_MATRICULA_DET_JR AMD,
+       aca_sala_jr sa,
+       gen_pais gp
+ WHERE AA.ALUM_CLAVE = AM.MAT_ALUM
+   AND AA.ALUM_EMPR = AM.MAT_EMPR
+   AND AA.ALUM_USER = AM.MAT_USER
+
+   AND AM.MAT_CURSO = AC.CUR_CLAVE
+   AND AM.MAT_EMPR = AC.CUR_EMPR
+   AND AM.MAT_USER = AC.CUR_USER
+
+   AND AC.CUR_CLAVE = CF.MAT_CURSO
+   AND AC.CUR_EMPR = CF.MAT_EMPR
+   AND AC.CUR_USER = CF.MAT_USER
+
+   AND CF.MAT_PROF = AP.PROF_CLAVE
+   AND CF.MAT_EMPR = AP.PROF_EMPR
+   AND CF.MAT_USER = AP.PROF_USER
+
+   AND AM.MAT_CLAVE = AMD.MAT_DET_CLAVE
+   AND AM.MAT_EMPR = AMD.MAT_DET_EMPR
+   AND AM.MAT_USER = AMD.MAT_DET_USER
+
+   AND amd.MAT_DET_SALA = sa.SALA_COD
+   AND amd.MAT_DET_EMPR = sa.SALA_EMPR
+   AND amd.MAT_DET_USER = sa.SALA_USER
+
+   AND gp.PAIS_CODIGO = aa.ALUM_PAIS
+   AND gp.PAIS_EMPR = aa.ALUM_EMPR
+
+   AND AMD.MAT_DET_CLAVE = $P{P_CLAVE}
+   AND AMD.MAT_DET_EMPR = $P{P_EMPRESA}
+   AND AMD.MAT_DET_USER = $P{P_LOGIN}]]>
+	</queryString>
+	<field name="ALUM_NOMBRE" class="java.lang.String"/>
+	<field name="ALUM_APELLIDO" class="java.lang.String"/>
+	<field name="ALUM_CI" class="java.lang.String"/>
+	<field name="ALUM_TELEFONO" class="java.lang.String"/>
+	<field name="ALUM_GENERO" class="java.lang.String"/>
+	<field name="ALUM_PAIS" class="java.math.BigDecimal"/>
+	<field name="CUR_DESCRIPCION" class="java.lang.String"/>
+	<field name="CUR_ANHO_ELECTIVO" class="java.math.BigDecimal"/>
+	<field name="MAT_DESCRIPCION" class="java.lang.String"/>
+	<field name="MAT_FECHA" class="java.sql.Timestamp"/>
+	<field name="MAT_DIRECTOR" class="java.math.BigDecimal"/>
+	<field name="MAT_CLAVE" class="java.math.BigDecimal"/>
+	<field name="MAT_DET_ITEM" class="java.math.BigDecimal"/>
+	<field name="DIRECTOR" class="java.lang.String"/>
+	<field name="SALA_DESC" class="java.lang.String"/>
+	<field name="PAIS_DESC" class="java.lang.String"/>
+	<field name="ALUM_IMG" class="java.io.InputStream"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="179" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="50" y="98" width="152" height="20" uuid="85d0a87d-7673-4e95-af16-26fd65890f5b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ALUM_NOMBRE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="98" width="48" height="20" uuid="e8b0e3ce-d93e-4d7a-8399-dba256052dda"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="50" y="118" width="152" height="20" uuid="39f0bf3e-0e12-4fdd-b5e2-e60e810f1fd6"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ALUM_APELLIDO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="118" width="48" height="20" uuid="7e5cb321-5b93-4fc4-beda-4cd3efcbb6bf"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Apellido]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="50" y="138" width="100" height="20" uuid="600009e8-79a2-49e3-a83d-9915018481d3"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ALUM_CI}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="138" width="48" height="20" uuid="19001c61-9a07-4fcb-a2c5-dc19b1ed6433"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[C.I.:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="312" y="98" width="100" height="20" uuid="bbd6700e-43ae-4a70-ad1c-72d9cbb1ad56"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ALUM_TELEFONO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="264" y="98" width="48" height="20" uuid="77f70768-232d-47f3-9d46-6a996cc5115b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Telefono:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="312" y="118" width="100" height="20" uuid="0f2e64ec-bfe8-4ba1-b79a-ebb48868ed31"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ALUM_GENERO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="264" y="118" width="48" height="20" uuid="55ba8b27-4c27-432a-adc9-1cf11f62640a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Genero:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="312" y="138" width="100" height="20" uuid="8330e99c-0ef4-4ee2-86e2-c27a92cd72d4"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PAIS_DESC}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="264" y="138" width="48" height="20" uuid="3ecf76ca-1a72-4c48-982c-ee9c19fd59fa"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pais:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="312" y="158" width="100" height="20" uuid="b8654306-e0a3-473a-9e90-27d3f68256d4"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MAT_DIRECTOR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="264" y="158" width="48" height="20" uuid="ff9c2312-3bf2-44bf-8730-7343058128d4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Director:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="87" y="158" width="115" height="20" uuid="4a80c146-20ea-43c1-a2c9-5c1efa3f2535"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUR_DESCRIPCION}+' '+$F{CUR_ANHO_ELECTIVO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="158" width="131" height="20" uuid="9fdbec16-d567-4fe6-affd-eb32638ba1d7"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Curso Año Electivo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="150" y="1" width="189" height="39" uuid="b487b568-bae2-46da-b1d6-547aca216d3d"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Colegio Johannes Gutenberg]]></text>
+			</staticText>
+			<line>
+				<reportElement x="2" y="91" width="554" height="1" uuid="6e75fa75-f11f-4fc5-b707-b4e37a48c625"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="412" y="20" width="101" height="20" uuid="a4cffebe-d3d4-4503-a412-110d5e30fb1d"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pág. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="513" y="20" width="40" height="20" uuid="3ef028cd-6226-425b-b0bf-a0bce9bfa580"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="495" y="0" width="58" height="20" uuid="8de031d3-a8d9-4868-928e-05a5d9c016c7"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ACAI001_JR]]></text>
+			</staticText>
+			<image>
+				<reportElement x="2" y="1" width="87" height="84" uuid="3d2d4cdc-445d-4673-95a0-fcd262a5de77"/>
+				<imageExpression><![CDATA["imagenees.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="110" y="51" width="279" height="20" uuid="e5f6335e-9e74-488a-a629-17787bffc168"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[J. E. Estigarribia, Departamento de Caaguazu - Paraguay]]></text>
+			</staticText>
+			<image>
+				<reportElement x="453" y="92" width="100" height="50" uuid="f10b8ab8-e71a-4d29-984b-cbb32638ee07"/>
+				<imageExpression><![CDATA[$F{ALUM_IMG}]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="8" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="22" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="2" width="100" height="20" uuid="34922257-0e8a-4dca-9a87-506ce444017f"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Item]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="110" y="2" width="100" height="20" uuid="c8a978ef-e93a-4ee3-aebc-6da720f71a1b"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Materia]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="266" y="2" width="100" height="20" uuid="f99a60bd-0bca-419d-9906-45cdb83d265f"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sala]]></text>
+			</staticText>
+			<line>
+				<reportElement x="2" y="15" width="554" height="1" uuid="ba3e1926-5c03-4eab-b47b-55cac7c195e1"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="100" height="20" uuid="68b8fca4-b1d4-4ecb-b31f-5bc60ca16782"/>
+				<textFieldExpression><![CDATA[$F{MAT_DET_ITEM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="103" y="0" width="125" height="20" uuid="0a943997-cf33-4d83-bd5d-a2eaa36e1d3a"/>
+				<textFieldExpression><![CDATA[$F{MAT_DESCRIPCION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="0" width="135" height="20" uuid="0f08e818-8a63-4332-b374-48d2cf11c31b"/>
+				<textFieldExpression><![CDATA[$F{SALA_DESC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

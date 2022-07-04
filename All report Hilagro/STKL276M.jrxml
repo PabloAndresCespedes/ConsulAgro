@@ -1,0 +1,727 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="STKL276M" language="groovy" pageWidth="1100" pageHeight="842" columnWidth="1060" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="adbbb974-1b91-4c71-8d6e-56483c1e49de">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Crosstab Data Text" hAlign="Center" fontName="Arial" fontSize="7"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#CCCCCC">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="ESTILO1" hAlign="Center" fontName="Arial" fontSize="7">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{venta} < 0]]></conditionExpression>
+			<style forecolor="#FF0000"/>
+		</conditionalStyle>
+	</style>
+	<style name="ESTILO2" hAlign="Center" fontName="Arial" fontSize="7">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{TOTAL_CANTeasure} < 0]]></conditionExpression>
+			<style forecolor="#FF0000" fontName="Arial" fontSize="7"/>
+		</conditionalStyle>
+	</style>
+	<style name="ESTILO4" hAlign="Center" fontName="Arial" fontSize="7">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{recibir} < 0]]></conditionExpression>
+			<style forecolor="#FF0000" fontName="Arial" fontSize="7"/>
+		</conditionalStyle>
+	</style>
+	<style name="style4" hAlign="Center" fontName="Arial" fontSize="7">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{entregar} < 0]]></conditionExpression>
+			<style forecolor="#FF0000" fontName="Arial" fontSize="7"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="P_WHERE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_MARCA_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_LINEA_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_GRUPO_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_RUBRO_DESC" class="java.lang.String"/>
+	<parameter name="P_DESCRIP_EMPR" class="java.lang.String"/>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String"/>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String"/>
+	<parameter name="P_PROGRAMA" class="java.lang.String"/>
+	<parameter name="P_CERO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT ART_LINEA     ART_LINEA,
+                ART_GRUPO     ART_GRUPO,
+                AR.ART_CODIGO ART_CODIGO,
+                AD.ARDE_SUC,
+                NVL(ARDE_CANT_ACT,0) TOTAL_CANT,
+                NVL(PED.PED_CANT_PEND_ENTREG, 0) "Ped_Entregar",
+                NVL(PED.PED_CANT_PEND_RECEP, 0)  "Ped_Recibir",
+                LIN_DESC LIN_DESC,
+                GRUP_DESC GRUP_DESC,
+                ART_DESC ART_DESC,
+                ART_UNID_MED ART_UNID_MED,
+               ((sum(ARDE_CANT_ACT)OVER (PARTITION BY ART_CODIGO )+ nvl(PED_CANT_PEND_RECEP,0))-nvl(PED_CANT_PEND_ENTREG,0))"DISP_VENTA",
+               sum(ARDE_CANT_ACT)OVER (PARTITION BY ART_CODIGO ) TOTAL,
+               AD.ARDE_SUC||' - '||sc.SUC_ABREV SUC_ABREV
+           FROM STK_MARCA             MA,
+                STK_LINEA             LI,
+                STK_GRUPO             GR,
+                STK_ARTICULO          AR,
+                STK_STKL076_V         PED,
+                STK_ARTICULO_DEPOSITO AD,
+                GEN_SUCURSAL  SC
+          WHERE MARC_CODIGO = ART_MARCA
+            AND MARC_EMPR = ART_EMPR
+            AND LIN_CODIGO = ART_LINEA
+            AND LIN_EMPR = ART_EMPR
+            AND GRUP_LINEA = ART_LINEA
+            AND GRUP_EMPR = ART_EMPR
+            AND GRUP_CODIGO = ART_GRUPO
+            AND AR.ART_CODIGO = PED.PED_ART_COD(+)
+            AND AR.ART_EMPR = PED.PROD_EMPR(+)
+            AND AR.ART_CODIGO = AD.ARDE_ART(+)
+            AND AR.ART_EMPR = AD.ARDE_EMPR(+)
+            AND AR.ART_EMPR =  $P{P_EMPRESA}
+            AND AD.ARDE_SUC = SC.SUC_CODIGO
+            AND AD.ARDE_EMPR = SC.SUC_EMPR
+            AND AR.ART_TIPO NOT IN (4)
+           $P!{P_WHERE}
+
+
+
+          GROUP BY ART_LINEA,
+                   LIN_DESC,
+                   ART_GRUPO,
+                   AD.ARDE_SUC,
+                   GRUP_DESC,
+                   ART_CODIGO,
+                   ART_DESC,
+                   ARDE_CANT_ACT,
+                   ART_UNID_MED,
+                   NVL(PED.PED_CANT_PEND_ENTREG, 0),
+                   NVL(PED.PED_CANT_PEND_RECEP, 0), AD.ARDE_SUC||' - '||sc.SUC_ABREV
+
+         HAVING $P{P_CERO} = 'S' OR
+
+         ( $P{P_CERO}= 'N' AND NOT(NVL(SUM(ARDE_CANT_ACT), 0) = 0
+          AND NVL(PED.PED_CANT_PEND_ENTREG, 0) = 0
+           AND NVL(PED.PED_CANT_PEND_RECEP, 0) = 0))
+order by  ART_LINEA,ART_GRUPO, AD.ARDE_SUC]]>
+	</queryString>
+	<field name="ART_LINEA" class="java.math.BigDecimal"/>
+	<field name="ART_GRUPO" class="java.math.BigDecimal"/>
+	<field name="ART_CODIGO" class="java.math.BigDecimal"/>
+	<field name="ARDE_SUC" class="java.math.BigDecimal"/>
+	<field name="TOTAL_CANT" class="java.math.BigDecimal"/>
+	<field name="Ped_Entregar" class="java.math.BigDecimal"/>
+	<field name="Ped_Recibir" class="java.math.BigDecimal"/>
+	<field name="LIN_DESC" class="java.lang.String"/>
+	<field name="GRUP_DESC" class="java.lang.String"/>
+	<field name="ART_DESC" class="java.lang.String"/>
+	<field name="ART_UNID_MED" class="java.lang.String"/>
+	<field name="DISP_VENTA" class="java.math.BigDecimal"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<field name="SUC_ABREV" class="java.lang.String"/>
+	<group name="Linea">
+		<groupExpression><![CDATA[$F{ART_LINEA}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<staticText>
+					<reportElement x="10" y="0" width="40" height="17" uuid="03d40fdb-d1e4-4259-b650-53e620e5caad"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Linea:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="50" y="0" width="351" height="17" uuid="d6883bd7-4a3c-49c0-b698-5d0b80591def"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{LIN_DESC}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Grupo">
+		<groupExpression><![CDATA[$F{ART_GRUPO}]]></groupExpression>
+		<groupHeader>
+			<band height="17">
+				<staticText>
+					<reportElement x="15" y="0" width="43" height="17" forecolor="#0033CC" uuid="ee9666d0-350b-4574-8c09-e5aaffaa8f6f"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Grupo :]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="58" y="0" width="320" height="17" forecolor="#0033CC" uuid="7dbac48b-2d6f-4e8b-b487-d4b25456c371"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{GRUP_DESC}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="42">
+				<crosstab>
+					<reportElement x="12" y="0" width="1148" height="42" uuid="e1a9ea6a-15d0-4090-a538-b9d0cc18d8c8"/>
+					<crosstabDataset>
+						<dataset resetType="Group" resetGroup="Grupo"/>
+					</crosstabDataset>
+					<crosstabHeaderCell>
+						<cellContents>
+							<staticText>
+								<reportElement style="Crosstab Data Text" mode="Opaque" x="0" y="0" width="40" height="23" backcolor="#CCCCCC" uuid="3473839e-3547-446a-b2a6-75ebfca6d57b"/>
+								<box>
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="7" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Cód]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="Crosstab Data Text" mode="Opaque" x="39" y="0" width="258" height="23" backcolor="#CCCCCC" uuid="b590780e-2f82-409f-8099-ea2fc6ecdb06"/>
+								<box>
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="7" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Descripción]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="Crosstab Data Text" mode="Opaque" x="297" y="0" width="26" height="23" backcolor="#CCCCCC" uuid="dde78963-5cab-48d6-961e-1b30f0502bf5"/>
+								<box>
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[U.M]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabHeaderCell>
+					<rowGroup name="ORDENAR" width="0">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{ART_DESC}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents>
+								<textField>
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="0" height="0" uuid="5141f53d-b87c-4d97-9467-b2412840cb7b"/>
+									<textFieldExpression><![CDATA[$V{ORDENAR}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="COD" width="39">
+						<bucket class="java.math.BigDecimal">
+							<bucketExpression><![CDATA[$F{ART_CODIGO}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#F0F8FF" mode="Transparent">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textField>
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="39" height="12" uuid="8a8f6a71-4d2d-4e1e-8cbe-ae1a6fcfc212"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[""+""+$V{COD}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents backcolor="#BFE1FF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+							</cellContents>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="DESCRIPCION" width="258">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{ART_DESC}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents>
+								<box>
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textField>
+									<reportElement style="Crosstab Data Text" x="1" y="0" width="257" height="12" uuid="afebb20f-1e18-4f39-a151-b7e139e5a5f5"/>
+									<textElement textAlignment="Left" verticalAlignment="Middle">
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[""+""+$V{DESCRIPCION}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents>
+								<box>
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+							</cellContents>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="UM" width="26">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{ART_UNID_MED}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents>
+								<box>
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textField isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="26" height="12" uuid="13e687c5-33b7-4081-bd8e-02e30641bfda"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[""+""+$V{UM}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<columnGroup name="SUCURSAL" height="0" totalPosition="End" headerPosition="Center">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{ARDE_SUC}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+							<cellContents backcolor="#F0F8FF" mode="Transparent">
+								<box>
+									<pen lineWidth="0.0" lineStyle="Double" lineColor="#000000"/>
+									<topPen lineWidth="0.0" lineStyle="Double"/>
+									<leftPen lineWidth="0.0" lineStyle="Double"/>
+									<bottomPen lineWidth="0.0" lineStyle="Double"/>
+									<rightPen lineWidth="0.0" lineStyle="Double"/>
+								</box>
+								<textField isStretchWithOverflow="true">
+									<reportElement style="Crosstab Data Text" mode="Transparent" x="0" y="0" width="20" height="0" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="45a266bd-ee8e-45bc-aa54-f753f97e7e92"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{SUCURSAL}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabColumnHeader>
+						<crosstabTotalColumnHeader>
+							<cellContents backcolor="#BFE1FF" mode="Transparent">
+								<box>
+									<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+									<topPen lineWidth="0.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="0.0"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+								<staticText>
+									<reportElement style="Crosstab Data Text" mode="Opaque" x="0" y="0" width="68" height="23" backcolor="#CCCCCC" uuid="b1e0c1aa-8233-4793-930e-68013875d8da"/>
+									<box>
+										<pen lineWidth="0.5"/>
+										<topPen lineWidth="0.5"/>
+										<leftPen lineWidth="0.5"/>
+										<bottomPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Total ]]></text>
+								</staticText>
+								<staticText>
+									<reportElement style="Crosstab Data Text" mode="Opaque" x="68" y="0" width="50" height="23" backcolor="#CCCCCC" uuid="2ba8c125-ac37-4a59-b279-22687bb0fd3f"/>
+									<box>
+										<pen lineWidth="0.5"/>
+										<topPen lineWidth="0.5"/>
+										<leftPen lineWidth="0.5"/>
+										<bottomPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Ped. Recibir]]></text>
+								</staticText>
+								<staticText>
+									<reportElement style="Crosstab Data Text" mode="Opaque" x="118" y="0" width="50" height="23" backcolor="#CCCCCC" uuid="3a4cec81-161c-4857-8b3b-a21525cf4e8e"/>
+									<box>
+										<pen lineWidth="0.5"/>
+										<topPen lineWidth="0.5"/>
+										<leftPen lineWidth="0.5"/>
+										<bottomPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Ped. Entegar ]]></text>
+								</staticText>
+								<staticText>
+									<reportElement style="Crosstab Data Text" mode="Opaque" x="168" y="0" width="50" height="23" backcolor="#CCCCCC" uuid="ce319bf3-b6fe-4240-aae5-9dc95200398f"/>
+									<box>
+										<pen lineWidth="0.5"/>
+										<topPen lineWidth="0.5"/>
+										<leftPen lineWidth="0.5"/>
+										<bottomPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[ Disp. Venta]]></text>
+								</staticText>
+							</cellContents>
+						</crosstabTotalColumnHeader>
+					</columnGroup>
+					<columnGroup name="SUCURSAL_COD" height="23" headerPosition="Center">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{SUC_ABREV}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+							<cellContents>
+								<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+									<reportElement style="Crosstab Data Text" mode="Opaque" x="0" y="0" width="42" height="23" backcolor="#CCCCCC" uuid="abd8bff0-cfbd-42fd-8824-9dca5db0838e"/>
+									<box>
+										<pen lineWidth="0.5"/>
+										<topPen lineWidth="0.5"/>
+										<leftPen lineWidth="0.5"/>
+										<bottomPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
+									<textElement verticalAlignment="Middle" rotation="None">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{SUCURSAL_COD}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabColumnHeader>
+						<crosstabTotalColumnHeader>
+							<cellContents/>
+						</crosstabTotalColumnHeader>
+					</columnGroup>
+					<measure name="TOTAL_CANTeasure" class="java.math.BigDecimal" calculation="Sum">
+						<measureExpression><![CDATA[$F{TOTAL_CANT}]]></measureExpression>
+					</measure>
+					<measure name="recibir" class="java.math.BigDecimal">
+						<measureExpression><![CDATA[$F{Ped_Recibir}]]></measureExpression>
+					</measure>
+					<measure name="entregar" class="java.math.BigDecimal">
+						<measureExpression><![CDATA[$F{Ped_Entregar}]]></measureExpression>
+					</measure>
+					<measure name="venta" class="java.math.BigDecimal">
+						<measureExpression><![CDATA[$F{DISP_VENTA}]]></measureExpression>
+					</measure>
+					<measure name="total" class="java.math.BigDecimal">
+						<measureExpression><![CDATA[$F{TOTAL}]]></measureExpression>
+					</measure>
+					<crosstabCell width="42" height="12">
+						<cellContents>
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField pattern="#,##0.00" isBlankWhenNull="false">
+								<reportElement style="ESTILO2" x="0" y="0" width="42" height="12" uuid="d8d02468-7ca8-48b5-92b5-bac2b63cb9ac"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{TOTAL_CANTeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="218" height="12" columnTotalGroup="SUCURSAL">
+						<cellContents backcolor="#BFE1FF" mode="Transparent">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement style="ESTILO4" x="68" y="0" width="50" height="12" uuid="6bf8d8db-e376-4739-87c1-20e361de6f44"/>
+								<box>
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{recibir}]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="68" height="12" uuid="c75d5640-8982-4bc0-82ea-4116e5b8ff1e"/>
+								<box>
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+								<reportElement style="style4" x="118" y="0" width="50" height="12" uuid="c01c0f61-6844-4678-8b29-6b161e505c97"/>
+								<box>
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{entregar}]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement style="ESTILO1" x="168" y="0" width="50" height="12" uuid="b9631842-1ab1-4d6c-a9ad-3692735c8d0f"/>
+								<box>
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{venta}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="42" height="0" rowTotalGroup="COD">
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="218" height="0" rowTotalGroup="COD" columnTotalGroup="SUCURSAL">
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell columnTotalGroup="SUCURSAL_COD">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell height="0" rowTotalGroup="COD" columnTotalGroup="SUCURSAL_COD">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="DESCRIPCION" columnTotalGroup="SUCURSAL_COD">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="UM" columnTotalGroup="SUCURSAL_COD">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="ORDENAR">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="ORDENAR" columnTotalGroup="SUCURSAL">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="ORDENAR" columnTotalGroup="SUCURSAL_COD">
+						<cellContents/>
+					</crosstabCell>
+				</crosstab>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="104" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="0" y="0" width="112" height="12" uuid="f6a8da3d-8f8d-4349-898a-fb6c4e0e05a6"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESCRIP_EMPR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy h.mm a" isBlankWhenNull="true">
+				<reportElement x="931" y="12" width="106" height="12" uuid="8357920a-c293-48fa-bb87-6cf9e8850c4e"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="61" y="72" width="200" height="15" uuid="9e3b3d91-58f9-4911-966f-0f1f932ca961"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_GRUPO_DESC}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement x="989" y="0" width="34" height="12" uuid="dfae52b9-a007-46de-9199-d7e66e9c9873"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="61" y="87" width="200" height="15" uuid="28eba3c1-b4be-4338-af13-8b55c4543e17"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_RUBRO_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="1" y="19" width="111" height="12" uuid="e33c5433-35cb-449d-97b8-963ec94df8c5"/>
+				<textElement>
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="61" y="57" width="200" height="15" uuid="b3aa6d35-b5e7-45b7-8c73-e5968c27f6b7"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_LINEA_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="261" y="12" width="330" height="12" uuid="5202df99-5ef5-406f-80c7-bba0074b60bc"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="61" y="42" width="200" height="15" uuid="9be2f704-04c1-4c4b-a16e-4eb6296d6d56"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_MARCA_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="932" y="0" width="58" height="12" uuid="246030e0-3510-4b86-b8da-009523900925"/>
+				<textElement textAlignment="Left">
+					<font fontName="Arial" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de "]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="856" y="0" width="73" height="12" uuid="54d4ee93-5850-4b58-b8b0-7eb265939a47"/>
+				<textElement>
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="19" y="42" width="40" height="15" uuid="e2a6784d-3867-4609-871f-4088879a3168"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Marca :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="19" y="57" width="40" height="15" uuid="f9071f80-0586-4579-aa1f-d344b322f72d"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Linea :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="19" y="72" width="40" height="15" uuid="a5d3ae80-e574-4036-babc-d269f72b3756"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Grupo :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="19" y="87" width="40" height="15" uuid="4aad1c38-b451-441f-ae21-90069456e776"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Rubro :]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+</jasperReport>

@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERI088" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fe5d50e-21ca-4eaf-b283-7b38dc65a6c3">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="69"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_CIUDAD_EMPR" class="java.lang.String"/>
+	<parameter name="P_DEPART_EMPR" class="java.lang.String"/>
+	<parameter name="P_REPUB_EMPR" class="java.lang.String"/>
+	<parameter name="P_FECHA_CONT_LETRAS_1" class="java.lang.String"/>
+	<parameter name="P_GEN_GEN_NOMBRE" class="java.lang.String"/>
+	<parameter name="P_NOMBRE_EMPRESA" class="java.lang.String"/>
+	<parameter name="P_GEN_GEN_DOMIC" class="java.lang.String"/>
+	<parameter name="P_SR_NOMBRE_POSTUL" class="java.lang.String"/>
+	<parameter name="P_EDAD_POSTUL" class="java.lang.String"/>
+	<parameter name="P_GENERO_POSTUL" class="java.lang.String"/>
+	<parameter name="P_ESTADO_CIVIL_POSTUL" class="java.lang.String"/>
+	<parameter name="P_PROFESION_POSTUL" class="java.lang.String"/>
+	<parameter name="P_NACINALIDAD_POSTUL" class="java.lang.String"/>
+	<parameter name="P_DIR_POSTUL" class="java.lang.String"/>
+	<parameter name="P_AREA_CARGO" class="java.lang.String"/>
+	<parameter name="P_CARGO_DESC" class="java.lang.String"/>
+	<parameter name="P_FORMA_PAGO" class="java.lang.String"/>
+	<parameter name="P_REMUN_CONVENIDA" class="java.lang.String"/>
+	<parameter name="P_PLAZO_CONTRATO_1" class="java.lang.String"/>
+	<parameter name="P_DURACION_DIVISION" class="java.lang.String"/>
+	<parameter name="P_CLAUSULA_ESPECIAL" class="java.lang.String"/>
+	<parameter name="P_NOMBRE_EMPLEADO" class="java.lang.String"/>
+	<parameter name="P_NOMBRE_EMPLEADOR" class="java.lang.String"/>
+	<parameter name="P_CI_EMPLEADO" class="java.lang.String"/>
+	<parameter name="P_CI_EMPLEADOR" class="java.lang.String"/>
+	<parameter name="P_FECHA_CONT_LETRAS_2" class="java.lang.String"/>
+	<parameter name="P_PLAZO_CONTRATO_2" class="java.lang.String"/>
+	<parameter name="P_PLAZO_CONTRATO_3" class="java.lang.String"/>
+	<parameter name="P_CIUDAD_POST" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_INGRESO_POST" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_ZAFRA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_ZAFRA_DES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLAVE_POST" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CONT_EMPL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT CASE
+         WHEN PP.DOCPOS_EMPR = 1 THEN
+          PP.DOCPOS_NOMBRE || ' ' || PP.DOCPOS_APELLIDO
+         ELSE
+          INITCAP(PP.DOCPOS_NOMBRE || ' ' || PP.DOCPOS_APELLIDO)
+       END NOMBRE_POSTULANTE,
+       DECODE(PP.DOCPOS_SEXO, 'M', 'Masculino', 'F', 'Femenino') SEXO,
+       CASE
+         WHEN PP.DOCPOS_SEXO = 'M' THEN
+          'el sr. '
+         ELSE
+          'la sra. '
+       END TRATAMIENTO_POSTULANTE,
+       CASE
+         WHEN PP.DOCPOS_SEXO = 'M' THEN
+          CASE
+            WHEN PP.DOCPOS_ESTADO_CIV = 'C' THEN
+             'Casado'
+            ELSE
+             'Soltero'
+          END
+         ELSE
+          CASE
+            WHEN PP.DOCPOS_ESTADO_CIV = 'C' THEN
+             'Casada'
+            ELSE
+             'Soltera'
+          END
+       END ESTADO_CIVIL,
+       CASE
+         WHEN PP.DOCPOS_EMPR = 1 THEN
+          GP.PROF_DESC
+         ELSE
+          INITCAP(GP.PROF_DESC)
+       END PROFESION,
+       GPA.PAIS_NACIONALIDAD,
+       CASE
+         WHEN PP.DOCPOS_EMPR = 1 THEN
+          PP.DOCPOS_DOMICILIO
+         ELSE
+          INITCAP(FZ.ZONA_DESC)
+       END DOMICILIO,
+       CASE
+         WHEN PP.DOCPOS_EMPR = 1 THEN
+          PP.DOCPOS_DOMICILIO
+         ELSE
+          INITCAP(PP.DOCPOS_DOMICILIO)
+       END ZONA_DESC,
+       PP.DOCPOS_CEDULA_IDEN,
+CASE
+         WHEN PP.DOCPOS_SEXO = 'M' THEN
+         'el Sr. '||INITCAP(PP.DOCPOS_NOMBRE || ' ' || PP.DOCPOS_APELLIDO)
+         else
+         'La Sra.'||INITCAP(PP.DOCPOS_NOMBRE || ' ' || PP.DOCPOS_APELLIDO)
+       END NOMBRE_POSTULANTE1
+
+  FROM PER_POSTULANTE_CARGO PP, GEN_PROFESION GP, GEN_PAIS GPA, FAC_ZONA FZ
+ WHERE PP.DOCPOS_EMPR = $P{P_EMPRESA}
+   AND PP.DOCPOS_CLAVE = $P{P_CLAVE_POST}
+   AND PP.DOCPOS_EMPR = GPA.PAIS_EMPR(+)
+   AND PP.DOCPOS_NACI = GPA.PAIS_CODIGO(+)
+   AND PP.DOCPOS_EMPR = GP.PROF_EMPR(+)
+   AND PP.DOCPOS_PROF = GP.PROF_CODIGO(+)
+   AND PP.DOCPOS_EMPR = FZ.ZONA_EMPR(+)
+   AND PP.DOCPOS_ZONA = FZ.ZONA_CODIGO(+)
+UNION ALL
+ SELECT C.EMPL_NOMBRE||' '||C.EMPL_APE NOMBRE,
+        decode(c.empl_sexo,'M', 'Masculino', 'F', 'Femenino')sexo,
+        CASE
+         WHEN empl_sexo = 'M' THEN
+          'el sr. '
+         ELSE
+          'la sra. '
+       END TRATAMIENTO_POSTULANTE,
+     CASE
+         WHEN empl_sexo = 'M' THEN
+          CASE
+            WHEN c.empl_est_civil = 'C' THEN
+             'Casado'
+            ELSE
+             'Soltero'
+          END
+         ELSE
+          CASE
+            WHEN c.empl_est_civil = 'C' THEN
+             'Casada'
+            ELSE
+             'Soltera'
+          END
+       END ESTADO_CIVIL,
+       CASE
+         WHEN a.pcon_empr = 1 THEN
+           P.PROF_DESC
+         ELSE
+          INITCAP(P.PROF_DESC)
+       END PROFESION,
+       S.PAIS_NACIONALIDAD,
+
+        CASE
+         WHEN pcon_empr = 1 THEN
+        l.loc_desc
+         ELSE
+          INITCAP(l.loc_desc)
+       END DOMICILIO,
+
+       CASE
+         WHEN pcon_empr = 1 THEN
+         A.PCON_DIRECCION
+         ELSE
+          INITCAP(A.PCON_DIRECCION)
+       END ZONA_DESC,
+       A.PCON_CI,
+    CASE
+         WHEN empl_sexo = 'M' THEN
+         'el Sr. '||INITCAP(C.EMPL_NOMBRE||' '||C.EMPL_APE)
+         else
+         'la Sra. '||INITCAP(C.EMPL_NOMBRE||' '||C.EMPL_APE)
+       END NOMBRE_POSTULANTE1
+
+
+   FROM PER_CONT_SIN_PROSELC A, PER_EMPLEADO C, GEN_PROFESION P, GEN_PAIS S, gen_localidad l
+     WHERE A.PCON_LEGAJO = C.EMPL_LEGAJO
+     AND A.PCON_EMPR = C.EMPL_EMPRESA
+     AND C.EMPL_NACIONALIDAD = S.PAIS_CODIGO(+)
+     AND C.EMPL_EMPRESA = S.PAIS_EMPR(+)
+     AND C.EMPL_PROF = P.PROF_CODIGO(+)
+     AND C.EMPL_EMPRESA = P.PROF_EMPR(+)
+     and c.EMPL_LOCALIDAD = l.loc_codigo(+)
+     and c.EMPL_EMPRESA = l.loc_empr(+)
+     AND A.PCON_EMPR = $P!{P_EMPRESA}
+     AND A.PCON_CODIGO =$P{P_CONT_EMPL}]]>
+	</queryString>
+	<field name="NOMBRE_POSTULANTE" class="java.lang.String"/>
+	<field name="SEXO" class="java.lang.String"/>
+	<field name="TRATAMIENTO_POSTULANTE" class="java.lang.String"/>
+	<field name="ESTADO_CIVIL" class="java.lang.String"/>
+	<field name="PROFESION" class="java.lang.String"/>
+	<field name="PAIS_NACIONALIDAD" class="java.lang.String"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="ZONA_DESC" class="java.lang.String"/>
+	<field name="DOCPOS_CEDULA_IDEN" class="java.math.BigDecimal"/>
+	<field name="NOMBRE_POSTULANTE1" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="5" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="25" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="13" uuid="ce5a3c3e-02d8-4ae9-aa0a-74bdf812f5e6"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[CONTRATO DE TRABAJO POR ZAFRA]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="11" y="13" width="533" height="12" uuid="944961d0-6b7b-47dc-87b8-7dbbdc831e3c"/>
+				<textElement textAlignment="Justified">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["En la ciudad de " + $P{P_CIUDAD_EMPR} + ", Departamento de " + $P{P_DEPART_EMPR} + ", República del " +  $P{P_REPUB_EMPR}  + ", a los " + $P{P_FECHA_CONT_LETRAS_1} + " del año " + $P{P_FECHA_CONT_LETRAS_2} +  ",por una parte la empresa "+ $P{P_NOMBRE_EMPRESA} + ", con domicilio en " + $P{P_GEN_GEN_DOMIC} + " de esta ciudad representado por el Sr.  " + $P{P_GEN_GEN_NOMBRE} + "  con C.I.N° " + $P{P_CI_EMPLEADOR} + " en su carácter de Presidente de la empresa denominado en adelante “EMPLEADOR“, y por otra " + $F{NOMBRE_POSTULANTE1} + ", de estado civil " + $F{ESTADO_CIVIL}+", sexo " + $F{SEXO} + ", profesión u oficio " + $F{PROFESION} + ", nacionalidad " + $F{PAIS_NACIONALIDAD} + " denominado “TRABAJADOR”, con C.I.N° " + $P{P_CI_EMPLEADO} + ", domiciliado en " +$P{P_DIR_POSTUL}+ " de la ciudad de " + $F{DOMICILIO} + ", convienen en celebrar el presente CONTRATO DE TRABAJO POR ZAFRA, que se regirán por las siguientes clausulas:"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="23">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="11" y="11" width="533" height="12" uuid="5101dc55-807a-4982-aa40-5f5b884eea66"/>
+				<textElement textAlignment="Justified">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["1.1. LA EMPRESA contrata a EL EMPLEADO para la ejecución de trabajos zafrales relacionados a " + $P{P_ZAFRA_DES} + " debiendo realizar todas las funciones y labores que se relacionen directa e indirectamente con los trabajos de las distintas secciones y ciclos de cultivo y cosecha, en un sistema de polivalencia de funciones, pudiendo el empleador asignarle funciones específicas conforme las necesidades del servicio. - \n"+
+"1.2. Los servicios contratados se ejecutarán en el local de la Empresa."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="11" y="-1" width="256" height="12" uuid="3a14b89a-9d09-479b-82c9-9656ef961930"/>
+				<textElement>
+					<font size="8" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[1. MODALIDADES.]]></text>
+			</staticText>
+		</band>
+		<band height="22">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="11" y="10" width="533" height="12" uuid="73e1f71a-aa8d-4a79-a6c2-18efdf8110f0"/>
+				<textElement textAlignment="Justified">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["2.1. Por unidad de tiempo.\n"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="11" y="-2" width="257" height="12" uuid="0fb3cb69-75b0-40a6-84c9-df3da58a6f2c"/>
+				<textElement>
+					<font size="8" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[2. FORMA CONTRATO.]]></text>
+			</staticText>
+		</band>
+		<band height="22">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="11" y="9" width="533" height="12" uuid="f2be1709-561e-4feb-ae9c-68a362d90dc2"/>
+				<textElement textAlignment="Justified">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["El monto del salario es jornal por hora de trabajo de acuerdo al mínimo vigente. - \n"+
+"Periodo de pago: mensual por periodo vencido. -"+
+"Época: Del 1 al 5 de cada mes. -\n"+
+"Lugar: Local de la Empresa. -\n"+
+"Forma de pago: Las partes acuerdan que como medida de seguridad el salario y/o liquidaciones podrán ser abonadas en cheques, tarjetas de débito, depósitos, acreditaciones, que permitan la percepción del trabajador con mayor garantía. No obstante la forma de pago, tiene la obligación de firmar mensualmente el recibo de salario, el incumplimiento de esta disposición será pasible de sanción disciplinaria.-\n"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="11" y="-2" width="257" height="12" uuid="ce26a7bc-74d0-4419-aaf2-e191b46dfb5b"/>
+				<textElement>
+					<font size="8" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[3. REMUNERACION CONVENIDA.]]></text>
+			</staticText>
+		</band>
+		<band height="22">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="11" y="10" width="533" height="12" uuid="803b7fa4-05ce-4e80-beed-d23e604ce1bd"/>
+				<textElement textAlignment="Justified">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["4.1.- EL EMPLEADO es contratado exclusivamente para realizar las labores contratadas en la presente zafra cuyo término es incierto por estar sujeto al tiempo de acopio de materia prima, cuyo plazo no es posible determinar con fecha cierta, pero se presume finalizaran en el mes de  " + $P{P_FEC_ZAFRA} + ". -\n"+
+"4.2. Fecha de inicio del trabajo: "+ $P{P_FEC_INGRESO_POST}+"-\n"+
+"4.3. Vigencia del contrato: hasta la culminación de las labores que le competen realizar en la presente zafra conforme el puesto de trabajo o función que desempeña o hasta la finalización de la misma. El EMPLEADO reconoce y está conforme que al término de la zafra o en el momento que culminen las labores para las que fue contratado, la relación laboral fenece temporalmente, sin cargo alguno para las partes ni derecho a indemnización, \n"+ "salvo el aguinaldo, por suspensión del contrato conforme art. 71 inc. “J“ del Código de Trabajo."+
+"4.4.- Período de prueba: 60 (sesenta) días.-\n"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="11" y="-2" width="322" height="12" uuid="a90d9ec0-6f1d-4bb2-aa78-0951e48b575f"/>
+				<textElement>
+					<font size="8" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[4. PLAZO DEL CONTRATO.]]></text>
+			</staticText>
+		</band>
+		<band height="24">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="11" y="12" width="533" height="12" uuid="3094c55e-c844-4922-b9ee-d8ae63419a68"/>
+				<textElement textAlignment="Justified">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["5.1. Se establecen jornadas de 8 horas diarias y 48 (cuarenta y ocho) horas semanales de trabajo y un horario de: \n "+
+"- Lunes a Viernes:         de 07:00 hs a 12:00 hs por la mañana.\n"+
+"                                       de 13:00 hs a 17:00 hs por la tarde.\n"+
+"- Sábados:                      de 07:00 hs a 12:00 hs.\n"+
+
+"5.2. El horario será determinado por la EMPRESA ajustándose a las necesidades del servicio y procesamiento y la existencia de materia prima. La jornada diaria de lunes a viernes podrá ser ampliada a los efectos de suplir el trabajo del día sábado, total o parcialmente, El horario podrá ser modificado en función a la época del año y a las necesidades del servicio.-Cualquier modificación, sino fuere una emergencia, será comunicada con una anticipación de 48 (cuarenta y ocho) horas por lo menos."+
+"5.3. Se pacta un día de descanso semanal, preferentemente en día domingo, o compensatorio en día hábil de la siguiente semana.-\n"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="11" y="0" width="322" height="12" uuid="24fa47ce-4a42-40c7-964f-9b65ff5f914d"/>
+				<textElement>
+					<font size="8" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[5. DURACIÓN Y DIVISIÓN DE LA JORNADA.]]></text>
+			</staticText>
+		</band>
+		<band height="25">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="11" y="13" width="533" height="12" uuid="fb7ab848-9623-4dbe-83b2-74f96fb8579c"/>
+				<textElement textAlignment="Justified">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["6.1. EL EMPLEADO se compromete comunicar a LA EMPRESA, por escrito, el cambio o traslado de su domicilio. Mientras este no se registre serán válidas todas las comunicaciones dirigidas al último domicilio denunciado, con todos los efectos legales.- \n"+
+"6.2. EL EMPLEADO se obliga a cumplir las normas disciplinarias, los horarios de trabajo; cuidar su imagen y presentación en el trabajo y usar el uniforme establecido por la Empresa si esta así lo dispusiera, así como los elementos y equipos de seguridad.- \n"+
+"6.3. Se pacta la exclusividad de la prestación del servicio. (Art. 22 del Código de Trabajo), durante la vigencia del presente contrato.- \n"+
+"6.4.EL EMPLEADO deberá guardar la mayor reserva sobre los costos, precios, nómina de clientes, proveedores, métodos de procesamiento y producción, servicios y en general sobre todo lo relacionado con el giro comercial y de producción de la EMPRESA, que llegare a conocer por las labores que ejecuta y funciones que desempeña. La violación de esta norma es particularmente grave y podrá ser causal de despido con justa causa. (Art. 81 inc. h) Código de Trabajo). La obligación de confidencialidad subsiste aun después de terminada la relación laboral. -\n"+
+ "6.5. EL EMPLEADO debe ser cortes y respetuoso con sus superiores, compañeros de trabajo, clientes y visitantes debiendo en todo momento guardar compostura y buen carácter; no proferir palabras soeces, insultos o humillar a sus compañeros de trabajo; incitar o participar de riñas y ajustar su conducta las normas legales, que declara conocer. -\n"+
+"6.6. A la entrada y salida, así como durante el o los recesos EL EMPLEADO deberá registrar su presencia en el reloj biométrico, debiendo justificar su ausencia o llegada tardía. -\n"+
+"6.7. Deberá recibir y firmar el Contrato de Trabajo, todos y cada uno de los documentos, notificaciones, comunicaciones, instructivos sobre seguridad, higiene, manejo de máquinas, etc. que le presente el empleador -\n"+
+"6.8. Si el empleador lo dispusiera deberá someterse a la entrada o salida de las instalaciones de la Empresa, a la revisión de la mochila, cartera, bolsos, paquetes, bultos, etc. sin que esta medida de seguridad constituya menoscabo a su persona y dignidad."+
+"En prueba de conformidad, previa lectura y ratificación del contenido, firman las partes en dos ejemplares de un mismo tenor y a un solo efecto."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="11" y="1" width="305" height="12" uuid="d4079663-4fb5-4db4-9211-ac5e68709f04"/>
+				<textElement>
+					<font size="8" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[6. CLAUSULAS ESPECIALES.]]></text>
+			</staticText>
+		</band>
+		<band height="103">
+			<staticText>
+				<reportElement x="42" y="51" width="218" height="12" uuid="ab9d36a7-63fc-4a93-9f1e-0a6fc0b335ee"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[...................................................................]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="304" y="77" width="198" height="12" uuid="3ec977a5-030c-484d-9bd7-ddf1b9580c80"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["C.I. N°   " + $P{P_CI_EMPLEADOR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="294" y="51" width="220" height="12" uuid="8f378e88-5505-4f7f-9311-493c008101b9"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[....................................................................]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="304" y="90" width="198" height="12" uuid="90399e1c-3969-4b41-a53d-bfa328ccc42a"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Empleador -  " + $P{P_NOMBRE_EMPRESA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="304" y="65" width="198" height="12" uuid="1ad058fd-9e4e-47f4-bc69-096b5142c7d2"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_NOMBRE_EMPLEADOR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="56" y="90" width="192" height="12" uuid="dbe5d721-e6ef-4539-9dac-50aa03b26d80"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Trabajador]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="FixRelativeToBottom" x="42" y="65" width="218" height="12" uuid="0594f0c8-c47a-4ac4-b98e-4c500729ae8f"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_POSTULANTE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="56" y="77" width="192" height="12" uuid="629a42a9-4bbe-43d7-9fe0-9c8d6733a46d"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["C.I. N°   " + $P{P_CI_EMPLEADO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="7" splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

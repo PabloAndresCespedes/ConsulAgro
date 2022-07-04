@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="control_ambiente" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="2af8c780-ef6e-455e-84ef-7c658afae5c0">
+	<property name="ireport.zoom" value="1.3310000000000062"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="80"/>
+	<parameter name="EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CODIGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT ACS.CSEC_CODIGO,
+       ACS.CSEC_EMPR,
+       ACS.CSEC_SUC,
+       ACS.CSEC_ARTICULO,
+       TO_CHAR(ACS.CSEC_FECHA,'DD/MM/YYYY') CSEC_FECHA,
+       ACS.CSEC_LOGIN,
+       TO_CHAR(CSA.CTRLAMB_HORA, 'HH24:MI') CTRLAMB_HORA,
+       CSA.CTRLAMB_TEMP_ACT,
+       CSA.CTRLAMB_TEMP_MAX,
+       CSA.CTRLAMB_TEMP_MIN,
+       CSA.CTRLAMB_HUM_ACT,
+       CSA.CTRLAMB_HUM_MAX,
+       CSA.CTRLAMB_HUM_MIN,
+       ACS.CSEC_SUC || ' - ' || GS.SUC_DESC SUCURSAL
+  FROM ACO_CTRL_SECADO ACS, ACO_CTRL_SEC_AMB CSA, GEN_SUCURSAL GS
+ WHERE ACS.CSEC_CODIGO = CSA.CTRLAMB_CTRL_SEC
+   AND ACS.CSEC_EMPR = CSA.CTRLAMB_EMPR
+   AND ACS.CSEC_SUC = CSA.CTRLAMB_SUC
+
+   AND GS.SUC_EMPR = ACS.CSEC_EMPR
+   AND GS.SUC_CODIGO = ACS.CSEC_SUC
+
+   AND ACS.CSEC_CODIGO = $P{CODIGO}
+   AND ACS.CSEC_EMPR = $P{EMPRESA}
+   AND ACS.CSEC_SUC = $P{SUCURSAL}]]>
+	</queryString>
+	<field name="CSEC_CODIGO" class="java.math.BigDecimal"/>
+	<field name="CSEC_EMPR" class="java.math.BigDecimal"/>
+	<field name="CSEC_SUC" class="java.math.BigDecimal"/>
+	<field name="CSEC_ARTICULO" class="java.math.BigDecimal"/>
+	<field name="CSEC_FECHA" class="java.lang.String"/>
+	<field name="CSEC_LOGIN" class="java.lang.String"/>
+	<field name="CTRLAMB_HORA" class="java.lang.String"/>
+	<field name="CTRLAMB_TEMP_ACT" class="java.lang.Double"/>
+	<field name="CTRLAMB_TEMP_MAX" class="java.lang.Double"/>
+	<field name="CTRLAMB_TEMP_MIN" class="java.lang.Double"/>
+	<field name="CTRLAMB_HUM_ACT" class="java.lang.Double"/>
+	<field name="CTRLAMB_HUM_MAX" class="java.lang.Double"/>
+	<field name="CTRLAMB_HUM_MIN" class="java.lang.Double"/>
+	<field name="SUCURSAL" class="java.lang.String"/>
+	<variable name="CTRLAMB_HUM_MIN_1" class="java.lang.Double" resetType="Page" calculation="Average">
+		<variableExpression><![CDATA[$F{CTRLAMB_HUM_MIN}]]></variableExpression>
+	</variable>
+	<variable name="CTRLAMB_HUM_MAX_1" class="java.lang.Double" resetType="Page" calculation="Average">
+		<variableExpression><![CDATA[$F{CTRLAMB_HUM_MAX}]]></variableExpression>
+	</variable>
+	<variable name="CTRLAMB_HUM_MAX_2" class="java.lang.Double" resetType="Page" calculation="Average">
+		<variableExpression><![CDATA[$F{CTRLAMB_HUM_MAX}]]></variableExpression>
+	</variable>
+	<variable name="CTRLAMB_HUM_MIN_2" class="java.lang.Double" resetType="Page" calculation="Average">
+		<variableExpression><![CDATA[$F{CTRLAMB_HUM_MIN}]]></variableExpression>
+	</variable>
+	<variable name="CTRLAMB_HUM_PROM" class="java.lang.Double" resetType="Page" calculation="Average">
+		<variableExpression><![CDATA[($F{CTRLAMB_HUM_MIN} + $F{CTRLAMB_HUM_MAX})/2]]></variableExpression>
+	</variable>
+	<variable name="CTRLAMB_TEMP_MIN_1" class="java.lang.Double" resetType="Page" calculation="Average">
+		<variableExpression><![CDATA[$F{CTRLAMB_TEMP_MIN}]]></variableExpression>
+	</variable>
+	<variable name="CTRLAMB_TEMP_MAX_1" class="java.lang.Double" resetType="Page" calculation="Average">
+		<variableExpression><![CDATA[$F{CTRLAMB_TEMP_MAX}]]></variableExpression>
+	</variable>
+	<variable name="CTRLAMB_TEMP_PROM" class="java.lang.Double" resetType="Page" calculation="Average">
+		<variableExpression><![CDATA[($F{CTRLAMB_TEMP_MIN} + $F{CTRLAMB_TEMP_MAX})/2]]></variableExpression>
+	</variable>
+	<title>
+		<band height="119" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="2" y="3" width="552" height="111" uuid="0714c214-3dea-4ece-bf9f-9925758ca10f"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="67" y="28" width="420" height="36" uuid="b6dec4b3-5fd6-4473-9ce7-9ea965f524b4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="22" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONTROL DE AMBIENTE]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="132" y="64" width="145" height="25" uuid="86c99b91-5f74-42f7-b537-4800b3161cf5"/>
+				<textElement verticalAlignment="Middle">
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="342" y="64" width="145" height="25" uuid="73544314-fff4-412c-8488-bc47a1f15cca"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{CSEC_FECHA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="67" y="64" width="65" height="25" uuid="622315b4-c223-4a03-ac5b-6aef9d42030f"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[SUCURSAL:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="277" y="64" width="65" height="25" uuid="bb5682f4-d23a-4b94-98d2-d3fbe246f651"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="3" width="100" height="25" uuid="fe26723b-f29c-4b70-8099-77b905c34561"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[ACOM301]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="51" splitType="Stretch">
+			<rectangle>
+				<reportElement x="42" y="5" width="471" height="42" uuid="97f24d24-bce2-44e4-9380-ed6c0be535bf"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="42" y="5" width="63" height="42" uuid="90b440f9-f754-4675-90bb-8ae5165b0fbc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HORA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="110" y="5" width="63" height="42" uuid="338aabee-6318-4a9d-99d4-e84938319072"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Temperatura Actual]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="178" y="5" width="63" height="42" uuid="c12630a7-54d0-45b6-a615-6f43383ae40a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Temperatura Maxima]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="246" y="5" width="63" height="42" uuid="5849bcb9-23e2-4079-86c4-32c3200f9430"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Temperatura Minima]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="314" y="5" width="63" height="42" uuid="d8e46736-5cb1-42f5-a5f2-72233cb85be4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Humedad Actual]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="382" y="5" width="63" height="42" uuid="abe50761-6026-42a5-a4ed-4b7223423bf6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Humedad Maxima]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="450" y="5" width="63" height="42" uuid="cc25b3ff-55e4-44af-b485-634386d92957"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Humedad Minima]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="26" splitType="Immediate">
+			<textField isBlankWhenNull="true">
+				<reportElement x="42" y="2" width="63" height="20" uuid="2580f03b-9a2b-4b8f-934c-c90ada6d5555"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CTRLAMB_HORA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="110" y="2" width="63" height="20" uuid="12cf36f7-cf47-4469-b53e-7f1bd00f1a29"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CTRLAMB_TEMP_ACT} + " Cº"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="178" y="2" width="63" height="20" uuid="73fcb559-930c-4f11-8639-37f62e33a3a9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CTRLAMB_TEMP_MAX}  + " Cº"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="246" y="2" width="63" height="20" uuid="637d5b55-1834-4fa8-bf19-c4170be219b2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CTRLAMB_TEMP_MIN}  + " Cº"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="314" y="2" width="63" height="20" uuid="3acc53f0-b733-42a3-8432-7d7d93495687"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CTRLAMB_HUM_ACT}  + " %"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="382" y="2" width="63" height="20" uuid="a0d08019-a1b5-4cb1-a35b-eb657d3dcc53"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CTRLAMB_HUM_MAX}  + " %"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="450" y="2" width="63" height="20" uuid="7260839a-3620-4d99-bb05-74f237fc4918"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CTRLAMB_HUM_MIN}  + " %"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="140">
+			<rectangle radius="10">
+				<reportElement mode="Opaque" x="2" y="0" width="552" height="137" uuid="b27b9955-80df-4291-b39d-c87b55dd1cf3"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="2" y="29" width="270" height="32" uuid="65199693-6d88-4c52-8b1c-48a2787cc47e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TEMPERATURA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="272" y="29" width="282" height="32" uuid="e57e048b-5a64-47e6-841d-eae8921cb20e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HUMEDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="105" y="61" width="73" height="32" uuid="1c8a7054-d04f-4c5f-a07d-862f7f7b1e85"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Promedio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="21" y="61" width="63" height="32" uuid="37514c15-59af-4cd4-8ee1-4acb39ec9261"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Maxima]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="378" y="60" width="73" height="33" uuid="fa7548d3-9ece-4faa-8872-92caf4ed2909"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Promedio]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="293" y="93" width="63" height="44" uuid="dfd40f51-2d12-400a-b25c-6fbc4722180b"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[Math.ceil($V{CTRLAMB_HUM_MAX_2} *100)/100 + " %"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="471" y="93" width="63" height="44" uuid="75180bc7-65a2-4201-b029-1e794db0412e"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[Math.ceil($V{CTRLAMB_HUM_MIN_2}*100)/100 + " %"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="378" y="93" width="71" height="44" uuid="4106a11d-ca14-4e06-ab17-a145b482cfbb"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[Math.ceil($V{CTRLAMB_HUM_PROM}*100)/100 + " %"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="200" y="61" width="63" height="32" uuid="c2b97d41-447b-44da-854e-3c869c7c46c1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Minima]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="471" y="60" width="63" height="33" uuid="166787fb-8bf0-49eb-801a-c1e88e559234"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Minima]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="293" y="60" width="63" height="33" uuid="32bac69f-07b0-4b25-8b9d-4ec80b7ff17e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Maxima]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="200" y="93" width="63" height="44" uuid="5b9417ff-169d-4ebf-809b-801b6e5b97a7"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[Math.ceil($V{CTRLAMB_TEMP_MIN_1}*100)/100 + " Cº"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="21" y="93" width="63" height="44" uuid="1afa4a78-3302-4a16-a4e2-427c62866771"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[Math.ceil($V{CTRLAMB_TEMP_MAX_1}*100)/100 + " Cº"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="105" y="93" width="73" height="44" uuid="c4bf5b63-cc39-441e-97b8-8af5ee5b34d3"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[Math.ceil($V{CTRLAMB_TEMP_PROM}*100)/100 + " Cº"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="0" width="552" height="29" uuid="23a2e353-ec62-4c68-be25-5e2a70f1ba81"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RESULTADOS DE CONTROL DE AMBIENTE]]></text>
+			</staticText>
+			<line>
+				<reportElement x="272" y="29" width="1" height="108" uuid="9d57d7a1-d495-470b-9b33-0ece0a805950"/>
+			</line>
+			<line>
+				<reportElement x="2" y="29" width="552" height="1" uuid="c0879e84-b791-4442-abaa-efc2f8b69574"/>
+			</line>
+			<line>
+				<reportElement x="3" y="59" width="552" height="1" uuid="3f044061-1baa-4bf9-ab42-9fbbd247da07"/>
+			</line>
+		</band>
+	</columnFooter>
+	<noData>
+		<band height="50">
+			<staticText>
+				<reportElement x="2" y="0" width="553" height="50" uuid="4c0caa87-0cf7-4e45-b3d2-694e435a0fd5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="14"/>
+				</textElement>
+				<text><![CDATA[No hay datos de ESTADO DEL AMBIENTE para esta fecha ]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

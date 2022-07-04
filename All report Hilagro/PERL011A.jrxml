@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERL011A" printOrder="Horizontal" pageWidth="1190" pageHeight="800" orientation="Landscape" columnWidth="1150" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="256f068c-bcd9-4f8f-ad60-19991dce2ad9">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table" fill="Solid">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<pen lineWidth="2.25" lineStyle="Solid"/>
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<subDataset name="Logo" uuid="ef404143-2338-4e8c-9a8e-e5b8b58a986e">
+		<parameter name="P_EMPRESA" class="java.lang.String"/>
+		<queryString language="SQL">
+			<![CDATA[select EMPR_LOGO logo
+from gen_empresa
+WHERE EMPR_CODIGO = $P{P_EMPRESA}]]>
+		</queryString>
+		<field name="LOGO" class="oracle.jdbc.OracleBlob"/>
+	</subDataset>
+	<subDataset name="CROSSTAB" uuid="308cc268-c4f4-4ba8-8ab8-9b7eaac1611c">
+		<parameter name="P_SUCURSAL" class="java.lang.String"/>
+		<parameter name="P_EMPRESA" class="java.lang.String"/>
+		<parameter name="P_DEPARTAMENTO" class="java.lang.String"/>
+		<parameter name="P_SESSION_ID" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT SUCURSAL,
+       NOMBRE,
+       SUM(IMPORTE) IMPORTE,
+       A.MES,
+       V.LEGAJO,
+       ORDEN
+  FROM PER_PERL011_C_TEMP V ,
+  (SELECT  TO_CHAR(TO_DATE(LEVEL, 'MM'), 'YYYY/MM') MES, LEVEL ORDEN
+    FROM DUAL
+    CONNECT BY LEVEL <= 12) A
+ WHERE SESSION_ID(+) =$P{P_SESSION_ID}
+   AND EMPR(+) = $P{P_EMPRESA}
+   AND IND_AGUINALDO(+) = 'S'
+   AND ANHO_MES (+)= A.MES
+ GROUP BY SUCURSAL, NOMBRE, A.MES, V.LEGAJO,ORDEN
+ UNION ALL
+ SELECT SUCURSAL,
+       NOMBRE,
+       SUM(IMPORTE)TOTAL,
+       'TOTAL PERCIBIDO',
+       V.LEGAJO,
+       13
+  FROM PER_PERL011_C_TEMP V
+ WHERE SESSION_ID =$P{P_SESSION_ID}
+   AND EMPR =$P{P_EMPRESA}
+   AND IND_AGUINALDO = 'S'
+ GROUP BY SUCURSAL, NOMBRE, V.LEGAJO
+ UNION ALL
+ SELECT SUCURSAL,
+       NOMBRE,
+       SUM(IMPORTE)/12 TOTAL,
+       'AGUINALDO',
+       V.LEGAJO,
+       14
+  FROM PER_PERL011_C_TEMP V
+ WHERE SESSION_ID = $P{P_SESSION_ID}
+   AND EMPR= $P{P_EMPRESA}
+   AND IND_AGUINALDO= 'S'
+ GROUP BY SUCURSAL, NOMBRE,  V.LEGAJO]]>
+		</queryString>
+		<field name="SUCURSAL" class="java.lang.String"/>
+		<field name="NOMBRE" class="java.lang.String"/>
+		<field name="IMPORTE" class="java.math.BigDecimal"/>
+		<field name="MES" class="java.lang.String"/>
+		<field name="LEGAJO" class="java.math.BigDecimal"/>
+		<field name="ORDEN" class="java.math.BigDecimal"/>
+	</subDataset>
+	<parameter name="P_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DEPARTAMENTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_EMPRESA" class="java.lang.String"/>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String"/>
+	<parameter name="P_SESSION_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String"/>
+	<parameter name="P_DESDE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_HASTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCU_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USUARIO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT SUCURSAL,
+       NOMBRE,
+       SUM(IMPORTE) IMPORTE,
+       A.MES,
+       V.LEGAJO,
+       ORDEN
+  FROM PER_PERL011_C_TEMP V ,
+  (SELECT  TO_CHAR(TO_DATE(LEVEL, 'MM'), 'YYYY/MM') MES, LEVEL ORDEN
+    FROM DUAL
+    CONNECT BY LEVEL <= 12) A
+ WHERE SESSION_ID(+) =$P{P_SESSION_ID}
+   AND EMPR(+) = $P{P_EMPRESA}
+   AND IND_AGUINALDO(+) = 'S'
+   AND ANHO_MES (+)= A.MES
+ GROUP BY SUCURSAL, NOMBRE, A.MES, V.LEGAJO,ORDEN
+ UNION ALL
+ SELECT SUCURSAL,
+       NOMBRE,
+       SUM(IMPORTE)TOTAL,
+       'TOTAL PERCIBIDO',
+       V.LEGAJO,
+       13
+  FROM PER_PERL011_C_TEMP V
+ WHERE SESSION_ID =$P{P_SESSION_ID}
+   AND EMPR =$P{P_EMPRESA}
+   AND IND_AGUINALDO = 'S'
+ GROUP BY SUCURSAL, NOMBRE, V.LEGAJO
+ UNION ALL
+ SELECT SUCURSAL,
+       NOMBRE,
+       SUM(IMPORTE)/12 TOTAL,
+       'AGUINALDO',
+       V.LEGAJO,
+       14
+  FROM PER_PERL011_C_TEMP V
+ WHERE SESSION_ID = $P{P_SESSION_ID}
+   AND EMPR= $P{P_EMPRESA}
+   AND IND_AGUINALDO= 'S'
+ GROUP BY SUCURSAL, NOMBRE,  V.LEGAJO]]>
+	</queryString>
+	<field name="SUCURSAL" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<field name="MES" class="java.lang.String"/>
+	<field name="LEGAJO" class="java.math.BigDecimal"/>
+	<field name="ORDEN" class="java.math.BigDecimal"/>
+	<group name="sucursal">
+		<groupExpression><![CDATA[$F{SUCURSAL}]]></groupExpression>
+	</group>
+	<group name="SUCURSAL">
+		<groupExpression><![CDATA[$F{SUCURSAL}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="138" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="241" height="20" uuid="231c65c9-b600-4a7c-afdb-9081a016766b"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_EMPRESA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="20" width="241" height="20" uuid="99df0854-26b6-4930-a242-0770b3c51ecb"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="851" y="0" width="102" height="20" uuid="a36e0981-a83e-43fe-863f-4b794e0f3add"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<rectangle radius="10">
+				<reportElement x="0" y="75" width="1093" height="57" uuid="b46e05f5-84b5-4553-86b5-ff14f45b5645"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="11" y="81" width="104" height="20" uuid="48911384-3f0b-4dc5-9957-48557188d81b"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha desde]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1029" y="0" width="28" height="20" uuid="3ca734a7-3c6e-4443-8f23-a57b4f579b16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hoja:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="1057" y="0" width="20" height="20" uuid="fc1eadc4-96cf-4144-9cac-7b4149ab0430"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="953" y="20" width="74" height="20" uuid="ca80d8f1-6787-42ba-b5fa-f0648d6bed09"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm">
+				<reportElement x="1029" y="20" width="48" height="20" uuid="97ef95e5-b687-47d5-9bc8-4092111c17b4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="851" y="20" width="102" height="20" uuid="802e11fc-8079-4241-8c94-fa95a61ec059"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="115" y="81" width="100" height="20" uuid="7d622bad-c441-4154-bdf0-1e574e60d0aa"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESDE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="11" y="101" width="104" height="20" uuid="66ba4f09-edfc-4bad-9d2c-53ed0519a29c"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hasta]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="115" y="101" width="100" height="20" uuid="c1a0beb7-c0e3-4866-b024-ef587ccadc82"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_HASTA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="322" y="81" width="104" height="20" uuid="8a007992-b43a-4768-b962-61451c4178ee"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Departamento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="322" y="101" width="104" height="20" uuid="de48be25-ed64-413c-9b63-cea67a617cb0"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sucursal]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="426" y="101" width="266" height="20" uuid="90d44b70-1e53-4dc0-8744-9983263539ec"/>
+				<textFieldExpression><![CDATA[$P{P_SUCU_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="426" y="81" width="266" height="20" uuid="6f6691be-7c17-49e4-8186-9ce105e9f1e5"/>
+				<textFieldExpression><![CDATA[$P{P_DEPARTAMENTO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="35" width="1150" height="40" uuid="fa8e9227-b5bd-4e34-9345-359bbbc4801d"/>
+				<textElement textAlignment="Center">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PLANILLA DE AGUINALDO]]></text>
+			</staticText>
+		</band>
+	</title>
+	<summary>
+		<band height="99" splitType="Stretch">
+			<elementGroup/>
+			<crosstab>
+				<reportElement x="0" y="0" width="1232" height="14" uuid="c275fab3-3f24-4dcc-a401-5e13c5a77bd4"/>
+				<crosstabDataset>
+					<dataset>
+						<datasetRun subDataset="CROSSTAB" uuid="9b979a83-1ce4-4779-8d7c-8af852f09f1d">
+							<datasetParameter name="P_EMPRESA">
+								<datasetParameterExpression><![CDATA[$P{P_EMPRESA}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_SESSION_ID">
+								<datasetParameterExpression><![CDATA[$P{P_SESSION_ID}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+					</dataset>
+				</crosstabDataset>
+				<crosstabHeaderCell>
+					<cellContents/>
+				</crosstabHeaderCell>
+				<rowGroup name="SUCURSAL" width="107">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{SUCURSAL}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#F0F8FF" mode="Transparent">
+							<box>
+								<pen lineWidth="0.5"/>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="4" y="0" width="100" height="12" uuid="d122f5a0-ca8d-4585-943a-6c7c4dd1f6a9"/>
+								<textElement textAlignment="Left" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{SUCURSAL}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="NOMBRE" width="143">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{NOMBRE}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#F0F8FF" mode="Transparent">
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="143" height="12" uuid="f0530136-e1f3-4df4-926d-0769d4235cb8"/>
+								<textElement textAlignment="Left">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{NOMBRE}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="ORDEN" height="2">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{ORDEN}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Transparent"/>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<columnGroup name="MES_A" height="11">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{MES}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents>
+							<box>
+								<pen lineWidth="0.5"/>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="61" height="11" uuid="328d15ec-b824-4d3f-83c8-fdd5351310aa"/>
+								<textElement>
+									<font size="8" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{MES_A}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="IMPORTEMeasure" class="java.lang.Integer" calculation="Sum">
+					<measureExpression><![CDATA[$F{IMPORTE}]]></measureExpression>
+				</measure>
+				<crosstabCell width="61" height="12">
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5"/>
+							<topPen lineWidth="0.5"/>
+							<leftPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<elementGroup>
+							<textField pattern="#,##0" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="58" height="12" uuid="8f2a71bf-86e0-4c68-95d8-38638ecf9fe8"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{IMPORTEMeasure}]]></textFieldExpression>
+							</textField>
+						</elementGroup>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="SUCURSAL">
+					<cellContents backcolor="#005FB3" mode="Opaque">
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" forecolor="#FFFFFF" uuid="7a2b0400-ad36-462d-abd6-9d43acf38f77"/>
+							<textFieldExpression><![CDATA[$V{IMPORTEMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" columnTotalGroup="ORDEN">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="ab9d29a1-813e-49bd-9f04-f53fb78d200b"/>
+							<textFieldExpression><![CDATA[$V{IMPORTEMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="SUCURSAL" columnTotalGroup="ORDEN">
+					<cellContents backcolor="#005FB3" mode="Opaque">
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" forecolor="#FFFFFF" uuid="212e85bb-0fe4-444f-9e3a-53982b429393"/>
+							<textFieldExpression><![CDATA[$V{IMPORTEMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="NOMBRE">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="9a36ab22-cddb-4afb-b0e8-a647850cf1fe"/>
+							<textFieldExpression><![CDATA[$V{IMPORTEMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="NOMBRE" columnTotalGroup="ORDEN">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="dfdab25c-0a10-4169-8522-e38eeefe6628"/>
+							<textFieldExpression><![CDATA[$V{IMPORTEMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell columnTotalGroup="MES_A">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="SUCURSAL" columnTotalGroup="MES_A">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="NOMBRE" columnTotalGroup="MES_A">
+					<cellContents/>
+				</crosstabCell>
+			</crosstab>
+		</band>
+	</summary>
+</jasperReport>

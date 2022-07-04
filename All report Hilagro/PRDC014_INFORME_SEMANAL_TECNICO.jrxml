@@ -1,0 +1,775 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PRDC014_INFORME_SEMANAL_TECNICO" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="dd5e3925-8e7c-4004-b621-141affc58262">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="48"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Colores_by_Juan">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{DIA} < 0]]></conditionExpression>
+			<style mode="Opaque" forecolor="#FF3333" fill="Solid"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#003399">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#EEEDED">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1" uuid="0275157c-183b-4532-abb1-106b85764ee1"/>
+	<subDataset name="cumplimiento semanal" uuid="6d3e3e50-20c8-4e8d-8ed0-9bb9fa08b43c">
+		<parameter name="P_SEMANA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_ANHO" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_RESPONSABLE" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT AVANCE,CANTIDAD, TECNICO, CUMPLIMIENTO
+FROM
+(SELECT PETI_LEGAJO || ' - ' || E.EMPL_NOMBRE || ' ' || E.EMPL_APE TECNICO,
+       NVL((SUM(AVC_AVANCE)),0) AVANCE,
+       COUNT(PETI_CLAVE)*100 CANTIDAD,
+       NVL(ROUND((SUM(AVC_AVANCE)) * 100 / (COUNT(PETI_CLAVE) * 100)),0) CUMPLIMIENTO
+  FROM PER_EMPLEADO      E,
+       PRD_TECNICO       T,
+       PRD_PETICIONES    P,
+       PRD_AVANCE_SEMANA AV,
+       FAC_SEMANA        S
+ WHERE P.PETI_CLAVE = AV.AVC_COD_PEDI
+   AND P.PETI_LEGAJO = E.EMPL_LEGAJO
+   AND E.EMPL_LEGAJO = T.TEC_LEGAJO
+   AND EMPL_EMPRESA = T.TEC_EMPR
+   AND AV.AVC_COD_SEM = S.SEM_COD
+   AND S.SEM_EMPR = 1
+   AND P.PETI_SISTEMA IS NOT NULL
+   AND P.PETI_IND_PLANIFICADO = 'S'
+   AND P.PETI_RESPONSABLE = $P{P_RESPONSABLE}
+   AND S.SEM_ANHO =  $P{P_ANHO}
+   AND S.SEM_NRO = ($P{P_SEMANA} - 1)
+ GROUP BY PETI_LEGAJO || ' - ' || E.EMPL_NOMBRE || ' ' || E.EMPL_APE)
+ ORDER BY 4]]>
+		</queryString>
+		<field name="AVANCE" class="java.math.BigDecimal"/>
+		<field name="CANTIDAD" class="java.math.BigDecimal"/>
+		<field name="TECNICO" class="java.lang.String"/>
+		<field name="CUMPLIMIENTO" class="java.math.BigDecimal"/>
+		<variable name="SUM_AVANCE" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{AVANCE}]]></variableExpression>
+		</variable>
+		<variable name="SUM_CANTIDAD" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{CANTIDAD}]]></variableExpression>
+		</variable>
+		<variable name="PORCENTAJE" class="java.math.BigDecimal">
+			<variableExpression><![CDATA[($V{SUM_AVANCE}/$V{SUM_CANTIDAD}) * 100]]></variableExpression>
+		</variable>
+	</subDataset>
+	<subDataset name="SEMANA" uuid="37cf21d6-e4ef-4c2e-8522-35cc401c9780">
+		<parameter name="P_ANHO" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_SEMANA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select T.SEM_DESDE, T.SEM_HASTA
+  from fac_semana t
+ where t.sem_nro = $P{P_SEMANA}
+   and t.sem_mes = to_char(Sysdate,'mm')
+   and t.sem_anho = $P{P_ANHO}
+   and t.sem_empr =  1]]>
+		</queryString>
+		<field name="SEM_DESDE" class="java.sql.Timestamp"/>
+		<field name="SEM_HASTA" class="java.sql.Timestamp"/>
+	</subDataset>
+	<parameter name="P_SEMANA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_ANHO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_RESPONSABLE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT TICKET,
+       DESCRIPCION,
+       AVANCE,
+       SEMANA,
+       LEGAJO,
+       TECNICO,
+       EMPRESA,
+       IMAGEN,
+       FECHA_CREACION,
+       SEM_CODIGO,
+       FECHA_ENTREGA,
+       DIA,
+       DESDE_HASTA,
+       ESTADO,
+       EMPR_DESC,
+       RESPONSABLE,
+       SOLICITANTE,
+       EMPRESA_COD,
+       AVC_FEC_INICIO,
+       AVC_FEC_FIN,
+       $P{P_ANHO} P_ANHO,
+       $P{P_RESPONSABLE} P_RESPONSABLE,
+       $P{P_SEMANA} P_SEMANA,
+       ($P{P_SEMANA} - 1) NRO_SEMANA,
+       'Hora Estimada' Hora_Estimada,
+       'Fecha Inicio' F_INICIO,
+       'Fecha Fin' F_FIN,
+       HORA_EST,
+ (select TO_DATE(T.SEM_DESDE)-7
+  from fac_semana t
+ where t.sem_nro = $P{P_SEMANA}
+   and t.sem_anho = $P{P_ANHO}
+   and t.sem_empr =  1) DESDE,
+ (select TO_DATE(T.SEM_HASTA)-7
+  from fac_semana t
+ where t.sem_nro = $P{P_SEMANA}
+   and t.sem_anho = $P{P_ANHO}
+   and t.sem_empr =  1) HASTA
+FROM(SELECT
+       TIC.PETI_CLAVE TICKET,
+       TIC.PETI_DESC DESCRIPCION,
+       T.AVC_AVANCE AVANCE,
+       S.SEM_NRO SEMANA,
+       TIC.PETI_LEGAJO LEGAJO,
+       EMPL.EMPL_NOMBRE || ' ' || EMPL.EMPL_APE TECNICO,
+       EMPR.EMPR_RAZON_SOCIAL EMPRESA,
+       EMPL.EMPL_IMG_BLOB IMAGEN,
+       TIC.PETI_HORA_INICIO FECHA_CREACION,
+       S.SEM_COD SEM_CODIGO,
+       TIC.PETI_FECHA_ENTREGA FECHA_ENTREGA,
+       TIC.PETI_FECHA_ENTREGA - TRUNC(SYSDATE)  DIA,
+       S.SEM_DESCRIPCION DESDE_HASTA,
+       DECODE(PETI_FEC_CIERRE,NULL,
+       TO_DATE(PETI_FECHA_ENTREGA,'dd/mm/yy')- TRUNC(SYSDATE),
+       TO_DATE(PETI_FEC_CIERRE,'dd/mm/yy')- TO_DATE(PETI_FECHA_ENTREGA,'dd/mm/yy')) DIAS,
+       DECODE(TIC.PETI_ESTADO, 1, 'EN PROCESO', 2, 'PENDIENTE', 3, 'FINALIZADO', 4, 'RECHAZADO', 5, 'ASIGNADO', 6, 'CERRADO', 7, 'EN ESPERA',
+                      8, 'APROBADO', 9, 'PLANIFICAR', 10, 'INSTALADO', 11, 'CONFIRMADO') ESTADO,
+      (SELECT EMPR_RAZON_SOCIAL FROM GEN_EMPRESA
+      WHERE EMPR_CODIGO =  TIC.PETI_EMPR) EMPR_DESC,
+      (SELECT NVL(P.EMPL_NOMBRE||' '||P.EMPL_APE, '')
+         FROM PER_EMPLEADO P
+        WHERE P.EMPL_LEGAJO = PETI_RESPONSABLE
+          AND ((empl_empresa=2 and empl_cargo=41)
+           or (empl_empresa=1 and empl_cargo in (144,260)))
+    AND EMPL_SITUACION = 'A') RESPONSABLE,
+  TIC.PETI_SOLICITANTE SOLICITANTE,
+  TIC.PETI_EMPR EMPRESA_COD,
+  AVC_FEC_INICIO, AVC_FEC_FIN,
+  TIC.PETI_HORA_ESTIMADA HORA_EST,
+  CASE
+  WHEN TIC.PETI_SOPORTE IS NULL THEN
+   0
+  ELSE
+   TIC.PETI_SOPORTE
+  END S
+  FROM PRD_AVANCE_SEMANA T,
+       PRD_PETICIONES    TIC,
+       FAC_SEMANA        S,
+       PER_EMPLEADO      EMPL,
+       PRD_TECNICO       TEC,
+       GEN_EMPRESA       EMPR
+ WHERE TIC.PETI_CLAVE = T.AVC_COD_PEDI
+   AND TIC.PETI_APLICACION_DESC IS NOT NULL
+   AND TIC.PETI_RESPONSABLE = $P{P_RESPONSABLE} -- TIC.PETI_LEGAJO IN (SELECT B.TEC_LEGAJO FROM PRD_TECNICO B WHERE TEC_JEFE =)
+   AND T.AVC_EMPR = TIC.PETI_EMPR
+   AND S.SEM_COD = T.AVC_COD_SEM
+   AND TIC.PETI_IND_PLANIFICADO = 'S'
+   AND S.SEM_EMPR = 1
+   AND S.SEM_ANHO IN ($P{P_ANHO},
+        (SELECT SEM_ANHO
+           FROM FAC_SEMANA
+          WHERE SEM_COD =
+                (SELECT L.SEM_COD
+                   FROM FAC_SEMANA L
+                  WHERE L.SEM_ANHO = $P{P_ANHO}
+                    AND L.SEM_EMPR = 1
+                    AND L.SEM_NRO = $P{P_SEMANA})
+            AND SEM_EMPR = 1))
+   AND S.SEM_NRO IN
+       ($P{P_SEMANA},
+        (SELECT SEM_NRO
+           FROM FAC_SEMANA
+          WHERE SEM_COD =
+                (SELECT L.SEM_COD - 1
+                   FROM FAC_SEMANA L
+                  WHERE L.SEM_ANHO = $P{P_ANHO}
+                    AND L.SEM_EMPR = 1
+                    AND L.SEM_NRO = $P{P_SEMANA})
+            AND SEM_EMPR = 1))
+   AND EMPL.EMPL_LEGAJO = TIC.PETI_LEGAJO
+   AND TEC.TEC_LEGAJO = TIC.PETI_LEGAJO
+   AND EMPL.EMPL_LEGAJO = TEC.TEC_LEGAJO
+   AND EMPL.EMPL_EMPRESA = TEC.TEC_EMPR
+   AND EMPR.EMPR_CODIGO = TEC.TEC_EMPR)
+ORDER BY TECNICO ASC,
+         SEMANA ASC,
+         RESPONSABLE DESC,
+         EMPRESA_COD,
+         --FECHA_ENTREGA ASC,
+         AVC_FEC_INICIO,
+         AVC_FEC_FIN]]>
+	</queryString>
+	<field name="TICKET" class="java.math.BigDecimal"/>
+	<field name="DESCRIPCION" class="java.lang.String"/>
+	<field name="AVANCE" class="java.math.BigDecimal"/>
+	<field name="SEMANA" class="java.math.BigDecimal"/>
+	<field name="LEGAJO" class="java.math.BigDecimal"/>
+	<field name="TECNICO" class="java.lang.String"/>
+	<field name="EMPRESA" class="java.lang.String"/>
+	<field name="IMAGEN" class="java.io.InputStream"/>
+	<field name="FECHA_CREACION" class="java.sql.Timestamp"/>
+	<field name="SEM_CODIGO" class="java.math.BigDecimal"/>
+	<field name="FECHA_ENTREGA" class="java.sql.Timestamp"/>
+	<field name="DIA" class="java.math.BigDecimal"/>
+	<field name="DESDE_HASTA" class="java.lang.String"/>
+	<field name="ESTADO" class="java.lang.String"/>
+	<field name="EMPR_DESC" class="java.lang.String"/>
+	<field name="RESPONSABLE" class="java.lang.String"/>
+	<field name="SOLICITANTE" class="java.lang.String"/>
+	<field name="EMPRESA_COD" class="java.math.BigDecimal"/>
+	<field name="AVC_FEC_INICIO" class="java.sql.Timestamp"/>
+	<field name="AVC_FEC_FIN" class="java.sql.Timestamp"/>
+	<field name="P_ANHO" class="java.lang.String"/>
+	<field name="P_RESPONSABLE" class="java.lang.String"/>
+	<field name="P_SEMANA" class="java.lang.String"/>
+	<field name="NRO_SEMANA" class="java.math.BigDecimal"/>
+	<field name="HORA_ESTIMADA" class="java.lang.String"/>
+	<field name="F_INICIO" class="java.lang.String"/>
+	<field name="F_FIN" class="java.lang.String"/>
+	<field name="HORA_EST" class="java.math.BigDecimal"/>
+	<field name="DESDE" class="java.sql.Timestamp"/>
+	<field name="HASTA" class="java.sql.Timestamp"/>
+	<variable name="IMAGEN_1" class="java.lang.Integer" resetType="Group" resetGroup="Tecnico" calculation="DistinctCount">
+		<variableExpression><![CDATA[$F{IMAGEN}]]></variableExpression>
+	</variable>
+	<variable name="NRO_SEMANA" class="java.lang.String">
+		<variableExpression><![CDATA[$F{P_SEMANA} - 1]]></variableExpression>
+	</variable>
+	<variable name="FONDO" class="java.lang.String"/>
+	<group name="Tecnico" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{LEGAJO}]]></groupExpression>
+		<groupHeader>
+			<band height="130">
+				<textField>
+					<reportElement mode="Opaque" x="446" y="114" width="100" height="16" backcolor="#CCCCCC" uuid="66da0d23-dc8a-419c-8624-781a663b7fb4"/>
+				</textField>
+				<image>
+					<reportElement x="2" y="0" width="59" height="60" uuid="066e213e-f098-42e4-8c60-b2aa26b3295e"/>
+					<imageExpression><![CDATA[$F{IMAGEN}]]></imageExpression>
+				</image>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement mode="Opaque" x="2" y="61" width="209" height="14" forecolor="#FFFFFF" backcolor="#0000CC" uuid="3cf23d50-0e71-40fd-a9b1-c14fe357adfd"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TECNICO}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement mode="Opaque" x="2" y="75" width="209" height="14" forecolor="#FFFFFF" backcolor="#0000CC" uuid="fd17e9cb-1fa0-4038-b69b-f094f98ca7ca"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{EMPRESA}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="113" width="555" height="1" uuid="507f2faf-53f3-42cd-a213-a7b8002dd6cb"/>
+					<graphicElement>
+						<pen lineWidth="0.25"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement mode="Opaque" x="97" y="114" width="36" height="16" backcolor="#CCCCCC" uuid="3bc0ebe4-5112-40a7-b44f-6ad64bfd193c"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Ticket]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="127" y="114" width="198" height="16" backcolor="#CCCCCC" uuid="bceaf01d-d4db-4ecf-ae58-dd9757d4e6e3"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Descripción]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="518" y="114" width="37" height="16" backcolor="#CCCCCC" uuid="7ddb86bb-d1bf-4ae8-8964-cbf70929f040"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Avances]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="399" y="114" width="53" height="16" backcolor="#CCCCCC" uuid="93bee843-f4a1-4034-a06d-358a60346b00"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Solicitante]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="515" y="0" width="39" height="14" uuid="08ac925d-ee56-404a-ba3c-4d827c4c0bb7"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="false" isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[PRDC014 ]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="499" y="13" width="42" height="12" uuid="8f0954f0-60ba-46a3-bb6e-a924fb0fdd01"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Pág. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report">
+					<reportElement x="520" y="13" width="31" height="12" uuid="9538014e-9bbe-4320-9394-60fdd46c0c82"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField pattern="EEEEE dd MMMMM yyyy">
+					<reportElement x="452" y="25" width="100" height="14" uuid="af526a66-d87e-4501-92e8-a94f3286b4fa"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Opaque" x="325" y="114" width="39" height="16" backcolor="#CCCCCC" uuid="44f88789-2479-4d85-938a-35dcf90ed7e7"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Estado]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement mode="Opaque" x="364" y="114" width="36" height="16" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC" uuid="e57860b1-8121-45ed-bb78-d094b9807645"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{HORA_ESTIMADA}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement mode="Opaque" x="485" y="114" width="28" height="16" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC" uuid="3d090eb1-94e2-4a71-bde7-49c2ece4d290"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{F_FIN}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement mode="Opaque" x="448" y="114" width="28" height="16" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC" uuid="3677f971-aa83-4170-a555-a122406892ba"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{F_INICIO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="3">
+				<line>
+					<reportElement x="100" y="0" width="455" height="1" uuid="53b164fa-adec-4091-a826-c256394bf4fd"/>
+					<graphicElement>
+						<pen lineWidth="0.25"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="SEMANA">
+		<groupExpression><![CDATA[$F{SEMANA}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<textField isBlankWhenNull="true">
+					<reportElement mode="Opaque" x="2" y="0" width="95" height="14" forecolor="#FFFFFF" backcolor="#FF0000" uuid="5b95c994-7ca9-4c1b-b76d-4f65a9c20dd9"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA['Semana ' + $F{SEMANA} +': ' + $F{DESDE_HASTA}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="RESPONSABLE">
+		<groupExpression><![CDATA[$F{RESPONSABLE}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<textField isBlankWhenNull="true">
+					<reportElement x="2" y="0" width="163" height="15" uuid="b65e2e0c-2d1f-408e-af4c-2da11518acb9"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA['Responsable: ' + $F{RESPONSABLE}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="EMPRESA">
+		<groupExpression><![CDATA[$F{EMPRESA_COD}]]></groupExpression>
+		<groupHeader>
+			<band height="10">
+				<textField isBlankWhenNull="true">
+					<reportElement x="61" y="0" width="140" height="10" uuid="4b6604fd-37ed-4897-bb8e-97b766d89ae8"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{EMPR_DESC}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<title>
+		<band height="298" splitType="Stretch">
+			<componentElement>
+				<reportElement key="table 1" style="table 1" x="38" y="99" width="438" height="59" uuid="f7c7a84e-a4d9-4e38-8f19-c27d70bfbedb"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="cumplimiento semanal" uuid="ec9d898e-161c-4a45-a156-9debb51160dd">
+						<datasetParameter name="P_SEMANA">
+							<datasetParameterExpression><![CDATA[$F{P_SEMANA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_ANHO">
+							<datasetParameterExpression><![CDATA[$F{P_ANHO}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_RESPONSABLE">
+							<datasetParameterExpression><![CDATA[$F{P_RESPONSABLE}]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="377" uuid="b333d90e-7a67-405e-9c2a-438c68b7600c">
+						<jr:columnHeader style="table 1_CH" height="21" rowSpan="1">
+							<box>
+								<topPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.25"/>
+								<bottomPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.25"/>
+							</box>
+							<staticText>
+								<reportElement x="10" y="0" width="367" height="20" forecolor="#FFFFFF" uuid="7b61c8a8-7e7c-4180-be20-9a8bd6e7ecd8"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="12" isBold="true"/>
+								</textElement>
+								<text><![CDATA[DESARROLLADOR]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="table 1_CH" height="21" rowSpan="1"/>
+						<jr:detailCell height="20" rowSpan="1">
+							<box>
+								<topPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.25"/>
+								<bottomPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.25"/>
+							</box>
+							<textField isBlankWhenNull="true">
+								<reportElement x="10" y="0" width="367" height="20" uuid="2411ee82-512a-4d0f-9c67-6aa1cba68d5f"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="12"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{TECNICO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="124" uuid="a5484e77-970b-41ce-88c6-8535a28a0dad">
+						<jr:columnHeader style="table 1_CH" height="21" rowSpan="1">
+							<box>
+								<topPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.25"/>
+								<bottomPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.25"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="124" height="20" forecolor="#FFFFFF" uuid="bbd0db9e-694c-4906-ac06-f7554703ef3d"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="12" isBold="true"/>
+								</textElement>
+								<text><![CDATA[CUMPLIMIENTO]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="table 1_CH" height="21" rowSpan="1">
+							<box>
+								<topPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.25"/>
+								<bottomPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.25"/>
+							</box>
+							<textField pattern="#,##0" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="111" height="20" forecolor="#FFFFFF" uuid="f2fb1b78-ee2c-4e9b-9ead-01ea71431a72"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="12" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{PORCENTAJE}]]></textFieldExpression>
+							</textField>
+							<staticText>
+								<reportElement x="112" y="0" width="10" height="20" forecolor="#FFFFFF" uuid="90c6befd-8014-46a2-abf6-46d53c4be015"/>
+								<textElement>
+									<font fontName="Arial" size="12" isBold="true"/>
+								</textElement>
+								<text><![CDATA[%]]></text>
+							</staticText>
+						</jr:columnFooter>
+						<jr:detailCell height="20" rowSpan="1">
+							<box>
+								<topPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.25"/>
+								<bottomPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.25"/>
+							</box>
+							<textField pattern="#,##0" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="111" height="20" uuid="ebc6be22-2669-4a40-9664-94330ba996b0"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="12"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{CUMPLIMIENTO}]]></textFieldExpression>
+							</textField>
+							<staticText>
+								<reportElement x="112" y="0" width="10" height="20" forecolor="#000000" uuid="15429134-9a00-49cc-b986-828a986db55b"/>
+								<textElement>
+									<font fontName="Arial" size="12" isBold="false"/>
+								</textElement>
+								<text><![CDATA[%]]></text>
+							</staticText>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<staticText>
+				<reportElement x="87" y="56" width="176" height="20" forecolor="#000000" uuid="709596e8-8930-4202-b757-a300f3b49020"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="12" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[RESUMEN SEMANA  NRO:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="252" y="56" width="26" height="20" forecolor="#000000" uuid="add41ff1-6672-4804-95e8-fed29d4f092a"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_SEMANA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="101" y="10" width="346" height="20" uuid="ffdfe0e6-7720-44da-8922-f82b47d49fb7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[INFORME DE CASOS PLANIFICADOS POR SEMANA]]></text>
+			</staticText>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="477" y="30" width="78" height="14" uuid="2a96a2e6-35c8-4d1f-8fbd-3d4684f8b4d0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="504" y="18" width="42" height="12" uuid="f6c5ed10-b6a1-4772-8302-65f5edd5d889"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pág. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="515" y="0" width="41" height="18" uuid="c79d9ff3-77b4-4c13-9b2c-a167fc2a4016"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[PRDC014 ]]></text>
+			</staticText>
+			<textField evaluationTime="Report">
+				<reportElement x="530" y="18" width="23" height="12" uuid="037b98d4-a0b3-4f26-b470-e6dcecc374b3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="300" y="56" width="76" height="20" uuid="9f986834-d3a8-43ee-afb1-73fbdfbf6b3f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESDE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="380" y="56" width="76" height="20" uuid="52652532-bbf7-455f-b6fb-4b64bff367ec"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HASTA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="376" y="56" width="4" height="20" uuid="e49ee708-6018-4da2-b316-0d079ce87e33"/>
+				<text><![CDATA[-]]></text>
+			</staticText>
+			<break>
+				<reportElement x="0" y="287" width="163" height="1" uuid="26ab3a74-4a70-4861-bff5-3a3ae50f016c"/>
+			</break>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="32">
+			<staticText>
+				<reportElement x="59" y="0" width="346" height="20" uuid="22c0eb77-e88c-467b-ba65-791f1e69eb97"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[INFORME DE CASOS PLANIFICADOS POR SEMANA]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="97" y="0" width="33" height="14" uuid="01b311bd-7be0-4381-b61d-392e1e78b62e"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TICKET}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="127" y="0" width="190" height="14" uuid="3d313f11-676c-4cf1-8dc4-24a758152630"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRIPCION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="531" y="0" width="21" height="14" uuid="2d7e4d2c-4c67-4795-a5ef-16e080a10881"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AVANCE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="403" y="0" width="43" height="14" uuid="a630f1e5-a470-4da8-a343-c13b593224a9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SOLICITANTE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="447" y="0" width="34" height="14" uuid="5c48befc-15d9-4e6e-91b6-195ada171938"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AVC_FEC_INICIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="483" y="0" width="38" height="14" uuid="c33bf5dd-4be4-40e7-befa-42793fdf0512"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AVC_FEC_FIN}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="317" y="0" width="47" height="14" isPrintWhenDetailOverflows="true" uuid="9e2a2f83-149c-4b34-b060-469abd098b35"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ESTADO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="363" y="0" width="40" height="14" uuid="7ad0a352-7dcc-4856-9a58-d88505a55037"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HORA_EST}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

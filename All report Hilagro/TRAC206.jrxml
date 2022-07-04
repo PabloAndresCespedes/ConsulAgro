@@ -1,0 +1,585 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TRAC206" language="groovy" pageWidth="780" pageHeight="842" columnWidth="740" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ac7f6e89-30b7-4cb5-b0a0-e38006dfccc8">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="PRODUCTO" uuid="bf7487a2-1588-4aff-b1e8-7ebe50582240">
+		<parameter name="P_SESSION_ID" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT TRAPROD.PRO_CODIGO,
+       TRAPROD.PRO_DESCRIPCION,
+       ROUND(SUM(DECODE(NVL(ORDCAR.OCA_KM_KG, 1),
+                        1,
+                        ORDCARPROD.OCA_PESO,
+                        ORDCARPROD.OCP_CANT) *
+                 ((OCA_PRECIO + NVL(OCA_VALOR_AGREG, 0)) +
+                  ROUND(((ORDCAR.OCA_PRECIO + NVL(OCA_VALOR_AGREG, 0)) * 10) / 100,
+                        2))),
+             0) SUM_DEBE,
+       -- SUM(DEBE),
+       SUM(HABER)
+  FROM TRA_TRAC006_AUXI,
+       TRA_ORDEN_CARGA  ORDCAR,
+       TRA_CAMION,
+       TRA_CHOFER,
+       TRA_OCARGA_PROD  ORDCARPROD,
+       TRA_PRODUCTO     TRAPROD
+ WHERE EMPR = 2
+
+
+   AND LOGIN = USER
+   AND ORDCAR.OCA_CLAVE = ORDCARPROD.OCP_CODIGO
+   AND ORDCAR.OCA_EMPR = ORDCARPROD.OCP_EMPR
+
+   AND ORDCARPROD.OCP_PRODUCTO = TRAPROD.PRO_CODIGO
+   AND ORDCARPROD.OCP_EMPR = TRAPROD.PRO_EMPR
+
+   AND CLAVE = OCA_CLAVE(+)
+   AND EMPR = OCA_EMPR(+)
+
+   AND OCA_CAMION = TRA_CAMION.CAM_CODIGO(+)
+   AND OCA_EMPR = TRA_CAMION.CAM_EMPR(+)
+
+   AND ORDCAR.OCA_COF_CODIGO = TRA_CHOFER.COF_CODIGO(+)
+   AND ORDCAR.OCA_EMPR = TRA_CHOFER.COF_EMPR(+)
+   AND SESSION_ID = $P{P_SESSION_ID}
+
+ GROUP BY TRAPROD.PRO_CODIGO, TRAPROD.PRO_DESCRIPCION
+ ORDER BY PRO_DESCRIPCION]]>
+		</queryString>
+		<field name="PRO_CODIGO" class="java.math.BigDecimal"/>
+		<field name="PRO_DESCRIPCION" class="java.lang.String"/>
+		<field name="SUM_DEBE" class="java.math.BigDecimal"/>
+		<field name="SUM(HABER)" class="java.math.BigDecimal"/>
+		<variable name="variable1" class="java.lang.Integer" calculation="Sum">
+			<variableExpression><![CDATA[$F{SUM_DEBE}]]></variableExpression>
+			<initialValueExpression><![CDATA[$F{SUM_DEBE}]]></initialValueExpression>
+		</variable>
+		<variable name="variable2" class="java.lang.Integer" calculation="Sum">
+			<variableExpression><![CDATA[$F{SUM(HABER)}]]></variableExpression>
+			<initialValueExpression><![CDATA[]]></initialValueExpression>
+		</variable>
+	</subDataset>
+	<parameter name="P_DESCRIP_EMPR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLIENTE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_INICIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_FIN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_CLI" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\REPORTES\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_WHERE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SESSION_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT CLAVE,
+       TIPO_MOV,
+       TO_DATE(FECHA, 'DD/MM/YYYY') FECHA,
+       DECODE(ORIGEN, 'SALDO INICIAL', 1, 'PAGO POR FLETES', 3, 2) ORDEN,
+       ORDENNRO,
+       ORIGEN,
+       DESTINO,
+       NVL(DEBE,0)DEBE,
+       NVL(HABER,0)HABER,
+       NVL(SALDO,0)SALDO,
+       NVL(PESO,0)PESO,
+       NVL(PRECIO,0)PRECIO,
+       CAM_CHAPA,
+       NVL(OCA_CHOFER_NOM, COF_NOMBRE) CHOFER,
+       NVL(CANTIDAD,0)CANTIDAD,
+       ROUND(SUM(DEBE+SALDO-HABER) OVER (ORDER BY FECHA, CLAVE)) AS CUMULATIVE_SUM
+  FROM TRA_TRAC006_AUXI, TRA_ORDEN_CARGA, TRA_CAMION, TRA_CHOFER
+ WHERE  CLAVE = OCA_CLAVE(+)
+   AND EMPR = OCA_EMPR(+)
+
+   AND OCA_CAMION = TRA_CAMION.CAM_CODIGO(+)
+   AND OCA_EMPR = TRA_CAMION.CAM_EMPR(+)
+
+   AND TRA_ORDEN_CARGA.OCA_COF_CODIGO = TRA_CHOFER.COF_CODIGO(+)
+   AND TRA_ORDEN_CARGA.OCA_EMPR = TRA_CHOFER.COF_EMPR(+)
+   AND SESSION_ID = $P{P_SESSION_ID}
+ ORDER BY TO_DATE(FECHA, 'DD/MM/YYYY'),
+          DECODE(ORIGEN, 'SALDO INICIAL', 1, 'PAGO POR FLETES', 3, 2),
+          CLAVE]]>
+	</queryString>
+	<field name="CLAVE" class="java.math.BigDecimal"/>
+	<field name="TIPO_MOV" class="java.math.BigDecimal"/>
+	<field name="FECHA" class="java.sql.Timestamp"/>
+	<field name="ORDEN" class="java.math.BigDecimal"/>
+	<field name="ORDENNRO" class="java.math.BigDecimal"/>
+	<field name="ORIGEN" class="java.lang.String"/>
+	<field name="DESTINO" class="java.lang.String"/>
+	<field name="DEBE" class="java.math.BigDecimal"/>
+	<field name="HABER" class="java.math.BigDecimal"/>
+	<field name="SALDO" class="java.math.BigDecimal"/>
+	<field name="PESO" class="java.math.BigDecimal"/>
+	<field name="PRECIO" class="java.math.BigDecimal"/>
+	<field name="CAM_CHAPA" class="java.lang.String"/>
+	<field name="CHOFER" class="java.lang.String"/>
+	<field name="CANTIDAD" class="java.math.BigDecimal"/>
+	<field name="CUMULATIVE_SUM" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="106" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="1" width="740" height="105" uuid="5c083614-7048-4e4a-bd69-bbc7f51d97c3"/>
+			</rectangle>
+			<textField>
+				<reportElement x="1" y="3" width="100" height="11" uuid="1a951d4c-9875-4e7d-abcd-e7146f005a73"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESCRIP_EMPR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="15" width="100" height="11" uuid="ebd2bcd8-cd72-465a-b498-34a24ad4f80a"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="67" y="60" width="91" height="11" uuid="800dccdc-d4fc-4fdc-a222-7cc9b88990c2"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FECHA_INICIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="67" y="73" width="91" height="11" uuid="79f62f9c-9183-4eba-a066-318d3b862f25"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FECHA_FIN}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="67" y="86" width="91" height="11" uuid="ee232a71-9229-46e0-9d8f-56caab1e1318"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_CLI}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="21" y="60" width="100" height="12" uuid="896d4ade-f57b-488c-b2c7-c325fd1a606c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Fecha Incio:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="25" y="73" width="100" height="12" uuid="6aa92ce8-d1a0-442a-8b27-721d2e8a49a8"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Fecha Fin:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="36" y="85" width="100" height="11" uuid="9acc809b-14ab-48cb-bed9-e63b5cdd70a6"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Cliente:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="227" y="33" width="121" height="20" uuid="755bf961-9dcc-42b5-956e-d25a17f62fd0"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESCRIP_EMPR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="343" y="33" width="6" height="20" uuid="32df64af-e891-4d08-8f80-fa3fd516b212"/>
+				<text><![CDATA[-]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="348" y="33" width="233" height="20" uuid="48121778-3529-4900-87ad-d84de37e936d"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="640" y="3" width="100" height="15" uuid="e909f7cc-1152-41f6-a695-73c0f934c87e"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="640" y="14" width="100" height="15" uuid="4bf1590b-247e-45a6-9096-881d7d156c4c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="23" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="2" width="38" height="11" uuid="ae4574f3-d39d-4778-b508-fde504d6d0a0"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="41" y="2" width="50" height="11" uuid="a7926946-9e45-4b50-a719-cb83fa9a5cc7"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[ORDEN NRO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="107" y="2" width="38" height="11" uuid="30eb197d-9ea4-4fb2-8ab3-cb603394d050"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[ORIGEN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="197" y="0" width="38" height="11" uuid="9a68fe47-36bb-4eee-bbd9-9b51fe665aeb"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[DESTINO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="297" y="2" width="38" height="11" uuid="5f232f00-267e-423e-bd9e-ac33eea2b132"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[CHAPA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="340" y="2" width="38" height="11" uuid="839a99b7-f8bf-469b-8eaa-2e43855a5aac"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[CHOFER]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="449" y="2" width="28" height="11" uuid="2226c78e-7721-462a-b467-335ecdae1f5b"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[PESO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="483" y="2" width="50" height="11" uuid="e4312ae8-d5bd-4fda-a0d1-25ac9425ef8e"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[CANTIDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="558" y="0" width="32" height="11" uuid="ba91e1b0-8cc0-4e25-b496-324285518bbf"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[PRECIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="615" y="2" width="25" height="11" uuid="597b3fbb-6ced-4400-9013-976366e699dc"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[DEBE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="655" y="3" width="30" height="11" uuid="9b7b4d9b-9f59-47ba-893e-a095c582813e"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[HABER]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="709" y="3" width="29" height="11" uuid="b31102dd-a8a4-4779-9a13-a12affe0ff13"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[SALDO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="13" width="740" height="1" uuid="281fee4b-efee-4c00-8356-6d12d6e6e99b"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="1" y="0" width="38" height="11" uuid="78314812-fa9b-455f-b11c-e8abbc16b52c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="41" y="0" width="40" height="11" uuid="e50a8a12-52bd-4d41-b8cf-7f922890f616"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDENNRO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="197" y="0" width="97" height="11" uuid="ebc2fa1c-b7f1-4761-8930-e6a99538c7ee"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESTINO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="297" y="0" width="38" height="11" uuid="b40f11bf-5279-4bcf-b07f-d11b9cf62922"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAM_CHAPA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="340" y="0" width="95" height="11" uuid="19fc8731-f5c5-43d7-87e2-7b17fc7bab50"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CHOFER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="496" y="0" width="38" height="11" uuid="45f7a2a9-22db-4374-ada0-7a5711735a9f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANTIDAD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="541" y="1" width="50" height="10" uuid="e5b449f1-254b-4370-bac0-54dccc3a2434"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRECIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="593" y="1" width="50" height="10" uuid="0a2802cd-f1ca-43a3-9fec-a7d48cde030a"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DEBE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="647" y="0" width="38" height="11" uuid="d699985a-fdd6-4f34-ba66-2a09847d0307"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HABER}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="97" y="0" width="95" height="11" uuid="9e941734-ab0e-4a11-ba86-16a8c0a376ed"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORIGEN}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="439" y="0" width="38" height="11" uuid="d9a33bd1-6bbf-4fe4-9e30-4b3dc8ff5aed"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PESO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="689" y="0" width="50" height="11" uuid="7a9ea419-678b-4ba0-b712-761d53351378"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUMULATIVE_SUM}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="166" splitType="Stretch">
+			<componentElement>
+				<reportElement key="table" x="2" y="41" width="736" height="77" uuid="83b7e15e-e42e-4c8b-b6c0-bd5046a15727"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="PRODUCTO" uuid="51cef480-0a5e-4313-bb70-4f2778d94399">
+						<datasetParameter name="P_SESSION_ID">
+							<datasetParameterExpression><![CDATA[$P{P_SESSION_ID}]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="66" uuid="759a6da2-9ee8-4ae9-adea-347074b3d8ee">
+						<jr:columnHeader style="table" height="13" rowSpan="1">
+							<staticText>
+								<reportElement x="4" y="0" width="62" height="13" uuid="778a1927-0cbb-4943-a5d1-ec7a3eaeb61a"/>
+								<textElement>
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<text><![CDATA[Codigo]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="12" rowSpan="1">
+							<textField pattern="#,##0" isBlankWhenNull="true">
+								<reportElement x="4" y="0" width="62" height="12" uuid="70ff54bc-31f8-4dad-bfaa-d1e575f725c9"/>
+								<textElement>
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{PRO_CODIGO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="109" uuid="4a770758-ec19-4934-a94a-dbf8d0533a97">
+						<jr:columnHeader style="table" height="13" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="13" uuid="f2475831-9b9e-4b14-b102-bec8edb99f01"/>
+								<textElement>
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<text><![CDATA[Descripcion]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="12" rowSpan="1">
+							<textField pattern="#,##0" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="109" height="12" uuid="41dcd296-eab5-4684-8460-2db8521b4aaa"/>
+								<textElement>
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{PRO_DESCRIPCION}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="1d13eefb-226b-4c44-b72d-3f47baad73c3">
+						<jr:tableFooter height="11" rowSpan="1">
+							<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+								<reportElement x="0" y="1" width="90" height="10" uuid="e342f1c5-dfc8-4e35-a56b-5789e6b8f0e4"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{variable1}]]></textFieldExpression>
+							</textField>
+							<line>
+								<reportElement x="0" y="0" width="90" height="1" uuid="c378c0e9-8760-464e-b97a-b24b763ac60b"/>
+								<graphicElement>
+									<pen lineWidth="0.5"/>
+								</graphicElement>
+							</line>
+						</jr:tableFooter>
+						<jr:columnHeader style="table" height="13" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="13" uuid="d1964e57-0d28-4a82-883b-0371f87eb9b5"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<text><![CDATA[Debe]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="12" rowSpan="1">
+							<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="90" height="12" uuid="494b6e8e-6152-4d47-a83c-66338f570524"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{SUM_DEBE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="37fd63ac-b05c-4b46-95d4-d125a64fabad">
+						<jr:tableFooter height="11" rowSpan="1">
+							<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+								<reportElement x="0" y="1" width="90" height="10" uuid="91ac0239-d8ea-41c5-b9ec-d8ef08bcbea6"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{variable2}]]></textFieldExpression>
+							</textField>
+							<line>
+								<reportElement x="0" y="0" width="90" height="1" uuid="eb254549-a3e3-46c4-966f-8652973d7394"/>
+								<graphicElement>
+									<pen lineWidth="0.5"/>
+								</graphicElement>
+							</line>
+						</jr:tableFooter>
+						<jr:columnHeader style="table" height="13" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="13" uuid="0251e603-48e7-46d2-b69a-fa75eb3c6c12"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<text><![CDATA[Haber]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="12" rowSpan="1">
+							<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="90" height="12" uuid="e7fab1a1-90ca-42fa-91d4-bdbcbe726bf3"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{SUM(HABER)}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<staticText>
+				<reportElement x="5" y="15" width="140" height="12" uuid="bf5f99cb-d47f-489c-9ed2-72b65f4e7d8a"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Resumen Por Producto]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

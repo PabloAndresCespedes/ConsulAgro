@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="stkl025agr" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9c5c6b81-0353-49ac-8025-27a9bba41ebc">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_DESC_EMPRESA" class="java.lang.String"/>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String"/>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String"/>
+	<parameter name="P_PROGRAMA" class="java.lang.String"/>
+	<parameter name="P_USUARIO" class="java.lang.String"/>
+	<parameter name="P_WHERE" class="java.lang.String"/>
+	<parameter name="P_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DEPOSITO" class="java.lang.String"/>
+	<parameter name="P_MARCA" class="java.lang.String"/>
+	<parameter name="P_LINEA" class="java.lang.String"/>
+	<parameter name="P_ENVASE" class="java.lang.String"/>
+	<parameter name="P_GRUPO" class="java.lang.String"/>
+	<parameter name="P_PERIODO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_INICIO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_FINAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_IMPRIMIR_SOLO_CANT" class="java.lang.String"/>
+	<parameter name="P_IMPRIMIR_CEROS" class="java.lang.String"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_DEPOSITO" class="java.lang.String"/>
+	<parameter name="P_DESC_MARCA" class="java.lang.String"/>
+	<parameter name="P_DESC_LINEA" class="java.lang.String"/>
+	<parameter name="P_DESC_ENVASE" class="java.lang.String"/>
+	<parameter name="P_DESC_GRUPO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT AD.ARDE_SUC SUCURSAL, ' TODOS ',
+                     AD.ARDE_ART CODIGO,
+                     SA.ART_COD_ALFANUMERICO ARTICULO,
+                     SA.ART_DESC DESCRIPCION,
+                     ROUND(SUM((CANT_INI + NVL(TOT_ENT, 0)) - NVL(TOT_SAL, 0)) *
+                           (P.AEP_COSTO_PROM_LOC),
+                           0) GUARANIES,
+                     ROUND(SUM((CANT_INI + NVL(TOT_ENT, 0)) - NVL(TOT_SAL, 0)) *
+                           (P.AEP_COSTO_PROM_MON),
+                           2) DOLARES,
+                     SUM((CANT_INI + NVL(TOT_ENT, 0)) - NVL(TOT_SAL, 0)) EXISTENCIA,
+                     SA.ART_KG_CONTENIDO * SUM((CANT_INI + NVL(TOT_ENT, 0)) - NVL(TOT_SAL, 0)) KG_TOTAL,
+                     SA.ART_UNID_MED UM,
+                     NVL(SUM(AUX.EXISTENCIA), 0) DEPOSITO,
+                     SA.ART_LINEA,
+                     (SELECT G.GRUP_CODIGO ||' - '||G.GRUP_DESC
+                      FROM STK_GRUPO G
+                      WHERE G.GRUP_LINEA = SA.ART_LINEA
+                        AND G.GRUP_CODIGO = SA.ART_GRUPO
+                        AND G.GRUP_EMPR = SA.ART_EMPR) GRUPO
+                FROM STK_ARTICULO SA,
+                     STK_DEPOSITO DP,
+                     STK_ART_EMPR_PERI P,
+                     (
+                              SELECT AD.ARDE_EMPR,
+                                             AD.ARDE_SUC,
+                                             AD.ARDE_DEP,
+                                             AD.ARDE_ART,ARDE_CANT_INI CANT_INI,
+                                             0 TOT_ENT,
+                                             0 TOT_SAL
+                                        FROM STK_ARTICULO_DEPOSITO AD
+                                       WHERE AD.ARDE_EMPR = 1
+                                  UNION ALL
+                                SELECT DOCU_EMPR,
+                                       DOCU_SUC_ORIG,
+                                       DOCU_DEP_ORIG,
+                                       DETA_ART,
+                                       0,
+                                       SUM(DECODE(OPER_ENT_SAL,'E', DETA_CANT, 0)) AS TOT_ENT,
+                                       SUM(DECODE(OPER_ENT_SAL,'S', DETA_CANT, 0)) AS TOT_SAL
+                                  FROM STK_OPERACION, STK_DOCUMENTO, STK_DOCUMENTO_DET
+                                 WHERE DOCU_CLAVE = DETA_CLAVE_DOC
+                                   AND DOCU_EMPR = DETA_EMPR
+                                   AND DOCU_CODIGO_OPER = OPER_CODIGO
+                                   AND DOCU_EMPR = OPER_EMPR
+                                   AND DOCU_EMPR = 1
+                                   AND DOCU_FEC_EMIS BETWEEN '01/12/19' AND '31/12/19'GROUP BY DOCU_EMPR,
+                                          DOCU_SUC_ORIG,
+                                          DOCU_DEP_ORIG,
+                                          DETA_ART
+                        ) AD,
+                   (SELECT SUM(B.ENTMERDET_CANT) EXISTENCIA,
+                           C.OCOM_SUC SUCURSAL,
+                           C.OCOM_DEPOSITO DEPOSITO,
+                           D.OCOMD_ART ARTICULO,
+                           D.OCOMD_EMPR EMPR
+                      FROM STK_ENTRADA_MERC     A,
+                           STK_ENTRADA_MERC_DET B,
+                           STK_ORDEN_COMPRA     C,
+                           STK_ORDEN_COMPRA_DET D
+                     WHERE B.ENTMERDET_ORDEN  = A.ENTMER_CLAVE_ORDEN
+                       AND B.ENTMERDET_NUM    = A.ENTMER_NUM_ENTR
+                       AND B.ENTMERDET_EMPR   = A.ENTMER_EMPR
+
+                       AND C.OCOM_CLAVE       = A.ENTMER_CLAVE_ORDEN
+                       AND C.OCOM_EMPR        = A.ENTMER_EMPR
+
+                       AND D.OCOMD_NRO_ITEM   = B.ENTMERDET_ITEM
+                       AND D.OCOMD_CLAVE_OCOM = B.ENTMERDET_ORDEN
+                       AND D.OCOMD_EMPR       = B.ENTMERDET_EMPR
+
+                       AND A.ENTMER_CLAVE_DOC_FIN IS NULL
+
+                     GROUP BY C.OCOM_SUC, C.OCOM_DEPOSITO, D.OCOMD_ART, D.OCOMD_EMPR) AUX
+
+                 WHERE SA.ART_TIPO <> 4
+
+                   AND SA.ART_CODIGO = AD.ARDE_ART
+                   AND SA.ART_EMPR   = AD.ARDE_EMPR
+
+                   AND AD.ARDE_EMPR  = AUX.EMPR(+)
+                   AND AD.ARDE_SUC   = AUX.SUCURSAL(+)
+                   AND AD.ARDE_DEP   = AUX.DEPOSITO(+)
+                   AND AD.ARDE_ART   = AUX.ARTICULO(+)
+
+                   AND P.AEP_ART     = SA.ART_CODIGO
+                   AND P.AEP_EMPR    = SA.ART_EMPR AND P.AEP_PERIODO = 241
+
+                   AND AD.ARDE_EMPR = DP.DEP_EMPR
+                   AND AD.ARDE_SUC  = DP.DEP_SUC
+                   AND AD.ARDE_DEP  = DP.DEP_CODIGO
+                 GROUP BY AD.ARDE_EMPR,
+                          AD.ARDE_SUC, ' TODOS ',
+                          AD.ARDE_ART,
+                          SA.ART_EMPR,
+                          SA.ART_LINEA,
+                          SA.ART_GRUPO,
+                          SA.ART_KG_CONTENIDO,
+                          (P.AEP_COSTO_PROM_LOC),
+                          (P.AEP_COSTO_PROM_MON),
+                          SA.ART_DESC,
+                          SA.ART_COD_ALFANUMERICO,
+                          SA.ART_UNID_MED
+                     HAVING SUM(ROUND((CANT_INI + NVL(TOT_ENT, 0)) - NVL(TOT_SAL, 0), 3)) <> 0]]>
+	</queryString>
+	<field name="SUCURSAL" class="java.math.BigDecimal"/>
+	<field name="&apos;TODOS&apos;" class="java.lang.String"/>
+	<field name="CODIGO" class="java.math.BigDecimal"/>
+	<field name="ARTICULO" class="java.lang.String"/>
+	<field name="DESCRIPCION" class="java.lang.String"/>
+	<field name="GUARANIES" class="java.math.BigDecimal"/>
+	<field name="DOLARES" class="java.math.BigDecimal"/>
+	<field name="EXISTENCIA" class="java.math.BigDecimal"/>
+	<field name="KG_TOTAL" class="java.math.BigDecimal"/>
+	<field name="UM" class="java.lang.String"/>
+	<field name="DEPOSITO" class="java.math.BigDecimal"/>
+	<field name="ART_LINEA" class="java.math.BigDecimal"/>
+	<field name="GRUPO" class="java.lang.String"/>
+	<variable name="CS_EM_TOT_LOC" class="java.lang.String" calculation="Sum">
+		<variableExpression><![CDATA[$V{CF_TOT_LOC}]]></variableExpression>
+	</variable>
+	<variable name="CS_EM_TOT_MON" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$V{CF_TOT_MON}]]></variableExpression>
+	</variable>
+	<variable name="CS_SU_TOT_MON" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$V{CF_TOT_MON}]]></variableExpression>
+	</variable>
+	<variable name="CS_SU_TOT_LOC" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$V{CF_TOT_LOC}]]></variableExpression>
+	</variable>
+	<variable name="CS_GE_TOT_LOC" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$V{CF_TOT_LOC}]]></variableExpression>
+	</variable>
+	<variable name="CS_GE_TOT_MON" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$V{CS_GE_TOT_MON}]]></variableExpression>
+	</variable>
+	<variable name="CF_TOT_LOC" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_CANT} * $F{AEP_COSTO_PROM_LOC}]]></variableExpression>
+	</variable>
+	<variable name="CF_TOT_MON" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_CANT} *$F{AEP_COSTO_PROM_MON}]]></variableExpression>
+	</variable>
+	<variable name="F_TOT_LOC" class="java.lang.String"/>
+	<variable name="F_TOT_MON" class="java.lang.String"/>
+	<variable name="F_CS_GE_TOT_LOC" class="java.lang.String"/>
+	<variable name="F_CS_GE_TOT_MON" class="java.lang.String"/>
+	<group name="Grupo_Empresa">
+		<groupExpression><![CDATA[$F{ARDE_EMPR}]]></groupExpression>
+		<groupHeader>
+			<band height="16">
+				<staticText>
+					<reportElement x="4" y="3" width="39" height="11" uuid="3608377a-3418-499b-a9c1-9243c95b7a51"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Empresa]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="52" y="3" width="181" height="11" uuid="f73691b2-05c0-4566-9444-6b18ac636b9b"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{P_EMPRESA}+' '+$P{P_DESC_EMPRESA}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<staticText>
+					<reportElement x="97" y="2" width="55" height="10" uuid="c5b0b55e-9655-48df-b495-9333a0cc70fe"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Total Empresa:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="97" y="-11" width="55" height="10" uuid="f1dba714-1951-4928-9316-49cd30aa0683"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Total Sucursal:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="160" y="1" width="148" height="12" uuid="f3593e51-c4e8-4e30-9c1d-1922fdd10d1b"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{P_DESC_EMPRESA}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="398" y="0" width="71" height="1" uuid="07709292-16da-4ac2-aa8a-b62f08f34f22"/>
+				</line>
+				<line>
+					<reportElement x="481" y="0" width="71" height="1" uuid="2304fa07-cb71-44e9-bb62-9f92e07f1985"/>
+				</line>
+				<textField>
+					<reportElement x="399" y="0" width="70" height="13" uuid="38e38ef3-c913-48d2-a251-29934ef43e5f"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CS_EM_TOT_LOC}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="481" y="0" width="70" height="13" uuid="fd6e83e9-d2e4-4646-8d95-496d9d651346"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CS_EM_TOT_MON}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Grupo_Sucursal">
+		<groupExpression><![CDATA[$F{ARDE_SUC}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<staticText>
+					<reportElement x="6" y="0" width="39" height="15" uuid="5fedd01c-a91f-45c2-b0c8-fceee66e17e2"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Sucursal]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="53" y="0" width="181" height="13" uuid="6b68b6a3-b278-49f7-b24f-9a968248532a"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{P_SUCURSAL}+' '+$F{SUC_DESC}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="13">
+				<textField>
+					<reportElement x="159" y="1" width="149" height="11" uuid="211b0a75-791e-467c-92ae-ff2dcade4789"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{P_DESC_SUCURSAL}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="397" y="0" width="72" height="1" uuid="734bc364-3b78-41b5-a0c3-d70afc63654c"/>
+				</line>
+				<line>
+					<reportElement x="481" y="1" width="72" height="1" uuid="4e445a3b-1cca-4117-bba6-9f8a3013ba2a"/>
+				</line>
+				<textField>
+					<reportElement x="399" y="0" width="70" height="12" uuid="f51a353d-4c02-4829-82b5-e2f093db4722"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CS_SU_TOT_LOC}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="481" y="0" width="70" height="12" uuid="41232298-2247-4e9f-892c-aa5c020f51dc"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CS_SU_TOT_MON}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Grupo_Articulo">
+		<groupExpression><![CDATA[$F{ARDE_ART}]]></groupExpression>
+		<groupHeader>
+			<band height="14"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="6"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="60" splitType="Immediate">
+			<rectangle>
+				<reportElement x="0" y="0" width="554" height="59" uuid="80d10b0e-d8fe-4872-98aa-caffa32b1145"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="494" y="1" width="21" height="13" uuid="2ac27758-5f0c-4ad8-b6d7-2cf01fb4a5c0"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Hoja:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="518" y="1" width="35" height="13" uuid="867c7748-a23d-4ae1-a92c-547948157b79"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="474" y="17" width="80" height="13" uuid="f2d49d15-24a1-48a1-bdd8-3772421df7f6"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>

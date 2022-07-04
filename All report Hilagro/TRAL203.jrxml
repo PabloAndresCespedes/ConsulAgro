@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TRAL203" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="28fa673e-caf8-41ae-8087-cd00795067d2">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROV" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_MON" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CONF_ADELANTO_PRO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROV_RAZON_SOCIAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_COD_MONEDA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_MONEDA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_IND_SALDO_CERO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_ORDEN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_TELEFONO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CONTACTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SALDO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_VENCIMIENTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FORMATO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_ORDEN_CONSULTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA["ORDER BY 1 "]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_WHERE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="p_ind_saldo" class="java.lang.String"/>
+	<parameter name="P_CAMION" class="java.lang.String">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_CAMION" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT TRA_CAMION.CAM_PROPIO_COD ORDEN,
+       TRA_CAMION.CAM_PROPIO_COD || '-' || TRA_CAMION.CAM_CHAPA CAM_CODIGO,
+       SUM(DECODE(TRA_RECORRIDO_MENSUAL.TAQ_MES,
+                  1,
+                  TRA_RECORRIDO_MENSUAL.RECORRIDO_MENSUAL /
+                  CONSUMO_MENSUAL.CONSUMO,
+                  0)) ENERO,
+       ROUND(SUM(DECODE(TRA_RECORRIDO_MENSUAL.TAQ_MES,
+                  2,
+                  TRA_RECORRIDO_MENSUAL.RECORRIDO_MENSUAL /
+                  CONSUMO_MENSUAL.CONSUMO,
+                  0)),2) FEBRERO,
+       SUM(DECODE(TRA_RECORRIDO_MENSUAL.TAQ_MES,
+                  3,
+                  TRA_RECORRIDO_MENSUAL.RECORRIDO_MENSUAL /
+                  CONSUMO_MENSUAL.CONSUMO,
+                  0)) MARZO,
+       SUM(DECODE(TRA_RECORRIDO_MENSUAL.TAQ_MES,
+                  4,
+                  TRA_RECORRIDO_MENSUAL.RECORRIDO_MENSUAL /
+                  CONSUMO_MENSUAL.CONSUMO,
+                  0)) ABRIL,
+       SUM(DECODE(TRA_RECORRIDO_MENSUAL.TAQ_MES,
+                  5,
+                  TRA_RECORRIDO_MENSUAL.RECORRIDO_MENSUAL /
+                  CONSUMO_MENSUAL.CONSUMO,
+                  0)) MAYO,
+       SUM(DECODE(TRA_RECORRIDO_MENSUAL.TAQ_MES,
+                  6,
+                  TRA_RECORRIDO_MENSUAL.RECORRIDO_MENSUAL /
+                  CONSUMO_MENSUAL.CONSUMO,
+                  0)) JUNIO,
+       SUM(DECODE(TRA_RECORRIDO_MENSUAL.TAQ_MES,
+                  7,
+                  TRA_RECORRIDO_MENSUAL.RECORRIDO_MENSUAL /
+                  CONSUMO_MENSUAL.CONSUMO,
+                  0)) JULIO,
+       SUM(DECODE(TRA_RECORRIDO_MENSUAL.TAQ_MES,
+                  8,
+                  TRA_RECORRIDO_MENSUAL.RECORRIDO_MENSUAL /
+                  CONSUMO_MENSUAL.CONSUMO,
+                  0)) AGOSTO,
+       SUM(DECODE(TRA_RECORRIDO_MENSUAL.TAQ_MES,
+                  9,
+                  TRA_RECORRIDO_MENSUAL.RECORRIDO_MENSUAL /
+                  CONSUMO_MENSUAL.CONSUMO,
+                  0)) SEPTIEMBRE,
+       SUM(DECODE(TRA_RECORRIDO_MENSUAL.TAQ_MES,
+                  10,
+                  TRA_RECORRIDO_MENSUAL.RECORRIDO_MENSUAL /
+                  CONSUMO_MENSUAL.CONSUMO,
+                  0)) OCTUBRE,
+       SUM(DECODE(TRA_RECORRIDO_MENSUAL.TAQ_MES,
+                  11,
+                  TRA_RECORRIDO_MENSUAL.RECORRIDO_MENSUAL /
+                  CONSUMO_MENSUAL.CONSUMO,
+                  0)) NOVIEMBRE,
+       SUM(DECODE(TRA_RECORRIDO_MENSUAL.TAQ_MES,
+                  12,
+                  TRA_RECORRIDO_MENSUAL.RECORRIDO_MENSUAL /
+                  CONSUMO_MENSUAL.CONSUMO,
+                  0)) DICIEMBRE
+  FROM TRA_CAMION,
+       TRA_RECORRIDO_MENSUAL,
+       (SELECT C.DOCU_TRA_CAMION,
+               TO_NUMBER(TO_CHAR(C.DOCU_FEC_EMIS, 'yyyy')) ANO,
+               TO_NUMBER(TO_CHAR(C.DOCU_FEC_EMIS, 'mm')) MES,
+               SUM(C.DETA_CANT) CONSUMO
+          FROM TRA_CONSUMO_V C
+         GROUP BY C.DOCU_TRA_CAMION,
+                  TO_NUMBER(TO_CHAR(C.DOCU_FEC_EMIS, 'yyyy')),
+                  TO_NUMBER(TO_CHAR(C.DOCU_FEC_EMIS, 'mm'))) CONSUMO_MENSUAL
+ WHERE TRA_CAMION.CAM_CODIGO = TRA_RECORRIDO_MENSUAL.TAQ_CAM_CODIGO
+   AND TRA_RECORRIDO_MENSUAL.TAQ_CAM_CODIGO =
+       CONSUMO_MENSUAL.DOCU_TRA_CAMION(+)
+   AND TRA_RECORRIDO_MENSUAL.TAQ_ANO = CONSUMO_MENSUAL.ANO(+)
+   AND TRA_RECORRIDO_MENSUAL.TAQ_MES = CONSUMO_MENSUAL.MES(+)
+   AND (TRA_CAMION.CAM_PROPIO_COD=$P{P_CAMION} OR $P{P_CAMION} IS NULL)
+ GROUP BY TRA_CAMION.CAM_PROPIO_COD,
+          TRA_CAMION.CAM_PROPIO_COD || '-' || TRA_CAMION.CAM_CHAPA]]>
+	</queryString>
+	<field name="ORDEN" class="java.math.BigDecimal"/>
+	<field name="CAM_CODIGO" class="java.lang.String"/>
+	<field name="ENERO" class="java.math.BigDecimal"/>
+	<field name="FEBRERO" class="java.lang.String"/>
+	<field name="MARZO" class="java.math.BigDecimal"/>
+	<field name="ABRIL" class="java.math.BigDecimal"/>
+	<field name="MAYO" class="java.math.BigDecimal"/>
+	<field name="JUNIO" class="java.math.BigDecimal"/>
+	<field name="JULIO" class="java.math.BigDecimal"/>
+	<field name="AGOSTO" class="java.math.BigDecimal"/>
+	<field name="SEPTIEMBRE" class="java.math.BigDecimal"/>
+	<field name="OCTUBRE" class="java.math.BigDecimal"/>
+	<field name="NOVIEMBRE" class="java.math.BigDecimal"/>
+	<field name="DICIEMBRE" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="79" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Transparent" x="0" y="0" width="552" height="65" uuid="95ed4190-89f6-423a-9fcb-91fc28b8fd4f"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="5" y="35" width="81" height="13" uuid="118b6a5b-af05-4b1d-a3a8-c831c86ea01f"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Camion :]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement x="456" y="15" width="88" height="13" uuid="75f6fa54-4608-4166-b474-f6dbae9b42b4"/>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="456" y="0" width="58" height="13" uuid="2cca577a-32e4-4964-aa99-27e919f2d7ec"/>
+				<textElement textAlignment="Left">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="514" y="0" width="30" height="13" uuid="f3bc2329-59a0-4a58-838d-44c82110bbe5"/>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="0" width="116" height="13" uuid="f08b058e-094d-44c3-8bed-c8b53c44c6be"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_EMPRESA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="141" y="10" width="272" height="15" uuid="76abd782-10fb-402f-be38-0bb73e77659b"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="91" y="35" width="160" height="13" uuid="072d7b6e-13ef-474e-8324-aef7f9e1c99f"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_CAMION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="413" y="0" width="40" height="13" uuid="83a8f4c5-375b-4f5b-8967-351e7c645ac7"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROGRAMA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="16" splitType="Stretch">
+			<staticText>
+				<reportElement x="104" y="0" width="30" height="15" uuid="e69034b6-fdc6-4db0-b2e0-fd3db591eb07"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Enero]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="136" y="0" width="36" height="15" uuid="ee981d9b-a622-48f3-a399-5e2193504687"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Febrero]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="181" y="0" width="30" height="15" uuid="529f31d0-b9dd-45bc-9b4d-c050398cb44f"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Marzo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="50" height="15" uuid="edb3e679-c49b-481e-83eb-f0776e8755ab"/>
+				<textElement textAlignment="Left">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Camion/es]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="227" y="0" width="23" height="15" uuid="2811dcdf-d7d1-46e0-a099-fc11f5d4b3dc"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Abril]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="344" y="0" width="22" height="15" uuid="15e28a3e-75d6-4749-8b13-6fa474792ae2"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Julio]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="15" width="552" height="1" uuid="0d0bc506-aa37-4d20-b260-bac4370d18a9"/>
+			</line>
+			<staticText>
+				<reportElement x="263" y="0" width="25" height="15" uuid="7be24bfd-faaa-4cd3-9bff-cdb821da31d5"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Mayo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="303" y="1" width="24" height="14" uuid="837d5f30-b6ce-4881-8610-a87d8dd6132c"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Junio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="376" y="0" width="28" height="15" uuid="d8cfb142-8325-491d-88f3-356d8c3aa834"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Agos.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="419" y="0" width="25" height="15" uuid="7450c541-4ec8-485c-8873-88757790aede"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sept.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="0" width="26" height="15" uuid="293590d3-b0a1-449b-a051-f6149c77b533"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Octu.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="493" y="0" width="24" height="15" uuid="da72c066-3e94-468f-ab36-74f57767d927"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nov.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="530" y="0" width="24" height="15" uuid="6d5f52fc-41fd-4e7c-a289-e64ec2dce4b3"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dici.]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="100" y="0" width="34" height="15" uuid="b0d49bfb-86c4-4e7c-8afc-9ece62c5c889"/>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ENERO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="177" y="0" width="34" height="15" uuid="a7bd0e8f-e536-411c-99d9-06e058a2c30e"/>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MARZO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="86" height="15" uuid="c8637912-9f6a-416c-8638-b2fb7042dc30"/>
+				<textElement>
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAM_CODIGO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="216" y="0" width="34" height="15" uuid="d7bacd7d-30dd-4de9-ae4b-03e2de843480"/>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ABRIL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="254" y="0" width="34" height="15" uuid="eac56bf7-a28e-4331-a8dd-07f72c826cc7"/>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MAYO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="292" y="0" width="34" height="15" uuid="fcf2f90f-5eca-4d92-afbd-ce1ae34ad1a1"/>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{JUNIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="331" y="0" width="34" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="58792568-0687-4bdb-922f-196008cce366"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{JULIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="370" y="0" width="34" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="80364e73-4aa4-4384-8e11-1c8e5a813ef5"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AGOSTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="409" y="0" width="34" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="36bc8db1-8af5-4f60-961b-3f1b21636ae3"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SEPTIEMBRE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="447" y="0" width="34" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="d2133286-a956-41bf-aa41-e5fefb176bab"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OCTUBRE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="483" y="0" width="34" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="1ecffe3d-0665-4b65-9cd4-60f4670ed0a4"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOVIEMBRE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="520" y="0" width="34" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="b0c1e5cd-59a9-4246-8bfd-f45454c669e9"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DICIEMBRE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="138" y="0" width="34" height="15" uuid="644f64d9-045c-4599-90cb-b8ddcb8e2e08"/>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FEBRERO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="12" splitType="Stretch">
+			<staticText>
+				<reportElement x="3" y="0" width="100" height="12" uuid="e7f340a1-9d26-46ec-8ae5-1ec7050e0813"/>
+				<textElement>
+					<font size="9" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Fin del listado...]]></text>
+			</staticText>
+		</band>
+	</lastPageFooter>
+</jasperReport>

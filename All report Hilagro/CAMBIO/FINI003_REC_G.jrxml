@@ -1,0 +1,571 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINI003_REC_G" language="groovy" columnCount="2" printOrder="Horizontal" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="277" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" whenResourceMissingType="Empty" uuid="04d56e59-02b4-4f57-927a-ce67b1adcf3d">
+	<property name="ireport.zoom" value="1.5026296018031553"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DOC_CLAVE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT FR.DOC_CLAVE||'-'||1 ORIGEN,
+       FC.CLI_CODIGO,
+       FC.CLI_NOM,
+       FC.CLI_RUC,
+       SUBSTR(LPAD(FD.DOC_NRO_DOC, 13, 0), 0, 3) || '-' ||
+       SUBSTR(LPAD(FD.DOC_NRO_DOC, 13, 0), 4, 3) || '-' ||
+       SUBSTR(LPAD(FD.DOC_NRO_DOC, 13, 0), 7, 14) NRO_FACTURA,
+       SUBSTR(LPAD(FR.DOC_NRO_DOC, 13, 0), 0, 3) || '-' ||
+       SUBSTR(LPAD(FR.DOC_NRO_DOC, 13, 0), 4, 3) || '-' ||
+       SUBSTR(LPAD(FR.DOC_NRO_DOC, 13, 0), 7, 14) NRO_RECIBO,
+       FD.DOC_MON COD_MONEDA,
+       FD.DOC_CTA_BCO,
+       FP.PAG_IMP_MON IMPORTE_PAGO,
+       FR.DOC_FEC_DOC FECHA_PAGO,
+       TO_CHAR(FR.DOC_FEC_DOC, 'dd') AS DAYPAGO,
+       TO_CHAR(FR.DOC_FEC_DOC, 'Month') AS MONTHPAGO,
+       TO_CHAR(FR.DOC_FEC_DOC, 'YYYY') AS YEARPAGO,
+       E.EMPR_RUC RUC,
+       D.MON_SIMBOLO SIMBOLO,
+       LPAD(TRIM(DECODE(MON_CODIGO,
+                        1,
+                        TO_CHAR(FR.DOC_NETO_EXEN_MON, '999G999G999G999'),
+                        TO_CHAR(FR.DOC_NETO_EXEN_MON, '999G999G999G999D00'))),
+            30,
+            '-') IMPORTE_RECIBO,
+       RPAD(NVL(GENERAL.FP_CONV_NRO_TXT(FR.DOC_NETO_EXEN_MON, FR.DOC_MON),
+                '-'),
+            90,
+            '-') IMPORTE_PAGO_TXT1,
+       RPAD(NVL(SUBSTR(GENERAL.FP_CONV_NRO_TXT(FR.DOC_NETO_EXEN_MON,
+                                               FR.DOC_MON),
+                       91,
+                       1000),
+                '--'),
+            90,
+            '-') IMPORTE_PAGO_TXT2,
+       FP.PAG_CLAVE_PAGO,
+       PAG_FEC_VTO,
+       UPPER(S.SUC_LOCALIDAD || ',  ' || TO_CHAR(FR.DOC_FEC_DOC, 'dd') ||
+             ' de ' ||
+             TO_CHAR(FR.DOC_FEC_DOC, 'Month', 'nls_date_language=spanish') ||
+             ' del ' || TO_CHAR(FR.DOC_FEC_DOC, 'yyyy') || '.') LUGAR_Y_FECHA,
+     ---------------
+       FCH.CHEQ_NRO,
+       FCH.CHEQ_FEC_EMIS,
+       BANCO.BCO_DESC
+    -----------------
+  FROM FIN_DOCUMENTO  FD,
+       FIN_UNION_PAGO FP,
+       FIN_CLIENTE    FC,
+       GEN_EMPRESA    E,
+       GEN_MONEDA     D,
+       FIN_DOCUMENTO  FR,
+       GEN_SUCURSAL   S,
+    ------------------------
+       FIN_DOCUMENTO  FDCH,
+       FIN_CHEQUE     FCH,
+       FIN_CHEQUE_DOCUMENTO FCHD,
+       FIN_BANCO     BANCO
+    ----------------------
+ WHERE FD.DOC_CLAVE = FP.PAG_CLAVE_DOC
+   AND FD.DOC_EMPR = FP.PAG_EMPR
+   AND FD.DOC_CLI = FC.CLI_CODIGO
+   AND FD.DOC_EMPR = FC.CLI_EMPR
+   AND FD.DOC_EMPR = EMPR_CODIGO
+   AND FD.DOC_MON = MON_CODIGO
+   AND FD.DOC_EMPR = MON_EMPR
+   AND PAG_CLAVE_PAGO = FR.DOC_CLAVE
+   AND PAG_EMPR = FR.DOC_EMPR
+   AND FP.PAG_CLAVE_PAGO IN ($P!{P_DOC_CLAVE})
+   AND FP.PAG_EMPR =$P!{P_EMPRESA}
+   AND FR.DOC_SUC = SUC_CODIGO
+   AND FR.DOC_EMPR = SUC_EMPR
+
+-------------------------------------
+   AND FDCH.DOC_REC_COB = FP.PAG_CLAVE_PAGO
+   AND FDCH.DOC_EMPR = FP.PAG_EMPR
+
+   AND FDCH.DOC_CLAVE = FCHD.CHDO_CLAVE_DOC
+   AND FDCH.DOC_EMPR = FCHD.CHDO_EMPR
+
+   AND FCHD.CHDO_CLAVE_CHEQ = FCH.CHEQ_CLAVE
+   AND FCHD.CHDO_EMPR = FCH.CHEQ_EMPR
+
+   AND FCH.CHEQ_BCO = BANCO.BCO_CODIGO
+   AND FCH.CHEQ_EMPR = BANCO.BCO_EMPR
+   -----------------------------------
+union all
+SELECT FR.DOC_CLAVE||'-'||2 ORIGEN,
+       FC.CLI_CODIGO,
+       FC.CLI_NOM,
+       FC.CLI_RUC,
+       SUBSTR(LPAD(FD.DOC_NRO_DOC, 13, 0), 0, 3) || '-' ||
+       SUBSTR(LPAD(FD.DOC_NRO_DOC, 13, 0), 4, 3) || '-' ||
+       SUBSTR(LPAD(FD.DOC_NRO_DOC, 13, 0), 7, 14) NRO_FACTURA,
+       SUBSTR(LPAD(FR.DOC_NRO_DOC, 13, 0), 0, 3) || '-' ||
+       SUBSTR(LPAD(FR.DOC_NRO_DOC, 13, 0), 4, 3) || '-' ||
+       SUBSTR(LPAD(FR.DOC_NRO_DOC, 13, 0), 7, 14) NRO_RECIBO,
+       FD.DOC_MON COD_MONEDA,
+       FD.DOC_CTA_BCO,
+       FP.PAG_IMP_MON IMPORTE_PAGO,
+       FR.DOC_FEC_DOC FECHA_PAGO,
+       TO_CHAR(FR.DOC_FEC_DOC, 'dd') AS DAYPAGO,
+       TO_CHAR(FR.DOC_FEC_DOC, 'Month') AS MONTHPAGO,
+       TO_CHAR(FR.DOC_FEC_DOC, 'YYYY') AS YEARPAGO,
+       E.EMPR_RUC RUC,
+       D.MON_SIMBOLO SIMBOLO,
+       LPAD(TRIM(DECODE(MON_CODIGO,
+                        1,
+                        TO_CHAR(FR.DOC_NETO_EXEN_MON, '999G999G999G999'),
+                        TO_CHAR(FR.DOC_NETO_EXEN_MON, '999G999G999G999D00'))),
+            30,
+            '-') IMPORTE_RECIBO,
+       RPAD(NVL(GENERAL.FP_CONV_NRO_TXT(FR.DOC_NETO_EXEN_MON, FR.DOC_MON),
+                '-'),
+            90,
+            '-') IMPORTE_PAGO_TXT1,
+       RPAD(NVL(SUBSTR(GENERAL.FP_CONV_NRO_TXT(FR.DOC_NETO_EXEN_MON,
+                                               FR.DOC_MON),
+                       91,
+                       1000),
+                '--'),
+            90,
+            '-') IMPORTE_PAGO_TXT2,
+       FP.PAG_CLAVE_PAGO,
+       PAG_FEC_VTO,
+       UPPER(S.SUC_LOCALIDAD || ',  ' || TO_CHAR(FR.DOC_FEC_DOC, 'dd') ||
+             ' de ' ||
+             TO_CHAR(FR.DOC_FEC_DOC, 'Month', 'nls_date_language=spanish') ||
+             ' del ' || TO_CHAR(FR.DOC_FEC_DOC, 'yyyy') || '.') LUGAR_Y_FECHA,
+     --------------- agregado por JB 11-03-2022 JB
+       FCH.CHEQ_NRO,
+       FCH.CHEQ_FEC_EMIS,
+       BANCO.BCO_DESC
+    -----------------
+  FROM FIN_DOCUMENTO  FD,
+       FIN_UNION_PAGO FP,
+       FIN_CLIENTE    FC,
+       GEN_EMPRESA    E,
+       GEN_MONEDA     D,
+       FIN_DOCUMENTO  FR,
+       GEN_SUCURSAL   S,
+    ------------------------
+       FIN_DOCUMENTO  FDCH,
+       FIN_CHEQUE     FCH,
+       FIN_CHEQUE_DOCUMENTO FCHD,
+       FIN_BANCO     BANCO
+    ----------------------
+ WHERE FD.DOC_CLAVE = FP.PAG_CLAVE_DOC
+   AND FD.DOC_EMPR = FP.PAG_EMPR
+   AND FD.DOC_CLI = FC.CLI_CODIGO
+   AND FD.DOC_EMPR = FC.CLI_EMPR
+   AND FD.DOC_EMPR = EMPR_CODIGO
+   AND FD.DOC_MON = MON_CODIGO
+   AND FD.DOC_EMPR = MON_EMPR
+   AND PAG_CLAVE_PAGO = FR.DOC_CLAVE
+   AND PAG_EMPR = FR.DOC_EMPR
+   AND FP.PAG_CLAVE_PAGO IN ($P!{P_DOC_CLAVE})
+   AND FP.PAG_EMPR =$P!{P_EMPRESA}
+   AND FR.DOC_SUC = SUC_CODIGO
+   AND FR.DOC_EMPR = SUC_EMPR
+  -------------------------------------
+    AND FDCH.DOC_REC_COB (+)= FP.PAG_CLAVE_PAGO
+   AND FDCH.DOC_EMPR (+)= FP.PAG_EMPR
+
+   AND FDCH.DOC_CLAVE = FCHD.CHDO_CLAVE_DOC(+)
+   AND FDCH.DOC_EMPR = FCHD.CHDO_EMPR(+)
+
+   AND FCHD.CHDO_CLAVE_CHEQ = FCH.CHEQ_CLAVE(+)
+   AND FCHD.CHDO_EMPR = FCH.CHEQ_EMPR(+)
+
+   AND FCH.CHEQ_BCO = BANCO.BCO_CODIGO(+)
+   AND FCH.CHEQ_EMPR = BANCO.BCO_EMPR(+)
+   -----------------------------------
+
+
+ORDER BY PAG_CLAVE_PAGO,origen,nro_factura]]>
+	</queryString>
+	<field name="ORIGEN" class="java.lang.String"/>
+	<field name="CLI_CODIGO" class="java.math.BigDecimal"/>
+	<field name="CLI_NOM" class="java.lang.String"/>
+	<field name="CLI_RUC" class="java.lang.String"/>
+	<field name="NRO_FACTURA" class="java.lang.String"/>
+	<field name="NRO_RECIBO" class="java.lang.String"/>
+	<field name="COD_MONEDA" class="java.math.BigDecimal"/>
+	<field name="DOC_CTA_BCO" class="java.math.BigDecimal"/>
+	<field name="IMPORTE_PAGO" class="java.math.BigDecimal"/>
+	<field name="FECHA_PAGO" class="java.sql.Timestamp"/>
+	<field name="DAYPAGO" class="java.lang.String"/>
+	<field name="MONTHPAGO" class="java.lang.String"/>
+	<field name="YEARPAGO" class="java.lang.String"/>
+	<field name="RUC" class="java.lang.String"/>
+	<field name="SIMBOLO" class="java.lang.String"/>
+	<field name="IMPORTE_RECIBO" class="java.lang.String"/>
+	<field name="IMPORTE_PAGO_TXT1" class="java.lang.String"/>
+	<field name="IMPORTE_PAGO_TXT2" class="java.lang.String"/>
+	<field name="PAG_CLAVE_PAGO" class="java.math.BigDecimal"/>
+	<field name="PAG_FEC_VTO" class="java.sql.Timestamp"/>
+	<field name="LUGAR_Y_FECHA" class="java.lang.String"/>
+	<field name="CHEQ_NRO" class="java.lang.String"/>
+	<field name="CHEQ_FEC_EMIS" class="java.sql.Timestamp"/>
+	<field name="BCO_DESC" class="java.lang.String"/>
+	<group name="CLAVE">
+		<groupExpression><![CDATA[$F{ORIGEN}]]></groupExpression>
+		<groupHeader>
+			<band height="251">
+				<rectangle radius="10">
+					<reportElement mode="Transparent" x="11" y="18" width="535" height="96" uuid="b773d6bb-a54f-4c2f-a803-8ab554ad4678"/>
+				</rectangle>
+				<staticText>
+					<reportElement x="399" y="41" width="22" height="12" uuid="533b09f6-5121-40e3-b5a8-bdc8920b40aa"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[RUC:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="340" y="22" width="188" height="23" uuid="5eec273a-0b17-43b9-84e3-ebe9d52f28c6"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[RECIBO DE DINERO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="24" y="22" width="115" height="10" uuid="e50c44e0-a8ec-4684-9110-96d8d0eeb7ab"/>
+					<textElement verticalAlignment="Top">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Molinos Harineros y derivados]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="353" y="60" width="188" height="23" uuid="3b29f937-a169-4b28-98a2-bf8dcdbc0f37"/>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="Arial" size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{IMPORTE_RECIBO}]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="333" y="91" width="210" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="883d0105-50a6-429b-a70d-46372e399587"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None" markup="none">
+						<font fontName="Arial" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NRO_RECIBO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="105" y="40" width="62" height="53" uuid="306282c3-acad-494e-91a0-0a686bbf1b0a"/>
+					<textElement>
+						<font fontName="Arial" size="4" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Planta Industrial
+Ruta PY02 Km 214
+Dr. J. E. Estigarribia (Campo 9)
+Caaguazú - Paraguay
+Tel/Fax: (0528) 222 815 (R.A.)
+ventas@hilagro.com.py
+www.hilagro.com.py
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="178" y="22" width="130" height="85" uuid="9c2d845a-9151-4436-9ffc-8c16de8b5308"/>
+					<textElement verticalAlignment="Top">
+						<font fontName="Arial" size="3" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Centro de Distribución de Asunción
+Avda. Defensores del Chaco Nro. 815, Fdo de la Mora, Central
+Tel/Fax: (021) 502 786 asuventas@hilagro.com.py
+Sucursal Loma Plata
+Avda. Central c/ 3 de Noviembre Nro. 11090, Loma Plata, Boquerón
+Tel/Fax: (0492) 253 422 lomaplata@hilagro.com.py
+Sucursal Concepción
+Ruta PY05 Km 213, Concepción
+Tel/Fax: (0331) 242 577 adm_c@hilagro.com.py
+Sucursal Santa Rosa del Aguaray
+Ruta PY08 Km 428 Santa Rosa, San Pedro
+Tel/Fax: (0433) 240 204 santarosa@hilagro.com.py
+Sucursal Pedro Juan Caballero
+Ruta PY05 Km 4,5 c/ Acceso a Fortuna Guazú, P. J. Caballero, Amambay
+Tel/Fax: (0336) 270 720 pjc@hilagro.com.py
+Sucursal Encarnación
+Ruta PY01 Km 355, Encarnación, Itapúa
+Tel.: (071) 207074 encarnacion@hilagro.com.py]]></text>
+				</staticText>
+				<rectangle radius="10">
+					<reportElement x="333" y="58" width="210" height="26" uuid="90c19484-6525-4754-813c-6161c9e24a6e"/>
+				</rectangle>
+				<textField pattern="" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="309" y="63" width="24" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="9a2eb8f3-42d8-46d2-adea-114ee549a9be"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SIMBOLO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Transparent" x="429" y="41" width="80" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="383aa430-b867-4fc7-9633-8cd173eacfa2"/>
+					<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" markup="none">
+						<font fontName="Arial" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{RUC}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="309" y="91" width="24" height="20" uuid="479933c7-c809-4084-bcdf-983a5f4f6a45"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nº]]></text>
+				</staticText>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="341" y="63" width="196" height="20" uuid="330199a6-f40a-479c-ab27-3c2051297c09"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{IMPORTE_RECIBO}]]></textFieldExpression>
+				</textField>
+				<image>
+					<reportElement mode="Transparent" x="24" y="38" width="71" height="50" uuid="bdb1af7e-2eb4-49d5-b945-949108ca348c"/>
+					<imageExpression><![CDATA["logo_rec_fini003.jpg"]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement x="11" y="195" width="57" height="15" uuid="bc29ead3-4b38-42b4-85db-8bb186e26f36"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Efectivo:]]></text>
+				</staticText>
+				<rectangle radius="5">
+					<reportElement mode="Transparent" x="66" y="122" width="351" height="20" uuid="a6a4a49b-041d-44e2-a958-e5c8a8910551"/>
+				</rectangle>
+				<rectangle radius="5">
+					<reportElement mode="Transparent" x="82" y="145" width="464" height="20" uuid="678aca57-3bb6-4fc7-9b13-1e8b163e035a"/>
+				</rectangle>
+				<staticText>
+					<reportElement x="11" y="122" width="55" height="15" uuid="f8ef34e4-abba-4f33-bd55-550fdda38a83"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Recibi de :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="401" y="194" width="47" height="15" uuid="05fca68c-b512-4b3d-85d7-0292fcc24bda"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[c/Banco:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="12" y="145" width="70" height="20" uuid="b6bb81f9-6b67-408d-aac6-4a7b8e0d76ca"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[La cantidad de :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="12" y="210" width="198" height="15" uuid="1c9c58e4-34c4-4bb2-a432-eae77432573f"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Por concepto de  pago segun detalle:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="458" y="122" width="85" height="15" uuid="113d761f-efd3-49c0-9519-cdf7cb93c1a0"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CLI_RUC}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="92" y="145" width="451" height="15" uuid="ffa12f5b-f30c-406f-bc3e-65501c37f8ff"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{IMPORTE_PAGO_TXT1}]]></textFieldExpression>
+				</textField>
+				<rectangle radius="5">
+					<reportElement mode="Transparent" x="11" y="170" width="535" height="20" uuid="62a725a7-d599-4639-96d3-f544763ad2cc"/>
+				</rectangle>
+				<rectangle radius="5">
+					<reportElement mode="Transparent" x="451" y="122" width="95" height="20" uuid="ffc0e54a-f4a1-43c5-be92-ee913a7fcf35"/>
+				</rectangle>
+				<textField>
+					<reportElement mode="Transparent" x="71" y="122" width="346" height="15" uuid="293adf6e-9d9f-422d-942b-eb84505f7087"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8" isUnderline="false" isStrikeThrough="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CLI_NOM}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="164" y="195" width="68" height="15" uuid="ed1e0a32-7551-4d4f-8ca4-16bf7b843120"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Cheque Nº:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="301" y="195" width="52" height="15" uuid="993687bc-3100-4527-9773-574821066677"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[P/Fecha:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="12" y="169" width="531" height="15" uuid="929d9d1e-6eb7-4941-9e6d-23f726e3b097"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{IMPORTE_PAGO_TXT2}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="421" y="122" width="30" height="15" uuid="ffdfe96e-a265-4b5e-afe4-605a28440f6d"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[RUC:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="6" y="234" width="79" height="15" uuid="4dc4bd74-be0d-4583-8c48-a925dbbab4a3"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Factura:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="179" y="234" width="55" height="15" uuid="8bc4ff0d-a26d-4c8c-85dc-5ceb832bc1e2"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Importe:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="91" y="234" width="69" height="15" uuid="5eb11ae9-e331-4f24-b73a-2bd74c449488"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Vencimiento:]]></text>
+				</staticText>
+				<line>
+					<reportElement x="14" y="249" width="230" height="1" uuid="26532e89-0b9d-4d32-b48f-4a272c2659e9"/>
+				</line>
+				<staticText>
+					<reportElement x="377" y="233" width="69" height="15" uuid="0645f9de-41b6-4af6-b936-54ec53d8ac9b"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Vencimiento:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="292" y="233" width="79" height="15" uuid="f18d491b-d223-4a83-b610-edfafad083c0"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Factura:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="465" y="233" width="55" height="15" uuid="b956bbcc-1f22-4ef2-9aee-c2f487373a0f"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Importe:]]></text>
+				</staticText>
+				<line>
+					<reportElement x="293" y="248" width="230" height="1" uuid="860bec88-4571-449e-af19-1830e47d51b4"/>
+				</line>
+				<textField>
+					<reportElement x="220" y="195" width="77" height="12" uuid="e072d650-eb8a-415b-be1c-10beea88c8a0"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CHEQ_NRO}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="340" y="195" width="59" height="12" uuid="e43e0b01-758d-4e7c-8c54-178a09178aac"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CHEQ_FEC_EMIS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="446" y="195" width="108" height="12" uuid="2bbd1fe8-a67a-4eeb-8e27-aa4db40c356a"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{BCO_DESC}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="110">
+				<staticText>
+					<reportElement x="98" y="95" width="72" height="15" uuid="ab696475-0163-4a9d-8825-c27d9208af7d"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Lugar y Fecha]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="359" y="95" width="92" height="15" uuid="db0c98ce-f191-43bf-b078-e4e099c91d34"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Firma]]></text>
+				</staticText>
+				<line>
+					<reportElement x="14" y="93" width="253" height="1" uuid="6aa4db86-6c8c-4bb6-afcd-4c675f19b50a"/>
+				</line>
+				<line>
+					<reportElement x="290" y="94" width="253" height="1" uuid="397f6bea-442e-4e12-919f-a2490ccc35d3"/>
+				</line>
+				<line>
+					<reportElement x="13" y="72" width="530" height="1" uuid="4694a326-bd8a-4c6d-b96d-a2965e1ae7e6"/>
+				</line>
+				<textField pattern="" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="14" y="76" width="253" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="ab72a0ad-f4f1-4cb5-a0f0-846cfc10bf22"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{LUGAR_Y_FECHA}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="FACTURAS">
+		<groupExpression><![CDATA[$F{NRO_FACTURA}]]></groupExpression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<detail>
+		<band height="14" splitType="Prevent">
+			<textField isBlankWhenNull="true">
+				<reportElement x="10" y="0" width="79" height="10" uuid="e49240b9-52bb-43b9-977d-6cdfd9fc44d2"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_FACTURA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="91" y="0" width="65" height="10" uuid="f5b2ea6b-b2d9-4530-a345-31ebe7f57746"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PAG_FEC_VTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="159" y="0" width="77" height="10" uuid="bff5acde-7e2b-43d3-a7f7-3927f97937e4"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_PAGO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,1511 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ACOL223" language="groovy" pageWidth="842" pageHeight="595" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="566b8e45-552b-4935-9bb6-e3e02cf7f0e3">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<subDataset name="CROSS" uuid="9e994518-ff76-46f8-a32a-4ec3bd51752e">
+		<parameter name="P_CLIENTE" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_SESSION_ID" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_CLI_NOMBRE" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_PRODUCTO" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_OPERACION" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_TICKET" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT DISTINCT T_BRUTO       BRUTO,
+                T_BRUTO       BRUTO_1,
+                T_TARA        TARA,
+                T_NETO        NETO,
+                T_CLIENTE     CLIENTE,
+                T_PRBR_CLIENT,
+                T_PRODUC,
+                PRODUC_DESC,
+                COD_OPERACION,
+                OPERACION,
+                NRO_TICKET,
+                FECHA,
+                CHAPA,
+                PRBR_SUC,
+                NRO_REMISION
+  FROM ACO_ACOL223_DET_TEMP
+ WHERE (SESSION_ID = $P{P_SESSION_ID} OR $P{P_SESSION_ID} IS NULL)
+   AND (EMPR = $P{P_EMPRESA} OR $P{P_EMPRESA} IS NULL)
+   AND (T_PRODUC = $P{P_PRODUCTO} OR $P{P_PRODUCTO} IS NULL)
+   AND (COD_OPERACION = $P{P_OPERACION} OR $P{P_OPERACION} IS NULL)
+   AND (T_CLIENTE = $P{P_CLIENTE} OR $P{P_CLIENTE} IS NULL)
+   AND (NRO_TICKET = $P{P_TICKET} OR $P{P_TICKET} IS NULL)
+]]>
+		</queryString>
+		<field name="BRUTO" class="java.math.BigDecimal"/>
+		<field name="BRUTO_1" class="java.math.BigDecimal"/>
+		<field name="TARA" class="java.math.BigDecimal"/>
+		<field name="NETO" class="java.math.BigDecimal"/>
+		<field name="CLIENTE" class="java.lang.String"/>
+		<field name="T_PRBR_CLIENT" class="java.math.BigDecimal"/>
+		<field name="T_PRODUC" class="java.math.BigDecimal"/>
+		<field name="PRODUC_DESC" class="java.lang.String"/>
+		<field name="COD_OPERACION" class="java.lang.String"/>
+		<field name="OPERACION" class="java.lang.String"/>
+		<field name="NRO_TICKET" class="java.math.BigDecimal"/>
+		<field name="FECHA" class="java.sql.Timestamp"/>
+		<field name="CHAPA" class="java.lang.String"/>
+		<field name="PRBR_SUC" class="java.math.BigDecimal"/>
+		<field name="NRO_REMISION" class="java.math.BigDecimal"/>
+		<variable name="variable1" class="java.lang.Number" calculation="DistinctCount">
+			<variableExpression><![CDATA[$F{BRUTO_1}]]></variableExpression>
+		</variable>
+	</subDataset>
+	<subDataset name="TABLA_DESC_1_1" uuid="49a5608d-66bb-466a-b919-5366faeabd53">
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_PRODUCTO" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_USER" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT DISTINCT DECODE(PROD_GRUPO,
+                       4,
+                       DECODE(NVL(AV.AVAO_REPORTE, 'N'), 'S', CAL_DESC, NULL),
+                       CAL_DESC) CAL_DESC,
+                DECODE(PROD_GRUPO,
+                       4,
+                       DECODE(NVL(AV.AVAO_REPORTE, 'N'),
+                              'S',
+                              CAL_CODIGO,
+                              NULL),
+                       CAL_CODIGO) CAL_CODIGO,
+                DECODE(PROD_GRUPO,
+                       4,
+                       DECODE(NVL(AV.AVAO_REPORTE, 'N'), 'S', CAL_EMPR, NULL),
+                       CAL_EMPR) CAL_EMPR
+
+  FROM ACO_PRODUCTO,
+       ACO_CALIFICACION             H,
+       ACO_PROD_ANALISIS,
+       ACO_VISUALIZAR_ANALISIS_OPER AV,
+       ACO_PROD_TABLA
+ WHERE PROD_EMPR = $P{P_EMPRESA}
+
+   AND CAL_EMPR = PROD_EMPR
+
+   AND AV.AVAO_PRODUCTO(+) = PRAN_CLAVE_PROD
+   AND AV.AVAO_TABLA(+) = PRAN_TABLA
+   AND AV.AVAO_EMPR(+) = PRAN_EMPR
+   AND AV.AVAO_LOGIN(+) = $P{P_USER}
+
+   AND PRAN_TABLA = CAL_CODIGO
+   AND PRAN_EMPR = CAL_EMPR
+   AND PRAN_EMPR = PROD_EMPR
+
+   AND ACO_PROD_TABLA.PRTA_CLAVE_PROD = PROD_CLAVE
+   AND ACO_PROD_TABLA.PRTA_EMPR = PROD_EMPR
+   AND ACO_PROD_TABLA.PRTA_CALIF = PRAN_TABLA
+
+
+
+   AND DECODE(PROD_GRUPO,
+                       4,
+                       DECODE(NVL(AV.AVAO_REPORTE, 'N'), 'S', CAL_DESC, NULL),
+                       CAL_DESC) IS NOT NULL
+   AND PROD_CODIGO = $P{P_PRODUCTO}
+ORDER BY CAL_CODIGO]]>
+		</queryString>
+		<field name="CAL_DESC" class="java.lang.String"/>
+		<field name="CAL_CODIGO" class="java.math.BigDecimal"/>
+		<field name="CAL_EMPR" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="PROM_CROSS" uuid="8fed53f9-6c3d-46af-a567-35b0dc6d0c8b">
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_SESSION_ID" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_OPERACION" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_PRODUCTO" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_CLIENTE" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_TICKET" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT DISTINCT PROD_EMPR,
+                CLAVE_PROD,
+                PRODUC,
+                TABLA,
+                TABLA_DESC,
+                NETO,
+                CLIENTE,
+                PRAN_PUNTAJE,
+                PRCA_PORC_DESCUENTO,
+                DESC_KG,
+                DOC_OPERACION,
+                PRBR_SUC,
+                (T.NETO * (PRAN_PUNTAJE / 100)) GEN_PRAN_PUNTAJ,
+                (T.NETO * (PRCA_PORC_DESCUENTO / 100)) GEN_PORC_DESCUENTO,
+                (T.NETO * (DESC_KG / 100)) GEN_DESC,
+                CAL_CODIGO
+  FROM ACO_ACOL223_TEMP t, ACO_CALIFICACION C
+ WHERE TABLA_DESC = C.CAL_DESC(+)
+   AND T.EMPR = C.CAL_EMPR(+)
+   AND EMPR = $P{P_EMPRESA}
+   AND SESSION_ID = $P{P_SESSION_ID}
+   AND (DOC_OPERACION = $P{P_OPERACION} OR $P{P_OPERACION} IS NULL)
+   AND (PRODUC = $P{P_PRODUCTO} OR $P{P_PRODUCTO} IS NULL)
+   AND (CLIENTE = $P{P_CLIENTE} OR $P{P_CLIENTE} IS NULL)
+   AND (NRO_TICKET = $P{P_TICKET} OR $P{P_TICKET} IS NULL)
+   AND TABLA_DESC IS NOT NULL
+UNION
+SELECT DISTINCT PROD_EMPR,
+                CLAVE_PROD,
+                PRODUC,
+                TABLA,
+                'A' TABLA_DESC,
+                NETO,
+                CLIENTE,
+                0 PRAN_PUNTAJE,
+                0 PRCA_PORC_DESCUENTO,
+                0 DESC_KG,
+                DOC_OPERACION,
+                PRBR_SUC,
+                0 GEN_PRAN_PUNTAJ,
+                0 GEN_PORC_DESCUENTO,
+                0 GEN_DESC,
+                0 CAL_CODIGO
+  FROM ACO_ACOL223_TEMP t, ACO_CALIFICACION C
+ WHERE TABLA_DESC = C.CAL_DESC(+)
+   AND T.EMPR = C.CAL_EMPR(+)
+   AND EMPR = $P{P_EMPRESA}
+   AND SESSION_ID = $P{P_SESSION_ID}
+   AND (DOC_OPERACION = $P{P_OPERACION} OR $P{P_OPERACION} IS NULL)
+   AND (PRODUC = $P{P_PRODUCTO} OR $P{P_PRODUCTO} IS NULL)
+   AND (CLIENTE = $P{P_CLIENTE} OR $P{P_CLIENTE} IS NULL)
+   AND (NRO_TICKET = $P{P_TICKET} OR $P{P_TICKET} IS NULL)
+   AND TABLA_DESC IS NOT NULL
+UNION
+SELECT DISTINCT PROD_EMPR,
+                CLAVE_PROD,
+                PRODUC,
+                TABLA,
+                'B' TABLA_DESC,
+                NETO,
+                CLIENTE,
+                PRAN_PUNTAJE,
+                PRCA_PORC_DESCUENTO,
+                DESC_KG,
+                DOC_OPERACION,
+                PRBR_SUC,
+                (T.NETO * (PRAN_PUNTAJE / 100)) GEN_PRAN_PUNTAJ,
+                (T.NETO * (PRCA_PORC_DESCUENTO / 100)) GEN_PORC_DESCUENTO,
+                (T.NETO * (DESC_KG / 100)) GEN_DESC,
+                0 CAL_CODIGO
+  FROM ACO_ACOL223_TEMP t, ACO_CALIFICACION C
+ WHERE TABLA_DESC = C.CAL_DESC(+)
+   AND T.EMPR = C.CAL_EMPR(+)
+   AND EMPR = $P{P_EMPRESA}
+   AND SESSION_ID = $P{P_SESSION_ID}
+   AND (DOC_OPERACION = $P{P_OPERACION} OR $P{P_OPERACION} IS NULL)
+   AND (PRODUC = $P{P_PRODUCTO} OR $P{P_PRODUCTO} IS NULL)
+   AND (CLIENTE = $P{P_CLIENTE} OR $P{P_CLIENTE} IS NULL)
+   AND (NRO_TICKET = $P{P_TICKET} OR $P{P_TICKET} IS NULL)
+
+ ORDER BY CAL_CODIGO]]>
+		</queryString>
+		<field name="PROD_EMPR" class="java.math.BigDecimal"/>
+		<field name="CLAVE_PROD" class="java.math.BigDecimal"/>
+		<field name="PRODUC" class="java.math.BigDecimal"/>
+		<field name="TABLA" class="java.math.BigDecimal"/>
+		<field name="TABLA_DESC" class="java.lang.String"/>
+		<field name="NETO" class="java.math.BigDecimal"/>
+		<field name="CLIENTE" class="java.lang.String"/>
+		<field name="PRAN_PUNTAJE" class="java.math.BigDecimal"/>
+		<field name="PRCA_PORC_DESCUENTO" class="java.math.BigDecimal"/>
+		<field name="DESC_KG" class="java.math.BigDecimal"/>
+		<field name="DOC_OPERACION" class="java.lang.String"/>
+		<field name="PRBR_SUC" class="java.math.BigDecimal"/>
+		<field name="GEN_PRAN_PUNTAJ" class="java.math.BigDecimal"/>
+		<field name="GEN_PORC_DESCUENTO" class="java.math.BigDecimal"/>
+		<field name="GEN_DESC" class="java.math.BigDecimal"/>
+		<field name="CAL_CODIGO" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="CROSS_DETAIL" uuid="5780a492-31e4-486e-b54a-f906519c7bbb">
+		<parameter name="P_CLIENTE" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_SESSION_ID" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_CLI_NOMBRE" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_EMPRESA" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_PRODUCTO" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_OPERACION" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="P_TICKET" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT DISTINCT FECHA,
+                PROD_EMPR,
+                CLAVE_PROD,
+                CLAVE_TICKET,
+                PRODUC,
+                PRODUC_DESC,
+                TABLA,
+                TABLA_DESC,
+                CHAPA,
+                BRUTO,
+                TARA,
+                NETO,
+                CLIENTE,
+                PRAN_PUNTAJE,
+                PRCA_PORC_DESCUENTO,
+                DESC_KG,
+                TOTDCTO,
+                TOTNETO,
+                DOC_CLAVE,
+                DOC_OPERACION,
+                DOC_TICKET_ENTSAL,
+                NRO_TICKET,
+                PRBR_SUC,
+                NRO_REMISION,
+                BRUTO BRUTO_1,
+                CAL_CODIGO
+  FROM ACO_ACOL223_TEMP T, ACO_CALIFICACION C
+ WHERE TABLA_DESC = C.CAL_DESC(+)
+   AND T.EMPR = C.CAL_EMPR(+)
+   AND EMPR = $P{P_EMPRESA}
+   AND SESSION_ID = $P{P_SESSION_ID}
+   AND DOC_OPERACION = $P{P_OPERACION}
+   AND PRODUC = $P{P_PRODUCTO}
+   AND CLIENTE = $P{P_CLIENTE}
+   AND NRO_TICKET = $P{P_TICKET}
+   AND TABLA_DESC IS NOT NULL
+ ORDER BY FECHA ASC, CAL_CODIGO]]>
+		</queryString>
+		<field name="FECHA" class="java.sql.Timestamp"/>
+		<field name="PROD_EMPR" class="java.math.BigDecimal"/>
+		<field name="CLAVE_PROD" class="java.math.BigDecimal"/>
+		<field name="CLAVE_TICKET" class="java.math.BigDecimal"/>
+		<field name="PRODUC" class="java.math.BigDecimal"/>
+		<field name="PRODUC_DESC" class="java.lang.String"/>
+		<field name="TABLA" class="java.math.BigDecimal"/>
+		<field name="TABLA_DESC" class="java.lang.String"/>
+		<field name="CHAPA" class="java.lang.String"/>
+		<field name="BRUTO" class="java.math.BigDecimal"/>
+		<field name="TARA" class="java.math.BigDecimal"/>
+		<field name="NETO" class="java.math.BigDecimal"/>
+		<field name="CLIENTE" class="java.lang.String"/>
+		<field name="PRAN_PUNTAJE" class="java.math.BigDecimal"/>
+		<field name="PRCA_PORC_DESCUENTO" class="java.math.BigDecimal"/>
+		<field name="DESC_KG" class="java.math.BigDecimal"/>
+		<field name="TOTDCTO" class="java.math.BigDecimal"/>
+		<field name="TOTNETO" class="java.math.BigDecimal"/>
+		<field name="DOC_CLAVE" class="java.math.BigDecimal"/>
+		<field name="DOC_OPERACION" class="java.lang.String"/>
+		<field name="DOC_TICKET_ENTSAL" class="java.math.BigDecimal"/>
+		<field name="NRO_TICKET" class="java.math.BigDecimal"/>
+		<field name="PRBR_SUC" class="java.math.BigDecimal"/>
+		<field name="NRO_REMISION" class="java.math.BigDecimal"/>
+		<field name="BRUTO_1" class="java.math.BigDecimal"/>
+		<field name="CAL_CODIGO" class="java.math.BigDecimal"/>
+	</subDataset>
+	<parameter name="P_SESSION_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PRODUCTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PRODUCTO_DES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESDE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_HASTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLIENTE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLI_NOMBRE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPR_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROG_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USER" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT T.T_BRUTO,
+       T.T_TARA,
+       T.T_NETO,
+       T.T_TOTDCTO,
+       T.T_TOTNETO,
+       T.T_CLIENTE,
+       T.T_PRBR_CLIENT,
+       T.T_PRODUC,
+       T.PRODUC_DESC,
+       T.COD_OPERACION,
+       OPERACION,
+       T.NRO_TICKET,
+       $P{P_SESSION_ID} SESSION_ID,
+       $P{P_EMPRESA} EMPR
+  FROM ACO_ACOL223_DET_TEMP T
+   WHERE T.SESSION_ID = $P{P_SESSION_ID}
+   AND T.EMPR = $P{P_EMPRESA}
+ORDER BY T.PRODUC_DESC,
+         T_PRBR_CLIENT,
+         T.COD_OPERACION,
+         FECHA]]>
+	</queryString>
+	<field name="T_BRUTO" class="java.math.BigDecimal"/>
+	<field name="T_TARA" class="java.math.BigDecimal"/>
+	<field name="T_NETO" class="java.math.BigDecimal"/>
+	<field name="T_TOTDCTO" class="java.math.BigDecimal"/>
+	<field name="T_TOTNETO" class="java.math.BigDecimal"/>
+	<field name="T_CLIENTE" class="java.lang.String"/>
+	<field name="T_PRBR_CLIENT" class="java.math.BigDecimal"/>
+	<field name="T_PRODUC" class="java.math.BigDecimal"/>
+	<field name="PRODUC_DESC" class="java.lang.String"/>
+	<field name="COD_OPERACION" class="java.lang.String"/>
+	<field name="OPERACION" class="java.lang.String"/>
+	<field name="NRO_TICKET" class="java.math.BigDecimal"/>
+	<field name="SESSION_ID" class="java.lang.String"/>
+	<field name="EMPR" class="java.lang.String"/>
+	<variable name="T_BRUTO_1" class="java.math.BigDecimal" resetType="Group" resetGroup="OPERACION" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_BRUTO}]]></variableExpression>
+	</variable>
+	<variable name="T_TARA_1" class="java.math.BigDecimal" resetType="Group" resetGroup="OPERACION" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_TARA}]]></variableExpression>
+	</variable>
+	<variable name="T_NETO_1" class="java.math.BigDecimal" resetType="Group" resetGroup="OPERACION" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_NETO}]]></variableExpression>
+	</variable>
+	<variable name="T_TOTDCTO_1" class="java.math.BigDecimal" resetType="Group" resetGroup="OPERACION" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_TOTDCTO}]]></variableExpression>
+	</variable>
+	<variable name="T_TOTNETO_1" class="java.math.BigDecimal" resetType="Group" resetGroup="OPERACION" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_TOTNETO}]]></variableExpression>
+	</variable>
+	<variable name="T_BRUTO_2" class="java.math.BigDecimal" resetType="Group" resetGroup="CLIENTE" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_BRUTO}]]></variableExpression>
+	</variable>
+	<variable name="T_TARA_2" class="java.math.BigDecimal" resetType="Group" resetGroup="CLIENTE" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_TARA}]]></variableExpression>
+	</variable>
+	<variable name="T_NETO_2" class="java.math.BigDecimal" resetType="Group" resetGroup="CLIENTE" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_NETO}]]></variableExpression>
+	</variable>
+	<variable name="T_TOTDCTO_2" class="java.math.BigDecimal" resetType="Group" resetGroup="CLIENTE" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_TOTDCTO}]]></variableExpression>
+	</variable>
+	<variable name="T_TOTNETO_2" class="java.math.BigDecimal" resetType="Group" resetGroup="CLIENTE" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_TOTNETO}]]></variableExpression>
+	</variable>
+	<variable name="T_BRUTO_3" class="java.math.BigDecimal" resetType="Group" resetGroup="PRODUCTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_BRUTO}]]></variableExpression>
+	</variable>
+	<variable name="T_TARA_3" class="java.math.BigDecimal" resetType="Group" resetGroup="PRODUCTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_TARA}]]></variableExpression>
+	</variable>
+	<variable name="T_NETO_3" class="java.math.BigDecimal" resetType="Group" resetGroup="PRODUCTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_NETO}]]></variableExpression>
+	</variable>
+	<variable name="T_TOTDCTO_3" class="java.math.BigDecimal" resetType="Group" resetGroup="PRODUCTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_TOTDCTO}]]></variableExpression>
+	</variable>
+	<variable name="T_TOTNETO_3" class="java.math.BigDecimal" resetType="Group" resetGroup="PRODUCTO" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_TOTNETO}]]></variableExpression>
+	</variable>
+	<variable name="T_BRUTO_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_BRUTO}]]></variableExpression>
+	</variable>
+	<variable name="T_TARA_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_TARA}]]></variableExpression>
+	</variable>
+	<variable name="T_NETO_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_NETO}]]></variableExpression>
+	</variable>
+	<variable name="T_TOTDCTO_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_TOTDCTO}]]></variableExpression>
+	</variable>
+	<variable name="T_TOTNETO_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{T_TOTNETO}]]></variableExpression>
+	</variable>
+	<group name="PRODUCTO">
+		<groupExpression><![CDATA[$F{T_PRODUC}]]></groupExpression>
+		<groupHeader>
+			<band height="10">
+				<staticText>
+					<reportElement x="3" y="0" width="45" height="10" uuid="33a107f5-d8b4-4d06-957b-fc8b0ebd9336"/>
+					<textElement>
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Producto :]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="49" y="0" width="44" height="10" uuid="bbc62793-76b8-4f7d-85ad-d3ac59ff5244"/>
+					<textElement>
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{T_PRODUC}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="94" y="0" width="422" height="10" uuid="0edd3c8c-e547-4dd3-8f61-7ed7ccc383ef"/>
+					<textElement>
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PRODUC_DESC}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="CLIENTE">
+		<groupExpression><![CDATA[$F{T_PRBR_CLIENT}]]></groupExpression>
+		<groupHeader>
+			<band height="12">
+				<staticText>
+					<reportElement x="8" y="2" width="45" height="10" uuid="41ec88e3-24a4-419b-a4a5-b23f62c3e929"/>
+					<textElement>
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Cliente :]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="54" y="2" width="44" height="10" uuid="aba86884-3b2b-4cfc-b23e-c82e643039da"/>
+					<textElement>
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{T_PRBR_CLIENT}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="99" y="2" width="422" height="10" uuid="e8f155e5-03d6-4cdd-8bd0-4f6ad6289581"/>
+					<textElement>
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{T_CLIENTE}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="12">
+				<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+					<reportElement x="194" y="2" width="40" height="10" uuid="6f9812b8-bad9-44a2-8591-126cf859b412"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{T_BRUTO_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+					<reportElement x="235" y="2" width="41" height="10" uuid="e4dca724-05f5-4848-8a84-269b61000388"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{T_TARA_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+					<reportElement x="278" y="2" width="41" height="10" uuid="566613d1-6f87-42f7-80bb-64bed508bcd8"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{T_NETO_2}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="92" y="2" width="73" height="10" uuid="36db2eb7-10d6-4e4b-ac0a-e15529082105"/>
+					<textElement>
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Cliente]]></text>
+				</staticText>
+				<crosstab>
+					<reportElement x="319" y="2" width="483" height="10" uuid="1e0a0e31-62e8-494e-9150-5b205c74069f"/>
+					<crosstabDataset isDataPreSorted="true">
+						<dataset>
+							<datasetRun subDataset="PROM_CROSS" uuid="fb1f3405-474a-4b62-851c-70b16f84dd01">
+								<datasetParameter name="P_SESSION_ID">
+									<datasetParameterExpression><![CDATA[$F{SESSION_ID}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="P_EMPRESA">
+									<datasetParameterExpression><![CDATA[$F{EMPR}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="P_CLIENTE">
+									<datasetParameterExpression><![CDATA[$F{T_CLIENTE}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="P_PRODUCTO">
+									<datasetParameterExpression><![CDATA[$F{T_PRODUC}]]></datasetParameterExpression>
+								</datasetParameter>
+							</datasetRun>
+						</dataset>
+					</crosstabDataset>
+					<rowGroup name="CLIENTE" width="0">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{CLIENTE}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#F0F8FF" mode="Opaque"/>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<columnGroup name="TABLA_DESC" height="0">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{TABLA_DESC}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+							<cellContents backcolor="#F0F8FF" mode="Opaque"/>
+						</crosstabColumnHeader>
+						<crosstabTotalColumnHeader>
+							<cellContents/>
+						</crosstabTotalColumnHeader>
+					</columnGroup>
+					<measure name="PRAN_PUNTAJEMeasure" class="java.math.BigDecimal" calculation="Average">
+						<measureExpression><![CDATA[$F{PRAN_PUNTAJE}]]></measureExpression>
+					</measure>
+					<measure name="PORCENTAJE" class="java.math.BigDecimal" calculation="Average">
+						<measureExpression><![CDATA[$F{PRCA_PORC_DESCUENTO}]]></measureExpression>
+					</measure>
+					<measure name="descuento" class="java.lang.Integer" calculation="Sum">
+						<measureExpression><![CDATA[( $F{DESC_KG} > 0 ? $F{DESC_KG} : 0 )]]></measureExpression>
+					</measure>
+					<crosstabCell width="69" height="10">
+						<cellContents backcolor="#33FFCC" mode="Transparent">
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="19" height="10" uuid="f16db414-f557-4fc8-ad36-cac8cf553285"/>
+								<textElement>
+									<font fontName="Arial" size="6" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{PRAN_PUNTAJEMeasure}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="21" y="0" width="19" height="10" uuid="16e7bba5-1d0e-437f-8090-a9575b7d4e70"/>
+								<textElement>
+									<font fontName="Arial" size="6" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{PORCENTAJE}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="42" y="0" width="27" height="10" uuid="01902f5e-9874-45eb-a90b-8cd1c9f11d67"/>
+								<box>
+									<rightPen lineWidth="0.25"/>
+								</box>
+								<textElement>
+									<font fontName="Arial" size="6" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[( $V{descuento} ? $V{descuento} : 0 )]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell height="25" rowTotalGroup="CLIENTE">
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="5f08b58a-3899-4cc0-bef5-ba24ee2053bb"/>
+								<textFieldExpression><![CDATA[$V{PRAN_PUNTAJEMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="50" columnTotalGroup="TABLA_DESC">
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="e0dc1c44-d616-4b39-8d84-8aa5268a8d89"/>
+								<textFieldExpression><![CDATA[$V{PRAN_PUNTAJEMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="CLIENTE" columnTotalGroup="TABLA_DESC">
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="302cd903-958d-4440-92e9-537f12975107"/>
+								<textFieldExpression><![CDATA[$V{PRAN_PUNTAJEMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+				</crosstab>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="OPERACION">
+		<groupExpression><![CDATA[$F{COD_OPERACION}]]></groupExpression>
+		<groupHeader>
+			<band height="11" splitType="Immediate">
+				<staticText>
+					<reportElement x="12" y="1" width="45" height="10" uuid="3ff3937d-4718-494e-bec6-90ae76cb84bb"/>
+					<textElement>
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Operacion :]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="58" y="1" width="339" height="10" uuid="055cf96b-6a50-4719-99a5-9d9367cfd805"/>
+					<textElement>
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{OPERACION}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="OPER">
+		<groupExpression><![CDATA[$F{NRO_TICKET}]]></groupExpression>
+		<groupHeader>
+			<band height="12" splitType="Immediate">
+				<crosstab>
+					<reportElement x="319" y="2" width="483" height="8" uuid="7ffecc1d-9cbf-4168-b58a-30102bc83b05"/>
+					<crosstabDataset isDataPreSorted="true">
+						<dataset>
+							<datasetRun subDataset="CROSS_DETAIL" uuid="8d2eaf7d-cef8-477c-a54a-5bfd47b54b16">
+								<datasetParameter name="P_PRODUCTO">
+									<datasetParameterExpression><![CDATA[$F{T_PRODUC}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="P_CLIENTE">
+									<datasetParameterExpression><![CDATA[$F{T_CLIENTE}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="P_SESSION_ID">
+									<datasetParameterExpression><![CDATA[$F{SESSION_ID}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="P_EMPRESA">
+									<datasetParameterExpression><![CDATA[$F{EMPR}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="P_OPERACION">
+									<datasetParameterExpression><![CDATA[$F{COD_OPERACION}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="P_TICKET">
+									<datasetParameterExpression><![CDATA[$F{NRO_TICKET}]]></datasetParameterExpression>
+								</datasetParameter>
+							</datasetRun>
+						</dataset>
+					</crosstabDataset>
+					<rowGroup name="NRO_TICKET" width="0" totalPosition="End">
+						<bucket class="java.math.BigDecimal">
+							<bucketExpression><![CDATA[$F{NRO_TICKET}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#F0F8FF" mode="Opaque"/>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents backcolor="#BFE1FF" mode="Transparent"/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<columnGroup name="TABLA_DESC" height="0" totalPosition="End">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{TABLA_DESC}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+							<cellContents backcolor="#F0F8FF" mode="Opaque"/>
+						</crosstabColumnHeader>
+						<crosstabTotalColumnHeader>
+							<cellContents backcolor="#BFE1FF" mode="Transparent"/>
+						</crosstabTotalColumnHeader>
+					</columnGroup>
+					<measure name="PRAN_PUNTAJEMeasure" class="java.math.BigDecimal">
+						<measureExpression><![CDATA[$F{PRAN_PUNTAJE}]]></measureExpression>
+					</measure>
+					<measure name="DESCUENTO" class="java.math.BigDecimal">
+						<measureExpression><![CDATA[$F{PRCA_PORC_DESCUENTO}]]></measureExpression>
+					</measure>
+					<measure name="PORC" class="java.math.BigDecimal">
+						<measureExpression><![CDATA[$F{DESC_KG}]]></measureExpression>
+					</measure>
+					<measure name="PTOS_TOTAL" class="java.math.BigDecimal" calculation="Average">
+						<measureExpression><![CDATA[$F{PRAN_PUNTAJE}]]></measureExpression>
+					</measure>
+					<measure name="PORC_TOTAL" class="java.math.BigDecimal" calculation="Average">
+						<measureExpression><![CDATA[$F{PRCA_PORC_DESCUENTO}]]></measureExpression>
+					</measure>
+					<measure name="DCTO_KG" class="java.math.BigDecimal" calculation="Sum">
+						<measureExpression><![CDATA[$F{DESC_KG}]]></measureExpression>
+					</measure>
+					<measure name="NETO" class="java.math.BigDecimal" calculation="Sum">
+						<measureExpression><![CDATA[$F{NETO}]]></measureExpression>
+					</measure>
+					<crosstabCell width="77" height="10">
+						<cellContents>
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="19" height="10" uuid="c3c29631-7dab-457b-ab5b-203f1049a8a7"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{PRAN_PUNTAJEMeasure}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="42" y="0" width="35" height="10" uuid="a4bde98c-c327-42c6-ab6b-cb3c848bb9ba"/>
+								<box>
+									<rightPen lineWidth="0.25"/>
+								</box>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{PORC}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="21" y="0" width="19" height="10" uuid="332a5880-5da8-4e82-aab6-bd4f1460f467"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{DESCUENTO}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="77" height="0" rowTotalGroup="NRO_TICKET">
+						<cellContents backcolor="#BFE1FF" mode="Transparent"/>
+					</crosstabCell>
+					<crosstabCell width="56" height="10" columnTotalGroup="TABLA_DESC">
+						<cellContents backcolor="#BFE1FF" mode="Transparent">
+							<textField pattern="#,##0" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="1" y="0" width="23" height="10" uuid="8ec6fd48-2c61-44e3-8a0c-aea2a6217972"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{DCTO_KG}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="26" y="0" width="30" height="10" uuid="5054e003-ca47-4182-96a0-6ba09c1aee7c"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{NETO} - $V{DCTO_KG}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="56" height="0" rowTotalGroup="NRO_TICKET" columnTotalGroup="TABLA_DESC">
+						<cellContents backcolor="#BFE1FF" mode="Transparent"/>
+					</crosstabCell>
+				</crosstab>
+				<crosstab>
+					<reportElement mode="Transparent" x="12" y="2" width="289" height="10" backcolor="#CCCCCC" uuid="03316efb-68e1-4f25-9c5c-2ada9d5f5872"/>
+					<crosstabParameter name="P_EMPRESA"/>
+					<crosstabParameter name="P_PROVEEDOR"/>
+					<crosstabParameter name="P_PRODUCTO"/>
+					<crosstabParameter name="P_USER"/>
+					<crosstabParameter name="P_RANGO"/>
+					<crosstabDataset isDataPreSorted="true">
+						<dataset>
+							<datasetRun subDataset="CROSS" uuid="aa3d599d-7c45-4803-9c9a-4585d0dfd92c">
+								<datasetParameter name="P_EMPRESA">
+									<datasetParameterExpression><![CDATA[$F{EMPR}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="P_SESSION_ID">
+									<datasetParameterExpression><![CDATA[$F{SESSION_ID}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="P_CLIENTE">
+									<datasetParameterExpression><![CDATA[$F{T_CLIENTE}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="P_TICKET">
+									<datasetParameterExpression><![CDATA[$F{NRO_TICKET}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="P_PRODUCTO">
+									<datasetParameterExpression><![CDATA[$F{T_PRODUC}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="P_OPERACION">
+									<datasetParameterExpression><![CDATA[$F{COD_OPERACION}]]></datasetParameterExpression>
+								</datasetParameter>
+							</datasetRun>
+						</dataset>
+					</crosstabDataset>
+					<crosstabHeaderCell>
+						<cellContents mode="Opaque"/>
+					</crosstabHeaderCell>
+					<rowGroup name="Fecha" width="35">
+						<bucket class="java.sql.Timestamp">
+							<bucketExpression><![CDATA[$F{FECHA}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents>
+								<textField pattern="dd-MM-yy" isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="35" height="8" uuid="dce0ccbd-ec6a-4e0c-a74d-344abc776880"/>
+									<textElement>
+										<font fontName="Arial" size="6" isUnderline="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{Fecha}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="SUCURSAL" width="20">
+						<bucket class="java.lang.Integer">
+							<bucketExpression><![CDATA[$F{PRBR_SUC}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents>
+								<textField>
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="20" height="8" uuid="03b994cd-ec55-4d8a-a019-788cb9b83694"/>
+									<textElement>
+										<font size="6"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{SUCURSAL}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="T_PRBR_NRO_TICKET" width="37" totalPosition="End">
+						<bucket class="java.math.BigDecimal">
+							<bucketExpression><![CDATA[$F{NRO_TICKET}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#F0F8FF" mode="Transparent">
+								<textField isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="37" height="8" uuid="e81db03e-6f23-45a5-bd76-58a1e69f9e3c"/>
+									<box>
+										<pen lineColor="#FFFFFF"/>
+										<topPen lineColor="#FFFFFF"/>
+										<leftPen lineColor="#FFFFFF"/>
+										<bottomPen lineColor="#FFFFFF"/>
+										<rightPen lineColor="#FFFFFF"/>
+									</box>
+									<textElement>
+										<font fontName="Arial" size="6" isUnderline="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{T_PRBR_NRO_TICKET}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents backcolor="#BFE1FF" mode="Transparent"/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="REMISION" width="35">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{NRO_REMISION}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents>
+								<textField>
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="35" height="8" uuid="a52fd18a-572d-4743-bf1d-b8749dfa9fea"/>
+									<textElement>
+										<font size="6"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{REMISION}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="T_DOC_NRO_CHAPA" width="39">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{CHAPA}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents>
+								<textField isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="39" height="8" uuid="a023b855-3585-4f1e-975f-67df99dccafa"/>
+									<textElement>
+										<font fontName="Arial" size="6" isUnderline="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{T_DOC_NRO_CHAPA}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="T_DOC_UNID_BRUTO" width="40">
+						<bucket class="java.math.BigDecimal">
+							<bucketExpression><![CDATA[$F{BRUTO}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents>
+								<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="40" height="8" uuid="dbb3718b-adb5-4fc9-a76e-205defce7912"/>
+									<textElement textAlignment="Right">
+										<font fontName="Arial" size="6" isUnderline="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{T_DOC_UNID_BRUTO}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="T_DOC_UNID_TARA" width="43">
+						<bucket class="java.math.BigDecimal">
+							<bucketExpression><![CDATA[$F{TARA}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents>
+								<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="43" height="8" uuid="72ea8db8-edeb-4904-9898-940bb9178470"/>
+									<textElement textAlignment="Right">
+										<font fontName="Arial" size="6" isUnderline="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{T_DOC_UNID_TARA}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="T_NETO" width="36">
+						<bucket class="java.math.BigDecimal">
+							<bucketExpression><![CDATA[$F{NETO}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents>
+								<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="36" height="8" uuid="d0f4b2d9-5268-43f6-9a3d-8bc32cbc28b5"/>
+									<textElement textAlignment="Right">
+										<font fontName="Arial" size="6" isUnderline="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{T_NETO}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents/>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<columnGroup name="PROVEEDOR" height="1">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{NRO_TICKET}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+							<cellContents/>
+						</crosstabColumnHeader>
+						<crosstabTotalColumnHeader>
+							<cellContents/>
+						</crosstabTotalColumnHeader>
+					</columnGroup>
+					<measure name="T_DOC_FECMeasure" class="java.sql.Timestamp">
+						<measureExpression><![CDATA[$F{FECHA}]]></measureExpression>
+					</measure>
+					<crosstabCell width="0" height="8">
+						<cellContents mode="Opaque"/>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="T_PRBR_NRO_TICKET">
+						<cellContents backcolor="#BFE1FF" mode="Transparent"/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="Fecha">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="SUCURSAL">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="REMISION">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="T_DOC_NRO_CHAPA">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="T_DOC_UNID_BRUTO">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="T_DOC_UNID_TARA">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="T_NETO">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell columnTotalGroup="PROVEEDOR">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="T_PRBR_NRO_TICKET" columnTotalGroup="PROVEEDOR">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="Fecha" columnTotalGroup="PROVEEDOR">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="SUCURSAL" columnTotalGroup="PROVEEDOR">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="REMISION" columnTotalGroup="PROVEEDOR">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="T_DOC_NRO_CHAPA" columnTotalGroup="PROVEEDOR">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="T_DOC_UNID_BRUTO" columnTotalGroup="PROVEEDOR">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="T_DOC_UNID_TARA" columnTotalGroup="PROVEEDOR">
+						<cellContents/>
+					</crosstabCell>
+					<crosstabCell rowTotalGroup="T_NETO" columnTotalGroup="PROVEEDOR">
+						<cellContents/>
+					</crosstabCell>
+				</crosstab>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="TICKET">
+		<groupExpression><![CDATA[$F{NRO_TICKET}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="119" splitType="Stretch">
+			<rectangle>
+				<reportElement x="2" y="0" width="800" height="116" uuid="51d0d55f-2d9d-4aa8-89ad-8c3f9fc56734"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="26" y="61" width="58" height="11" uuid="d4707fc1-659a-499a-a6bb-51d5c3840b5c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Fecha desde :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="26" y="82" width="58" height="11" uuid="689948eb-c935-4a31-bcd1-9f72bd1d81c5"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Producto :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="26" y="102" width="58" height="11" uuid="aea6aa77-55c1-4a6f-9cee-bbc4f0681629"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Cliente :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="288" y="61" width="58" height="11" uuid="de5d5e45-aed8-4b08-98c6-a1417329a61f"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Hasta:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="85" y="61" width="100" height="11" uuid="f3c4c4cb-25f9-47a0-8465-e669936495f8"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESDE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="347" y="61" width="100" height="11" uuid="d59db5a6-3702-4b67-9974-c00d6ce6a657"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_HASTA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="85" y="82" width="30" height="11" uuid="c6dff1ac-ab83-45e9-92e3-80f09dad0eb9"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PRODUCTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="117" y="82" width="290" height="11" uuid="6f5b4917-6dc4-4076-9c66-b36cb013cb13"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PRODUCTO_DES}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="84" y="102" width="31" height="11" uuid="0566a7e1-8a79-457c-b9f5-b7f76cf1d9fa"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_CLIENTE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="116" y="102" width="291" height="11" uuid="4f16b974-520a-4066-8056-6cf7a9d786a1"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_CLI_NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="3" width="130" height="10" uuid="068016ca-75cb-4eb5-9d3d-334094cfbe27"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_EMPRESA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="13" width="130" height="10" uuid="a3eabc41-85b8-4dc9-8fdd-8e4335aeb6e9"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="184" y="14" width="487" height="20" uuid="c09c8215-b76a-45da-8130-9dee358f5bbd"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$P{P_PROG_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="699" y="3" width="100" height="10" uuid="3fc5d177-e913-4ae5-a0d7-eb6cd060c50e"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="699" y="13" width="100" height="10" uuid="b3268916-d95b-48d6-b836-cf9220328d2c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="32" splitType="Stretch">
+			<staticText>
+				<reportElement style="Crosstab Data Text" x="2" y="16" width="36" height="11" uuid="4899ee17-ac45-43ba-a270-220e3b16c53a"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Crosstab Data Text" x="257" y="16" width="32" height="11" uuid="c1255670-e3fd-46a1-abe5-6066876c61e0"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Neto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Crosstab Data Text" x="134" y="16" width="33" height="11" uuid="816606ec-288f-4d14-b0c9-18e0da43e80d"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Chapa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Crosstab Data Text" x="208" y="16" width="42" height="11" uuid="b217e8c3-6a41-46e8-a872-9bee57591bc8"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Tara]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Crosstab Data Text" x="60" y="16" width="41" height="11" uuid="1d2fd21d-4ee8-4985-b98c-36145558fa32"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[NroTicket]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Crosstab Data Text" x="176" y="16" width="34" height="11" uuid="ea42de60-d127-4b07-9ae4-24c62eb6c70a"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Bruto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Crosstab Data Text" x="37" y="16" width="20" height="11" uuid="87d80bce-6b87-402d-b84f-28e669cab9b3"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Suc]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Crosstab Data Text" x="93" y="16" width="50" height="11" uuid="017be95e-a37e-447a-a9f9-3036ffbf984a"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Remision]]></text>
+			</staticText>
+			<crosstab>
+				<reportElement x="316" y="0" width="483" height="32" uuid="67670b3b-066d-4798-be84-e3dda4dd0340"/>
+				<crosstabDataset>
+					<dataset>
+						<datasetRun subDataset="TABLA_DESC_1_1" uuid="4d173617-4ce4-489e-b445-728aa6a2fdca">
+							<datasetParameter name="P_EMPRESA">
+								<datasetParameterExpression><![CDATA[$F{EMPR}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_PRODUCTO">
+								<datasetParameterExpression><![CDATA[$F{T_PRODUC}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_USER">
+								<datasetParameterExpression><![CDATA[$P{P_USER}]]></datasetParameterExpression>
+							</datasetParameter>
+						</datasetRun>
+					</dataset>
+				</crosstabDataset>
+				<rowGroup name="CAL_EMPR" width="0" totalPosition="End">
+					<bucket class="java.math.BigDecimal">
+						<bucketExpression><![CDATA[$F{CAL_EMPR}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque"/>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents backcolor="#BFE1FF" mode="Opaque"/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="CAL_DESC" height="21" totalPosition="End">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{CAL_DESC}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Transparent">
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="72" height="10" uuid="5d463b84-ae9a-4fb5-aa6e-208417e6c89b"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{CAL_DESC}]]></textFieldExpression>
+							</textField>
+							<staticText>
+								<reportElement style="Crosstab Data Text" x="21" y="11" width="19" height="10" uuid="14492738-3b35-496e-ad55-65814d6cdc65"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<text><![CDATA[%]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="Crosstab Data Text" x="0" y="11" width="19" height="10" uuid="51922bc8-164f-4ff1-aca0-516c15ba18f5"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<text><![CDATA[Ptos.]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="Crosstab Data Text" x="42" y="11" width="30" height="10" uuid="fa83d5ea-6ec8-4005-8527-5c6d6e4753c3"/>
+								<textElement>
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<text><![CDATA[D/B]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents backcolor="#BFE1FF" mode="Transparent">
+							<staticText>
+								<reportElement style="Crosstab Data Text" x="0" y="11" width="35" height="10" uuid="3ac4424f-3835-4350-91b8-779c89e33f7d"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<text><![CDATA[Tot. Dcto.]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="Crosstab Data Text" x="37" y="11" width="37" height="10" uuid="6cfd55c5-0ea6-414c-be4b-25833a57d6a7"/>
+								<textElement textAlignment="Right">
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<text><![CDATA[Tot. Neto]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="CAL_DESCMeasure" class="java.lang.Integer" calculation="Count">
+					<measureExpression><![CDATA[$F{CAL_DESC}]]></measureExpression>
+				</measure>
+				<crosstabCell width="73" height="0">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell width="73" height="0" rowTotalGroup="CAL_EMPR">
+					<cellContents backcolor="#BFE1FF" mode="Transparent"/>
+				</crosstabCell>
+				<crosstabCell width="74" height="0" columnTotalGroup="CAL_DESC">
+					<cellContents backcolor="#BFE1FF" mode="Transparent"/>
+				</crosstabCell>
+				<crosstabCell width="74" height="0" rowTotalGroup="CAL_EMPR" columnTotalGroup="CAL_DESC">
+					<cellContents backcolor="#BFE1FF" mode="Transparent"/>
+				</crosstabCell>
+			</crosstab>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="10" splitType="Stretch">
+			<staticText>
+				<reportElement x="92" y="0" width="73" height="10" uuid="88d714db-adba-4dd6-a023-bf614b033ed8"/>
+				<textElement>
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total general]]></text>
+			</staticText>
+			<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement x="194" y="0" width="40" height="10" uuid="8e0518b7-fefc-42eb-bf38-d9d38018a36b"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{T_BRUTO_4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement x="235" y="0" width="41" height="10" uuid="cbfd2067-2006-44e7-8c76-32eb9fe538f4"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{T_TARA_4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement x="278" y="0" width="41" height="10" uuid="cf89f88a-531d-4357-94ad-a9947826c5e5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{T_NETO_4}]]></textFieldExpression>
+			</textField>
+			<crosstab>
+				<reportElement x="319" y="0" width="483" height="10" uuid="7af345da-252c-41cc-9fcd-f087fc13a2a2"/>
+				<crosstabDataset isDataPreSorted="true">
+					<dataset>
+						<datasetRun subDataset="PROM_CROSS" uuid="1260963d-3520-46b7-ac17-39c32ba1ee5e">
+							<datasetParameter name="P_SESSION_ID">
+								<datasetParameterExpression><![CDATA[$F{SESSION_ID}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="P_EMPRESA">
+								<datasetParameterExpression><![CDATA[$F{EMPR}]]></datasetParameterExpression>
+							</datasetParameter>
+						</datasetRun>
+					</dataset>
+				</crosstabDataset>
+				<rowGroup name="PROD_EMPR" width="0">
+					<bucket class="java.math.BigDecimal">
+						<bucketExpression><![CDATA[$F{PROD_EMPR}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque"/>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="TABLA_DESC" height="0">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{TABLA_DESC}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque"/>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="GEN_PRAN_PUNTAJMeasure" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{GEN_PRAN_PUNTAJ}]]></measureExpression>
+				</measure>
+				<measure name="porcentaje" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{GEN_PORC_DESCUENTO}]]></measureExpression>
+				</measure>
+				<measure name="descuento" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[( $F{DESC_KG} > 0 ? $F{DESC_KG} : 0 )]]></measureExpression>
+				</measure>
+				<measure name="neto" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{NETO}]]></measureExpression>
+				</measure>
+				<crosstabCell width="77" height="10">
+					<cellContents backcolor="#CCFFCC" mode="Transparent">
+						<textField pattern="#,##0.00" isBlankWhenNull="true">
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="19" height="10" uuid="3e59e518-7a51-4eb7-bf10-5cd8c770e6bd"/>
+							<textElement>
+								<font fontName="Arial" size="6" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{GEN_PRAN_PUNTAJMeasure}/$V{neto}*100]]></textFieldExpression>
+						</textField>
+						<textField pattern="#,##0.00" isBlankWhenNull="true">
+							<reportElement style="Crosstab Data Text" x="21" y="0" width="19" height="10" uuid="ad697c9b-ca28-4277-a1a0-309037b75c74"/>
+							<textElement>
+								<font fontName="Arial" size="6" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{porcentaje}/$V{neto}*100]]></textFieldExpression>
+						</textField>
+						<textField pattern="#,##0" isBlankWhenNull="true">
+							<reportElement style="Crosstab Data Text" x="42" y="0" width="35" height="10" uuid="e94a51a5-f859-4b8c-9008-af6fb234a32a"/>
+							<box>
+								<rightPen lineWidth="0.25"/>
+							</box>
+							<textElement>
+								<font fontName="Arial" size="6" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA[( $V{descuento} > 0 ? $V{descuento} : 0 )]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="PROD_EMPR">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="f1ff4028-dd88-4271-a973-905f8c35b9a6"/>
+							<textFieldExpression><![CDATA[$V{GEN_PRAN_PUNTAJMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" columnTotalGroup="TABLA_DESC">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="45408c62-5329-40b2-ba1f-79449ce4cfd2"/>
+							<textFieldExpression><![CDATA[$V{GEN_PRAN_PUNTAJMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="PROD_EMPR" columnTotalGroup="TABLA_DESC">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="301c93b6-8f37-4a51-9121-48983c18c6b6"/>
+							<textFieldExpression><![CDATA[$V{GEN_PRAN_PUNTAJMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+		</band>
+	</summary>
+</jasperReport>

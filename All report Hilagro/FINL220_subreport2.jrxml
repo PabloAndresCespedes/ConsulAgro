@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINL220_subreport2" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="ff271250-4fcb-4146-8c78-90f11eb30c37">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT DECODE(TMOV_IND_AFECTA_SALDO,'C','CUENTAS DEUDORAS','N','CUENTAS  ACREEDORAS','P','CUENTAS ACREEDORAS')TMOV_IND_AFECTA_SALDO_USD,
+       MON_DESC MON_DESC_USD,
+       SUM(DECODE(TMOV_IND_DBCR_CTA,
+                  'D',
+                  CUO_DIF_CAMBIO_USD,
+                  -1 * CUO_DIF_CAMBIO_USD)) DIF_CAMBIO_USD
+  FROM GEN_TIPO_MOV, GEN_MONEDA, FIN_DOCUMENTO, FIN_CUOTA
+ WHERE TMOV_CODIGO = DOC_TIPO_MOV
+   AND TMOV_EMPR = DOC_EMPR
+   AND MON_CODIGO = DOC_MON
+   AND MON_EMPR = DOC_EMPR
+   AND DOC_CLAVE = CUO_CLAVE_DOC
+   AND DOC_EMPR = CUO_EMPR
+   AND DOC_EMPR = $P{P_EMPRESA}
+   AND MON_CODIGO = 1
+ GROUP BY TMOV_IND_AFECTA_SALDO, MON_DESC
+ORDER BY TMOV_IND_AFECTA_SALDO, MON_DESC]]>
+	</queryString>
+	<field name="TMOV_IND_AFECTA_SALDO_USD" class="java.lang.String"/>
+	<field name="MON_DESC_USD" class="java.lang.String"/>
+	<field name="DIF_CAMBIO_USD" class="java.math.BigDecimal"/>
+	<group name="AFECTA_SALDO">
+		<groupExpression><![CDATA[$F{TMOV_IND_AFECTA_SALDO_USD}]]></groupExpression>
+		<groupHeader>
+			<band height="25">
+				<textField>
+					<reportElement x="0" y="0" width="163" height="11" uuid="61232d77-814d-4c2f-913c-66d4d0aee513"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TMOV_IND_AFECTA_SALDO_USD}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="3" y="13" width="100" height="11" uuid="32e0d629-9775-4ecd-ae22-47b59118f9b3"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Moneda]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="413" y="0" width="112" height="11" uuid="ba719b8f-cae8-4a2b-bd72-5ca267377a0c"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Diferencia de cambio USD]]></text>
+				</staticText>
+				<line>
+					<reportElement x="1" y="23" width="550" height="1" uuid="54098cd3-7bbe-443f-a874-d63d0dd8e425"/>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="425" y="2" width="100" height="11" uuid="e637ce97-6245-43b8-a8de-47f2d4142851"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIF_CAMBIO_USD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="3" y="2" width="100" height="11" uuid="1f21e83d-c26e-4a2c-ab82-3d09779eea56"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MON_DESC_USD}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

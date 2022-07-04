@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subreporte1" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c6d4d90c-1f8d-4975-9e3d-58657dcee988">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\user\\Documents\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SESSION" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCURSAL" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_INI" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_FIN" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT T_PDOC_EMPLEADO,
+       T_EMPL_NOMBRE,
+       T_SUC_DESC,
+       T_PDOC_DEPARTAMENTO,
+       T_DPTO_DESC,
+       T_PDDET_CLAVE_CONCEPTO,
+       T_PCON_DESC,
+       T_EMPL_FORMA_PAGO,
+       T_FORMA_DESC,
+       T_PCON_IND_DBCR,
+       T_PCON_IND_AGUINALDO,
+       T_PCON_IND_IPS,
+       T_PDOC_FEC,
+       CASE  WHEN T_PCON_IND_DBCR='C' THEN T_PDDET_IMP
+             WHEN T_PCON_IND_DBCR='D' THEN - T_PDDET_IMP
+             ELSE NULL
+       END IMPORTE,
+       T_P_LOGIN,
+       T_P_EMPRESA
+  FROM C_PERL200_TEMP
+ WHERE T_P_SESSION = $P!{P_SESSION}
+AND T_EMPL_SUCURSAL = $P!{P_SUCURSAL}
+AND T_PDOC_FEC BETWEEN $P!{P_FECHA_INI} AND $P!{P_FECHA_FIN}
+order by T_SUC_DESC, T_EMPL_NOMBRE]]>
+	</queryString>
+	<field name="T_PDOC_EMPLEADO" class="java.math.BigDecimal"/>
+	<field name="T_EMPL_NOMBRE" class="java.lang.String"/>
+	<field name="T_SUC_DESC" class="java.lang.String"/>
+	<field name="T_PDOC_DEPARTAMENTO" class="java.math.BigDecimal"/>
+	<field name="T_DPTO_DESC" class="java.lang.String"/>
+	<field name="T_PDDET_CLAVE_CONCEPTO" class="java.math.BigDecimal"/>
+	<field name="T_PCON_DESC" class="java.lang.String"/>
+	<field name="T_EMPL_FORMA_PAGO" class="java.math.BigDecimal"/>
+	<field name="T_FORMA_DESC" class="java.lang.String"/>
+	<field name="T_PCON_IND_DBCR" class="java.lang.String"/>
+	<field name="T_PCON_IND_AGUINALDO" class="java.lang.String"/>
+	<field name="T_PCON_IND_IPS" class="java.lang.String"/>
+	<field name="T_PDOC_FEC" class="java.sql.Timestamp"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<field name="T_P_LOGIN" class="java.lang.String"/>
+	<field name="T_P_EMPRESA" class="java.math.BigDecimal"/>
+	<variable name="variable1" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<textField>
+				<reportElement x="478" y="15" width="33" height="27" uuid="eb38ba83-7870-498e-9118-745edf9d9061"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="15" width="87" height="27" uuid="0523d452-ed95-46ea-9dc1-de6786246786"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HILAGRO SA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="150" y="42" width="202" height="16" uuid="6afa37a0-5351-40a4-8b4a-37f5bbd08887"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PLANILLA SALARIAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="410" y="15" width="68" height="16" uuid="2784c9ab-201e-4a68-96b1-bf174d60eb58"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PAGINA:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="418" y="45" width="117" height="16" uuid="3ba7d3b6-c2bf-4481-b468-38e94fe18f2e"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="43" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement x="5" y="41" width="100" height="20" uuid="cc1302c9-ab6a-444f-ad5f-1c8b6362dbfe"/>
+				<text><![CDATA[NOMBRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="132" y="41" width="100" height="20" uuid="5c9892da-588d-4799-9775-79b16bf35ab3"/>
+				<text><![CDATA[FORMA PAGO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="287" y="41" width="100" height="20" uuid="19cdc160-4346-436f-aa3e-d6eff23f7657"/>
+				<text><![CDATA[IMPORTE]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="53" splitType="Stretch">
+			<textField>
+				<reportElement x="5" y="0" width="100" height="20" uuid="433bb7ad-0f4e-4a5f-befe-a1db97c20ee7"/>
+				<textFieldExpression><![CDATA[$F{T_EMPL_NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="132" y="0" width="100" height="20" uuid="e78d89b3-7cce-44d1-9881-eea9035d5356"/>
+				<textFieldExpression><![CDATA[$F{T_EMPL_FORMA_PAGO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="287" y="0" width="100" height="20" uuid="ff66fc1b-0ed7-4bac-bd04-0006d8e8634d"/>
+				<textFieldExpression><![CDATA[$F{IMPORTE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="171" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="206" splitType="Stretch">
+			<subreport>
+				<reportElement x="79" y="11" width="200" height="100" uuid="4312a06a-3a0f-416d-8872-8ac241c53c5d"/>
+				<subreportParameter name="SUBREPORT_DIR"/>
+				<subreportParameter name="P_FECHA_INI">
+					<subreportParameterExpression><![CDATA[$P{P_FECHA_INI}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_FECHA_FIN">
+					<subreportParameterExpression><![CDATA[$P{P_FECHA_FIN}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_SUCURSAL">
+					<subreportParameterExpression><![CDATA[$P{P_SUCURSAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_SESSION">
+					<subreportParameterExpression><![CDATA[$P{P_SESSION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "report3.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

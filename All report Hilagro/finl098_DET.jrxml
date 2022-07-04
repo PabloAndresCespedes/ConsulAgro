@@ -1,0 +1,562 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="finl098_DET" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="28fa673e-caf8-41ae-8087-cd00795067d2">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.one.page.per.sheet" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="ireport.callouts" value="##Fri Jul 06 16:54:39 PYT 2018"/>
+	<style name="detalles" hAlign="Left" vAlign="Top" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman"/>
+	<style name="cabecera_columna" forecolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Top" fontSize="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DESC_PROGRAMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FORMATO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_RAZON_SOCIAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_DESDE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FEC_HASTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NRO_IMPORTACION" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_COD_PROVEEDOR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT A.IMP_CLAVE ,A.IMP_NRO NRO_IMPORTACION,
+       A.IMP_FEC_CONF_PEDIDO FEC_CONF_IMPORTACION,
+       F.PROV_CODIGO||' '||UPPER(F.PROV_RAZON_SOCIAL) PROVEEDOR_IMPORTACION,
+       DOC_TIPO_MOV || ' ' || TMOV_DESC TIPO_MOVIMIENTO,
+       DOC_CLAVE,
+       DOC_NRO_DOC NRO_DOCUMENTO,
+       DOC_FEC_DOC FECHA_DOCUMENTO,
+       D.PROV_CODIGO||' '||UPPER(D.PROV_RAZON_SOCIAL) PROV_RAZON_SOCIAL,
+       DOC_LOGIN USUARIO,
+       DOC_MON MONEDA,
+       (CASE WHEN DOC_FEC_DOC <= '31/12/2021' THEN ROUND(NVL(A.IMP_TASA_IMPORTACION, DECODE(DOC_MON, 1, COT_TASA, DOC_TASA)),2) ELSE ROUND(COT_TASA,2) END)   TASA,
+       DECODE(DOC_MON,
+              1, --SI ES MONEDA 1 SE UTILIZA EL LOC SI NO SE MULTIPLICA POR LA TASA OFICIAL DE LA IMP
+              NVL(DOC_IVA_LOC, 0) + NVL(DOC_NETO_EXEN_LOC, 0) +
+              NVL(DOC_NETO_GRAV_LOC, 0),
+              (NVL(DOC_IVA_MON, 0) + NVL(DOC_NETO_EXEN_MON, 0) +
+              NVL(DOC_NETO_GRAV_MON, 0)) *
+              (CASE WHEN DOC_FEC_DOC <= '31/12/2021' THEN NVL(A.IMP_TASA_IMPORTACION, COT_TASA) ELSE COT_TASA END)) * DECODE(B.DCON_TIPO_SALDO,'D',-1,1) IMP_TOTAL_DOC_GS,
+
+       DECODE(DOC_MON,
+              1,
+              ROUND((NVL(DOC_IVA_LOC, 0) + NVL(DOC_NETO_EXEN_LOC, 0) +
+                    NVL(DOC_NETO_GRAV_LOC, 0)) /
+                    (CASE WHEN DOC_FEC_DOC <= '31/12/2021' THEN NVL(A.IMP_TASA_IMPORTACION, COT_TASA) ELSE COT_TASA END),
+                    2),
+              ROUND(NVL(DOC_IVA_MON, 0) + NVL(DOC_NETO_EXEN_MON, 0) +
+                    NVL(DOC_NETO_GRAV_MON, 0),
+                    2))  * DECODE(B.DCON_TIPO_SALDO,'D',-1,1)  IMP_TOTAL_DOC_US,
+       DECODE(DOC_MON,
+              1,
+              NVL(DCON_IVA_LOC, 0) + NVL(DCON_EXEN_LOC, 0) +
+              NVL(DCON_GRAV_LOC, 0),
+              (NVL(DCON_IVA_MON, 0) + NVL(DCON_EXEN_MON, 0) +
+              NVL(DCON_GRAV_MON, 0)) * (CASE WHEN DOC_FEC_DOC <= '31/12/2021' THEN NVL(A.IMP_TASA_IMPORTACION, COT_TASA) ELSE COT_TASA END))  * DECODE(B.DCON_TIPO_SALDO,'D',-1,1)
+       IMP_CONC_GS,
+       DECODE(DOC_MON,
+              1,
+              ROUND((NVL(DCON_IVA_LOC, 0) + NVL(DCON_EXEN_LOC, 0) +
+                    NVL(DCON_GRAV_LOC, 0)) / (CASE WHEN DOC_FEC_DOC <= '31/12/2021' THEN NVL(A.IMP_TASA_IMPORTACION, COT_TASA) ELSE COT_TASA END),
+                    2),
+              ROUND(NVL(DCON_IVA_MON, 0) + NVL(DCON_EXEN_MON, 0) +
+                    NVL(DCON_GRAV_MON, 0),
+                    2)) * DECODE(B.DCON_TIPO_SALDO,'D',-1,1)  IMP_CONC_US,
+       FCON_CODIGO || ' ' || FCON_DESC CONCEPTO ,
+       DECODE(NVL(B.DCON_IMP_AFECTA_COSTO,'N'),'S','SI','NO') AFECTA_COSTO_PROD
+  FROM IMP_IMPORTACION  A,
+       FIN_DOC_CONCEPTO B,
+       FIN_DOCUMENTO    C,
+       FIN_PROVEEDOR    D,
+       IMP_FACTURA      E,
+       FIN_PROVEEDOR    F,
+       STK_COTIZACION   G,
+       FIN_CONCEPTO     H,
+       GEN_TIPO_MOV     I,
+       GEN_MONEDA       J
+ WHERE  A.IMP_CLAVE = B.DCON_CLAVE_IMP
+   AND IMP_EMPR = DCON_EMPR
+   AND DCON_CLAVE_DOC = DOC_CLAVE
+   AND DCON_EMPR = DOC_EMPR
+   AND DOC_PROV = D.PROV_CODIGO
+   AND DOC_EMPR = D.PROV_EMPR
+   AND A.IMP_CLAVE = E.FAC_CLAVE_IMPORTACION(+)
+   AND A.IMP_EMPR = FAC_EMPR(+)
+   AND E.FAC_PROV = F.PROV_CODIGO(+)
+   AND E.FAC_EMPR = F.PROV_EMPR(+)
+   AND C.DOC_FEC_DOC = COT_FEC(+)
+   AND DOC_EMPR = COT_EMPR(+)
+   AND DOC_MON=COT_MON(+)
+   AND DCON_CLAVE_CONCEPTO = FCON_CLAVE
+   AND DCON_EMPR = FCON_EMPR
+   AND DOC_TIPO_MOV = TMOV_CODIGO
+   AND DOC_EMPR = TMOV_EMPR
+   AND DOC_MON = MON_CODIGO
+   AND DOC_EMPR = MON_EMPR
+   AND (DOC_FEC_DOC >= TO_DATE( $P{P_FEC_DESDE},'DD/MM/YYYY') OR $P{P_FEC_DESDE} IS NULL)
+   AND DOC_FEC_DOC<=TO_DATE( $P{P_FEC_HASTA},'DD/MM/YYYY')
+   AND (FAC_PROV=$P{P_COD_PROVEEDOR} OR $P{P_COD_PROVEEDOR} IS NULL)
+   AND (IMP_NRO=$P{P_NRO_IMPORTACION} OR $P{P_NRO_IMPORTACION} IS NULL)
+   AND IMP_EMPR = $P{P_EMPRESA}
+   ORDER BY 1,2 ,3,7,6
+]]>
+	</queryString>
+	<field name="IMP_CLAVE" class="java.math.BigDecimal"/>
+	<field name="NRO_IMPORTACION" class="java.math.BigDecimal"/>
+	<field name="FEC_CONF_IMPORTACION" class="java.sql.Timestamp"/>
+	<field name="PROVEEDOR_IMPORTACION" class="java.lang.String"/>
+	<field name="TIPO_MOVIMIENTO" class="java.lang.String"/>
+	<field name="DOC_CLAVE" class="java.math.BigDecimal"/>
+	<field name="NRO_DOCUMENTO" class="java.math.BigDecimal"/>
+	<field name="FECHA_DOCUMENTO" class="java.sql.Timestamp"/>
+	<field name="PROV_RAZON_SOCIAL" class="java.lang.String"/>
+	<field name="USUARIO" class="java.lang.String"/>
+	<field name="MONEDA" class="java.math.BigDecimal"/>
+	<field name="TASA" class="java.math.BigDecimal"/>
+	<field name="IMP_TOTAL_DOC_GS" class="java.math.BigDecimal"/>
+	<field name="IMP_TOTAL_DOC_US" class="java.math.BigDecimal"/>
+	<field name="IMP_CONC_GS" class="java.math.BigDecimal"/>
+	<field name="IMP_CONC_US" class="java.math.BigDecimal"/>
+	<field name="CONCEPTO" class="java.lang.String"/>
+	<field name="AFECTA_COSTO_PROD" class="java.lang.String"/>
+	<variable name="V_IMP_DOC_GS" class="java.lang.Double" resetType="Group" resetGroup="IMPORTACION" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMP_TOTAL_DOC_GS}]]></variableExpression>
+	</variable>
+	<variable name="V_IMP_DOC_US" class="java.lang.Double" resetType="Group" resetGroup="IMPORTACION" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMP_TOTAL_DOC_US}]]></variableExpression>
+	</variable>
+	<variable name="V_IMP_CONC_GS" class="java.lang.Double" resetType="Group" resetGroup="IMPORTACION" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMP_CONC_GS}]]></variableExpression>
+	</variable>
+	<variable name="V_IMP_CONC_US" class="java.lang.Double" resetType="Group" resetGroup="IMPORTACION" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMP_CONC_US}]]></variableExpression>
+	</variable>
+	<group name="IMPORTACION">
+		<groupExpression><![CDATA[$F{IMP_CLAVE}]]></groupExpression>
+		<groupHeader>
+			<band height="31">
+				<textField>
+					<reportElement x="3" y="0" width="63" height="11" uuid="3ce5f74c-fc9e-49fa-9e8e-6c3c068a3d0e"/>
+					<textElement textAlignment="Center">
+						<font size="7" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NRO_IMPORTACION}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="72" y="0" width="70" height="11" uuid="271aa087-8f74-4ac8-aadb-953e14cf57b0"/>
+					<textElement textAlignment="Center">
+						<font size="7" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FEC_CONF_IMPORTACION}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="152" y="0" width="180" height="11" uuid="647a0296-13da-46e6-8803-acf3fed0274b"/>
+					<textElement>
+						<font size="7" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PROVEEDOR_IMPORTACION}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="49" y="20" width="46" height="11" uuid="3b99b20f-fd87-48b5-a0fd-4527397b0749"/>
+					<textElement>
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nro. Doc.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="98" y="20" width="33" height="11" uuid="6f1c7f4a-b62a-479f-aacd-e990f660b1fc"/>
+					<textElement>
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Fec. Doc.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="26" y="20" width="20" height="11" uuid="1d2a4bd5-5b17-430b-a134-3c2737197572"/>
+					<textElement>
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TM]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="131" y="20" width="93" height="11" uuid="8e7c9e46-e6f0-4c74-88f5-782a9d645657"/>
+					<textElement>
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Proveedor]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="224" y="20" width="16" height="11" uuid="5e0d5a09-7b9f-4997-a5a8-cfa6457e786e"/>
+					<textElement>
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Mon.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="242" y="20" width="26" height="11" uuid="5dd0780a-8dc2-44df-97c7-3bb16f6e024d"/>
+					<textElement>
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Tasa]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="268" y="20" width="54" height="11" uuid="e9ae4141-7e6d-4e14-b6ce-b56d246d2df8"/>
+					<textElement>
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Imp. Tot. GS.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="326" y="20" width="44" height="11" uuid="65974670-8733-4056-976c-927432aad031"/>
+					<textElement>
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Imp. Tot. US.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="510" y="20" width="45" height="11" uuid="45cab096-0058-4dfa-8a27-066fff728359"/>
+					<textElement>
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Imp Conc. US.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="458" y="20" width="52" height="11" uuid="96728ee6-8d3d-4935-b577-02469107dbea"/>
+					<textElement>
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Imp Conc. Gs.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="374" y="20" width="40" height="11" uuid="0cbeb5cd-f951-4d1d-9ddc-4c29fb75c7eb"/>
+					<textElement>
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Concepto]]></text>
+				</staticText>
+				<line>
+					<reportElement x="1" y="13" width="554" height="1" uuid="426fc76d-1106-4173-a99e-c9e055d996ae"/>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="16">
+				<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+					<reportElement x="266" y="5" width="54" height="11" uuid="264bf30d-88e9-4f6a-bf46-16bcff657c76"/>
+					<textElement textAlignment="Right">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_IMP_DOC_GS}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement x="324" y="5" width="43" height="11" uuid="b50a3f26-6522-4b2c-b608-4d3c14131c8c"/>
+					<textElement textAlignment="Right">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_IMP_DOC_US}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0;-#,##0">
+					<reportElement x="458" y="5" width="50" height="11" uuid="b313a680-f566-4a44-8887-a1bd4766184a"/>
+					<textElement textAlignment="Right">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_IMP_CONC_GS}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement x="510" y="5" width="45" height="11" uuid="dc57da71-92a1-4f35-8908-42d7a7251f4f"/>
+					<textElement textAlignment="Right">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_IMP_CONC_US}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="124" y="2" width="431" height="1" uuid="32ce4600-ac85-4b97-a02f-01e320dc7651"/>
+				</line>
+				<textField>
+					<reportElement x="129" y="5" width="137" height="11" uuid="e370a878-6647-4d5d-933e-82f00f767206"/>
+					<textElement textAlignment="Left">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["TOTAL IMPORTACION "+$F{NRO_IMPORTACION}+" :"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="78" splitType="Stretch">
+			<rectangle>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="555" height="77" uuid="95ed4190-89f6-423a-9fcb-91fc28b8fd4f"/>
+			</rectangle>
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement x="460" y="23" width="88" height="13" uuid="75f6fa54-4608-4166-b474-f6dbae9b42b4"/>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="460" y="8" width="58" height="13" uuid="2cca577a-32e4-4964-aa99-27e919f2d7ec"/>
+				<textElement textAlignment="Left">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="518" y="8" width="30" height="13" uuid="f3bc2329-59a0-4a58-838d-44c82110bbe5"/>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="7" y="8" width="116" height="13" uuid="f08b058e-094d-44c3-8bed-c8b53c44c6be"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_EMPRESA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="7" y="23" width="100" height="13" uuid="5ea0f3c4-cda4-4938-9be7-d2bea69c0a1f"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="145" y="18" width="227" height="15" uuid="76abd782-10fb-402f-be38-0bb73e77659b"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESC_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="417" y="8" width="40" height="13" uuid="83a8f4c5-375b-4f5b-8967-351e7c645ac7"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="14" y="63" width="68" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="a60a5ef5-942f-4893-b938-aec0997eca90"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Fecha desde:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="149" y="63" width="37" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="12f22e80-9c19-4c75-ad71-d263a421e314"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Hasta:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="14" y="37" width="68" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="858e209d-308a-4127-b055-5ca446941593"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Proveedor:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="143" y="38" width="145" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="61f8132e-e152-42f6-a4d4-46972fd61b55"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_RAZON_SOCIAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="98" y="64" width="45" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="ae400c70-2446-4193-88b9-17158fe1dd56"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FEC_DESDE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="200" y="64" width="52" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="df13e086-d942-4b0e-b1a4-b3eff0ed413b"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FEC_HASTA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="14" y="49" width="75" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="f712a2f5-f4d9-4300-a48d-8355253dae6e"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Nro. Importacion:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="91" y="38" width="40" height="11" uuid="285fd8b9-a5dc-4499-a471-0f9c44b1478b"/>
+				<textElement textAlignment="Right">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_COD_PROVEEDOR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="91" y="49" width="40" height="11" uuid="a79a146a-a393-4c78-ae9e-c20f3e56a1c6"/>
+				<textElement textAlignment="Right">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_NRO_IMPORTACION}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="14" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="1" width="64" height="11" uuid="145487df-8b73-472f-892f-d748c9b27950"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro. Importacion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="72" y="1" width="70" height="11" uuid="a36f4371-d3e4-4b3b-a0b3-433f742e5089"/>
+				<textElement>
+					<font size="7" isBold="true" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[Fec. Conf. Import.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="152" y="1" width="77" height="11" uuid="7a74a5c5-ae16-467e-bd7b-3ceae43c19c0"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Proveedor]]></text>
+			</staticText>
+			<line>
+				<reportElement x="2" y="11" width="554" height="1" uuid="f7d75a9b-ba68-4861-81fb-17f3d3ec6060"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField pattern="###0;-###0">
+				<reportElement x="24" y="0" width="20" height="11" uuid="2d4f071c-b3ca-408f-ad72-d656ee7f2d53"/>
+				<textElement textAlignment="Center">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO_MOVIMIENTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="47" y="0" width="46" height="11" uuid="4eebbe94-43ed-41df-bc0c-c3bda7d3c013"/>
+				<textElement textAlignment="Center">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_DOCUMENTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="96" y="0" width="33" height="11" uuid="4e74949e-0d11-48b7-823c-70473e1e51cb"/>
+				<textElement textAlignment="Center">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_DOCUMENTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="129" y="0" width="93" height="11" uuid="7b224f6d-3bd4-4d34-8cdf-7b6468c9f927"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROV_RAZON_SOCIAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="222" y="0" width="16" height="11" uuid="df5f2397-1524-4f09-9dfc-6d3388da214b"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MONEDA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="240" y="0" width="26" height="11" uuid="64f0a31e-8234-4879-a03d-e521366f7302"/>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TASA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0">
+				<reportElement x="266" y="0" width="54" height="11" uuid="fb3182cb-5994-4bd0-93e2-cac14e061f74"/>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP_TOTAL_DOC_GS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="324" y="0" width="44" height="11" uuid="8eeb9f66-007a-4ead-a82b-399b909c6bb4"/>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP_TOTAL_DOC_US}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0">
+				<reportElement x="458" y="0" width="50" height="11" uuid="034a775d-5dde-4830-b2fe-7a594735261e"/>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP_CONC_GS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="508" y="0" width="47" height="11" uuid="11117a20-21c1-4245-98eb-dc0e322ab0ae"/>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP_CONC_US}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="372" y="0" width="85" height="11" uuid="cf75b1fd-2c05-438a-a6d5-c9781e739d9e"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CONCEPTO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="13">
+			<staticText>
+				<reportElement x="7" y="0" width="100" height="11" uuid="e7f340a1-9d26-46ec-8ae5-1ec7050e0813"/>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Fin del listado...]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

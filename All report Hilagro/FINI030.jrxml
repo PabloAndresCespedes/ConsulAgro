@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINI030" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bfc03d4d-06df-4ec5-b1bf-11e05aa21963">
+	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="237"/>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CLAVE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USUARIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUC_ORI" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUC_DEST" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT CHEQ_CLAVE,
+        CHEQ_EMPR,
+        CHEQ_SERIE,
+        CHEQ_NRO,
+        CHEQ_SUC,
+        CHEQ_BCO,
+        CHEQ_MON ,
+        CHEQ_CLI,
+        CHEQ_ORDEN,
+        CHEQ_CLI_NOM,
+        CHEQ_TITULAR,
+        CHEQ_FEC_EMIS,
+        CHEQ_FEC_DEPOSITAR,
+        CHEQ_IMPORTE,
+        DECODE(CHEQ_SITUACION,'I','INGRESADO') CHEQ_SITUACION,
+        CHEQ_OBS,
+        CHEQ_FEC_RECHAZO,
+        CHEQ_LEGAJO,
+        CHEQ_ABOGADO,
+        CHEQ_FEC_GRAB,
+        BCO_NOT_TRANSF,
+        CHEQ_LOGIN,
+        CHEQ_NRO_CTA_CHEQ,
+        DECODE(NVL(CHEQ_IMPORTE_LOC, 0), 0, CHEQ_IMPORTE, CHEQ_IMPORTE_LOC) CHEQ_IMPORTE_LOC,
+        BCO_DESC,
+        CHEQ_BLOQUEAR_DEP,
+        MON_DESC
+   FROM FIN_CHEQUE, FIN_BANCO,FIN_CHEQUE_DOCU_RESP,FIN_DOCUMENTO, GEN_MONEDA M
+    WHERE CHEQ_EMPR = 1---$P!{P_EMPRESA}
+    AND CHEQ_EMPR = BCO_EMPR
+    AND CHEQ_BCO = BCO_CODIGO
+    AND CHEQ_MON = MON_CODIGO
+    AND CHEQ_EMPR = MON_EMPR
+    and chdo_clave_cheq(+)=CHEQ_CLAVE
+    and chdo_empr(+)=cheq_empr
+    AND DOC_CLAVE(+)=CHDO_CLAVE_DOC
+    AND DOC_EMPR(+)=CHDO_EMPR
+   AND CHEQ_CLAVE  IN ( $P!{P_CLAVE})
+  ORDER BY BCO_DESC, CHEQ_NRO]]>
+	</queryString>
+	<field name="CHEQ_CLAVE" class="java.math.BigDecimal"/>
+	<field name="CHEQ_EMPR" class="java.math.BigDecimal"/>
+	<field name="CHEQ_SERIE" class="java.lang.String"/>
+	<field name="CHEQ_NRO" class="java.lang.String"/>
+	<field name="CHEQ_SUC" class="java.math.BigDecimal"/>
+	<field name="CHEQ_BCO" class="java.math.BigDecimal"/>
+	<field name="CHEQ_MON" class="java.math.BigDecimal"/>
+	<field name="CHEQ_CLI" class="java.math.BigDecimal"/>
+	<field name="CHEQ_ORDEN" class="java.lang.String"/>
+	<field name="CHEQ_CLI_NOM" class="java.lang.String"/>
+	<field name="CHEQ_TITULAR" class="java.lang.String"/>
+	<field name="CHEQ_FEC_EMIS" class="java.sql.Timestamp"/>
+	<field name="CHEQ_FEC_DEPOSITAR" class="java.sql.Timestamp"/>
+	<field name="CHEQ_IMPORTE" class="java.math.BigDecimal"/>
+	<field name="CHEQ_SITUACION" class="java.lang.String"/>
+	<field name="CHEQ_OBS" class="java.lang.String"/>
+	<field name="CHEQ_FEC_RECHAZO" class="java.sql.Timestamp"/>
+	<field name="CHEQ_LEGAJO" class="java.math.BigDecimal"/>
+	<field name="CHEQ_ABOGADO" class="java.math.BigDecimal"/>
+	<field name="CHEQ_FEC_GRAB" class="java.sql.Timestamp"/>
+	<field name="BCO_NOT_TRANSF" class="java.lang.String"/>
+	<field name="CHEQ_LOGIN" class="java.lang.String"/>
+	<field name="CHEQ_NRO_CTA_CHEQ" class="java.lang.String"/>
+	<field name="CHEQ_IMPORTE_LOC" class="java.math.BigDecimal"/>
+	<field name="BCO_DESC" class="java.lang.String"/>
+	<field name="CHEQ_BLOQUEAR_DEP" class="java.lang.String"/>
+	<field name="MON_DESC" class="java.lang.String"/>
+	<group name="BANCO">
+		<groupExpression><![CDATA[$F{BCO_DESC}]]></groupExpression>
+		<groupHeader>
+			<band height="33">
+				<textField>
+					<reportElement x="54" y="11" width="386" height="13" uuid="cf94701a-0268-4045-846b-d2cd92f37daf"/>
+					<textElement>
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{BCO_DESC}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="11" width="100" height="13" uuid="fbd1933d-5f14-418e-89fc-0699d7b58c76"/>
+					<textElement>
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[BANCO:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="-1" y="20" width="25" height="13" uuid="d0bafffd-bc91-4d4a-bd19-d46a6a83adac"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SERIE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="18" y="21" width="46" height="11" uuid="fbc70026-eea6-434f-8fa3-8136650d29fa"/>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[NRO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="71" y="13" width="122" height="20" uuid="c41e1432-7a1d-4a12-b685-b86cd1bde8cd"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CLIENTE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="230" y="13" width="56" height="20" uuid="17484e05-ee75-42cd-9677-ac19a9b5f33b"/>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[IMPORTE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="349" y="12" width="48" height="20" uuid="e53f2b69-9cbe-4761-92ab-f1a3b06a4c0b"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[FECHA EMISION]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="398" y="13" width="45" height="20" uuid="0e16c259-bea3-4a62-8db3-1d0d03c49e16"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[FECHA DEPOSITAR]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="446" y="13" width="58" height="20" uuid="799037c4-7a1a-4dee-a698-d96b84d3dcf9"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SITUACION]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="504" y="13" width="50" height="20" uuid="0c7bd735-690e-422f-bf45-a090e2251ed6"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MONEDA]]></text>
+				</staticText>
+				<line>
+					<reportElement x="0" y="32" width="555" height="1" uuid="6a03acd1-bb6e-4078-8867-1805cfbc7c25"/>
+				</line>
+				<staticText>
+					<reportElement x="299" y="0" width="56" height="32" uuid="c4ee5d13-4024-4d0a-8de8-d2e1ae36aaff"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[IMPORTE LOCAL]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="35" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="450" y="0" width="100" height="20" uuid="dd45b3ac-1538-4b51-9294-2b1c984b2408"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="-3" y="0" width="100" height="20" uuid="7337b863-79a9-4f61-be35-527d479bfd34"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_USUARIO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="15" width="100" height="20" uuid="6929f8fa-97af-4965-8684-0b3f15041662"/>
+				<text><![CDATA[FINI030]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="42" splitType="Stretch">
+			<staticText>
+				<reportElement x="172" y="0" width="268" height="20" uuid="9d605375-34f5-45e3-b01f-3ac31b48ec02"/>
+				<textElement>
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TRANSLADO DE CHEQUES DIFERIDOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-3" y="20" width="136" height="20" uuid="8ff85f92-5f7f-4873-9741-daaf81baa855"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SUCURSAL ORIGEN:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="254" y="20" width="140" height="20" uuid="c50253b7-d9c5-4c80-90f8-1625d27f88a6"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SUCURSAL DESTINO:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="111" y="22" width="143" height="20" uuid="d8439333-bd4e-4f68-b7e6-5d193349361b"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SUC_ORI}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="370" y="22" width="180" height="20" uuid="c56eb03c-e9d0-4fa0-bac3-0e030eb931bb"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SUC_DEST}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="-1" width="24" height="13" uuid="750c5c5a-e448-4661-83f7-464708d5b332"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CHEQ_SERIE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="18" y="-1" width="46" height="13" uuid="d217a5e3-69aa-49c7-beb7-f4cb19826907"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CHEQ_NRO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="230" y="-1" width="56" height="13" uuid="9196bfcc-3ceb-4da4-9a09-def4142ebae1"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CHEQ_IMPORTE}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{CHEQ_MON}==1 ? "#,##0":"#,##0.00"]]></patternExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="284" y="-1" width="62" height="13" uuid="ff709385-8e76-405e-a7a5-8ca090ef8b53"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CHEQ_IMPORTE_LOC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="349" y="-1" width="48" height="13" uuid="68a3aafa-61ee-4b54-8626-1ee969428ccb"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CHEQ_FEC_EMIS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="398" y="-1" width="45" height="13" uuid="8e64d441-939b-4049-8d36-112ef29c43ba"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CHEQ_FEC_DEPOSITAR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="446" y="-1" width="58" height="13" uuid="04152eff-b94f-44d0-aaa2-5a18ce69d047"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CHEQ_SITUACION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="71" y="-1" width="153" height="13" uuid="86d68c5f-c9ec-475e-84c2-70edce046ea5"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CHEQ_CLI_NOM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="504" y="-2" width="51" height="14" uuid="e16c12de-d3bb-4943-a050-c32946b089c6"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MON_DESC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

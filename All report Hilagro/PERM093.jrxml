@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERM093" language="groovy" pageWidth="595" pageHeight="842" columnWidth="455" leftMargin="70" rightMargin="70" topMargin="70" bottomMargin="70" uuid="c0daf44e-849a-46d5-9329-21c22d69b936">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_CIUDAD_EMPR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_DEPART_EMPR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_REPUB_EMPR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_CONT_LETRAS_1" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA_CONT_LETRAS_2" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_GEN_GEN_NOMBRE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CI_EMPLEADOR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA3" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_LEGAJO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT  EMPL_NOMBRE||' '||EMPL_APE NOMBRE,
+        EMPL_DOC_IDENT EMPL_CI,
+        PAIS_NACIONALIDAD EMPL_NAC,
+        LOC_DESC EMPL_CIUDAD,
+        EMPL_DIR,
+        CAR_DESC EMPL_CARGO,
+ case when empl_sexo = 'F' THEN
+           'la Sra. '
+             else
+            'el Sr. '
+         end empl_tto,
+        DECODE(EMPL_ASIG_TELEFONIA,'1','TIGO',2, 'PERSONAL',3, 'CLARO',4,'VOX','SIN TELEFONIA')TELEFONIA,
+        EMPL_DESC_PLAN,
+        EMPL_ASIG_T_NRO_T NRO_TEL,
+        EMPL_ASIG_T_COSTO COSTO
+  FROM PER_ASIG_TELEF_EMPL, PER_EMPLEADO , GEN_LOCALIDAD L, GEN_PAIS P, PER_CARGO
+  WHERE EMPL_ASIG_COD =  EMPL_LEGAJO
+    AND EMPL_ASIG_EMPR = EMPL_EMPRESA
+    AND EMPL_LOCALIDAD = LOC_CODIGO
+    AND EMPL_EMPRESA = LOC_EMPR
+    AND EMPL_NACIONALIDAD = P.PAIS_CODIGO
+    AND EMPL_EMPRESA = P.PAIS_EMPR
+    AND EMPL_CARGO = CAR_CODIGO
+    AND EMPL_EMPRESA = CAR_EMPR
+    AND EMPL_EMPRESA = $P!{P_EMPRESA}
+    AND EMPL_LEGAJO = $P!{P_LEGAJO}]]>
+	</queryString>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="EMPL_CI" class="java.math.BigDecimal"/>
+	<field name="EMPL_NAC" class="java.lang.String"/>
+	<field name="EMPL_CIUDAD" class="java.lang.String"/>
+	<field name="EMPL_DIR" class="java.lang.String"/>
+	<field name="EMPL_CARGO" class="java.lang.String"/>
+	<field name="EMPL_TTO" class="java.lang.String"/>
+	<field name="TELEFONIA" class="java.lang.String"/>
+	<field name="EMPL_DESC_PLAN" class="java.lang.String"/>
+	<field name="NRO_TEL" class="java.lang.String"/>
+	<field name="COSTO" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="60" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="27" width="455" height="20" uuid="797302bf-7776-4b3e-9e49-741dbf5662c8"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ADENDA AL CONTRATO INDIVIDUAL DE TRABAJO]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="455" height="20" uuid="ee1ec302-027f-47f3-a5ca-f5380317982b"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["En " + $P{P_CIUDAD_EMPR} + ", Departamento de " + $P{P_DEPART_EMPR} + ", República del " +  $P{P_REPUB_EMPR}  + ", a los " + $P{P_FECHA_CONT_LETRAS_1} + " de  " + $P{P_FECHA_CONT_LETRAS_2} +  " entre HILAGRO S.A., representada en este acto por el Sr. " +$P{P_GEN_GEN_NOMBRE}+ " , con Cédula de Identidad Nº  " + $P{P_CI_EMPLEADOR} + "  en su carácter Representante Legal de la firma, en adelante denominado indistintamente como “EL EMPLEADOR” o “LA EMPRESA”, y por la otra "+$F{EMPL_TTO}+$F{NOMBRE}+ " con Cédula de Identidad Nº " + $F{EMPL_CI} + ",  de nacionalidad " + $F{EMPL_NAC} + ", con domiciliado en " + $F{EMPL_DIR}+  ",  de la ciudad de " + $F{EMPL_CIUDAD}+ ", denominado a los efectos de este contrato como el “TRABAJADOR”, convienen en celebrar el presente  ACUERDO como ADENDA AL CONTRATO INDIVIDUAL DE TRABAJO suscripto entre las partes, y expresan que:\n" +
+"En fecha " + $P{P_FECHA3} + "  ambas partes celebraron un CONTRATO INDIVIDUAL DE TRABAJO, en los términos y condiciones estipulados en el mismo.- \n" +
+"Por dicho contrato, el TRABAJADOR se obligó a prestar a LA EMPRESA sus servicios para desempeñarse como " +  $F{EMPL_CARGO}  + ", con el alcance y en los términos y condiciones estipulados en el mencionado contrato.- \n" +
+"A la fecha, existe la necesidad de modificar las condiciones de trabajo a fin de facilitar el desempeño de las tareas contratadas, y a ese efecto las partes acuerdan cuanto sigue: \n"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="39">
+			<staticText>
+				<reportElement x="2" y="0" width="453" height="17" uuid="0795aa78-9c2c-466f-bda3-c829ff4b90f8"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CLÁUSULA PRIMERA: PLAN DE TELEFONÍA]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="17" width="454" height="20" uuid="126db131-7a1e-4e57-a928-320829061db0"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["1.1. Atendiendo a la función  " + $F{EMPL_CARGO} + ",  desempeñada por El TRABAJADOR, y a fin de poder facilitar sus tareas, EL EMPLEADOR proveerá un chip con el número " + $F{NRO_TEL} + ", de la empresa telefónica " + $F{TELEFONIA}+ ", el cual cuenta con un plan de" + $F{EMPL_DESC_PLAN} + ",  con un costo mensual de G. " + $F{COSTO} + ", que será absorbido por HILAGRO S.A., quien será la titular de la línea y plan contratado.\n" +
+"1.2. En caso que el TRABAJADOR quiera aumentar el plan " + $F{EMPL_DESC_PLAN} + ",  contratado por la empresa, deberá solicitar a la misma el aumento correspondiente a través del Departamento de Administración, comprometiéndose el TRABAJADOR  a pagar la diferencia del costo del plan inicialmente contratado y el nuevo. \n" +
+"1.3. Si el TRABAJADOR deja de pertenecer a la empresa HILAGRO S.A. o al Grupo de empresas del que forma parte, deberá hacer entrega del chip, ya que este seguirá perteneciendo a HILAGRO S.A. \n"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="46">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="2" y="24" width="453" height="20" uuid="14dc5f62-c0c6-47cc-aee9-4a7d44ac237b"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" isStrikeThrough="false"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["2.1. El chip y el plan de telefonía será utilizado en un equipo o teléfono celular de propiedad del TRABAJADOR, siendo este el único responsable del cuidado y mantenimiento del equipo. \n"+
+"2.2. La EMPRESA queda exonerada de cualquier responsabilidad respecto a los daños ocasionados al equipo propiedad del TRABAJADOR como consecuencia de su utilización.\n"
+]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="3" width="169" height="20" uuid="7da70ce0-c2af-434f-a053-216da6490bec"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CLÁUSULA SEGUNDA: EQUIPO]]></text>
+			</staticText>
+		</band>
+		<band height="48">
+			<staticText>
+				<reportElement x="2" y="7" width="452" height="20" uuid="9558778d-d49d-4135-93a4-99c114d7eaaa"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CLÁUSULA TERCERA: INFORMACIÓN CONFIDENCIAL]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="27" width="454" height="20" uuid="78b8b104-d4ab-4d56-8b5c-d6eba9f4fac5"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["3.1. EL TRABAJADOR acepta y reconoce que tiene acceso a información confidencial propiedad de la EMPRESA, de clientes o de terceros; comprometiéndose EL TRABAJADOR a no utilizar, divulgar ni reproducir dicha información confidencial durante la vigencia de su relación contractual con\n"+
+"LA EMPRESA y después de su terminación. \n"+
+"3.2. El TRABAJADOR deberá abstenerse de alzar imágenes, frases u opiniones políticas y religiosas en redes sociales o cualquier plataforma similar, utilizando cuentas o imágenes de la EMPRESA, que no hayan sido proporcionados y debidamente autorizados por el EMPLEADOR.\n "
+]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="43">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="2" y="19" width="455" height="19" uuid="8eb2d851-bbb4-4a5b-bf2c-c6b2162ab633"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" isStrikeThrough="false"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["del Contrato Individual de Trabajo suscripto en fecha  " + $P{P_FECHA3} + ",  quedan vigentes y sin variación alguna.\n "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="-1" y="3" width="172" height="16" uuid="6d1de929-f3ca-4ba5-9b09-8ca8b675e037"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CLÁUSULA CUARTA: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="107" y="3" width="347" height="20" uuid="ecb783ff-e79b-460e-9be2-3ac62a5fd6fa"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Salvo las modificaciones aquí convenidas, las demás cláusulas y condiciones]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<summary>
+		<band height="129" splitType="Stretch">
+			<staticText>
+				<reportElement x="-1" y="0" width="456" height="57" uuid="d7e2bf67-49c7-4e31-bee7-e1514c2308d9"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" isBold="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<text><![CDATA[EN PRUEBA DE CONFORMIDAD, PREVIA LECTURA Y RATIFICACIÓN, FIRMAN LAS PARTES EN DOS EJEMPLARES DE UN MISMO TENOR Y A UN SOLO EFECTO, EN EL LUGAR Y FECHA ARRIBA INDICADOS.]]></text>
+			</staticText>
+			<line>
+				<reportElement x="-1" y="93" width="155" height="1" uuid="bc0d4b49-1a24-4d41-a891-1683150909af"/>
+			</line>
+			<staticText>
+				<reportElement x="-1" y="93" width="155" height="20" uuid="cfd9bcf1-84f8-4820-8da0-7f08f45137f5"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TRABAJADOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="299" y="93" width="155" height="20" uuid="4cdcc821-a132-4da2-8842-713e270ecbdf"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[EMPRESA]]></text>
+			</staticText>
+			<line>
+				<reportElement x="299" y="93" width="155" height="1" uuid="2ae18d79-7de5-45f4-9488-eb7d9dc407a3"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

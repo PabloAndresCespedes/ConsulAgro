@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="peri052l" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1c5dd182-da38-49e7-81d9-9fd719c957b5">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_EMPRESA" class="java.lang.String"/>
+	<parameter name="P_EMPL_LEG" class="java.lang.String"/>
+	<parameter name="P_EMPL_NOM" class="java.lang.String"/>
+	<parameter name="P_EMPRESA_DESC" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select EMPLV_ITEM Nro,
+       EMPLV_FEC_SOL Fecha_Sol,
+       EMPLV_FEC_DESDE Fecha_Desde,
+       EMPLV_FEC_HASTA Fecha_Hasta,
+       EMPLV_CANT_DIAS Cant_Dia,
+       EMPLV_FEC_REINTEGRO Fec_Rein,
+       EMPLV_PERIODO Periodo,
+       DECODE(EMPLV_TIPO,1,'Normal',2,'Adelantado') Tipo
+from PER_EMPLEADO_VACACION
+where EMPLV_EMPR =  $P{P_EMPRESA}
+  AND EMPLV_LEGAJO = $P{P_EMPL_LEG}
+  order by EMPLV_ITEM]]>
+	</queryString>
+	<field name="NRO" class="java.math.BigDecimal"/>
+	<field name="FECHA_SOL" class="java.sql.Timestamp"/>
+	<field name="FECHA_DESDE" class="java.sql.Timestamp"/>
+	<field name="FECHA_HASTA" class="java.sql.Timestamp"/>
+	<field name="CANT_DIA" class="java.math.BigDecimal"/>
+	<field name="FEC_REIN" class="java.sql.Timestamp"/>
+	<field name="PERIODO" class="java.lang.String"/>
+	<field name="TIPO" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="98" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="2" width="555" height="93" uuid="24009cce-28c5-4e5d-9ff3-71c85c1b4f54"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="150" y="6" width="273" height="26" uuid="ef8c9ec5-ff13-4ee5-81e0-658ceb18a00c"/>
+				<textElement>
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Listado de Vacaciones Otorgadas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="56" width="57" height="20" uuid="6d59cf98-b5ee-4fdb-b9a2-60ba4e9b5a5a"/>
+				<text><![CDATA[Empresa:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="75" width="57" height="20" uuid="9648d058-5eee-4d35-9c8a-533530ed977b"/>
+				<text><![CDATA[Empleado:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement x="413" y="56" width="132" height="20" uuid="06520371-0a59-4a5d-84cf-119e83d175a7"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="69" y="56" width="169" height="20" uuid="dd9e247b-ccf1-4e7a-ab1e-abff62bdb57b"/>
+				<textFieldExpression><![CDATA[$P{P_EMPRESA_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="69" y="75" width="169" height="20" uuid="5f050b65-e11d-4284-9921-eee257cc0234"/>
+				<textFieldExpression><![CDATA[$P{P_EMPL_NOM}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="29" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="28" width="555" height="1" uuid="901299d4-644e-4fa4-819f-2d67da644d0b"/>
+			</line>
+			<staticText>
+				<reportElement x="18" y="12" width="43" height="16" uuid="0b9225c3-7656-47df-8b27-823879ddfb6a"/>
+				<text><![CDATA[Nro.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="58" y="12" width="60" height="16" uuid="2b2c0fb0-3281-4dc3-abcf-885214444a04"/>
+				<text><![CDATA[Solicitado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="117" y="13" width="81" height="16" uuid="812c7224-ff8d-4b10-b5a7-2305376af381"/>
+				<text><![CDATA[Otorg. Desde]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="200" y="12" width="67" height="16" uuid="f8fa96b4-9f47-4396-b777-b193dec5c908"/>
+				<text><![CDATA[Otorg. Hasta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="271" y="12" width="66" height="16" uuid="492c0da7-4011-43b7-95b0-06558c145051"/>
+				<text><![CDATA[Cant. Días ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="337" y="12" width="77" height="16" uuid="ed0f33ec-ce2a-48ef-969d-3c97a958ac04"/>
+				<text><![CDATA[Reintegracion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="416" y="12" width="48" height="16" uuid="a0ac7be5-e224-44d8-b41c-f0317be10e23"/>
+				<text><![CDATA[Periodo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="491" y="12" width="34" height="16" uuid="6201bc4b-1eb1-4821-8498-e378c396eb42"/>
+				<text><![CDATA[Tipo]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="19" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="7" y="2" width="43" height="15" uuid="f435988e-1090-484f-8015-b7dae54f2b15"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{NRO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="53" y="2" width="61" height="15" uuid="4feb88fc-1cc8-4920-9ded-ff3b5743c3ae"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{FECHA_SOL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="120" y="2" width="62" height="15" uuid="dff9b21d-721d-4edf-9bff-91b663392726"/>
+				<textFieldExpression><![CDATA[$F{FECHA_DESDE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="201" y="2" width="54" height="15" uuid="cb5bd8a5-1f5e-4440-976c-78c6ad7f2632"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{FECHA_HASTA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="270" y="2" width="51" height="15" uuid="7ecfb30a-43f5-4147-bc6d-10efd0b2d466"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{CANT_DIA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="341" y="2" width="53" height="15" uuid="5829fbb9-910f-4aca-a5b1-80daf27c771a"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{FEC_REIN}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="402" y="2" width="70" height="15" uuid="7a1a8338-beb8-45be-9f1a-608b193fa97e"/>
+				<textElement textAlignment="Center">
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PERIODO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="480" y="2" width="77" height="15" uuid="5ff4fc39-1505-4d60-8553-f3b10a9ef75f"/>
+				<textFieldExpression><![CDATA[$F{TIPO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="25" splitType="Stretch">
+			<textField>
+				<reportElement x="455" y="3" width="100" height="20" uuid="790f6e27-66b6-4031-a6ad-c03c429eeeda"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página N°" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
