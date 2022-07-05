@@ -110,103 +110,6 @@ create or replace package body PERL051 is
 
  BEGIN
 
-
-   /*select COUNT(*)
-    INTO   V_CONTADOR
-   from per_dotacion_jsa F
-   WHERE F.DOT_EMPRESA = P_EMPRESA
-     AND F.DOT_MES_ANHO = TO_CHAR(LAST_DAY(ADD_MONTHS(P_FECHA, -1)), 'MM/YYYY');
-
- IF V_CONTADOR = 0 THEN
-   insert into per_dotacion_jsa
-     (dot_empresa, dot_departamento, dot_legajo, dot_nombre, dot_situacion, dot_ingreso, dot_salida, dot_dpto_real, dot_mes_anho, dot_incluye_com)
-     SELECT P_EMPRESA empresa,
-                       CASE
-                            WHEN DPTO_SUC = 2 THEN
-                                 'CDA'
-                            WHEN DPTO_CODIGO = 1 THEN
-                                 'ADM'
-                            WHEN (DPTO_CODIGO IN(14,22,2) OR DPTO_SUC NOT IN (1,2)) THEN
-                                'COMERCIAL'
-                            ELSE
-                               'INDUSTRIAL'
-                            END DEPARTAMENTO,
-
-                                      EMPL_LEGAJO LEGAJO ,
-                                      EMPL_NOMBRE||' '||EMPL_APE NOMBRE,
-                                      DECODE(EMPL_SITUACION,'A','ACTIVO', 'INACTIVO') SITUACION,
-                                      EMPL_FEC_INGRESO INGRESO,
-                                      EMPL_FEC_SALIDA SALIDA,
-                                      DPTO_CODIGO||' - '||DPTO_DESC DEPARTAMENTO_PERM,
-                                      TO_CHAR(LAST_DAY(ADD_MONTHS(P_FECHA, -1)), 'MM/YYYY'),
-                                      E.EMPL_INCLUYE_TVC
-                    FROM PER_EMPLEADO E, GEN_DEPARTAMENTO DPTO
-                   WHERE E.EMPL_DEPARTAMENTO = DPTO.DPTO_CODIGO
-                     AND E.EMPL_EMPRESA = DPTO.DPTO_EMPR
-                     AND EMPL_CODIGO_PROV <> 0
-                     AND EMPL_TIPO_CONT <> 'T'
-                     AND EMPL_FORMA_PAGO <> 0
-                     AND EMPL_EMPRESA = 1
-                     and    CASE
-                                  WHEN EMPL_SITUACION = 'I' AND
-                                       EMPL_FEC_INGRESO <= LAST_DAY(ADD_MONTHS(P_FECHA, -1)) AND
-                                       EMPL_FEC_SALIDA > LAST_DAY(ADD_MONTHS(P_FECHA, -1)) THEN
-                                   EMPL_LEGAJO
-                                 WHEN EMPL_SITUACION = 'A' AND EMPL_FEC_INGRESO <= LAST_DAY(ADD_MONTHS(P_FECHA, -1)) THEN
-                        EMPL_LEGAJO
-                           END  IS NOT NULL;
-
- END IF;
-
- IF  LAST_DAY(P_FECHA) = P_FECHA THEN
-    select COUNT(*)
-    INTO   V_CONTADOR
-   from per_dotacion_jsa F
-   WHERE F.DOT_EMPRESA = P_EMPRESA
-     AND F.DOT_MES_ANHO = TO_CHAR(P_FECHA, 'MM/YYYY');
-
- IF V_CONTADOR = 0 THEN
-   insert into per_dotacion_jsa
-     (dot_empresa, dot_departamento, dot_legajo, dot_nombre, dot_situacion, dot_ingreso, dot_salida, dot_dpto_real, dot_mes_anho, dot_incluye_com)
-     SELECT P_EMPRESA empresa,
-                       CASE
-                            WHEN DPTO_SUC = 2 THEN
-                                 'CDA'
-                            WHEN DPTO_CODIGO = 1 THEN
-                                 'ADM'
-                            WHEN (DPTO_CODIGO IN(14,22,2) OR DPTO_SUC NOT IN (1,2)) THEN
-                                'COMERCIAL'
-                            ELSE
-                               'INDUSTRIAL'
-                            END DEPARTAMENTO,
-
-                                      EMPL_LEGAJO LEGAJO ,
-                                      EMPL_NOMBRE||' '||EMPL_APE NOMBRE,
-                                      DECODE(EMPL_SITUACION,'A','ACTIVO', 'INACTIVO') SITUACION,
-                                      EMPL_FEC_INGRESO INGRESO,
-                                      EMPL_FEC_SALIDA SALIDA,
-                                      DPTO_CODIGO||' - '||DPTO_DESC DEPARTAMENTO_PERM,
-                                      TO_CHAR(P_FECHA, 'MM/YYYY'),
-                                      E.EMPL_INCLUYE_TVC
-                    FROM PER_EMPLEADO E, GEN_DEPARTAMENTO DPTO
-                   WHERE E.EMPL_DEPARTAMENTO = DPTO.DPTO_CODIGO
-                     AND E.EMPL_EMPRESA = DPTO.DPTO_EMPR
-                     AND EMPL_CODIGO_PROV <> 0
-                     AND EMPL_TIPO_CONT <> 'T'
-                     AND EMPL_FORMA_PAGO <> 0
-                     AND EMPL_EMPRESA = 1
-                     and    CASE
-                                  WHEN EMPL_SITUACION = 'I' AND
-                                       EMPL_FEC_INGRESO <= P_FECHA AND
-                                       EMPL_FEC_SALIDA > P_FECHA THEN
-                                   EMPL_LEGAJO
-                                 WHEN EMPL_SITUACION = 'A' AND EMPL_FEC_INGRESO <= P_FECHA THEN
-                        EMPL_LEGAJO
-                           END  IS NOT NULL;
-
- END IF;
-
- END IF;*/
    V_FECHA := TO_DATE(P_FECHA);
    ----------------------------------------------------------------------------------------------------VERIFICADO
      P_QUERY1 := 'SELECT DEPARTAMENTO,
@@ -328,11 +231,6 @@ P_QUERY2 := 'SELECT DOT_DEPARTAMENTO, MAX(PB), MAX(MES1), MAX(MES2)
               GROUP BY DOT_DEPARTAMENTO)
               GROUP BY DOT_DEPARTAMENTO';
 
-
-
-
-
-
 ------------------------------------------------------------------------------------------------verificado
      P_QUERY3 := 'SELECT DPTO_CODIGO||'' - ''||DECODE(DPTO_CODIGO,29,''P.J.C'',DPTO_DESC) DEPARTAMENTO,
 
@@ -373,13 +271,6 @@ P_QUERY2 := 'SELECT DOT_DEPARTAMENTO, MAX(PB), MAX(MES1), MAX(MES2)
                AND EMPL_EMPRESA = 1
                AND DPTO_SUC NOT IN (1,2,8)
                GROUP BY DPTO_DESC, DPTO_CODIGO';
-
-
-
-
-
-
-
 
 
    IF APEX_COLLECTION.COLLECTION_EXISTS(P_COLLECTION_NAME => 'TAB_DOTACION') THEN
@@ -440,7 +331,6 @@ P_QUERY2 := 'SELECT DOT_DEPARTAMENTO, MAX(PB), MAX(MES1), MAX(MES2)
   FROM DUAL;
 
    V_FECHA_HAB := TBL_ULT_DIA_LAB_SUCURSAL(I_FECHA => P_FECHA);
-
 
     select T.CONF_TABLEAU_DESDE
     INTO X_CONF_TABLEAU_DESDE
@@ -686,10 +576,6 @@ P_QUERY2 := 'SELECT DOT_DEPARTAMENTO, MAX(PB), MAX(MES1), MAX(MES2)
                        FECHA)
                        GROUP BY MES, ANHO';
 
-
-
-
-
   IF APEX_COLLECTION.COLLECTION_EXISTS(P_COLLECTION_NAME => 'EST_PRODUCTO') THEN
           APEX_COLLECTION.DELETE_COLLECTION(P_COLLECTION_NAME => 'EST_PRODUCTO');
        END IF;
@@ -705,15 +591,15 @@ P_QUERY2 := 'SELECT DOT_DEPARTAMENTO, MAX(PB), MAX(MES1), MAX(MES2)
 
       IF APEX_COLLECTION.COLLECTION_EXISTS(P_COLLECTION_NAME => 'OBJETIVO_PB_PRO') THEN
           APEX_COLLECTION.DELETE_COLLECTION(P_COLLECTION_NAME => 'OBJETIVO_PB_PRO');
-    END IF;
+          END IF;
         APEX_COLLECTION.CREATE_COLLECTION_FROM_QUERY_B(P_COLLECTION_NAME => 'OBJETIVO_PB_PRO',
                                                        P_QUERY           => P_QUERY7);
 
 
      ----PROYECCION
-           IF APEX_COLLECTION.COLLECTION_EXISTS(P_COLLECTION_NAME => 'EST_PROYECCION') THEN
-              APEX_COLLECTION.DELETE_COLLECTION(P_COLLECTION_NAME => 'EST_PROYECCION');
-          END IF;
+        IF APEX_COLLECTION.COLLECTION_EXISTS(P_COLLECTION_NAME => 'EST_PROYECCION') THEN
+            APEX_COLLECTION.DELETE_COLLECTION(P_COLLECTION_NAME => 'EST_PROYECCION');
+        END IF;
         APEX_COLLECTION.CREATE_COLLECTION_FROM_QUERY_B(P_COLLECTION_NAME => 'EST_PROYECCION',
                                                        P_QUERY           => P_QUERY8);
 
@@ -834,8 +720,8 @@ P_QUERY2 := 'SELECT DOT_DEPARTAMENTO, MAX(PB), MAX(MES1), MAX(MES2)
  if  P_FECHA = last_day(TO_DATE(P_FECHA))  then
    p_and_transagro := p_and_transagro ||' semana is null and MES || ''/'' || ANHO = '''||V_MES3||'''';
     P_AND := P_AND||'and semana is null AND MES || ''/'' || ANHO = '''||V_MES3||'''';
-    P_AND_SOL := P_AND_SOL|| 'and semana is null AND SOL.MES||''/''||SOL.ANHO = '''||V_MES3||'''';
-    P_AND_SEL := P_AND_SEL|| 'and semana is null AND SEL.MES||''/''||SEL.ANHO = '''||V_MES3||'''';
+    P_AND_SOL := P_AND_SOL|| 'and SOL.semana is null AND SOL.MES||''/''||SOL.ANHO = '''||V_MES3||'''';
+    P_AND_SEL := P_AND_SEL|| 'and SEL.semana is null AND SEL.MES||''/''||SEL.ANHO = '''||V_MES3||'''';
 
  else
     p_and_transagro := p_and_transagro||' SEMANA || ''/'' || ANHO = '''||V_SEMANA||'''';
@@ -1897,150 +1783,10 @@ PROCEDURE PP_PROCESO_SELECCION_SELC(P_EMPRESA IN NUMBER, P_FECHA IN DATE)IS
      P_AND VARCHAR2(2000);
      P_AND_SOL VARCHAR2(2000);
      P_AND_SEL VARCHAR2(2000);
- BEGIN
- /* P_QUERY := 'SELECT
-              ----TIPO_SELECCION
-               SUM(Q_VACANT),
-               AREA,
-               MES_ANHO,
-               TIPO_SELEC_SOL,
-               SUM(SUM(Q_VACANT)) OVER(PARTITION BY AREA, MES_ANHO ORDER BY MES_ANHO) TOTAL_VAC_AREA,
-               ROUND(SUM(Q_VACANT) /
-                     NVL(SUM(SUM(Q_VACANT))
-                         OVER(PARTITION BY AREA, MES_ANHO ORDER BY MES_ANHO),
-                         1) * 100) POR_SELEC,
-               ----TIPO_CONTRATACION
-               TIPO_CONTRATACION,
-               SUM(SUM(Q_VACANT)) OVER(PARTITION BY TIPO_CONTRATACION, MES_ANHO ORDER BY MES_ANHO) TOTAL_TIPO_CONT,
-               ROUND(SUM(Q_VACANT) /
-                     NVL(SUM(SUM(Q_VACANT))
-                         OVER(PARTITION BY TIPO_CONTRATACION, MES_ANHO ORDER BY MES_ANHO),
-                         1) * 100) POR_CONT,
-               COUNT(Q_VACANT),
-               ORDEN,
-               CASE
-                 WHEN TIPO_SELEC_SOL = ''Anticipada'' AND ORDEN = 1 THEN
-                  SUM(Q_VACANT)
-                 WHEN TIPO_SELEC_SOL = ''Programada'' AND ORDEN = 1 THEN
-                  SUM(Q_VACANT)
-                 WHEN TIPO_SELEC_SOL = ''Re-contratacion'' AND ORDEN = 1 THEN
-                  SUM(Q_VACANT)
-               END MES1_ant,
-               CASE
-                 WHEN TIPO_SELEC_SOL = ''Anticipada'' AND ORDEN = 2 THEN
-                  SUM(Q_VACANT)
-                 WHEN TIPO_SELEC_SOL = ''Programada'' AND ORDEN = 2 THEN
-                  SUM(Q_VACANT)
-                 WHEN TIPO_SELEC_SOL = ''Re-contratacion'' AND ORDEN = 2 THEN
-                  SUM(Q_VACANT)
-               END MES2_ant,
-               CASE
-                 WHEN TIPO_SELEC_SOL = ''Anticipada'' AND ORDEN = 3 THEN
-                  SUM(Q_VACANT)
-                 WHEN TIPO_SELEC_SOL = ''Programada'' AND ORDEN = 3 THEN
-                  SUM(Q_VACANT)
-                 WHEN TIPO_SELEC_SOL = ''Re-contratacion'' AND ORDEN = 3 THEN
-                  SUM(Q_VACANT)
-               END MES3_ant,
-               CASE
-                 WHEN TIPO_CONTRATACION = ''Directa'' AND ORDEN = 1 THEN
-                  SUM(Q_VACANT)
-                 WHEN TIPO_CONTRATACION = ''Programada'' AND ORDEN = 1 THEN
-                  SUM(Q_VACANT)
-                 WHEN TIPO_CONTRATACION = ''Re-contratacion'' AND ORDEN = 1 THEN
-                  SUM(Q_VACANT)
-               END MES1_CONT,
-               CASE
-                 WHEN TIPO_CONTRATACION = ''Directa'' AND ORDEN = 2 THEN
-                  SUM(Q_VACANT)
-                 WHEN TIPO_SELEC_SOL = ''Programada'' AND ORDEN = 2 THEN
-                  SUM(Q_VACANT)
-                 WHEN TIPO_CONTRATACION = ''Re-contratacion'' AND ORDEN = 2 THEN
-                  SUM(Q_VACANT)
-               END MES2_CONT,
-               CASE
-                 WHEN TIPO_CONTRATACION = ''Directa'' AND ORDEN = 3 THEN
-                  SUM(Q_VACANT)
-                 WHEN TIPO_CONTRATACION = ''Programada'' AND ORDEN = 3 THEN
-                  SUM(Q_VACANT)
-                 WHEN TIPO_CONTRATACION = ''Re-contratacion'' AND ORDEN = 3 THEN
-                  SUM(Q_VACANT)
-               END MES3_CONT
-                FROM (SELECT 1 Q_VACANT,
-                             NRO_SOL,
-                             to_char(v.FECHA_SOL, ''MM/YYYY'') MES_ANHO,
-                             AREA_DESC AREA,
-                             TIPO_SELEC_SOL,
-                             TIPO_CONTRATACION,
-                             CASE
-                               WHEN to_char(v.FECHA_SOL, ''MM/YYYY'') =
-                                    TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -2), ''MM/YYYY'') THEN
-                                1
-                               WHEN to_char(v.FECHA_SOL, ''MM/YYYY'') =
-                                    TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1), ''MM/YYYY'') THEN
-                                2
-                               WHEN to_char(v.FECHA_SOL, ''MM/YYYY'') =
-                                    TO_CHAR((TO_DATE('''||P_FECHA||''')), ''MM/YYYY'') THEN
-                                3
-                             END ORDEN,
-                             V.COD_POSTULANTE
-                        FROM CUBO_LONDON_PROCESO_SELEC v
-                       WHERE FECHA_SOL BETWEEN
-                             ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2) AND
-                             TO_DATE('''||P_FECHA||''')
-
-                         AND V.COD_POSTULANTE IS NOT NULL
-                       GROUP BY to_char(v.FECHA_SOL, ''MM/YYYY''),
-                                FECHA_SOL,
-                                NRO_SOL,
-                                Q_VACANT,
-                                AREA_DESC,
-                                TIPO_SELEC_SOL,
-                                TIPO_CONTRATACION,
-                                COD_POSTULANTE
-
-                      UNION ALL
-                      SELECT 1,
-                             S.PCON_SOL_NRO,
-                             DECODE(G.SOLPER_FECHA_SOL,
-                                    NULL,
-                                    TO_CHAR(ADD_MONTHS(S.PCON_FECHA_INICIO,-2), ''MM/YYYY''),
-                                    TO_CHAR(SOLPER_FECHA_SOL, ''MM/YYYY'')),
-                             X.AREDPP_DESC,
-                             ''Re-contratacion'',
-                             ''Re-contratacion'',
-                             CASE
-                               WHEN TO_CHAR(PCON_FECHA_INICIO, ''MM/YYYY'') =
-                                    TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -2), ''MM/YYYY'') THEN
-                                1
-                               WHEN TO_CHAR(PCON_FECHA_INICIO, ''MM/YYYY'') =
-                                    TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1), ''MM/YYYY'') THEN
-                                2
-                               WHEN TO_CHAR(PCON_FECHA_INICIO, ''MM/YYYY'') =
-                                    TO_CHAR((TO_DATE('''||P_FECHA||''')), ''MM/YYYY'') THEN
-                                3
-                             END ORDEN,
-                             S.PCON_LEGAJO
-                        FROM PER_CONT_SIN_PROSELC   S,
-                             PER_AREA_DPP           X,
-                             PER_SOLICITUD_PERSONAL G
-                       WHERE S.PCON_AREA = X.AREDPP_CLAVE
-                         AND S.PCON_EMPR = X.AREDPP_EMPR
-                         AND S.PCON_SOL_NRO = G.SOLPER_CLAVE(+)
-                         AND S.PCON_EMPR = G.SOLPER_EMPR(+)
-                         AND DECODE(G.SOLPER_FECHA_SOL,
-                                    NULL,
-                                    PCON_FECHA_INICIO,
-                                    SOLPER_FECHA_SOL) BETWEEN
-                             ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2) AND
-                             TO_DATE('''||P_FECHA||''')
-                         AND PCON_EMPR = 1)
-               GROUP BY AREA, MES_ANHO, TIPO_SELEC_SOL, TIPO_CONTRATACION, ORDEN';*/
-
-
+ begin
 
  IF  P_FECHA = LAST_DAY(TO_DATE(P_FECHA))  THEN
-    P_AND := P_AND||' AND MES || ''/'' || ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  ';
+    P_AND := P_AND||'AND MES || ''/'' || ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  ';
     P_AND_SOL := P_AND_SOL|| 'AND SOL.MES||''/''||SOL.ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  ';
     P_AND_SEL := P_AND_SEL|| 'AND SEL.MES||''/''||SEL.ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  ';
 
@@ -2356,121 +2102,6 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                  AND ''03/2020'' =  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-2),''MM/YYYY'')
                  AND G.SOLPER_CLAVE IS NULL';
 
-  /*P_QUERY:= 'SELECT
-            ----TIPO_SELECCION
-             SUM(Q_VACANT),
-             AREA,
-             MES_ANHO,
-             TIPO_SELEC_SOL,
-             SUM(SUM(Q_VACANT)) OVER(PARTITION BY AREA, MES_ANHO ORDER BY MES_ANHO) TOTAL_VAC_AREA,
-             ROUND(SUM(Q_VACANT) /
-                   NVL(SUM(SUM(Q_VACANT))
-                       OVER(PARTITION BY AREA, MES_ANHO ORDER BY MES_ANHO),
-                       1) * 100) POR_SELEC,
-             ORDEN,
-             CASE
-               WHEN TIPO_SELEC_SOL = ''Anticipada'' AND ORDEN = 1 THEN
-                NVL(SUM(Q_VACANT),0)
-               WHEN TIPO_SELEC_SOL = ''Programada'' AND ORDEN = 1 THEN
-                SUM(Q_VACANT)
-               WHEN TIPO_SELEC_SOL = ''Re-Contratacion'' AND ORDEN = 1 THEN
-                SUM(Q_VACANT)
-             END MES1_ant,
-             CASE
-               WHEN TIPO_SELEC_SOL = ''Anticipada'' AND ORDEN = 2 THEN
-                SUM(Q_VACANT)
-               WHEN TIPO_SELEC_SOL = ''Programada'' AND ORDEN = 2 THEN
-                SUM(Q_VACANT)
-               WHEN TIPO_SELEC_SOL = ''Re-Contratacion'' AND ORDEN = 2 THEN
-                SUM(Q_VACANT)
-             END MES2_ant,
-             CASE
-               WHEN TIPO_SELEC_SOL = ''Anticipada'' AND ORDEN = 3 THEN
-                SUM(Q_VACANT)
-               WHEN TIPO_SELEC_SOL = ''Programada'' AND ORDEN = 3 THEN
-                SUM(Q_VACANT)
-               WHEN TIPO_SELEC_SOL = ''Re-Contratacion'' AND ORDEN = 3 THEN
-                SUM(Q_VACANT)
-             END MES3_ant
-
-              FROM (SELECT Q_VACANT,
-                           NRO_SOL,
-                           to_char(v.FECHA_SOL, ''MON/YYYY'') MES_ANHO,
-                           AREA_DESC AREA,
-                           TIPO_SELEC_SOL,
-                           TIPO_CONTRATACION,
-                           CASE
-                             WHEN to_char(v.FECHA_SOL, ''MM/YYYY'') =
-                                  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -2), ''MM/YYYY'') THEN
-                              1
-                             WHEN to_char(v.FECHA_SOL, ''MM/YYYY'') =
-                                  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1), ''MM/YYYY'') THEN
-                              2
-                             WHEN to_char(v.FECHA_SOL, ''MM/YYYY'') =
-                                  TO_CHAR((TO_DATE('''||P_FECHA||''')), ''MM/YYYY'') THEN
-                              3
-                           END ORDEN
-                      FROM CUBO_LONDON_PROCESO_SELEC v
-                     WHERE FECHA_SOL BETWEEN
-                           ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2) AND
-                           TO_DATE('''||P_FECHA||''')
-                           AND TIPO_SELEC_SOL <>''Re-Contratacion''
-                     GROUP BY to_char(v.FECHA_SOL, ''MM/YYYY''),
-                              FECHA_SOL,
-                              NRO_SOL,
-                              Q_VACANT,
-                              AREA_DESC,
-                              TIPO_SELEC_SOL,
-                              TIPO_CONTRATACION
-
-                    UNION ALL
-                    SELECT NVL(G.SOLPER_CANT,1) VACANCIA,
-                           S.PCON_SOL_NRO,
-                           DECODE(G.SOLPER_FECHA_SOL,
-                                  NULL,
-                                  TO_CHAR(ADD_MONTHS(S.PCON_FECHA_INICIO,-1), ''MON/YYYY''),
-                                  TO_CHAR(SOLPER_FECHA_SOL, ''MON/YYYY'')),
-                           X.AREDPP_DESC,
-                           ''Re-Contratacion'',
-                           ''Re-Contratacion'',
-                           CASE
-                             WHEN TO_CHAR(DECODE(G.SOLPER_FECHA_SOL,
-                                  NULL,
-                                   ADD_MONTHS(S.PCON_FECHA_INICIO, -1),
-                                  SOLPER_FECHA_SOL), ''MM/YYYY'') =
-                                  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -2), ''MM/YYYY'') THEN
-                              1
-                             WHEN TO_CHAR( DECODE(G.SOLPER_FECHA_SOL,
-                                  NULL,
-                                   ADD_MONTHS(S.PCON_FECHA_INICIO, -1),
-                                  SOLPER_FECHA_SOL), ''MM/YYYY'') =
-                                  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1), ''MM/YYYY'') THEN
-                              2
-                             WHEN TO_CHAR( DECODE(G.SOLPER_FECHA_SOL,
-                                  NULL,
-                                  ADD_MONTHS(S.PCON_FECHA_INICIO, -1),
-                                  SOLPER_FECHA_SOL), ''MM/YYYY'') =
-                                  TO_CHAR((TO_DATE('''||P_FECHA||''')), ''MM/YYYY'') THEN
-                              3
-                           END ORDEN
-                      FROM PER_CONT_SIN_PROSELC   S,
-                           PER_AREA_DPP           X,
-                           PER_SOLICITUD_PERSONAL G
-                     WHERE S.PCON_AREA = X.AREDPP_CLAVE
-                       AND S.PCON_EMPR = X.AREDPP_EMPR
-                       AND S.PCON_SOL_NRO = G.SOLPER_CLAVE(+)
-                       AND S.PCON_EMPR = G.SOLPER_EMPR(+)
-                       AND S.PCON_EMPR = 1
-                       AND DECODE(G.SOLPER_FECHA_SOL,
-                                  NULL,
-                                  ADD_MONTHS(PCON_FECHA_INICIO,-1),
-                                  SOLPER_FECHA_SOL) BETWEEN
-                           ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2) AND
-                           TO_DATE('''||P_FECHA||''')
-                       AND PCON_EMPR = 1)
-                        GROUP BY AREA, MES_ANHO, TIPO_SELEC_SOL, TIPO_CONTRATACION, ORDEN';
-
-*/
    P_QUERY2:='SELECT
                  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-2),''MM/YYYY''),
                  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-1),''MM/YYYY''),
@@ -4788,206 +4419,6 @@ P_QUERY2 :='SELECT SUM(TIPO_CONTRA_INDEFINIDO), SUM(TIPO_CONTRA_TEMPORAL), SUM(C
  ELSE
    P_AND := P_AND||' AND SEMANA || ''/'' || ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')  ';
  END IF;
-  
-  /* P_QUERY7:= 'SELECT EMPL_LEGAJO,NOMBRE,INGRESO, SALIDA, SUCURSAL, DEPARTAMENTO,
-                          CARGO,TIPO_DESV,FACTOR_DESCV,MOTIVO_DESCV,TIPDESV_DESC,
-                          Motivo,TIPO_CONTRATO,MES, IMPORTE, CONCEPTO, VALOR, EMPL_TIPO_CONT,
-                 SEMANA_ANHO,SEMANA
-    FROM
-                   (SELECT EMPL_LEGAJO,
-                         EMPL_NOMBRE||'' ''||EMPL_APE NOMBRE,
-                         EMPL_FEC_INGRESO INGRESO,
-                         EMPL_FEC_SALIDA SALIDA,
-                         EMPL_SUCURSAL SUCURSAL,
-                         EMPL_DEPARTAMENTO DEPARTAMENTO,
-                         EMPL_CARGO CARGO,
-                         DECODE(empl_tipo_desv,''DJ'',''Despido Justificado'',''DI'',''Despido Injustificado'',''RV'',''Renuncia Voluntaria'',''TC'',''Termino de Contrato'',''JU'',''Judicial'')TIPO_DESV,
-                         (SELECT FAC.FACDES_DESC FROM PER_FACTOR_DESVINCULACION FAC WHERE FAC.FACDES_EMPR = 1 AND FAC.FACDES_CLAVE = DESV.TIPDESV_FACTOR)FACTOR_DESCV,
-                         (SELECT MOT.MOTDESV_DESC FROM PER_MOTIVO_DESVINCULACION MOT WHERE MOT.MOTDESV_EMPR = 1 AND MOT.MOTDESV_CLAVE = DESV.TIPDESV_MOTIVO)MOTIVO_DESCV,
-                         DESV.TIPDESV_DESC,
-                         EM.EMPL_MOTIVO_SALIDA Motivo,
-                         DECODE(EM.EMPL_TIPO_CONT,''I'',''INDEFINIDO'',''T'',''TEMPORAL'') TIPO_CONTRATO,
-                         TO_CHAR(EMPSOL_FECHA_VERIF, ''MM/YYYY'') MES,
-                         TO_CHAR(EMPSOL_FECHA_VERIF, ''IW/YYYY'') SEMANA_ANHO,
-                         TO_NUMBER(TO_CHAR(EMPSOL_FECHA_VERIF, ''IW'')) SEMANA,
-                          CASE WHEN TO_CHAR(PDOC_FEC_GRAB, ''MM/YYYY'') =  TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'') THEN
-                              PDDET_IMP
-                              END IMPORTE,
-                         CASE WHEN TO_CHAR(PDOC_FEC_GRAB, ''MM/YYYY'') =  TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'') THEN
-                         PDDET_CLAVE_CONCEPTO
-                        END CONCEPTO,
-                         3 VALOR,
-                         EMPL_TIPO_CONT,
-                         EMPSOL_FECHA_VERIF
-                    FROM PER_EMPLEADO_HIST EM,
-                         PER_TIPO_DESVINCULACION DESV,
-                         PER_DOCUMENTO A,
-                         PER_DOCUMENTO_DET B,
-                         PER_EMPL_SOL_CAMBIO_ESTADO X
-                   WHERE EMPL_SITUACION = ''I''
-                     AND EMPL_EMPRESA = 1
-                     AND EMPL_EMPRESA =  DESV.TIPDESV_EMPR (+)
-                     AND EMPL_MOT_DESV = DESV.TIPDESV_MOTIVO (+)
-                     AND EMPL_FAC_DESV = DESV.TIPDESV_FACTOR (+)
-                     AND EMPL_TIPO_DESV = DESV.TIPDESV_TIP_DESV (+)
-                     AND EMPL_LEGAJO =  A.PDOC_EMPLEADO(+)
-                     AND EMPL_EMPRESA = PDOC_EMPR(+)
-                     AND PDOC_CLAVE = PDDET_CLAVE_DOC(+)
-                     AND PDOC_EMPR = PDDET_EMPR(+)
-                     AND B.PDDET_CLAVE_CONCEPTO(+) IN (25, 23,27)
-
-                     AND EM.EMPL_LEGAJO = X.EMPSOL_EMPL_LEG
-                     AND EM.EMPL_EMPRESA = X.EMPSOL_EMPR
-                     AND X.EMPSOL_ESTADO_EMP_SOL = ''I''
-                     AND X.EMPSOL_ESTADO_VERIF = ''C''
-
-                     AND TO_CHAR(X.EMPSOL_FECHA_VERIF, ''MM/YYYY'') = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')
-                     AND TO_CHAR(PDOC_FEC_GRAB, ''MM/YYYY'') = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')
-                     AND SEMANA|| ''/'' || ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')
-                     UNION ALL
-                    /* SELECT EMPL_LEGAJO,
-                         EMPL_NOMBRE||'' ''||EMPL_APE,
-                         EMPL_FEC_INGRESO,
-                         EMPL_FEC_SALIDA,
-                         EMPL_SUCURSAL,
-                         EMPL_DEPARTAMENTO,
-                         EMPL_CARGO CARGO,
-                         DECODE(empl_tipo_desv,''DJ'',''Despido Justificado'',''DI'',''Despido Injustificado'',''RV'',''Renuncia Voluntaria'',''TC'',''Termino de Contrato'',''JU'',''Judicial'')TIPO_DESV,
-                         (SELECT FAC.FACDES_DESC FROM PER_FACTOR_DESVINCULACION FAC WHERE FAC.FACDES_EMPR = 1 AND FAC.FACDES_CLAVE = DESV.TIPDESV_FACTOR)FACTOR_DESCV,
-                         (SELECT MOT.MOTDESV_DESC FROM PER_MOTIVO_DESVINCULACION MOT WHERE MOT.MOTDESV_EMPR = 1 AND MOT.MOTDESV_CLAVE = DESV.TIPDESV_MOTIVO)MOTIVO_DESCV,
-                         DESV.TIPDESV_DESC,
-                         EM.EMPL_MOTIVO_SALIDA Motivo,
-                         DECODE(EM.EMPL_TIPO_CONT,''I'',''INDEFINIDO'',''T'',''TEMPORAL'') TIPO_CONTRATO,
-                         TO_CHAR(EMPL_FEC_SALIDA, ''MM/YYYY'') HH,
-                         TO_CHAR(EMPL_FEC_SALIDA, ''IW/YYYY'') HHS,
-                         TO_NUMBER(TO_CHAR(EMPL_FEC_SALIDA, ''IW'')) HHSA,
-                         CASE WHEN TO_CHAR(PDOC_FEC, ''MM/YYYY'') =  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1),''MM/YYYY'') THEN
-                              PDDET_IMP
-                              END IMPORTE,
-                         CASE WHEN TO_CHAR(PDOC_FEC, ''MM/YYYY'') =  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1),''MM/YYYY'') THEN
-                         PDDET_CLAVE_CONCEPTO
-                        END CONCEPTO,
-                         2 VALOR,
-                         EMPL_TIPO_CONT,
-                         NULL
-                    FROM PER_EMPLEADO_HIST EM,
-                         PER_TIPO_DESVINCULACION DESV,
-                         PER_DOCUMENTO A,
-                         PER_DOCUMENTO_DET B
-                   WHERE EMPL_SITUACION = ''I''
-                     AND EMPL_EMPRESA = 1
-                     AND EMPL_EMPRESA =  DESV.TIPDESV_EMPR (+)
-                     AND EMPL_MOT_DESV = DESV.TIPDESV_MOTIVO (+)
-                     AND EMPL_FAC_DESV = DESV.TIPDESV_FACTOR (+)
-                     AND EMPL_TIPO_DESV = DESV.TIPDESV_TIP_DESV (+)
-                     AND EMPL_LEGAJO =  A.PDOC_EMPLEADO(+)
-                     AND EMPL_EMPRESA = PDOC_EMPR(+)
-                     AND PDOC_CLAVE = PDDET_CLAVE_DOC(+)
-                     AND PDOC_EMPR = PDDET_EMPR(+)
-                     AND B.PDDET_CLAVE_CONCEPTO(+) IN (25, 23,27)
-                     AND TO_CHAR(EMPL_FEC_SALIDA, ''MM/YYYY'') =  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1),''MM/YYYY'')
-                     AND TO_CHAR(PDOC_FEC, ''MM/YYYY'') =  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1),''MM/YYYY'')
-                     AND MES|| ''/'' || ANHO =  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1),''MM/YYYY'')*/
-
-              /*       SELECT EMPL_LEGAJO,
-                         EMPL_NOMBRE||'' ''||EMPL_APE NOMBRE,
-                         EMPL_FEC_INGRESO INGRESO,
-                         EMPL_FEC_SALIDA SALIDA,
-                         EMPL_SUCURSAL SUCURSAL,
-                         EMPL_DEPARTAMENTO DEPARTAMENTO,
-                         EMPL_CARGO CARGO,
-                         DECODE(empl_tipo_desv,''DJ'',''Despido Justificado'',''DI'',''Despido Injustificado'',''RV'',''Renuncia Voluntaria'',''TC'',''Termino de Contrato'',''JU'',''Judicial'')TIPO_DESV,
-                         (SELECT FAC.FACDES_DESC FROM PER_FACTOR_DESVINCULACION FAC WHERE FAC.FACDES_EMPR = 1 AND FAC.FACDES_CLAVE = DESV.TIPDESV_FACTOR)FACTOR_DESCV,
-                         (SELECT MOT.MOTDESV_DESC FROM PER_MOTIVO_DESVINCULACION MOT WHERE MOT.MOTDESV_EMPR = 1 AND MOT.MOTDESV_CLAVE = DESV.TIPDESV_MOTIVO)MOTIVO_DESCV,
-                         DESV.TIPDESV_DESC,
-                         EM.EMPL_MOTIVO_SALIDA Motivo,
-                         DECODE(EM.EMPL_TIPO_CONT,''I'',''INDEFINIDO'',''T'',''TEMPORAL'') TIPO_CONTRATO,
-                         TO_CHAR(EMPSOL_FECHA_VERIF, ''MM/YYYY'') MES,
-                         TO_CHAR(EMPSOL_FECHA_VERIF, ''IW/YYYY'') SEMANA_ANHO,
-                         TO_NUMBER(TO_CHAR(EMPSOL_FECHA_VERIF, ''IW'')) SEMANA,
-                          CASE WHEN TO_CHAR(PDOC_FEC_GRAB, ''MM/YYYY'') =   TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1),''MM/YYYY'') THEN
-                              PDDET_IMP
-                              END IMPORTE,
-                         CASE WHEN TO_CHAR(PDOC_FEC_GRAB, ''MM/YYYY'') =   TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1),''MM/YYYY'') THEN
-                         PDDET_CLAVE_CONCEPTO
-                        END CONCEPTO,
-                         2 VALOR,
-                         EMPL_TIPO_CONT,
-                         EMPSOL_FECHA_VERIF
-                    FROM PER_EMPLEADO_HIST EM,
-                         PER_TIPO_DESVINCULACION DESV,
-                         PER_DOCUMENTO A,
-                         PER_DOCUMENTO_DET B,
-                         PER_EMPL_SOL_CAMBIO_ESTADO X
-                   WHERE EMPL_SITUACION = ''I''
-                     AND EMPL_EMPRESA = 1
-                     AND EMPL_EMPRESA =  DESV.TIPDESV_EMPR (+)
-                     AND EMPL_MOT_DESV = DESV.TIPDESV_MOTIVO (+)
-                     AND EMPL_FAC_DESV = DESV.TIPDESV_FACTOR (+)
-                     AND EMPL_TIPO_DESV = DESV.TIPDESV_TIP_DESV (+)
-                     AND EMPL_LEGAJO =  A.PDOC_EMPLEADO(+)
-                     AND EMPL_EMPRESA = PDOC_EMPR(+)
-                     AND PDOC_CLAVE = PDDET_CLAVE_DOC(+)
-                     AND PDOC_EMPR = PDDET_EMPR(+)
-                     AND B.PDDET_CLAVE_CONCEPTO(+) IN (25, 23,27)
-
-                     AND EM.EMPL_LEGAJO = X.EMPSOL_EMPL_LEG
-                     AND EM.EMPL_EMPRESA = X.EMPSOL_EMPR
-                     AND X.EMPSOL_ESTADO_EMP_SOL = ''I''
-                     AND X.EMPSOL_ESTADO_VERIF = ''C''
-
-                     AND TO_CHAR(X.EMPSOL_FECHA_VERIF, ''MM/YYYY'') = TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1),''MM/YYYY'')
-                     AND TO_CHAR(PDOC_FEC_GRAB, ''MM/YYYY'') = TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1),''MM/YYYY'')
-                     AND MES|| ''/'' || ANHO = TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1),''MM/YYYY'')
-                     UNION ALL
-                     SELECT EMPL_LEGAJO,
-                         EMPL_NOMBRE||'' ''||EMPL_APE,
-                         EMPL_FEC_INGRESO,
-                         EMPL_FEC_SALIDA,
-                         EMPL_SUCURSAL,
-                         EMPL_DEPARTAMENTO,
-                         EMPL_CARGO CARGO,
-                         DECODE(empl_tipo_desv,''DJ'',''Despido Justificado'',''DI'',''Despido Injustificado'',''RV'',''Renuncia Voluntaria'',''TC'',''Termino de Contrato'',''JU'',''Judicial'')TIPO_DESV,
-                         (SELECT FAC.FACDES_DESC FROM PER_FACTOR_DESVINCULACION FAC WHERE FAC.FACDES_EMPR = 1 AND FAC.FACDES_CLAVE = DESV.TIPDESV_FACTOR)FACTOR_DESCV,
-                         (SELECT MOT.MOTDESV_DESC FROM PER_MOTIVO_DESVINCULACION MOT WHERE MOT.MOTDESV_EMPR = 1 AND MOT.MOTDESV_CLAVE = DESV.TIPDESV_MOTIVO)MOTIVO_DESCV,
-                         DESV.TIPDESV_DESC,
-                         EM.EMPL_MOTIVO_SALIDA Motivo,
-                         DECODE(EM.EMPL_TIPO_CONT,''I'',''INDEFINIDO'',''T'',''TEMPORAL'') TIPO_CONTRATO,
-                         TO_CHAR(EMPL_FEC_SALIDA, ''MM/YYYY'') HH,
-                         TO_CHAR(EMPL_FEC_SALIDA, ''IW/YYYY'') HHS,
-                         TO_NUMBER(TO_CHAR(EMPL_FEC_SALIDA, ''IW'')) HHSA,
-                          CASE WHEN TO_CHAR(PDOC_FEC, ''MM/YYYY'') =  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -2),''MM/YYYY'') THEN
-                              PDDET_IMP
-                              END IMPORTE,
-                         CASE WHEN TO_CHAR(PDOC_FEC, ''MM/YYYY'') =  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -2),''MM/YYYY'') THEN
-                         PDDET_CLAVE_CONCEPTO
-                        END CONCEPTO,
-                         1 VALOR,
-                         EMPL_TIPO_CONT,
-                         NULL
-                    FROM PER_EMPLEADO_HIST EM,
-                         PER_TIPO_DESVINCULACION DESV,
-                         PER_DOCUMENTO A,
-                         PER_DOCUMENTO_DET B
-                   WHERE EMPL_SITUACION = ''I''
-                     AND EMPL_EMPRESA = 1
-                     AND EMPL_EMPRESA =  DESV.TIPDESV_EMPR (+)
-                     AND EMPL_MOT_DESV = DESV.TIPDESV_MOTIVO (+)
-                     AND EMPL_FAC_DESV = DESV.TIPDESV_FACTOR (+)
-                     AND EMPL_TIPO_DESV = DESV.TIPDESV_TIP_DESV (+)
-                     AND EMPL_LEGAJO =  A.PDOC_EMPLEADO(+)
-                     AND EMPL_EMPRESA = PDOC_EMPR(+)
-                     AND PDOC_CLAVE = PDDET_CLAVE_DOC(+)
-                     AND PDOC_EMPR = PDDET_EMPR(+)
-                     AND B.PDDET_CLAVE_CONCEPTO(+) IN (25, 23,27)
-                     AND TO_CHAR(EMPL_FEC_SALIDA, ''MM/YYYY'') =  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -2),''MM/YYYY'')
-                     AND TO_CHAR(PDOC_FEC, ''MM/YYYY'') =  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -2),''MM/YYYY'')
-                     AND MES|| ''/'' || ANHO = TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -2),''MM/YYYY''))
-                     GROUP BY EMPL_LEGAJO,NOMBRE,INGRESO, SALIDA, SUCURSAL, DEPARTAMENTO,
-                          CARGO,TIPO_DESV,FACTOR_DESCV,MOTIVO_DESCV,TIPDESV_DESC,
-                          Motivo,TIPO_CONTRATO,MES, IMPORTE, CONCEPTO, VALOR, EMPL_TIPO_CONT,
-                 SEMANA_ANHO,SEMANA';*/
-
 
    P_QUERY7:= 'SELECT EMPL_LEGAJO,NOMBRE,INGRESO, SALIDA, SUCURSAL, DEPARTAMENTO,
                           CARGO,TIPO_DESV,FACTOR_DESCV,MOTIVO_DESCV,TIPDESV_DESC,
@@ -5206,46 +4637,6 @@ P_QUERY2 :='SELECT SUM(TIPO_CONTRA_INDEFINIDO), SUM(TIPO_CONTRA_TEMPORAL), SUM(C
                           Motivo,TIPO_CONTRATO,MES, IMPORTE, CONCEPTO, VALOR, EMPL_TIPO_CONT,
                  SEMANA_ANHO,SEMANA';
 
-
-
-
-           /*P_QUERY:= 'SELECT
-                          CASE
-                             WHEN TO_CHAR(B.EMPL_FEC_SALIDA,''MM/YYYY'') = TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -2),''MM/YYYY'') THEN
-                               1
-                             END CANT1,
-                              TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -2),''MM/YYYY'') MES1,
-                             CASE
-                             WHEN TO_CHAR(B.EMPL_FEC_SALIDA,''MM/YYYY'') = TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1),''MM/YYYY'') THEN
-                               1
-                             END CANT2,
-                             TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1),''MM/YYYY'') MES2,
-                             CASE
-                             WHEN TO_CHAR(B.EMPL_FEC_SALIDA,''MM/YYYY'') = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'') THEN
-                               1
-                             END CANT3,
-                             TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  MES3,
-                             TO_CHAR(B.EMPL_FEC_SALIDA,''MM/YYYY'') MES_ANHO,
-                           B.TIPO_DESV,
-                            COUNT (B.TIPO_DESV) OVER(PARTITION BY TO_CHAR(B.EMPL_FEC_SALIDA,''MM/YYYY''),(B.TIPO_DESV)) CANT_MOTV,
-                            EMPL_TIPO_CONT,
-                            TO_NUMBER(TO_CHAR(B.EMPL_FEC_SALIDA,''IW'')) SEM,
-                            COUNT (B.TIPO_DESV) OVER(PARTITION BY TO_CHAR(B.EMPL_FEC_SALIDA,''IW''),(B.TIPO_DESV)) SEM_MOTV
-                      FROM CUBO_EMPLEADO_V_DESV B, PER_EMPLEADO A
-                      WHERE B.EMPL_LEGAJO = A.EMPL_LEGAJO
-                      AND B.EMPL_EMPRESA = A.EMPL_EMPRESA
-                      AND B.EMPL_FEC_SALIDA BETWEEN ''01/''||to_char(ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2), ''MM/YYYY'')  AND  TO_DATE('''||P_FECHA||''')
-                      AND B.EMPL_EMPRESA = 1
-                      UNION ALL
-                      SELECT
-                      count(*), TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -2),''MM/YYYY'') MES1,
-                       COUNT(*),TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1),''MM/YYYY'') MES2,
-                       COUNT(*), TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'') MES3, NULL, TIPO_DESV, NULL,''I'', NULL,NULL
-                        FROM CUBO_EMPLEADO_V_DESV
-                       WHERE EMPL_EMPRESA = 1
-                       AND TIPO_DESV = ''Judicial''
-                       GROUP BY TIPO_DESV';*/
-
            IF P_EMPRESA = 1 THEN
               P_QUERY:=' SELECT
                         CASE WHEN C017 = 1 THEN  1 END CANT1,
@@ -5305,44 +4696,6 @@ P_QUERY2 :='SELECT SUM(TIPO_CONTRA_INDEFINIDO), SUM(TIPO_CONTRA_TEMPORAL), SUM(C
                        AND TIPO_DESV = ''Judicial''
                        GROUP BY TIPO_DESV';
              END IF;
-
-
-       /*  P_QUERY1 := 'SELECT CASE
-                             WHEN TO_CHAR(PDOC_FEC, ''MM/YYYY'') =
-                                  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -2), ''MM/YYYY'') THEN
-                              SUM(B.PDDET_IMP)
-                             ELSE
-                              0
-                           END MONTO_MES1,
-                           TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -2), ''MM/YYYY'') MES1,
-                           CASE
-                             WHEN TO_CHAR(PDOC_FEC, ''MM/YYYY'') =
-                                  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1), ''MM/YYYY'') THEN
-                              SUM(B.PDDET_IMP)
-                             ELSE
-                              0
-                           END MONTO_MES2,
-                           TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1), ''MM/YYYY'') MES2,
-                           CASE
-                             WHEN TO_CHAR(PDOC_FEC, ''MM/YYYY'') =
-                                  TO_CHAR(TO_DATE('''||P_FECHA||'''), ''MM/YYYY'') THEN
-                              SUM(B.PDDET_IMP)
-                             ELSE
-                              0
-                           END MONTO_MES3,
-                           TO_CHAR(TO_DATE('''||P_FECHA||'''), ''MM/YYYY'') MES3
-                      FROM PER_DOCUMENTO A, PER_DOCUMENTO_DET B
-                     WHERE pddet_clave_doc = pdoc_clave
-                       and pddet_empr = pdoc_empr
-                       AND B.PDDET_CLAVE_CONCEPTO IN (25, 23) AND
-                       PDOC_FEC BETWEEN ''01/''||to_char(ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2), ''MM/YYYY'')  AND
-                       TO_DATE('''||P_FECHA||''')
-                       AND pddet_empr = 1
-                       AND PDOC_EMPLEADO IN (SELECT C001
-                                             WHERE collection_name = ''DESVINC_SALARIO''
-                                               and c008 = ''Despido Injustificado''
-                                               AND  C018 <>''T'')
-                     GROUP BY TO_CHAR(PDOC_FEC, ''MM/YYYY'')';*/
 
  delete x
   where otro = 'DESVINCULACINES';
@@ -5454,48 +4807,6 @@ P_QUERY1:='SELECT
                            and C018 <>''T''
                          GROUP BY C017,C015,C001';
 
-
-
-          /*'SELECT CASE
-                             WHEN TO_CHAR(PDOC_FEC, ''MM/YYYY'') =
-                                  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -2), ''MM/YYYY'') THEN
-                              SUM(B.PDDET_IMP)
-                             ELSE
-                              0
-                           END MONTO_MES1,
-                           TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -2), ''MM/YYYY'') MES1,
-                           CASE
-                             WHEN TO_CHAR(PDOC_FEC, ''MM/YYYY'') =
-                                  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1), ''MM/YYYY'') THEN
-                              SUM(B.PDDET_IMP)
-                             ELSE
-                              0
-                           END MONTO_MES2,
-                           TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1), ''MM/YYYY'') MES2,
-                           CASE
-                             WHEN TO_CHAR(PDOC_FEC, ''MM/YYYY'') =
-                                  TO_CHAR(TO_DATE('''||P_FECHA||'''), ''MM/YYYY'') THEN
-                              SUM(B.PDDET_IMP)
-                             ELSE
-                              0
-                           END MONTO_MES3,
-                           TO_CHAR(TO_DATE('''||P_FECHA||'''), ''MM/YYYY'') MES3
-                      FROM PER_DOCUMENTO A, PER_DOCUMENTO_DET B
-                     WHERE pddet_clave_doc = pdoc_clave
-                       and pddet_empr = pdoc_empr
-                       AND B.PDDET_CLAVE_CONCEPTO IN (27)
-                       AND   pddet_empr = 1
-                       AND PDOC_FEC BETWEEN ''01/''||to_char(ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2), ''MM/YYYY'') AND
-                       TO_DATE('''||P_FECHA||''')
-                      AND
-                       PDOC_EMPLEADO IN
-                       (SELECT EMPL_LEGAJO
-                          FROM CUBO_EMPLEADO_V_DESV
-                         WHERE EMPL_FEC_SALIDA BETWEEN
-                               ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2) AND
-                               TO_DATE('''||P_FECHA||''')
-                           AND EMPL_EMPRESA = 1)
-             GROUP BY TO_CHAR(PDOC_FEC, ''MM/YYYY'')';*/
 
          IF APEX_COLLECTION.COLLECTION_EXISTS(P_COLLECTION_NAME => 'DESVINC_SALARIO') THEN
              APEX_COLLECTION.DELETE_COLLECTION(P_COLLECTION_NAME => 'DESVINC_SALARIO');

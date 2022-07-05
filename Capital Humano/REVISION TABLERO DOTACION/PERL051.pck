@@ -95,6 +95,9 @@ create or replace package PERL051 is
 FUNCTION PP_ESTADO_VAC  (P_EMPRESA IN NUMBER,
                          P_NRO      IN NUMBER )RETURN VARCHAR2;                                 
 PROCEDURE PP_ROTACION_CARGO;
+
+procedure add_hist_query(in_nombre varchar2, in_query clob);
+
 end PERL051;
 /
 create or replace package body PERL051 is
@@ -722,12 +725,11 @@ P_QUERY2 := 'SELECT DOT_DEPARTAMENTO, MAX(PB), MAX(MES1), MAX(MES2)
     P_AND := P_AND||'and semana is null AND MES || ''/'' || ANHO = '''||V_MES3||'''';
     P_AND_SOL := P_AND_SOL|| 'and SOL.semana is null AND SOL.MES||''/''||SOL.ANHO = '''||V_MES3||'''';
     P_AND_SEL := P_AND_SEL|| 'and SEL.semana is null AND SEL.MES||''/''||SEL.ANHO = '''||V_MES3||'''';
-
  else
     p_and_transagro := p_and_transagro||' SEMANA || ''/'' || ANHO = '''||V_SEMANA||'''';
-    P_AND := P_AND||' AND SEMANA || ''/'' || ANHO = '''||V_SEMANA||'''';
-    P_AND_SOL := P_AND_SOL|| 'AND SOL.SEMANA||''/''||SOL.ANHO ='''||V_SEMANA||'''';
-    P_AND_SEL := P_AND_SEL|| 'AND SEL.SEMANA||''/''||SEL.ANHO ='''||V_SEMANA||'''';
+    P_AND := P_AND||'AND MES IS NULL AND SEMANA || ''/'' || ANHO = '''||V_SEMANA||'''';
+    P_AND_SOL := P_AND_SOL|| 'AND SOL.MES IS NULL AND SOL.SEMANA||''/''||SOL.ANHO ='''||V_SEMANA||'''';
+    P_AND_SEL := P_AND_SEL|| 'AND SEL.MES IS NULL AND SEL.SEMANA||''/''||SEL.ANHO ='''||V_SEMANA||'''';
  end if;
  
 IF P_EMPRESA = 1 THEN
@@ -739,12 +741,14 @@ IF P_EMPRESA = 1 THEN
                   AND T.SOLPER_ESTADO_APROB = ''C''
                    and SOLPER_ESTADO_FINAL <> ''A''
                   and  SOLPER_EMPR ='||P_EMPRESA||'
+                  AND T.SEMANA IS NULL
                    AND T.MES || ''/'' || ANHO = '''||V_MES1||''') A ,
                    ( SELECT SUM(SOLPER_CANT) MES2
                              FROM PER_SOLICITUD_PERSONAL_HIST T
                             WHERE TO_CHAR(SOLPER_FECHA_APROB, ''MM/YYYY'') ='''||V_MES2||'''
                             AND T.SOLPER_ESTADO_APROB = ''C''
                              and SOLPER_ESTADO_FINAL <> ''A''
+                             AND T.MES IS NULL
                             and  SOLPER_EMPR ='||P_EMPRESA||'
                               AND T.MES || ''/'' || ANHO ='''||V_MES2||''')B,
                    (SELECT SUM(SOLPER_CANT) MES3
@@ -9879,9 +9883,11 @@ P_QUERY1 := 'SELECT
    V_SEMANA          VARCHAR2(60);
    V_FECHA1          DATE;
    V_FECHA2          DATE;
-
+   
+   l_and varchar2(2000);
+   
  BEGIN
-
+  
   SELECT  TO_CHAR(ADD_MONTHS(TO_DATE(P_FECHA),-2),'MM/YYYY'),
          TO_CHAR(ADD_MONTHS(TO_DATE(P_FECHA),-1),'MM/YYYY'),
          TO_CHAR(TO_DATE(P_FECHA),'MM/YYYY'),
@@ -10527,21 +10533,12 @@ P_QUERY1 := 'SELECT
 
 
 
-
     IF APEX_COLLECTION.COLLECTION_EXISTS(P_COLLECTION_NAME => 'VAC_DEPARTAMENTO2') THEN
        APEX_COLLECTION.DELETE_COLLECTION(P_COLLECTION_NAME => 'VAC_DEPARTAMENTO2');
     END IF;
+    
        APEX_COLLECTION.CREATE_COLLECTION_FROM_QUERY_B(P_COLLECTION_NAME => 'VAC_DEPARTAMENTO2',
                                                       P_QUERY           => P_QUERY12);
-
-
-
-
-  /*
- insert into x
-   (campo1,  otro)
- values
-   (P_QUERY13, 'IND_ROTACION');*/
 
  END   PP_VAC_SEL_CONT;
 
@@ -12182,5 +12179,12 @@ P_QUERY13 :='SELECT      EMPL_CARGO,
 
 END PP_ROTACION_CARGO;
 
+
+procedure add_hist_query(in_nombre varchar2, in_query clob) as
+begin
+   delete from x where otro = in_nombre;
+   insert into x (campo1, otro) values (in_query, in_nombre);
+end add_hist_query;
+  
 end PERL051;
 /
