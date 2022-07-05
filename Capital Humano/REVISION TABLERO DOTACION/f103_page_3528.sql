@@ -28,7 +28,7 @@ prompt APPLICATION 103 - RECURSOS HUMANOS
 -- Application Export:
 --   Application:     103
 --   Name:            RECURSOS HUMANOS
---   Date and Time:   11:56 Monday June 27, 2022
+--   Date and Time:   11:13 Tuesday July 5, 2022
 --   Exported By:     PABLOC
 --   Flashback:       0
 --   Export Type:     Page Export
@@ -80,7 +80,7 @@ wwv_flow_api.create_page(
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'PABLOC'
-,p_last_upd_yyyymmddhh24miss=>'20220627115608'
+,p_last_upd_yyyymmddhh24miss=>'20220705094910'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(10982579091552464459)
@@ -715,27 +715,27 @@ wwv_flow_api.create_page_plug(
 '                            WHEN  EMPL_AREA_ORGANI =8  or  empl_cargo = 1 THEN',
 '                                 ''CAPITAL HUMANO''   ',
 '                            WHEN (DPTO_CODIGO IN(14,22,2) OR DPTO_SUC NOT IN (1,2)) THEN',
-'                                ''COMERCIAL'' ',
+'                                ''COMERCIAL''',
 '                            ELSE',
 '                               ''INDUSTRIAL''',
 '                            END',
 '      else',
 '    dpto_desc',
 '    end     DEPARTAMENTO,',
-'                            CASE',
-'                                       WHEN EMPL_SITUACION = ''A'' AND',
-'                                            EMPL_FEC_INGRESO <= :P3528_DET_DOT_FECHA THEN',
-'                                        1',
-'                                       ELSE',
-'                                        0',
-'                                     END +CASE',
-'                                                  WHEN EMPL_SITUACION = ''I'' AND',
-'                                                       EMPL_FEC_INGRESO <= :P3528_DET_DOT_FECHA AND',
-'                                                       EMPL_FEC_SALIDA > :P3528_DET_DOT_FECHA THEN',
-'                                                   1',
-'                                                  ELSE',
-'                                                   0',
-'                                                END VALOR,',
+'(CASE',
+'WHEN EMPL_SITUACION = ''A'' AND',
+'    EMPL_FEC_INGRESO <= :P3528_DET_DOT_FECHA THEN',
+'1',
+'ELSE',
+'0',
+'END) + (CASE',
+'          WHEN EMPL_SITUACION = ''I'' AND',
+'               EMPL_FEC_INGRESO <= :P3528_DET_DOT_FECHA AND',
+'               EMPL_FEC_SALIDA > :P3528_DET_DOT_FECHA THEN',
+'           1',
+'          ELSE',
+'           0',
+'        END) VALOR,',
 '                          ',
 '                                      EMPL_FEC_INGRESO INGRESO,',
 '                                      EMPL_FEC_SALIDA SALIDA,',
@@ -758,10 +758,17 @@ wwv_flow_api.create_page_plug(
 '                     AND EMPL_CODIGO_PROV <> 0',
 '                     AND EMPL_TIPO_CONT <> ''T''',
 '                     AND EMPL_FORMA_PAGO <> 0',
-'                     AND NVL(E.MES,SEMANA)||''/''||ANHO = :P3528_MES_ANHO_S',
+'                     --AND NVL(E.MES,SEMANA)||''/''||ANHO = :P3528_MES_ANHO_S',
+'                        and ',
+'                        case when to_date(:P3528_FECHA_HASTA, ''dd/mm/yyyy'') = last_day(to_date(:P3528_FECHA_HASTA, ''dd/mm/yyyy''))',
+'                        or :P3528_OPC_DOTA in (1,2)',
+'                        then',
+'                          E.MES',
+'                         else e.semana',
+'                        end||''/''||ANHO = :P3528_MES_ANHO_S',
 '                     AND EMPL_EMPRESA = 1',
 '      AND EMPL_EMPRESA = :p_empresa',
-'UNION ALL',
+'UNION',
 'SELECT    ''DOTACION TEMPORAL''   DEPARTAMENTO,',
 '                            CASE',
 '                                       WHEN EMPL_SITUACION = ''A'' AND',
@@ -792,11 +799,13 @@ wwv_flow_api.create_page_plug(
 '                                        FROM PER_EMPLEADO_DEPTO T',
 '                                        WHERE T.PEREMPDEP_EMPL = EMPL_LEGAJO',
 '                                        AND T.PEREMPDEP_EMPR = 1',
-'                                        AND T.PEREMPDEP_DEPTO <> DPTO_CODIGO )) DEPARTAMENTO_ANTERIOR',
-'                    FROM PER_EMPLEADO_HIST E, GEN_DEPARTAMENTO DPTO',
+'                                        AND T.PEREMPDEP_DEPTO <> DPTO_CODIGO )',
+'                                     ) DEPARTAMENTO_ANTERIOR',
+'                    FROM PER_EMPLEADO_HIST E, ',
+'                         GEN_DEPARTAMENTO  DPTO',
 '                   WHERE E.EMPL_DEPARTAMENTO = DPTO.DPTO_CODIGO',
-'                     AND E.EMPL_EMPRESA = DPTO.DPTO_EMPR',
-'                     AND EMPL_CODIGO_PROV <> 0',
+'                     AND E.EMPL_EMPRESA      = DPTO.DPTO_EMPR',
+'                     AND EMPL_CODIGO_PROV    <> 0',
 '                     AND EMPL_TIPO_CONT = ''T''',
 '                     AND EMPL_FORMA_PAGO <> 0',
 '                     --AND NVL(E.MES,SEMANA)||''/''||ANHO = :P3528_MES_ANHO_S',
@@ -808,12 +817,14 @@ wwv_flow_api.create_page_plug(
 '                         else e.semana',
 '                        end||''/''||ANHO = :P3528_MES_ANHO_S',
 '                     AND EMPL_EMPRESA = 1',
-'  AND EMPL_EMPRESA = :p_empresa)',
-'          WHERE DEPARTAMENTO =:P3528_DOT_MES_DEP',
-'          AND VALOR = 1',
+'  AND EMPL_EMPRESA = :p_empresa',
+')',
+'WHERE DEPARTAMENTO = :P3528_DOT_MES_DEP',
+'AND VALOR = 1',
+'',
 'UNION ALL',
 '',
-'SELECT DEPARTAMENTO,LEGAJO, NOMBRE, SITUACION, INGRESO, SALIDA , DEPARTAMENTO_PERM DEP_PERTENECIENTE,DEPARTAMENTO_ANTERIOR',
+'SELECT DEPARTAMENTO,LEGAJO, NOMBRE, SITUACION, INGRESO, SALIDA , DEPARTAMENTO_PERM, DEPARTAMENTO_ANTERIOR',
 'FROM(',
 'SELECT  CASE WHEN E.EMPL_AREA_ORGANI IN (4) THEN',
 '                             ''ADMINISTRACION''',
@@ -862,12 +873,18 @@ wwv_flow_api.create_page_plug(
 '                   WHERE E.EMPL_DEPARTAMENTO = DPTO.DPTO_CODIGO',
 '                     AND E.EMPL_EMPRESA = DPTO.DPTO_EMPR',
 '                     AND EMPL_CODIGO_PROV <> 0',
-'                 --   AND EMPL_TIPO_CONT <> ''T''',
 '                     AND EMPL_FORMA_PAGO <> 0',
-'                     AND NVL(E.MES,SEMANA)||''/''||ANHO = :P3528_MES_ANHO_S',
+'                     --AND NVL(E.MES,SEMANA)||''/''||ANHO = :P3528_MES_ANHO_S',
+'                        and ',
+'                        case when to_date(:P3528_FECHA_HASTA, ''dd/mm/yyyy'') = last_day(to_date(:P3528_FECHA_HASTA, ''dd/mm/yyyy''))',
+'                        or :P3528_OPC_DOTA in (1,2)',
+'                        then',
+'                          E.MES',
+'                         else e.semana',
+'                        end||''/''||ANHO = :P3528_MES_ANHO_S',
 '                     AND EMPL_EMPRESA = 2',
 '      AND EMPL_EMPRESA = :p_empresa',
-'UNION ALL',
+'UNION',
 'SELECT  ''DOTACION TEMPORAL'' DEPARTAMENTO,',
 '                            CASE',
 '                                       WHEN EMPL_SITUACION = ''A'' AND',
@@ -916,8 +933,8 @@ wwv_flow_api.create_page_plug(
 '                     AND EMPL_EMPRESA = 2',
 '  AND EMPL_EMPRESA = :p_empresa',
 ')',
-'          WHERE DEPARTAMENTO = :P3528_DOT_MES_DEP',
-'          AND VALOR = 1',
+'WHERE DEPARTAMENTO = CASE WHEN :P3528_DOT_MES_DEP = ''GERENCIA DE TI'' THEN ''ADMINISTRACION'' ELSE :P3528_DOT_MES_DEP END',
+'AND VALOR = 1',
 ''))
 ,p_plug_source_type=>'NATIVE_IR'
 ,p_ajax_items_to_submit=>'P3528_DOT_MES_DEP,P3528_DET_DOT_FECHA,P3528_MES_ANHO_S,P3528_OPC_DOTA'
@@ -1049,10 +1066,8 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_is_default=>'Y'
 ,p_display_rows=>100000
 ,p_report_columns=>'DEPARTAMENTO:LEGAJO:NOMBRE:SITUACION:INGRESO:SALIDA:DEP_PERTENECIENTE:DEPARTAMENTO_ANTERIOR'
-,p_sort_column_1=>'LEGAJO'
-,p_sort_direction_1=>'DESC'
-,p_sort_column_2=>'DEP_PERTENECIENTE'
-,p_sort_direction_2=>'ASC'
+,p_sort_column_1=>'DEP_PERTENECIENTE'
+,p_sort_direction_1=>'ASC'
 ,p_break_on=>'DEP_PERTENECIENTE'
 ,p_break_enabled_on=>'DEP_PERTENECIENTE'
 );
@@ -5436,16 +5451,6 @@ wwv_flow_api.create_page_plug(
 '        FROM APEX_collections',
 '       WHERE collection_name = ''DOT_CANTIDAD''',
 '       AND C006 NOT IN(''A'')',
-'/*UNION ALL',
-'SELECT ''INDUSTRIAL TOTAL'' DESCR, ''Q'', c002 PB, c007 MES1, c008 MES2, c009 MES3, ''D'' ORDEN',
-'        FROM APEX_collections',
-'       WHERE collection_name = ''DOT_CANTIDAD''',
-'       AND C006 = ''DA''*/',
-'/* UNION ALL  ',
-'SELECT ''INDUSTRIAL TEMPORAL'' DESCR, ''Q'', NULL PB, TO_CHAR(TO_NUMBER(c007)-TO_NUMBER(C003)) MES1, TO_CHAR(TO_NUMBER(c008)-TO_NUMBER(C004)) MES2, TO_CHAR(TO_NUMBER(c009)-TO_NUMBER(C005)) MES3, ''D'' ORDEN',
-'        FROM APEX_collections',
-'       WHERE collection_name = ''DOT_CANTIDAD''',
-'       AND C006 = ''DA''*/',
 'ORDER BY 7'))
 ,p_plug_source_type=>'NATIVE_IR'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
@@ -5572,22 +5577,22 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_columns=>'DESCRIPCION:UM:PB:MES1:MES2:MES3:'
 );
 wwv_flow_api.create_worksheet_condition(
- p_id=>wwv_flow_api.id(11016771711698684195)
+ p_id=>wwv_flow_api.id(7853157365522759931)
 ,p_report_id=>wwv_flow_api.id(11063630762469497376)
-,p_name=>'INDICADOR'
+,p_name=>unistr('DOTACI\00D3N TEMPORAL')
 ,p_condition_type=>'HIGHLIGHT'
 ,p_allow_delete=>'Y'
 ,p_column_name=>'DESCRIPCION'
 ,p_operator=>'='
-,p_expr=>'INDICADOR'
+,p_expr=>'DOTACION TEMPORAL'
 ,p_condition_sql=>' (case when ("DESCRIPCION" = #APXWS_EXPR#) then #APXWS_HL_ID# end) '
-,p_condition_display=>'#APXWS_COL_NAME# = ''INDICADOR''  '
+,p_condition_display=>'#APXWS_COL_NAME# = ''DOTACION TEMPORAL''  '
 ,p_enabled=>'Y'
 ,p_highlight_sequence=>10
-,p_row_bg_color=>'#9AEAFC'
+,p_row_bg_color=>'#CDE3FA'
 );
 wwv_flow_api.create_worksheet_condition(
- p_id=>wwv_flow_api.id(11016772089941684196)
+ p_id=>wwv_flow_api.id(7853157746265759932)
 ,p_report_id=>wwv_flow_api.id(11063630762469497376)
 ,p_name=>'ORDEN'
 ,p_condition_type=>'HIGHLIGHT'
@@ -5602,19 +5607,19 @@ wwv_flow_api.create_worksheet_condition(
 ,p_row_bg_color=>'#99CCFF'
 );
 wwv_flow_api.create_worksheet_condition(
- p_id=>wwv_flow_api.id(11016772529694684197)
+ p_id=>wwv_flow_api.id(7853158145564759932)
 ,p_report_id=>wwv_flow_api.id(11063630762469497376)
-,p_name=>unistr('DOTACI\00D3N TEMPORAL')
+,p_name=>'INDICADOR'
 ,p_condition_type=>'HIGHLIGHT'
 ,p_allow_delete=>'Y'
 ,p_column_name=>'DESCRIPCION'
 ,p_operator=>'='
-,p_expr=>'DOTACION TEMPORAL'
+,p_expr=>'INDICADOR'
 ,p_condition_sql=>' (case when ("DESCRIPCION" = #APXWS_EXPR#) then #APXWS_HL_ID# end) '
-,p_condition_display=>'#APXWS_COL_NAME# = ''DOTACION TEMPORAL''  '
+,p_condition_display=>'#APXWS_COL_NAME# = ''INDICADOR''  '
 ,p_enabled=>'Y'
 ,p_highlight_sequence=>10
-,p_row_bg_color=>'#CDE3FA'
+,p_row_bg_color=>'#9AEAFC'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(11094948869901347885)
@@ -10227,7 +10232,7 @@ wwv_flow_api.create_page_plug(
 '    FROM APEX_collections',
 '    WHERE collection_name = ''VAC_DEPARTAMENTO''',
 '    GROUP BY C002, C003, c005   ',
-'UNION ALL     ',
+'UNION ALL',
 'SELECT NULL, NULL,  C003 MES, c005 orden',
 ' FROM APEX_collections',
 'WHERE collection_name = ''VAC_DEPARTAMENTO''',
@@ -10243,7 +10248,6 @@ wwv_flow_api.create_worksheet(
  p_id=>wwv_flow_api.id(11103260418910553475)
 ,p_max_row_count=>'1000000'
 ,p_show_search_bar=>'N'
-,p_report_list_mode=>'TABS'
 ,p_show_detail_link=>'N'
 ,p_owner=>'LVILLASANTI'
 ,p_internal_uid=>78747071677721901
@@ -12869,7 +12873,7 @@ wwv_flow_api.create_page_plug(
 '  SELECT 6 ORDEN,''RE-CONTRATACION'' DESCIPCION,SUM(C014) MES1, SUM(C015) MES2, SUM(C016) MES3',
 ' FROM APEX_collections',
 'WHERE collection_name = ''CONTRATACIONES''',
-' UNION ALL',
+' UNION all',
 ' SELECT 7 ORDEN, ''% CONTRATACIONES CH'' DESCIPCION, ROUND((SUM(nvl(C007,0))/DECODE((SUM(nvl(C007,0))+SUM(nvl(C010,0))+SUM(nvl(C014,0))),0,1,(SUM(nvl(C007,0))+SUM(nvl(C010,0))+SUM(nvl(C014,0)))))*100) MES1,',
 '                                                   ROUND((SUM(nvl(C008,0))/DECODE((SUM(nvl(C008,0))+SUM(nvl(C011,0))+SUM(nvl(C015,0))),0,1,(SUM(nvl(C008,0))+SUM(nvl(C011,0))+SUM(nvl(C015,0)))))*100) MES2, ',
 '                                                   ROUND((SUM(nvl(C009,0))/DECODE((SUM(nvl(C009,0))+SUM(nvl(C012,0))+SUM(nvl(C016,0))),0,1,(SUM(nvl(C009,0))+SUM(nvl(C012,0))+SUM(nvl(C016,0)))))*100) MES3',
@@ -13141,7 +13145,6 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_identifier=>'F'
 ,p_column_label=>'Empleado'
 ,p_column_type=>'STRING'
-,p_static_id=>'CHICO'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(11096474316886425765)
@@ -13151,7 +13154,6 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_label=>'Tipo Contrato'
 ,p_column_type=>'STRING'
 ,p_column_alignment=>'CENTER'
-,p_static_id=>'CHICO'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(11097648741583523083)
@@ -13161,7 +13163,6 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_label=>'Semana'
 ,p_column_type=>'STRING'
 ,p_column_alignment=>'CENTER'
-,p_static_id=>'CHICO'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(11100658160702405968)
@@ -13190,7 +13191,6 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_label=>'Cargo'
 ,p_column_type=>'STRING'
 ,p_display_text_as=>'LOV_ESCAPE_SC'
-,p_static_id=>'CHICO'
 ,p_rpt_named_lov=>wwv_flow_api.id(11111334981019860881)
 ,p_rpt_show_filter_lov=>'1'
 );
@@ -13202,7 +13202,6 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_label=>'Sucursal'
 ,p_column_type=>'STRING'
 ,p_display_text_as=>'LOV_ESCAPE_SC'
-,p_static_id=>'CHICO'
 ,p_rpt_named_lov=>wwv_flow_api.id(11099036932838026445)
 ,p_rpt_show_filter_lov=>'1'
 );
@@ -20872,10 +20871,10 @@ wwv_flow_api.create_page_da_action(
 'ELSE',
 ':P3528_DET_DOT_FECHA :=TO_DATE(:P3528_FECHA_HASTA);',
 ':P3528_MES_ANHO_S := TO_CHAR(TO_DATE(:P3528_FECHA_HASTA),''IW/YYYY'');',
-'--:P3528_MES_ANHO_S := TO_CHAR(TO_DATE(:P3528_FECHA_HASTA),''MM/YYYY'');',
-'END IF;',
-'',
-''))
+'    if TO_DATE(:P3528_FECHA_HASTA ,''dd/mm/yyyy'') = last_day(TO_DATE(:P3528_FECHA_HASTA ,''dd/mm/yyyy'')) then',
+'    :P3528_MES_ANHO_S := TO_CHAR(TO_DATE(:P3528_FECHA_HASTA),''MM/YYYY'');',
+'    end if;',
+'END IF;'))
 ,p_attribute_02=>'P3528_OPC_DOTA'
 ,p_attribute_03=>'P3528_DET_DOT_FECHA,P3528_MES_ANHO_S'
 ,p_attribute_04=>'N'
@@ -21054,6 +21053,9 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_api.id(11096802899755722783)
 );
+end;
+/
+begin
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(11042648383717307140)
 ,p_name=>'ACT_VSC'
@@ -21063,9 +21065,6 @@ wwv_flow_api.create_page_da_event(
 ,p_bind_type=>'bind'
 ,p_bind_event_type=>'click'
 );
-end;
-/
-begin
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(11042648195202307139)
 ,p_event_id=>wwv_flow_api.id(11042648383717307140)
