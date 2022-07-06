@@ -28,7 +28,7 @@ prompt APPLICATION 103 - RECURSOS HUMANOS
 -- Application Export:
 --   Application:     103
 --   Name:            RECURSOS HUMANOS
---   Date and Time:   08:25 Wednesday July 6, 2022
+--   Date and Time:   11:53 Wednesday July 6, 2022
 --   Exported By:     PABLOC
 --   Flashback:       0
 --   Export Type:     Page Export
@@ -80,7 +80,7 @@ wwv_flow_api.create_page(
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'PABLOC'
-,p_last_upd_yyyymmddhh24miss=>'20220706082307'
+,p_last_upd_yyyymmddhh24miss=>'20220706112456'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(10982579091552464459)
@@ -91,6 +91,8 @@ wwv_flow_api.create_page_plug(
 ,p_include_in_reg_disp_sel_yn=>'Y'
 ,p_plug_display_point=>'BODY'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_plug_display_condition_type=>'NEVER'
+,p_required_patch=>wwv_flow_api.id(7906764008996747416)
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'
 );
@@ -5446,7 +5448,7 @@ wwv_flow_api.create_page_plug(
 '       WHERE collection_name = ''DOT_CANTIDAD''',
 '       AND C006=''A''',
 'UNION ALL',
-' SELECT C001 DESCR, ''Q'', c002 PB, c003 MES1, c004 MES2, c005 MES3, c006 ORDEN---c007 MES1, c008 MES2, c009 MES3, c006 ORDEN',
+' SELECT C001 DESCR, ''Q'', c002 PB, c003 MES1, c004 MES2, c005 MES3, c006 ORDEN',
 '        FROM APEX_collections',
 '       WHERE collection_name = ''DOT_CANTIDAD''',
 '       AND C006 NOT IN(''A'')',
@@ -5573,10 +5575,10 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'1448557'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'DESCRIPCION:UM:PB:MES1:MES2:MES3:'
+,p_report_columns=>'DESCRIPCION:UM:MES1:MES2:MES3:'
 );
 wwv_flow_api.create_worksheet_condition(
- p_id=>wwv_flow_api.id(7853157365522759931)
+ p_id=>wwv_flow_api.id(7906315871129655665)
 ,p_report_id=>wwv_flow_api.id(11063630762469497376)
 ,p_name=>unistr('DOTACI\00D3N TEMPORAL')
 ,p_condition_type=>'HIGHLIGHT'
@@ -5591,7 +5593,7 @@ wwv_flow_api.create_worksheet_condition(
 ,p_row_bg_color=>'#CDE3FA'
 );
 wwv_flow_api.create_worksheet_condition(
- p_id=>wwv_flow_api.id(7853157746265759932)
+ p_id=>wwv_flow_api.id(7906316296189655666)
 ,p_report_id=>wwv_flow_api.id(11063630762469497376)
 ,p_name=>'ORDEN'
 ,p_condition_type=>'HIGHLIGHT'
@@ -5606,7 +5608,7 @@ wwv_flow_api.create_worksheet_condition(
 ,p_row_bg_color=>'#99CCFF'
 );
 wwv_flow_api.create_worksheet_condition(
- p_id=>wwv_flow_api.id(7853158145564759932)
+ p_id=>wwv_flow_api.id(7906316695925655666)
 ,p_report_id=>wwv_flow_api.id(11063630762469497376)
 ,p_name=>'INDICADOR'
 ,p_condition_type=>'HIGHLIGHT'
@@ -10469,7 +10471,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'1359197'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'INDICADOR:UM:PB:MES1:MES2:MES3:'
+,p_report_columns=>'INDICADOR:UM:MES1:MES2:MES3:'
 ,p_sort_column_1=>'ORDEN'
 ,p_sort_direction_1=>'ASC'
 ,p_sort_column_2=>'0'
@@ -10484,22 +10486,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_sort_direction_6=>'ASC'
 );
 wwv_flow_api.create_worksheet_condition(
- p_id=>wwv_flow_api.id(11016748062978629997)
-,p_report_id=>wwv_flow_api.id(11072566764934338447)
-,p_name=>'SOLICITUDES'
-,p_condition_type=>'HIGHLIGHT'
-,p_allow_delete=>'Y'
-,p_column_name=>'INDICADOR'
-,p_operator=>'='
-,p_expr=>'Tipo de Solicitud'
-,p_condition_sql=>' (case when ("INDICADOR" = #APXWS_EXPR#) then #APXWS_HL_ID# end) '
-,p_condition_display=>'#APXWS_COL_NAME# = ''Tipo de Solicitud''  '
-,p_enabled=>'Y'
-,p_highlight_sequence=>10
-,p_row_bg_color=>'#CDE3FA'
-);
-wwv_flow_api.create_worksheet_condition(
- p_id=>wwv_flow_api.id(11016748304649629997)
+ p_id=>wwv_flow_api.id(7906954468189765587)
 ,p_report_id=>wwv_flow_api.id(11072566764934338447)
 ,p_name=>'INDICADOR'
 ,p_condition_type=>'HIGHLIGHT'
@@ -10512,6 +10499,21 @@ wwv_flow_api.create_worksheet_condition(
 ,p_enabled=>'Y'
 ,p_highlight_sequence=>10
 ,p_row_bg_color=>'#9AEAFC'
+);
+wwv_flow_api.create_worksheet_condition(
+ p_id=>wwv_flow_api.id(7906954823377765587)
+,p_report_id=>wwv_flow_api.id(11072566764934338447)
+,p_name=>'SOLICITUDES'
+,p_condition_type=>'HIGHLIGHT'
+,p_allow_delete=>'Y'
+,p_column_name=>'INDICADOR'
+,p_operator=>'='
+,p_expr=>'Tipo de Solicitud'
+,p_condition_sql=>' (case when ("INDICADOR" = #APXWS_EXPR#) then #APXWS_HL_ID# end) '
+,p_condition_display=>'#APXWS_COL_NAME# = ''Tipo de Solicitud''  '
+,p_enabled=>'Y'
+,p_highlight_sequence=>10
+,p_row_bg_color=>'#CDE3FA'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(11096130936038143855)
@@ -11135,7 +11137,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'1363135'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'INDICADOR:UM:PB:MES1:MES2:MES3:'
+,p_report_columns=>'INDICADOR:UM:MES1:MES2:MES3:'
 ,p_sort_column_1=>'ORDEN'
 ,p_sort_direction_1=>'ASC'
 ,p_sort_column_2=>'0'
@@ -11150,22 +11152,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_sort_direction_6=>'ASC'
 );
 wwv_flow_api.create_worksheet_condition(
- p_id=>wwv_flow_api.id(11016746905569629347)
-,p_report_id=>wwv_flow_api.id(11072172965114589176)
-,p_name=>'Solicitud'
-,p_condition_type=>'HIGHLIGHT'
-,p_allow_delete=>'Y'
-,p_column_name=>'INDICADOR'
-,p_operator=>'='
-,p_expr=>unistr('Tipo de Contrataci\00F3n')
-,p_condition_sql=>' (case when ("INDICADOR" = #APXWS_EXPR#) then #APXWS_HL_ID# end) '
-,p_condition_display=>unistr('#APXWS_COL_NAME# = ''Tipo de Contrataci\00F3n''  ')
-,p_enabled=>'Y'
-,p_highlight_sequence=>10
-,p_row_bg_color=>'#CDE3FA'
-);
-wwv_flow_api.create_worksheet_condition(
- p_id=>wwv_flow_api.id(11016747323872629347)
+ p_id=>wwv_flow_api.id(7907841600706851978)
 ,p_report_id=>wwv_flow_api.id(11072172965114589176)
 ,p_name=>'INDICADORES'
 ,p_condition_type=>'HIGHLIGHT'
@@ -11178,6 +11165,21 @@ wwv_flow_api.create_worksheet_condition(
 ,p_enabled=>'Y'
 ,p_highlight_sequence=>10
 ,p_row_bg_color=>'#9AEAFC'
+);
+wwv_flow_api.create_worksheet_condition(
+ p_id=>wwv_flow_api.id(7907842054273851978)
+,p_report_id=>wwv_flow_api.id(11072172965114589176)
+,p_name=>'Solicitud'
+,p_condition_type=>'HIGHLIGHT'
+,p_allow_delete=>'Y'
+,p_column_name=>'INDICADOR'
+,p_operator=>'='
+,p_expr=>unistr('Tipo de Contrataci\00F3n')
+,p_condition_sql=>' (case when ("INDICADOR" = #APXWS_EXPR#) then #APXWS_HL_ID# end) '
+,p_condition_display=>unistr('#APXWS_COL_NAME# = ''Tipo de Contrataci\00F3n''  ')
+,p_enabled=>'Y'
+,p_highlight_sequence=>10
+,p_row_bg_color=>'#CDE3FA'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(11096134001385143886)
@@ -12944,7 +12946,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_display_order=>70
 ,p_column_identifier=>'T'
 ,p_column_label=>'MES'
-,p_column_link=>'f?p=&APP_ID.:2256:&SESSION.::&DEBUG.:RP:P2256_FECHA,P2256_MES,P2256_ORDEN,P2256_OPCION:&P3528_FECHA_HASTA.,1,#ORDEN#,1'
+,p_column_link=>'f?p=&APP_ID.:2256:&SESSION.::&DEBUG.:RP,:P2256_FECHA,P2256_MES,P2256_ORDEN,P2256_OPCION,P2256_TIPO_CONTRATO:&P3528_FECHA_HASTA.,1,#ORDEN#,1,\#DESCRIPCION#\'
 ,p_column_linktext=>'#C001#'
 ,p_column_type=>'STRING'
 ,p_column_alignment=>'CENTER'
@@ -12956,7 +12958,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_display_order=>80
 ,p_column_identifier=>'U'
 ,p_column_label=>'MES'
-,p_column_link=>'f?p=&APP_ID.:2256:&SESSION.::&DEBUG.:RP:P2256_FECHA,P2256_MES,P2256_ORDEN,P2256_OPCION:&P3528_FECHA_HASTA.,2,#ORDEN#,1'
+,p_column_link=>'f?p=&APP_ID.:2256:&SESSION.::&DEBUG.:RP,:P2256_FECHA,P2256_MES,P2256_ORDEN,P2256_OPCION,P2256_TIPO_CONTRATO:&P3528_FECHA_HASTA.,2,#ORDEN#,1,\#DESCRIPCION#\'
 ,p_column_linktext=>'#C002#'
 ,p_column_type=>'STRING'
 ,p_column_alignment=>'CENTER'
@@ -12968,7 +12970,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_display_order=>90
 ,p_column_identifier=>'V'
 ,p_column_label=>'MES'
-,p_column_link=>'f?p=&APP_ID.:2256:&SESSION.::&DEBUG.:RP:P2256_FECHA,P2256_MES,P2256_ORDEN,P2256_OPCION:&P3528_FECHA_HASTA.,3,#ORDEN#,1'
+,p_column_link=>'f?p=&APP_ID.:2256:&SESSION.::&DEBUG.:RP,:P2256_FECHA,P2256_MES,P2256_ORDEN,P2256_OPCION,P2256_TIPO_CONTRATO:&P3528_FECHA_HASTA.,3,#ORDEN#,1,\#DESCRIPCION#\'
 ,p_column_linktext=>'#C003#'
 ,p_column_type=>'STRING'
 ,p_column_alignment=>'CENTER'
@@ -12997,22 +12999,22 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_columns=>'DESCRIPCION:UM:PB:TEN:C001:C002:C003:'
 );
 wwv_flow_api.create_worksheet_condition(
- p_id=>wwv_flow_api.id(11016742974999627915)
+ p_id=>wwv_flow_api.id(7903760786581384593)
 ,p_report_id=>wwv_flow_api.id(11096441077301083990)
-,p_name=>'INDICADOR'
+,p_name=>'CONT'
 ,p_condition_type=>'HIGHLIGHT'
 ,p_allow_delete=>'Y'
 ,p_column_name=>'DESCRIPCION'
 ,p_operator=>'='
-,p_expr=>'INDICADOR'
+,p_expr=>'CONTRATACION TOTALES'
 ,p_condition_sql=>' (case when ("DESCRIPCION" = #APXWS_EXPR#) then #APXWS_HL_ID# end) '
-,p_condition_display=>'#APXWS_COL_NAME# = ''INDICADOR''  '
+,p_condition_display=>'#APXWS_COL_NAME# = ''CONTRATACION TOTALES''  '
 ,p_enabled=>'Y'
 ,p_highlight_sequence=>10
-,p_row_bg_color=>'#9AEAFC'
+,p_row_bg_color=>'#CDE3FA'
 );
 wwv_flow_api.create_worksheet_condition(
- p_id=>wwv_flow_api.id(11016743331123627916)
+ p_id=>wwv_flow_api.id(7903761142701384593)
 ,p_report_id=>wwv_flow_api.id(11096441077301083990)
 ,p_name=>'CONTRATACIONES INDEFINISO'
 ,p_condition_type=>'HIGHLIGHT'
@@ -13027,19 +13029,51 @@ wwv_flow_api.create_worksheet_condition(
 ,p_row_bg_color=>'#B5C0C4'
 );
 wwv_flow_api.create_worksheet_condition(
- p_id=>wwv_flow_api.id(11016743755433627916)
+ p_id=>wwv_flow_api.id(7903761516676384593)
 ,p_report_id=>wwv_flow_api.id(11096441077301083990)
-,p_name=>'CONT'
+,p_name=>'CONTRATACIONES TEMPORALES'
 ,p_condition_type=>'HIGHLIGHT'
 ,p_allow_delete=>'Y'
 ,p_column_name=>'DESCRIPCION'
 ,p_operator=>'='
-,p_expr=>'CONTRATACION TOTALES'
+,p_expr=>'CONTRATACIONES TEMPORALES'
 ,p_condition_sql=>' (case when ("DESCRIPCION" = #APXWS_EXPR#) then #APXWS_HL_ID# end) '
-,p_condition_display=>'#APXWS_COL_NAME# = ''CONTRATACION TOTALES''  '
+,p_condition_display=>'#APXWS_COL_NAME# = ''CONTRATACIONES TEMPORALES''  '
 ,p_enabled=>'Y'
 ,p_highlight_sequence=>10
-,p_row_bg_color=>'#CDE3FA'
+,p_row_bg_color=>'#E8E8E8'
+,p_row_font_color=>'#000000'
+);
+wwv_flow_api.create_worksheet_condition(
+ p_id=>wwv_flow_api.id(7903761997336384594)
+,p_report_id=>wwv_flow_api.id(11096441077301083990)
+,p_name=>'CONTRATACIONES TIEMPO INDEFINIDO'
+,p_condition_type=>'HIGHLIGHT'
+,p_allow_delete=>'Y'
+,p_column_name=>'DESCRIPCION'
+,p_operator=>'='
+,p_expr=>'CONTRATACIONES TIEMPO INDEFINIDO'
+,p_condition_sql=>' (case when ("DESCRIPCION" = #APXWS_EXPR#) then #APXWS_HL_ID# end) '
+,p_condition_display=>'#APXWS_COL_NAME# = ''CONTRATACIONES TIEMPO INDEFINIDO''  '
+,p_enabled=>'Y'
+,p_highlight_sequence=>10
+,p_row_bg_color=>'#E8E8E8'
+,p_row_font_color=>'#000000'
+);
+wwv_flow_api.create_worksheet_condition(
+ p_id=>wwv_flow_api.id(7903762346245384594)
+,p_report_id=>wwv_flow_api.id(11096441077301083990)
+,p_name=>'INDICADOR'
+,p_condition_type=>'HIGHLIGHT'
+,p_allow_delete=>'Y'
+,p_column_name=>'DESCRIPCION'
+,p_operator=>'='
+,p_expr=>'INDICADOR'
+,p_condition_sql=>' (case when ("DESCRIPCION" = #APXWS_EXPR#) then #APXWS_HL_ID# end) '
+,p_condition_display=>'#APXWS_COL_NAME# = ''INDICADOR''  '
+,p_enabled=>'Y'
+,p_highlight_sequence=>10
+,p_row_bg_color=>'#9AEAFC'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(11096472818258425750)
@@ -13056,7 +13090,7 @@ wwv_flow_api.create_page_plug(
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'SELECT C009 EMPLEADO,',
 '       c001 FECHA_INGRESO,',
-'       C011 CARGO,',
+'       c.car_desc CARGO,',
 '       C012 SUCURSAL,',
 '       c002 TIPO_CONTRATO,',
 '       c004 CONTRATADO_POR,',
@@ -13064,6 +13098,7 @@ wwv_flow_api.create_page_plug(
 '       C005 TIPO_CONT,',
 '       TO_CHAR(TO_DATE(C001,''DD/MM/YYYY''),''IW'') SEMANA',
 '  FROM APEX_collections',
+'  inner join per_cargo c on (car_codigo=C011 and c.car_empr=:p_empresa)',
 ' WHERE collection_name = ''TAB_CONTRATACIONES''',
 '  AND TO_CHAR(TO_DATE(C001,''DD/MM/YYYY''), ''MM/YYYY'') = TO_CHAR(TO_DATE(:P3528_FECHA_HASTA), ''MM/YYYY'')',
 '  AND TO_DATE(C001,''DD/MM/YYYY'') <= :P3528_FECHA_HASTA',
@@ -13103,7 +13138,7 @@ wwv_flow_api.create_page_plug(
 wwv_flow_api.create_worksheet(
  p_id=>wwv_flow_api.id(11096472906840425751)
 ,p_max_row_count=>'1000000'
-,p_no_data_found_message=>'''NO SE REGISTRARON CONTRATACIONES EN EL MES'''
+,p_no_data_found_message=>'NO SE REGISTRARON CONTRATACIONES EN EL MES'
 ,p_show_nulls_as=>'-'
 ,p_pagination_type=>'ROWS_X_TO_Y'
 ,p_pagination_display_pos=>'BOTTOM_RIGHT'
@@ -13166,9 +13201,6 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_identifier=>'T'
 ,p_column_label=>'Cargo'
 ,p_column_type=>'STRING'
-,p_display_text_as=>'LOV_ESCAPE_SC'
-,p_rpt_named_lov=>wwv_flow_api.id(11111334981019860881)
-,p_rpt_show_filter_lov=>'1'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(11063354785460542250)
@@ -13225,7 +13257,7 @@ wwv_flow_api.create_page_plug(
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'SELECT C009 EMPLEADO,',
 '       c001 FECHA_INGRESO,',
-'       C011 CARGO,',
+'       c.car_desc CARGO,',
 '       C012 SUCURSAL,',
 '       c002 TIPO_CONTRATO,',
 '       c004 CONTRATADO_POR,',
@@ -13233,6 +13265,7 @@ wwv_flow_api.create_page_plug(
 '       C005 TIPO_CONT,',
 '       TO_CHAR(TO_DATE(C001,''DD/MM/YYYY''),''IW'') SEMANA',
 '  FROM APEX_collections',
+'  inner join per_cargo c on(c.car_codigo=C011 and c.car_empr=:p_empresa)',
 ' WHERE collection_name = ''TAB_CONTRATACIONES''',
 '  AND TO_CHAR(TO_DATE(C001,''DD/MM/YYYY''), ''MM/YYYY'') = TO_CHAR(TO_DATE(:P3528_FECHA_HASTA), ''MM/YYYY'')',
 '  AND TO_DATE(C001,''DD/MM/YYYY'') <= :P3528_FECHA_HASTA',
@@ -13272,7 +13305,7 @@ wwv_flow_api.create_page_plug(
 wwv_flow_api.create_worksheet(
  p_id=>wwv_flow_api.id(11096474852537425771)
 ,p_max_row_count=>'1000000'
-,p_no_data_found_message=>'''NO SE REGISTRARON CONTRATACIONES EN LA SEMANA'''
+,p_no_data_found_message=>'NO SE REGISTRARON CONTRATACIONES EN LA SEMANA'
 ,p_show_nulls_as=>'-'
 ,p_pagination_type=>'ROWS_X_TO_Y'
 ,p_pagination_display_pos=>'BOTTOM_RIGHT'
@@ -13339,10 +13372,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_identifier=>'Q'
 ,p_column_label=>'Cargo'
 ,p_column_type=>'STRING'
-,p_display_text_as=>'LOV_ESCAPE_SC'
 ,p_static_id=>'CHICO'
-,p_rpt_named_lov=>wwv_flow_api.id(11111334981019860881)
-,p_rpt_show_filter_lov=>'1'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(11063354251188542245)
@@ -13504,6 +13534,9 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_type=>'STRING'
 ,p_static_id=>'CHICO'
 );
+end;
+/
+begin
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(11060915541595426965)
 ,p_db_column_name=>'FECHA_SALIDA'
@@ -13549,9 +13582,6 @@ wwv_flow_api.create_worksheet_column(
 ,p_rpt_named_lov=>wwv_flow_api.id(11111334981019860881)
 ,p_rpt_show_filter_lov=>'1'
 );
-end;
-/
-begin
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(11060915169629426961)
 ,p_db_column_name=>'MOTIVO_SALIDA'
@@ -14391,6 +14421,9 @@ wwv_flow_api.create_jet_chart_series(
 ,p_items_label_font_size=>'10'
 ,p_threshold_display=>'onIndicator'
 );
+end;
+/
+begin
 wwv_flow_api.create_jet_chart_series(
  p_id=>wwv_flow_api.id(11014918761521230993)
 ,p_chart_id=>wwv_flow_api.id(11096799467564722749)
@@ -14441,9 +14474,6 @@ wwv_flow_api.create_jet_chart_series(
 ,p_items_label_font_size=>'10'
 ,p_threshold_display=>'onIndicator'
 );
-end;
-/
-begin
 wwv_flow_api.create_jet_chart_series(
  p_id=>wwv_flow_api.id(11014918872718230994)
 ,p_chart_id=>wwv_flow_api.id(11096799467564722749)
@@ -15260,6 +15290,9 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_alignment=>'RIGHT'
 ,p_static_id=>'CHICO'
 );
+end;
+/
+begin
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(10998233111181699115)
 ,p_db_column_name=>'MES2'
@@ -15331,9 +15364,6 @@ wwv_flow_api.create_worksheet_condition(
 ,p_highlight_sequence=>10
 ,p_row_bg_color=>'#B5C0C4'
 );
-end;
-/
-begin
 wwv_flow_api.create_worksheet_condition(
  p_id=>wwv_flow_api.id(10971265236068086529)
 ,p_report_id=>wwv_flow_api.id(10948023328309297814)
@@ -18564,13 +18594,15 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P3528_PROCESO_1'
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_api.id(11069734928678375444)
-,p_item_default=>'PROCESO DE RECLUTAMIENTO - SELECCION - CONTRATACION'
+,p_use_cache_before_default=>'NO'
+,p_item_default=>'PROCESO DE RECLUTAMIENTO - SELECCION - CONTRATACIONES'
 ,p_prompt=>'Nuevo'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
 ,p_grid_column=>4
 ,p_grid_label_column_span=>0
 ,p_field_template=>wwv_flow_api.id(11101510892263346303)
 ,p_item_template_options=>'#DEFAULT#'
+,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'VALUE'
 ,p_attribute_04=>'Y'
@@ -19112,6 +19144,7 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P3528_PROCESO'
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_api.id(11100654110121405928)
+,p_use_cache_before_default=>'NO'
 ,p_item_default=>'PROCESO DE RECLUTAMIENTO - SELECCION - CONTRATACION'
 ,p_prompt=>'Nuevo'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
@@ -19119,6 +19152,7 @@ wwv_flow_api.create_page_item(
 ,p_grid_label_column_span=>0
 ,p_field_template=>wwv_flow_api.id(11101510892263346303)
 ,p_item_template_options=>'#DEFAULT#'
+,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'VALUE'
 ,p_attribute_04=>'Y'
@@ -19677,8 +19711,6 @@ wwv_flow_api.create_page_da_action(
 'IF :P3528_FECHA_HASTA IS NULL THEN',
 ' RAISE_APPLICATION_ERROR (-20001,''La fecha no puede quedar vacia'');',
 'END IF;',
-'/*PERL051.PP_GRAFICO1_DOTACION(P_EMPRESA =>:P_EMPRESA,',
-'                             P_FECHA => :P3528_FECHA_HASTA);*/',
 '',
 'PERL051.PP_DOTACION(P_EMPRESA =>:P_EMPRESA,',
 '                    P_FECHA => :P3528_FECHA_HASTA);'))
@@ -20082,9 +20114,6 @@ wwv_flow_api.create_page_da_action(
 ,p_attribute_08=>'REMOVE'
 ,p_attribute_10=>'TOPRIGHT'
 );
-end;
-/
-begin
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(11097135144824360076)
 ,p_name=>'clic_contrataciones'
@@ -20094,6 +20123,9 @@ wwv_flow_api.create_page_da_event(
 ,p_bind_type=>'bind'
 ,p_bind_event_type=>'click'
 );
+end;
+/
+begin
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(11097135241319360077)
 ,p_event_id=>wwv_flow_api.id(11097135144824360076)
@@ -21031,9 +21063,6 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_api.id(11096802899755722783)
 );
-end;
-/
-begin
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(11042648383717307140)
 ,p_name=>'ACT_VSC'
@@ -21043,6 +21072,9 @@ wwv_flow_api.create_page_da_event(
 ,p_bind_type=>'bind'
 ,p_bind_event_type=>'click'
 );
+end;
+/
+begin
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(11042648195202307139)
 ,p_event_id=>wwv_flow_api.id(11042648383717307140)
