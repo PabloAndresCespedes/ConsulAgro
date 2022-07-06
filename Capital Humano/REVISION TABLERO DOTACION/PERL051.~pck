@@ -95,6 +95,9 @@ create or replace package PERL051 is
 FUNCTION PP_ESTADO_VAC  (P_EMPRESA IN NUMBER,
                          P_NRO      IN NUMBER )RETURN VARCHAR2;                                 
 PROCEDURE PP_ROTACION_CARGO;
+
+procedure add_hist_query(in_nombre varchar2, in_query clob);
+
 end PERL051;
 /
 create or replace package body PERL051 is
@@ -722,12 +725,11 @@ P_QUERY2 := 'SELECT DOT_DEPARTAMENTO, MAX(PB), MAX(MES1), MAX(MES2)
     P_AND := P_AND||'and semana is null AND MES || ''/'' || ANHO = '''||V_MES3||'''';
     P_AND_SOL := P_AND_SOL|| 'and SOL.semana is null AND SOL.MES||''/''||SOL.ANHO = '''||V_MES3||'''';
     P_AND_SEL := P_AND_SEL|| 'and SEL.semana is null AND SEL.MES||''/''||SEL.ANHO = '''||V_MES3||'''';
-
  else
     p_and_transagro := p_and_transagro||' SEMANA || ''/'' || ANHO = '''||V_SEMANA||'''';
-    P_AND := P_AND||' AND SEMANA || ''/'' || ANHO = '''||V_SEMANA||'''';
-    P_AND_SOL := P_AND_SOL|| 'AND SOL.SEMANA||''/''||SOL.ANHO ='''||V_SEMANA||'''';
-    P_AND_SEL := P_AND_SEL|| 'AND SEL.SEMANA||''/''||SEL.ANHO ='''||V_SEMANA||'''';
+    P_AND := P_AND||'AND MES IS NULL AND SEMANA || ''/'' || ANHO = '''||V_SEMANA||'''';
+    P_AND_SOL := P_AND_SOL|| 'AND SOL.MES IS NULL AND SOL.SEMANA||''/''||SOL.ANHO ='''||V_SEMANA||'''';
+    P_AND_SEL := P_AND_SEL|| 'AND SEL.MES IS NULL AND SEL.SEMANA||''/''||SEL.ANHO ='''||V_SEMANA||'''';
  end if;
  
 IF P_EMPRESA = 1 THEN
@@ -739,12 +741,14 @@ IF P_EMPRESA = 1 THEN
                   AND T.SOLPER_ESTADO_APROB = ''C''
                    and SOLPER_ESTADO_FINAL <> ''A''
                   and  SOLPER_EMPR ='||P_EMPRESA||'
+                  AND T.SEMANA IS NULL
                    AND T.MES || ''/'' || ANHO = '''||V_MES1||''') A ,
                    ( SELECT SUM(SOLPER_CANT) MES2
                              FROM PER_SOLICITUD_PERSONAL_HIST T
                             WHERE TO_CHAR(SOLPER_FECHA_APROB, ''MM/YYYY'') ='''||V_MES2||'''
                             AND T.SOLPER_ESTADO_APROB = ''C''
                              and SOLPER_ESTADO_FINAL <> ''A''
+                             AND T.semana IS NULL
                             and  SOLPER_EMPR ='||P_EMPRESA||'
                               AND T.MES || ''/'' || ANHO ='''||V_MES2||''')B,
                    (SELECT SUM(SOLPER_CANT) MES3
@@ -762,6 +766,7 @@ IF P_EMPRESA = 1 THEN
                             AND T.SOLPER_ESTADO_APROB = ''C''
                              and SOLPER_ESTADO_FINAL <> ''A''
                             and  SOLPER_EMPR ='||P_EMPRESA||'
+                            and t.semana is null
                               AND T.MES || ''/'' || ANHO = '''||V_MES_PB||''') D
 
                  UNION ALL
@@ -771,6 +776,7 @@ IF P_EMPRESA = 1 THEN
                   (SELECT ((SOLPER_CANT)) MES1
                              FROM PER_SOLICITUD_PERSONAL_HIST T
                             WHERE  T.MES || ''/'' || ANHO =  '''||V_MES0||'''
+                            and t.semana is null
                              AND NVL(SOLPER_ESTADO_FINAL,''EP'')in ( ''EP'',''EE'',''P'',''ER'')-- = ''EP''
                             AND T.SOLPER_ESTADO_APROB = ''C''
                              and SOLPER_ESTADO_FINAL <> ''A''
@@ -779,6 +785,7 @@ IF P_EMPRESA = 1 THEN
                     FROM( select SOLPER_CANT MES2--, ''b'',''VACANCIAS ACUM.''
                              from per_solicitud_personal_hist T
                             WHERE t.mes || ''/'' || anho =  '''||V_MES1||'''
+                            and t.semana is null
                             and  SOLPER_EMPR ='||P_EMPRESA||'
                               AND NVL(SOLPER_ESTADO_FINAL,''EP'') in ( ''EP'',''EE'',''P'',''ER'') --= ''EP''
                             AND T.SOLPER_ESTADO_APROB = ''C''
@@ -792,6 +799,7 @@ IF P_EMPRESA = 1 THEN
                              from per_solicitud_personal_hist T
                             WHERE t.mes || ''/'' || anho =  '''||V_MES2||'''
                             and  SOLPER_EMPR ='||P_EMPRESA||'
+                            and t.semana is null
                               AND NVL(SOLPER_ESTADO_FINAL,''EP'') in ( ''EP'',''EE'',''P'',''ER'') --= ''EP''
                             AND T.SOLPER_ESTADO_APROB = ''C''
                              and SOLPER_ESTADO_FINAL <> ''A''
@@ -803,6 +811,7 @@ IF P_EMPRESA = 1 THEN
                                      END) PB--, ''b'',''VACANCIAS ACUM.''
                              from per_solicitud_personal_hist T
                             WHERE t.mes || ''/'' || anho =  '''||V_MES_PB||'''
+                            and t.semana is null
                               AND NVL(SOLPER_ESTADO_FINAL,''EP'') in ( ''EP'',''EE'',''P'',''ER'')
                             AND T.SOLPER_ESTADO_APROB = ''C''
                              and SOLPER_ESTADO_FINAL <> ''A''
@@ -829,6 +838,8 @@ IF P_EMPRESA = 1 THEN
                               and SOLPER_ESTADO_FINAL <> ''A''
                              and  SOLPER_EMPR ='||P_EMPRESA||'
                              AND SOL.SOLPER_CLAVE NOT IN (439,444,445,448,452,460,466)
+                             and sel.semana is null
+                             and sol.semana is null
                              AND SOL.MES||''/''||SOL.ANHO =TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-12),''MM/YYYY'')
                              AND SEL.MES||''/''||SEL.ANHO =TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-12),''MM/YYYY'')
                              AND SOLPER_FECHA_APROB  < ''01/''||TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-12),''MM/YYYY'')
@@ -846,6 +857,7 @@ IF P_EMPRESA = 1 THEN
                         AND T.SOLPER_EMPR = A.AREDPP_EMPR
                         AND TO_CHAR(SOLPER_FECHA_APROB, ''MM/YYYY'') =  '''||V_MES1||'''
                         AND T.MES || ''/'' || ANHO =  '''||V_MES1||'''
+                        and t.semana is null
                         AND T.SOLPER_ESTADO_APROB = ''C''
                         and  SOLPER_EMPR ='||P_EMPRESA||'
                          and SOLPER_ESTADO_FINAL <> ''A''
@@ -861,6 +873,7 @@ IF P_EMPRESA = 1 THEN
                         AND T.SOLPER_EMPR = A.AREDPP_EMPR
                         AND TO_CHAR(SOLPER_FECHA_APROB, ''MM/YYYY'') =  '''||V_MES2||'''
                         AND T.MES || ''/'' || ANHO =  '''||V_MES2||'''
+                        and t.semana is null
                         AND T.SOLPER_ESTADO_APROB = ''C''
                          and SOLPER_ESTADO_FINAL <> ''A''
                         and  SOLPER_EMPR ='||P_EMPRESA||'
@@ -878,7 +891,6 @@ IF P_EMPRESA = 1 THEN
                              and SOLPER_ESTADO_FINAL <> ''A''
                             and  SOLPER_EMPR ='||P_EMPRESA||'
                             AND TO_CHAR(SOLPER_FECHA_SOL, ''MM/YYYY'') = '''||V_MES3||'''
-                           --- AND mes || ''/'' || ANHO =  '''||v_mes3||'''
                             '||P_AND||'
                         GROUP BY AREDPP_DESC,TO_CHAR(SOLPER_FECHA_APROB, ''MM/YYYY''),  SOLPER_ESTADO_FINAL';
 
@@ -950,6 +962,7 @@ IF P_EMPRESA = 1 THEN
    AND T.SOLPER_ESTADO_APROB = ''C''
    and SOLPER_ESTADO_FINAL <> ''A''
    and SOLPER_EMPR = 1
+   AND T.SEMANA IS NULL
    AND T.MES || ''/'' || ANHO = '''||V_MES1||'''
 union all
 
@@ -1007,6 +1020,7 @@ SELECT T.SOLPER_CLAVE NRO_SOL,
    AND T.SOLPER_ESTADO_APROB = ''C''
    and SOLPER_ESTADO_FINAL <> ''A''
    and SOLPER_EMPR = 1
+   and t.semana is null
    AND T.MES || ''/'' || ANHO = '''||V_MES2||'''
 
 union all
@@ -1086,14 +1100,11 @@ SELECT T.SOLPER_CLAVE NRO_SOL,
                              
                              FROM PER_SOLICITUD_PERSONAL_HIST T
                             WHERE  T.MES || ''/'' || ANHO =  '''||V_MES0||'''
+                            and t.semana is null
                              AND NVL(SOLPER_ESTADO_FINAL,''EP'')in ( ''EP'',''EE'',''P'',''ER'')-- = ''EP''
                             AND T.SOLPER_ESTADO_APROB = ''C''
                              and SOLPER_ESTADO_FINAL <> ''A''
                             and  SOLPER_EMPR =1
-                          
-                        
-                              
-                              
        union all                    
                            
   select  T.SOLPER_CLAVE NRO_SOL, 
@@ -1110,12 +1121,12 @@ SELECT T.SOLPER_CLAVE NRO_SOL,
                           T.SOLPER_FECHA_APROB FECHA_APROBACION,
                           DECODE(SOLPER_ESTADO_FINAL,''F'',''Finalizado'',''EP'',''En Proceso'',''R'',''Rechazado'',''P'',''Pendiente'',''EE'',''En Espera'', ''ER'',  ''En Reclutamiento'', ''A'',''ANULADO'') ESTADO_FIN_SOL,
                           ''VACANCIAS ACUM.'',
-                        --   T.MES || ''/'' || ANHO 
                            '''||V_MES2||'''mes
   
   
                              from per_solicitud_personal_hist T
                             WHERE t.mes || ''/'' || anho =  '''||V_MES1||'''
+                            and t.semana is null
                             and  SOLPER_EMPR =1
                               AND NVL(SOLPER_ESTADO_FINAL,''EP'') in ( ''EP'',''EE'',''P'',''ER'') --= ''EP''
                             AND T.SOLPER_ESTADO_APROB = ''C''
@@ -1136,18 +1147,14 @@ SELECT T.SOLPER_CLAVE NRO_SOL,
                           T.SOLPER_FECHA_APROB FECHA_APROBACION,
                           DECODE(SOLPER_ESTADO_FINAL,''F'',''Finalizado'',''EP'',''En Proceso'',''R'',''Rechazado'',''P'',''Pendiente'',''EE'',''En Espera'', ''ER'',  ''En Reclutamiento'', ''A'',''ANULADO'') ESTADO_FIN_SOL,
                           ''VACANCIAS ACUM.'',
-                          -- T.MES || ''/'' || ANHO mes
                           '''||V_MES3||'''
-  
                              from per_solicitud_personal_hist T
                             WHERE t.mes || ''/'' || anho =  '''||V_MES2||'''
+                            and t.semana is null
                             and  SOLPER_EMPR =1
                               AND NVL(SOLPER_ESTADO_FINAL,''EP'') in ( ''EP'',''EE'',''P'',''ER'') --= ''EP''
                             AND T.SOLPER_ESTADO_APROB = ''C''
-                             and SOLPER_ESTADO_FINAL <> ''A'' 
-                        
-  
-  
+                             and SOLPER_ESTADO_FINAL <> ''A''
                              ';
 
                         
@@ -1244,11 +1251,6 @@ IF APEX_COLLECTION.COLLECTION_EXISTS(P_COLLECTION_NAME => 'VACANCIAS_TRANS') THE
           APEX_COLLECTION.CREATE_COLLECTION_FROM_QUERY_B(P_COLLECTION_NAME => 'VACANCIAS_TRANS',
                                                          P_QUERY           => P_QUERY2);
 
-
-
-
-
-
  END PP_PROCESO_SELECCION_VAC;
 
 PROCEDURE PP_PROCESO_SELECCION_CONT(P_EMPRESA IN NUMBER, P_FECHA IN DATE)IS
@@ -1266,10 +1268,7 @@ PROCEDURE PP_PROCESO_SELECCION_CONT(P_EMPRESA IN NUMBER, P_FECHA IN DATE)IS
                  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-1),''MM/YYYY''),
                  TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')
               FROM DUAL';
-    P_QUERY3 :='/*SELECT ''Re-Contratacion'',6
-                  FROM DUAL
-                 UNION ALL*/
-                 SELECT ''Directa'',4
+    P_QUERY3 :='SELECT ''Directa'',4
                   FROM DUAL
                  UNION ALL
                  SELECT ''Programada'', 5
@@ -1278,18 +1277,16 @@ PROCEDURE PP_PROCESO_SELECCION_CONT(P_EMPRESA IN NUMBER, P_FECHA IN DATE)IS
                   SELECT ''Acumulada'', 7
                   FROM DUAL ';
 
-
-
  IF  P_FECHA = LAST_DAY(TO_DATE(P_FECHA))  THEN
-    P_AND := P_AND||' AND MES || ''/'' || ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  ';
+    P_AND := P_AND||'AND SEMANA IS NULL AND MES || ''/'' || ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  ';
 
-    P_AND_SOL := P_AND_SOL|| 'AND SOL.MES||''/''||SOL.ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  ';
-    P_AND_SEL := P_AND_SEL|| 'AND SEL.MES||''/''||SEL.ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  ';
+    P_AND_SOL := P_AND_SOL|| 'and sol.semana is null AND SOL.MES||''/''||SOL.ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  ';
+    P_AND_SEL := P_AND_SEL|| 'and sel.semana is null AND SEL.MES||''/''||SEL.ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  ';
 
  ELSE
-   P_AND := P_AND||' AND SEMANA || ''/'' || ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')  ';
-    P_AND_SOL := P_AND_SOL|| 'AND SOL.SEMANA||''/''||SOL.ANHO =TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')  ';
-    P_AND_SEL := P_AND_SEL|| 'AND SEL.SEMANA||''/''||SEL.ANHO =TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')  ';
+   P_AND := P_AND||'and mes is null AND SEMANA || ''/'' || ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')  ';
+    P_AND_SOL := P_AND_SOL|| 'and sol.mes is null AND SOL.SEMANA||''/''||SOL.ANHO =TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')  ';
+    P_AND_SEL := P_AND_SEL|| 'and sel.mes is null AND SEL.SEMANA||''/''||SEL.ANHO =TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')  ';
  END IF;
 
   P_QUERY7 := 
@@ -1336,36 +1333,11 @@ PROCEDURE PP_PROCESO_SELECCION_CONT(P_EMPRESA IN NUMBER, P_FECHA IN DATE)IS
                    AND SEL.SELEPER_ESTADO_GRAL = ''C''
                    AND SOLPER_ESTADO_FINAL = ''F''
                    and SOLPER_TIPO_CONTRATACION <>''RC''
+                   and sol.semana is null 
+                   and sel.semana is null
                    AND SOL.MES||''/''||SOL.ANHO = TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-2),''MM/YYYY'')
                    AND SEL.MES||''/''||SEL.ANHO =TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-2),''MM/YYYY'')
                    AND TO_CHAR(CON.CONSEL_FECHA_INICIO,''MM/YYYY'') =TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-2),''MM/YYYY'')
-                  UNION ALL
-                  SELECT   1 Q_VACANT,
-                     null NRO_SOL,
-                     TO_CHAR(PCON_FECHA_INICIO, ''MON/YYYY'') MES_ANHO,
-                     AR.AREDPP_DESC AREA,
-                     ''Re-Contratacion'' TIPO_CONTRATACION,
-                     ''Re-Contratacion'' TIPO_SELEC_SOL,
-                     PC.CAR_CODIGO,
-                     ADD_MONTHS(TO_DATE(PCON_FECHA_INICIO),-1),
-                     NULL,
-                     NULL URGENCIA,
-                     NULL TIPO_CONTRATO,
-                     NULL ESTADO_APROB_SOL,
-                     NULL OPERADOR_APROB_SOL,
-                     NULL FECHA_APROB_SOL,
-                     ''Finalizado'' ESTADO_FIN_SOL,
-                      1 ORDEN,
-                     TO_CHAR(ADD_MONTHS(TO_DATE(PCON_FECHA_INICIO),-1),''MM/YYYY'') MES_ANHOG
-                  FROM PER_AREA_DPP                AR,
-                       PER_CARGO                   PC,
-                       PER_CONT_SIN_PROSELC       CON
-                 WHERE CON.PCON_AREA = AR.AREDPP_CLAVE
-                   AND CON.PCON_EMPR = ar.aredpp_empr
-                   AND CON.PCON_CARGO = PC.CAR_CODIGO
-                   AND CON.PCON_EMPR = PC.CAR_EMPR
-                   AND TO_CHAR(CON.PCON_FECHA_INICIO,''MM/YYYY'') =''04/2020''
-                   AND ''04/2020'' =  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-2),''MM/YYYY'')
                UNION ALL
                 SELECT   1 Q_VACANT,
                      SOL.SOLPER_CLAVE NRO_SOL,
@@ -1410,57 +1382,11 @@ PROCEDURE PP_PROCESO_SELECCION_CONT(P_EMPRESA IN NUMBER, P_FECHA IN DATE)IS
                    and SOLPER_TIPO_CONTRATACION <>''RC''
                    AND SEL.SELEPER_ESTADO_GRAL = ''C''
                    AND SOLPER_ESTADO_FINAL = ''F''
+                   and sol.semana is null 
+                   and sel.semana is null
                    AND SOL.MES||''/''||SOL.ANHO = TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-1),''MM/YYYY'')
                    AND SEL.MES||''/''||SEL.ANHO =TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-1),''MM/YYYY'')
                    AND TO_CHAR(CON.CONSEL_FECHA_INICIO,''MM/YYYY'') =TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-1),''MM/YYYY'')
-
-            /*    SELECT SOLPER_CANT Q_VACANT,
-                     T.SOLPER_CLAVE NRO_SOL,
-                     TO_CHAR(SOLPER_FECHA_SOL, ''MON/YYYY'') MES_ANHO,
-                     A.AREDPP_DESC AREA,
-                     DECODE(SOLPER_TIPO_CONTRATACION,''PR'',''Programada'',''DR'',''Directa'',''RC'',''Re-Contratacion'') TIPO_CONTRATACION,
-                     DECODE(SOLPER_TIPO_SELEC,''PR'',''Programada'',''AN'',''Anticipada'', ''RC'', ''Re-Contratacion'')TIPO_SELEC_SOL,
-                     T.SOLPER_CARGO,
-                     SOLPER_FECHA_SOL,
-                     T.SOLPER_OPERADOR_SOL,
-                     DECODE(SOLPER_NIVEL_URGENCIA,''M'',''MEDIO'',''A'',''ALTO'',''B'',''BAJO'') URGENCIA,
-                     DECODE(SOLPER_TIPO_CONT,''IN'',''Indefinido'',''TE'',''Temporal'') TIPO_CONTRATO,
-                     DECODE(SOLPER_ESTADO_APROB,''C'',''Confirmado'',''P'',''Pendiente'',''R'',''Rechazado'',NULL,''Pendiente'') ESTADO_APROB_SOL,
-                     SOLPER_OPERADOR_APROB OPERADOR_APROB_SOL,
-                     SOLPER_FECHA_APROB FECHA_APROB_SOL,
-                     DECODE(SOLPER_ESTADO_FINAL,''F'',''Finalizado'',''EP'',''En Proceso'',''R'',''Rechazado'',''P'',''Pendiente'',''EE'',''En Espera'', ''ER'', ''En Reclutamiento'', ''A'',''Anulado'') ESTADO_FIN_SOL,
-                     2 ORDEN,
-                     TO_CHAR(SOLPER_FECHA_SOL, ''MM/YYYY'') MES_ANHOG
-                 FROM PER_SOLICITUD_PERSONAL_HIST T,PER_AREA_DPP A
-                 WHERE T.SOLPER_AREA = A.AREDPP_CLAVE
-                 AND T.SOLPER_EMPR = A.AREDPP_EMPR
-                 AND TO_CHAR(SOLPER_FECHA_SOL, ''MM/YYYY'') =TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-1),''MM/YYYY'')
-                 AND T.MES || ''/'' || ANHO =TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-1),''MM/YYYY'')
-                UNION ALL
-               SELECT SOLPER_CANT Q_VACANT,
-                     T.SOLPER_CLAVE NRO_SOL,
-                     TO_CHAR(SOLPER_FECHA_SOL, ''MON/YYYY'') MES_ANHO,
-                     A.AREDPP_DESC AREA,
-                     DECODE(SOLPER_TIPO_CONTRATACION,''PR'',''Programada'',''DR'',''Directa'',''RC'',''Re-Contratacion'') TIPO_CONTRATACION,
-                     DECODE(SOLPER_TIPO_SELEC,''PR'',''Programada'',''AN'',''Anticipada'', ''RC'', ''Re-Contratacion'')TIPO_SELEC_SOL,
-                     T.SOLPER_CARGO,
-                     SOLPER_FECHA_SOL,
-                     T.SOLPER_OPERADOR_SOL,
-                     DECODE(SOLPER_NIVEL_URGENCIA,''M'',''MEDIO'',''A'',''ALTO'',''B'',''BAJO'') URGENCIA,
-                     DECODE(SOLPER_TIPO_CONT,''IN'',''Indefinido'',''TE'',''Temporal'') TIPO_CONTRATO,
-                     DECODE(SOLPER_ESTADO_APROB,''C'',''Confirmado'',''P'',''Pendiente'',''R'',''Rechazado'',NULL,''Pendiente'') ESTADO_APROB_SOL,
-                     SOLPER_OPERADOR_APROB OPERADOR_APROB_SOL,
-                     SOLPER_FECHA_APROB FECHA_APROB_SOL,
-                     DECODE(SOLPER_ESTADO_FINAL,''F'',''Finalizado'',''EP'',''En Proceso'',''R'',''Rechazado'',''P'',''Pendiente'',''EE'',''En Espera'', ''ER'', ''En Reclutamiento'', ''A'',''Anulado'') ESTADO_FIN_SOL,
-                     3 ORDEN,
-                     TO_CHAR(SOLPER_FECHA_SOL, ''MM/YYYY'') MES_ANHOG
-                 FROM PER_SOLICITUD_PERSONAL_HIST T,PER_AREA_DPP A
-                 WHERE T.SOLPER_AREA = A.AREDPP_CLAVE
-                 AND T.SOLPER_EMPR = A.AREDPP_EMPR
-                 and SOLPER_TIPO_CONTRATACION <>''RC''
-                 AND TO_CHAR(SOLPER_FECHA_SOL, ''MM/YYYY'') = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')
-                 AND T.SEMANA|| ''/'' || ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')
-              */
               union all
                SELECT   1 Q_VACANT,
                      SOL.SOLPER_CLAVE NRO_SOL,
@@ -1507,206 +1433,8 @@ PROCEDURE PP_PROCESO_SELECCION_CONT(P_EMPRESA IN NUMBER, P_FECHA IN DATE)IS
                    AND SOLPER_ESTADO_FINAL = ''F''
                      '||P_AND_SOL||'
                      '||P_AND_SEL ||'
-                  -- AND SOL.mes||''/''||SOL.ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''mm/YYYY'')
-                  -- AND SEL.mes||''/''||SEL.ANHO =TO_CHAR(TO_DATE('''||P_FECHA||'''),''mm/YYYY'')
-                   AND TO_CHAR(CON.CONSEL_FECHA_INICIO,''MM/YYYY'') = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')
-                /* UNION ALL
-                 SELECT
-                     1 VACANCIA,
-                     S.PCON_SOL_NRO NRO_SOL,
-                     TO_CHAR(S.PCON_FECHA_INICIO, ''MON/YYYY'')MES_ANHO,
-                      AREDPP_DESC AREA,
-                     ''Re-Contratacion'' TIPO_CONTRATACION,
-                     ''Re-Contratacion'' TIPO_SELECCION,
-                     S.PCON_CARGO CARGO,
-                     S.PCON_FECHA_INICIO FECHA_SOL,
-                     NULL,
-                     NULL URGENCIA,
-                     DECODE(S.PCON_TIPO_CONT,''IN'',''Indefinido'',''TE'',''Temporal'') TIPO_CONTRATO,
-                     ''Confirmado''  ESTADO_APROB_SOL,
-                     NULL,
-                     NULL,
-                     ''Finalizado'' ESTADO_FIN_SOL,
-                      3 ORDEN,
-                      TO_CHAR(S.PCON_FECHA_INICIO, ''MON/YYYY'') MES_ANHOG
-                FROM PER_CONT_SIN_PROSELC S, PER_SOLICITUD_PERSONAL G,PER_AREA_DPP dd
-               WHERE S.PCON_SOL_NRO = G.SOLPER_CLAVE(+)
-                 AND S.PCON_EMPR = G.SOLPER_EMPR(+)
-                 AND DD.AREDPP_CLAVE = S.PCON_AREA
-                 AND DD.AREDPP_EMPR = S.PCON_EMPR
-                 AND S.PCON_EMPR = 1
-                 AND TO_CHAR(PCON_FECHA_INICIO,''MM/YYYY'') =TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')
-                 AND G.SOLPER_CLAVE IS not NULL */
-                 UNION ALL
-                SELECT
-                     1 VACANCIA,
-                     S.PCON_SOL_NRO NRO_SOL,
-                     TO_CHAR(ADD_MONTHS(S.PCON_FECHA_INICIO, -1), ''MON/YYYY'')MES_ANHO,
-                      AREDPP_DESC AREA,
-                     ''Re-Contratacion'' TIPO_CONTRATACION,
-                     ''Re-Contratacion'' TIPO_SELECCION,
-                     S.PCON_CARGO CARGO,
-                     ADD_MONTHS(S.PCON_FECHA_INICIO, -1) FECHA_SOL,
-                     NULL,
-                     NULL URGENCIA,
-                     DECODE(S.PCON_TIPO_CONT,''IN'',''Indefinido'',''TE'',''Temporal'') TIPO_CONTRATO,
-                     ''Confirmado''  ESTADO_APROB_SOL,
-                     NULL,
-                     NULL,
-                     ''Finalizado'' ESTADO_FIN_SOL,
-                      1 ORDEN,
-                      ''03/2020''
-                FROM PER_CONT_SIN_PROSELC S, PER_SOLICITUD_PERSONAL G,PER_AREA_DPP dd
-               WHERE S.PCON_SOL_NRO = G.SOLPER_CLAVE(+)
-                 AND S.PCON_EMPR = G.SOLPER_EMPR(+)
-                 AND DD.AREDPP_CLAVE = S.PCON_AREA
-                 AND DD.AREDPP_EMPR = S.PCON_EMPR
-                 AND S.PCON_EMPR = 1
-                 AND TO_CHAR(ADD_MONTHS(S.PCON_FECHA_INICIO, -1), ''MM/YYYY'') = ''03/2020''
-                 AND ''03/2020'' =  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-2),''MM/YYYY'')
-                 AND G.SOLPER_CLAVE IS NULL';
+                   AND TO_CHAR(CON.CONSEL_FECHA_INICIO,''MM/YYYY'') = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')';
 
-
-
-
-
-/*
-  P_QUERY2:= 'SELECT CASE
-               WHEN MES_ANHO = TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -2),''MM/YYYY'') THEN
-               sum(Q_VACANT)
-               END MES1,
-               CASE
-               WHEN MES_ANHO = TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1),''MM/YYYY'') THEN
-               sum(Q_VACANT)
-               END MES2,
-               CASE
-               WHEN MES_ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'') THEN
-               sum(Q_VACANT)
-               END MES3,
-               TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -2),''MM/YYYY'')MES_1,
-               TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -1),''MM/YYYY'') MES_2,
-               TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'') MES_3
-          FROM (SELECT Q_VACANT, NRO_SOL, to_char(FECHA_SOL,''MM/YYYY'') MES_ANHO
-                 FROM CUBO_LONDON_PROCESO_SELEC V
-                 WHERE FECHA_SOL BETWEEN
-                       ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2) AND
-                       TO_DATE('''||P_FECHA||''')
-                 GROUP BY to_char(FECHA_SOL,''MM/YYYY''), FECHA_APROB_SOL, NRO_SOL, Q_VACANT
-                 UNION ALL
-                 select 1, NULL, to_char(pcon_fecha_inicio, ''MM/YYYY'')
-                     from per_cont_sin_proselc
-                    where pcon_empr = 1
-                      and to_char(pcon_fecha_inicio, ''MM/YYYY'')<>( TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY''))
-                     )
-         GROUP BY MES_ANHO';
-*/
-/*
-----------------------------------------------RECONTRATACIONES HISTORICO
-SELECT SOLPER_CANT Q_VACANT,
-       T.SOLPER_CLAVE NRO_SOL,
-       TO_CHAR(SOLPER_FECHA_SOL, 'MON/YYYY') MES_ANHO,
-       A.AREDPP_DESC AREA,
-       DECODE(SOLPER_TIPO_CONTRATACION,'PR','Programada','DR','Directa','RC','Re-Contratacion') TIPO_CONTRATACION,
-       DECODE(SOLPER_TIPO_SELEC,'PR','Programada','AN','Anticipada', 'RC', 'Re-Contratacion')TIPO_SELEC_SOL,
-       T.SOLPER_CARGO,
-       SOLPER_FECHA_SOL,
-       T.SOLPER_OPERADOR_SOL,
-       DECODE(SOLPER_NIVEL_URGENCIA,'M','MEDIO','A','ALTO','B','BAJO') URGENCIA,
-       DECODE(SOLPER_TIPO_CONT,'IN','Indefinido','TE','Temporal') TIPO_CONTRATO,
-       DECODE(SOLPER_ESTADO_APROB,'C','Confirmado','P','Pendiente','R','Rechazado',NULL,'Pendiente') ESTADO_APROB_SOL,
-       SOLPER_OPERADOR_APROB OPERADOR_APROB_SOL,
-       SOLPER_FECHA_APROB FECHA_APROB_SOL,
-       DECODE(SOLPER_ESTADO_FINAL,'F','Finalizado','EP','En Proceso','R','Rechazado','P','Pendiente','EE','En Espera') ESTADO_FIN_SOL,
-       1 ORDEN
-   FROM PER_SOLICITUD_PERSONAL_HIST T,PER_AREA_DPP A
-   WHERE T.SOLPER_AREA = A.AREDPP_CLAVE
-   AND T.SOLPER_EMPR = A.AREDPP_EMPR
-   AND TO_CHAR(SOLPER_FECHA_SOL, 'MM/YYYY') = TO_CHAR(ADD_MONTHS(&V_FECHA3, -2), 'MM/YYYY')
-   AND T.MES || '/' || ANHO = '03/2020'
- UNION ALL
-  SELECT SOLPER_CANT Q_VACANT,
-       T.SOLPER_CLAVE NRO_SOL,
-       TO_CHAR(SOLPER_FECHA_SOL, 'MON/YYYY') MES_ANHO,
-       A.AREDPP_DESC AREA,
-       DECODE(SOLPER_TIPO_CONTRATACION,'PR','Programada','DR','Directa','RC','Re-Contratacion') TIPO_CONTRATACION,
-       DECODE(SOLPER_TIPO_SELEC,'PR','Programada','AN','Anticipada', 'RC', 'Re-Contratacion')TIPO_SELEC_SOL,
-       T.SOLPER_CARGO,
-       SOLPER_FECHA_SOL,
-       T.SOLPER_OPERADOR_SOL,
-       DECODE(SOLPER_NIVEL_URGENCIA,'M','MEDIO','A','ALTO','B','BAJO') URGENCIA,
-       DECODE(SOLPER_TIPO_CONT,'IN','Indefinido','TE','Temporal') TIPO_CONTRATO,
-       DECODE(SOLPER_ESTADO_APROB,'C','Confirmado','P','Pendiente','R','Rechazado',NULL,'Pendiente') ESTADO_APROB_SOL,
-       SOLPER_OPERADOR_APROB OPERADOR_APROB_SOL,
-       SOLPER_FECHA_APROB FECHA_APROB_SOL,
-       DECODE(SOLPER_ESTADO_FINAL,'F','Finalizado','EP','En Proceso','R','Rechazado','P','Pendiente','EE','En Espera') ESTADO_FIN_SOL,
-       1 ORDEN
-   FROM PER_SOLICITUD_PERSONAL_HIST T,PER_AREA_DPP A
-   WHERE T.SOLPER_AREA = A.AREDPP_CLAVE
-   AND T.SOLPER_EMPR = A.AREDPP_EMPR
-   AND TO_CHAR(SOLPER_FECHA_SOL, 'MM/YYYY') = TO_CHAR(ADD_MONTHS(&V_FECHA3, -1), 'MM/YYYY')
-   AND T.MES || '/' || ANHO = '04/2020'
-  UNION ALL
-  SELECT SOLPER_CANT Q_VACANT,
-       T.SOLPER_CLAVE NRO_SOL,
-       TO_CHAR(SOLPER_FECHA_SOL, 'MON/YYYY') MES_ANHO,
-       A.AREDPP_DESC AREA,
-       DECODE(SOLPER_TIPO_CONTRATACION,'PR','Programada','DR','Directa','RC','Re-Contratacion') TIPO_CONTRATACION,
-       DECODE(SOLPER_TIPO_SELEC,'PR','Programada','AN','Anticipada', 'RC', 'Re-Contratacion')TIPO_SELEC_SOL,
-       T.SOLPER_CARGO,
-       SOLPER_FECHA_SOL,
-       T.SOLPER_OPERADOR_SOL,
-       DECODE(SOLPER_NIVEL_URGENCIA,'M','MEDIO','A','ALTO','B','BAJO') URGENCIA,
-       DECODE(SOLPER_TIPO_CONT,'IN','Indefinido','TE','Temporal') TIPO_CONTRATO,
-       DECODE(SOLPER_ESTADO_APROB,'C','Confirmado','P','Pendiente','R','Rechazado',NULL,'Pendiente') ESTADO_APROB_SOL,
-       SOLPER_OPERADOR_APROB OPERADOR_APROB_SOL,
-       SOLPER_FECHA_APROB FECHA_APROB_SOL,
-       DECODE(SOLPER_ESTADO_FINAL,'F','Finalizado','EP','En Proceso','R','Rechazado','P','Pendiente','EE','En Espera') ESTADO_FIN_SOL,
-       1 ORDEN
-   FROM PER_SOLICITUD_PERSONAL_HIST T,PER_AREA_DPP A
-   WHERE T.SOLPER_AREA = A.AREDPP_CLAVE
-   AND T.SOLPER_EMPR = A.AREDPP_EMPR
-   AND TO_CHAR(SOLPER_FECHA_SOL, 'MM/YYYY') = TO_CHAR(TO_DATE(&V_FECHA3,'DD/MM/YYYY'), 'MM/YYYY')
-   AND T.SEMANA|| '/' || ANHO = '21/2020'
-
-
-
-
-   -------------------RECONTRATACION
-
-
-   SELECT S.PCON_SOL_NRO NRO_SOL,
-       DECODE(G.SOLPER_FECHA_SOL,
-              NULL,
-              TO_CHAR(ADD_MONTHS(S.PCON_FECHA_INICIO, -1), 'MM/YYYY'),
-              TO_CHAR(SOLPER_FECHA_SOL, 'MM/YYYY')) MES_ANHO,
-       DECODE(G.SOLPER_FECHA_SOL,
-              NULL,
-              ADD_MONTHS(S.PCON_FECHA_INICIO, -1),
-              SOLPER_FECHA_SOL) FECHA_SOL,
-       G.SOLPER_OPERADOR_SOL,
-       G.SOLPER_NIVEL_URGENCIA URGENCIA,
-       DECODE(G.SOLPER_AREA, NULL, S.PCON_AREA, SOLPER_AREA) AREA,
-       DECODE(G.SOLPER_CARGO, NULL, S.PCON_CARGO, SOLPER_CARGO) CARGO,
-
- DECODE(DECODE(G.SOLPER_TIPO_CONT,
-              NULL,
-              S.PCON_TIPO_CONT,
-              G. SOLPER_TIPO_CONT),'IN','Indefinido','TE','Temporal') TIPO_CONTRATO,
-       'Re-Contratacion' TIPO_CONTRATACION,
-       DECODE(SOLPER_ESTADO_APROB,'C','Confirmado','P','Pendiente','R','Rechazado',NULL,'Pendiente') ESTADO_APROB_SOL,
-       NVL(G.SOLPER_CANT, 1) VACANCIA,
-       G.SOLPER_OPERADOR_APROB,
-       G.SOLPER_FECHA_APROB,
-       'Re-Contratacion' TIPO_SELECCION,
-       DECODE(SOLPER_ESTADO_FINAL,'F','Finalizado','EP','En Proceso','R','Rechazado','P','Pendiente','EE','En Espera') ESTADO_FIN_SOL,
-  DECODE (PCON_SOL_NRO, NULL, S.PCON_LEGAJO) LEGAJO,
-  DECODE (G.SOLPER_EMPR, NULL, S.PCON_EMPR) EMPR
-  FROM PER_CONT_SIN_PROSELC S, PER_SOLICITUD_PERSONAL G
- WHERE S.PCON_SOL_NRO = G.SOLPER_CLAVE(+)
-   AND S.PCON_EMPR = G.SOLPER_EMPR(+)
-   AND S.PCON_EMPR = 1
-   AND G.SOLPER_CLAVE IS NULL---
-*/
        IF APEX_COLLECTION.COLLECTION_EXISTS(P_COLLECTION_NAME => 'SEL_CONTRATACION') THEN
           APEX_COLLECTION.DELETE_COLLECTION(P_COLLECTION_NAME => 'SEL_CONTRATACION');
           END IF;
@@ -1725,8 +1453,6 @@ SELECT SOLPER_CANT Q_VACANT,
                     SUM(C001)
                     WHEN C005 = ''Programada'' AND C016= 1 THEN
                     SUM(C001)
-                 --   WHEN C005 = ''Re-Contratacion'' AND C016 = 1 THEN
-                 --   SUM(C001)
                     WHEN C005 = ''Acumulada'' AND C016 = 1 THEN
                     SUM(C001)
                  END MES1_CONT,
@@ -1735,8 +1461,6 @@ SELECT SOLPER_CANT Q_VACANT,
                     SUM(C001)
                     WHEN C005 = ''Programada'' AND C016= 2 THEN
                     SUM(C001)
-             --       WHEN C005 = ''Re-Contratacion'' AND C016 = 2 THEN
-                --    SUM(C001)
                    WHEN C005 = ''Acumulada'' AND C016 = 2 THEN
                     SUM(C001)
                  END MES2_CONT,
@@ -1745,8 +1469,6 @@ SELECT SOLPER_CANT Q_VACANT,
                     SUM(C001)
                     WHEN C005 = ''Programada'' AND C016= 3 THEN
                     SUM(C001)
-                  --  WHEN C005 = ''Re-Contratacion'' AND C016 = 3 THEN
-                  --  SUM(C001)
                     WHEN C005 = ''Acumulada'' AND C016 = 3 THEN
                     SUM(C001)
                END MES3_CONT
@@ -1786,42 +1508,18 @@ PROCEDURE PP_PROCESO_SELECCION_SELC(P_EMPRESA IN NUMBER, P_FECHA IN DATE)IS
  begin
 
  IF  P_FECHA = LAST_DAY(TO_DATE(P_FECHA))  THEN
-    P_AND := P_AND||'AND MES || ''/'' || ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  ';
-    P_AND_SOL := P_AND_SOL|| 'AND SOL.MES||''/''||SOL.ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  ';
-    P_AND_SEL := P_AND_SEL|| 'AND SEL.MES||''/''||SEL.ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  ';
+    P_AND := P_AND||'and semana is null AND MES || ''/'' || ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  ';
+    P_AND_SOL := P_AND_SOL|| 'and sol.semana is null AND SOL.MES||''/''||SOL.ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  ';
+    P_AND_SEL := P_AND_SEL|| 'and sel.semana is null AND SEL.MES||''/''||SEL.ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  ';
 
  ELSE
-    P_AND := P_AND||' AND SEMANA || ''/'' || ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')  ';
-    P_AND_SOL := P_AND_SOL|| 'AND SOL.SEMANA||''/''||SOL.ANHO =TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')  ';
-    P_AND_SEL := P_AND_SEL|| 'AND SEL.SEMANA||''/''||SEL.ANHO =TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')  ';
+    P_AND := P_AND||' and mes is null AND SEMANA || ''/'' || ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')  ';
+    P_AND_SOL := P_AND_SOL|| 'and sol.mes is null AND SOL.SEMANA||''/''||SOL.ANHO =TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')  ';
+    P_AND_SEL := P_AND_SEL|| 'and sol.mes is null AND SEL.SEMANA||''/''||SEL.ANHO =TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')  ';
  END IF;
 
 
-P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
-                     T.SOLPER_CLAVE NRO_SOL,
-                     TO_CHAR(SOLPER_FECHA_SOL, ''MON/YYYY'') MES_ANHO,
-                     A.AREDPP_DESC AREA,
-                     DECODE(SOLPER_TIPO_CONTRATACION,''PR'',''Programada'',''DR'',''Directa'',''RC'',''Re-Contratacion'') TIPO_CONTRATACION,
-                     DECODE(SOLPER_TIPO_SELEC,''PR'',''Programada'',''AN'',''Anticipada'', ''RC'', ''Re-Contratacion'')TIPO_SELEC_SOL,
-                     T.SOLPER_CARGO,
-                     SOLPER_FECHA_SOL,
-                     T.SOLPER_OPERADOR_SOL,
-                     DECODE(SOLPER_NIVEL_URGENCIA,''M'',''MEDIO'',''A'',''ALTO'',''B'',''BAJO'') URGENCIA,
-                     DECODE(SOLPER_TIPO_CONT,''IN'',''Indefinido'',''TE'',''Temporal'') TIPO_CONTRATO,
-                     DECODE(SOLPER_ESTADO_APROB,''C'',''Confirmado'',''P'',''Pendiente'',''R'',''Rechazado'',NULL,''Pendiente'') ESTADO_APROB_SOL,
-                     SOLPER_OPERADOR_APROB OPERADOR_APROB_SOL,
-                     SOLPER_FECHA_APROB FECHA_APROB_SOL,
-                     DECODE(SOLPER_ESTADO_FINAL,''F'',''Finalizado'',''EP'',''En Proceso'',''R'',''Rechazado'',''P'',''Pendiente'',''EE'',''En Espera'', ''ER'', ''En Reclutamiento'', ''A'',''Anulado'') ESTADO_FIN_SOL,
-                     1 ORDEN,
-                     TO_CHAR(SOLPER_FECHA_SOL, ''MM/YYYY'') MES_ANHOG
-                 FROM PER_SOLICITUD_PERSONAL_HIST T,PER_AREA_DPP A
-                 WHERE T.SOLPER_AREA = A.AREDPP_CLAVE
-                 AND T.SOLPER_EMPR = A.AREDPP_EMPR
-                 and SOLPER_TIPO_CONTRATACION <>''RC''
-                 AND TO_CHAR(SOLPER_FECHA_SOL, ''MM/YYYY'') = TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-2),''MM/YYYY'')
-                 AND T.MES || ''/'' || ANHO = TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-2),''MM/YYYY'')*/
-
-                  SELECT   1 Q_VACANT,
+P_QUERY7 := 'SELECT   1 Q_VACANT,
                      SOL.SOLPER_CLAVE NRO_SOL,
                      TO_CHAR(seleper_fecha_estado_gral, ''MON/YYYY'') MES_ANHO,
                      AR.AREDPP_DESC AREA,
@@ -1865,37 +1563,11 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                    AND SOLPER_ESTADO_FINAL = ''F''
                    and SOLPER_TIPO_CONTRATACION <>''RC''
                    AND SOL.SOLPER_CLAVE NOT IN (439,444,445,448,452,460,466)---SON ALGUNOS QUE MARCEK HABIA CERRADO ESTADO Y QUE LA FECHA DE CONTRATACION FUE ATNES DE LA FECHA DE CIERRE
+                   and sol.semana is null
+                   and sel.semana is null
                    AND SOL.MES||''/''||SOL.ANHO = TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-2),''MM/YYYY'')
                    AND SEL.MES||''/''||SEL.ANHO =TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-2),''MM/YYYY'')
                    AND TO_CHAR(sel.seleper_fecha_estado_gral,''MM/YYYY'') =TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-2),''MM/YYYY'')
-
-                 UNION ALL
-                  SELECT   1 Q_VACANT,
-                     null NRO_SOL,
-                     TO_CHAR(PCON_FECHA_INICIO, ''MON/YYYY'') MES_ANHO,
-                     AR.AREDPP_DESC AREA,
-                     ''Re-Contratacion'' TIPO_CONTRATACION,
-                     ''Re-Contratacion'' TIPO_SELEC_SOL,
-                     PC.CAR_CODIGO,
-                     ADD_MONTHS(TO_DATE(PCON_FECHA_INICIO),-1),
-                     NULL,
-                     NULL URGENCIA,
-                     NULL TIPO_CONTRATO,
-                     NULL ESTADO_APROB_SOL,
-                     NULL OPERADOR_APROB_SOL,
-                     NULL FECHA_APROB_SOL,
-                     ''Finalizado'' ESTADO_FIN_SOL,
-                      1 ORDEN,
-                     TO_CHAR(ADD_MONTHS(TO_DATE(PCON_FECHA_INICIO),-1),''MM/YYYY'') MES_ANHOG
-                  FROM PER_AREA_DPP                AR,
-                       PER_CARGO                   PC,
-                       PER_CONT_SIN_PROSELC       CON
-                 WHERE CON.PCON_AREA = AR.AREDPP_CLAVE
-                   AND CON.PCON_EMPR = ar.aredpp_empr
-                   AND CON.PCON_CARGO = PC.CAR_CODIGO
-                   AND CON.PCON_EMPR = PC.CAR_EMPR
-                   AND TO_CHAR(CON.PCON_FECHA_INICIO,''MM/YYYY'') =''04/2020''
-                   AND ''04/2020'' =  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-2),''MM/YYYY'')
                  union all
                  SELECT   1 Q_VACANT,
                      SOL.SOLPER_CLAVE NRO_SOL,
@@ -1941,59 +1613,11 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                    AND SOLPER_ESTADO_FINAL = ''F''
                    and SOLPER_TIPO_CONTRATACION <>''RC''
                    AND SOL.SOLPER_CLAVE NOT IN (439,444,445,448,452,460,466)---SON ALGUNOS QUE MARCEK HABIA CERRADO ESTADO Y QUE LA FECHA DE CONTRATACION FUE ATNES DE LA FECHA DE CIERRE
+                   and sol.semana is null
+                   and sel.semana is null
                    AND SOL.MES||''/''||SOL.ANHO = TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-1),''MM/YYYY'')
                    AND SEL.MES||''/''||SEL.ANHO =TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-1),''MM/YYYY'')
                    AND TO_CHAR(sel.seleper_fecha_estado_gral,''MM/YYYY'') =TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-1),''MM/YYYY'')
-                 /*
-
-               UNION ALL
-                SELECT SOLPER_CANT Q_VACANT,
-                     T.SOLPER_CLAVE NRO_SOL,
-                     TO_CHAR(SOLPER_FECHA_SOL, ''MON/YYYY'') MES_ANHO,
-                     A.AREDPP_DESC AREA,
-                     DECODE(SOLPER_TIPO_CONTRATACION,''PR'',''Programada'',''DR'',''Directa'',''RC'',''Re-Contratacion'') TIPO_CONTRATACION,
-                     DECODE(SOLPER_TIPO_SELEC,''PR'',''Programada'',''AN'',''Anticipada'', ''RC'', ''Re-Contratacion'')TIPO_SELEC_SOL,
-                     T.SOLPER_CARGO,
-                     SOLPER_FECHA_SOL,
-                     T.SOLPER_OPERADOR_SOL,
-                     DECODE(SOLPER_NIVEL_URGENCIA,''M'',''MEDIO'',''A'',''ALTO'',''B'',''BAJO'') URGENCIA,
-                     DECODE(SOLPER_TIPO_CONT,''IN'',''Indefinido'',''TE'',''Temporal'') TIPO_CONTRATO,
-                     DECODE(SOLPER_ESTADO_APROB,''C'',''Confirmado'',''P'',''Pendiente'',''R'',''Rechazado'',NULL,''Pendiente'') ESTADO_APROB_SOL,
-                     SOLPER_OPERADOR_APROB OPERADOR_APROB_SOL,
-                     SOLPER_FECHA_APROB FECHA_APROB_SOL,
-                     DECODE(SOLPER_ESTADO_FINAL,''F'',''Finalizado'',''EP'',''En Proceso'',''R'',''Rechazado'',''P'',''Pendiente'',''EE'',''En Espera'', ''ER'', ''En Reclutamiento'', ''A'',''Anulado'') ESTADO_FIN_SOL,
-                     2 ORDEN,
-                     TO_CHAR(SOLPER_FECHA_SOL, ''MM/YYYY'') MES_ANHOG
-                 FROM PER_SOLICITUD_PERSONAL_HIST T,PER_AREA_DPP A
-                 WHERE T.SOLPER_AREA = A.AREDPP_CLAVE
-                 AND T.SOLPER_EMPR = A.AREDPP_EMPR
-                 and SOLPER_TIPO_CONTRATACION <>''RC''
-                 AND TO_CHAR(SOLPER_FECHA_SOL, ''MM/YYYY'') =TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-1),''MM/YYYY'')
-                 AND T.MES || ''/'' || ANHO =TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-1),''MM/YYYY'')
-                UNION ALL
-                SELECT SOLPER_CANT Q_VACANT,
-                     T.SOLPER_CLAVE NRO_SOL,
-                     TO_CHAR(SOLPER_FECHA_SOL, ''MON/YYYY'') MES_ANHO,
-                     A.AREDPP_DESC AREA,
-                     DECODE(SOLPER_TIPO_CONTRATACION,''PR'',''Programada'',''DR'',''Directa'',''RC'',''Re-Contratacion'') TIPO_CONTRATACION,
-                     DECODE(SOLPER_TIPO_SELEC,''PR'',''Programada'',''AN'',''Anticipada'', ''RC'', ''Re-Contratacion'')TIPO_SELEC_SOL,
-                     T.SOLPER_CARGO,
-                     SOLPER_FECHA_SOL,
-                     T.SOLPER_OPERADOR_SOL,
-                     DECODE(SOLPER_NIVEL_URGENCIA,''M'',''MEDIO'',''A'',''ALTO'',''B'',''BAJO'') URGENCIA,
-                     DECODE(SOLPER_TIPO_CONT,''IN'',''Indefinido'',''TE'',''Temporal'') TIPO_CONTRATO,
-                     DECODE(SOLPER_ESTADO_APROB,''C'',''Confirmado'',''P'',''Pendiente'',''R'',''Rechazado'',NULL,''Pendiente'') ESTADO_APROB_SOL,
-                     SOLPER_OPERADOR_APROB OPERADOR_APROB_SOL,
-                     SOLPER_FECHA_APROB FECHA_APROB_SOL,
-                     DECODE(SOLPER_ESTADO_FINAL,''F'',''Finalizado'',''EP'',''En Proceso'',''R'',''Rechazado'',''P'',''Pendiente'',''EE'',''En Espera'', ''ER'', ''En Reclutamiento'', ''A'',''Anulado'') ESTADO_FIN_SOL,
-                     3 ORDEN,
-                     TO_CHAR(SOLPER_FECHA_SOL, ''MM/YYYY'') MES_ANHOG
-                 FROM PER_SOLICITUD_PERSONAL_HIST T,PER_AREA_DPP A
-                 WHERE T.SOLPER_AREA = A.AREDPP_CLAVE
-                 AND T.SOLPER_EMPR = A.AREDPP_EMPR
-                 and SOLPER_TIPO_CONTRATACION <>''RC''
-                 AND TO_CHAR(SOLPER_FECHA_SOL, ''MM/YYYY'') = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')
-                 AND T.mes|| ''/'' || ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''mm/YYYY'')*/
                 UNION ALL
                   SELECT   1 Q_VACANT,
                      SOL.SOLPER_CLAVE NRO_SOL,
@@ -2041,66 +1665,7 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                    AND SOL.SOLPER_CLAVE NOT IN (439,444,445,448,452,460,466)---SON ALGUNOS QUE MARCEK HABIA CERRADO ESTADO Y QUE LA FECHA DE CONTRATACION FUE ATNES DE LA FECHA DE CIERRE
                    '||P_AND_SOL||'
                    '||P_AND_SEL ||'
-                  --  AND SOL.mes||''/''||SOL.ANHO =  TO_CHAR(TO_DATE('''||P_FECHA||'''),''mm/YYYY'')
-                  -- AND SEL.mes||''/''||SEL.ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''mm/YYYY'')
-                   AND TO_CHAR(sel.seleper_fecha_estado_gral,''MM/YYYY'') = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')
-             /*  union all
-                SELECT
-                     1 VACANCIA,
-                     S.PCON_SOL_NRO NRO_SOL,
-                     TO_CHAR(S.PCON_FECHA_INICIO, ''MON/YYYY'')MES_ANHO,
-                      AREDPP_DESC AREA,
-                     ''Re-Contratacion'' TIPO_CONTRATACION,
-                     ''Re-Contratacion'' TIPO_SELECCION,
-                     S.PCON_CARGO CARGO,
-                     S.PCON_FECHA_INICIO FECHA_SOL,
-                     NULL,
-                     NULL URGENCIA,
-                     DECODE(S.PCON_TIPO_CONT,''IN'',''Indefinido'',''TE'',''Temporal'') TIPO_CONTRATO,
-                     ''Confirmado''  ESTADO_APROB_SOL,
-                     NULL,
-                     NULL,
-                     ''Finalizado'' ESTADO_FIN_SOL,
-                      3 ORDEN,
-                      TO_CHAR(S.PCON_FECHA_INICIO, ''MON/YYYY'') MES_ANHOG
-                FROM PER_CONT_SIN_PROSELC S, PER_SOLICITUD_PERSONAL G,PER_AREA_DPP dd
-               WHERE S.PCON_SOL_NRO = G.SOLPER_CLAVE(+)
-                 AND S.PCON_EMPR = G.SOLPER_EMPR(+)
-                 AND DD.AREDPP_CLAVE = S.PCON_AREA
-                 AND DD.AREDPP_EMPR = S.PCON_EMPR
-                 AND S.PCON_EMPR = 1
-                 AND TO_CHAR(PCON_FECHA_INICIO,''MM/YYYY'') =TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')
-                 AND G.SOLPER_CLAVE IS not NULL */
-
-                union all
-
-                SELECT
-                     1 VACANCIA,
-                     S.PCON_SOL_NRO NRO_SOL,
-                     TO_CHAR(ADD_MONTHS(S.PCON_FECHA_INICIO, -1), ''MON/YYYY'')MES_ANHO,
-                      AREDPP_DESC AREA,
-                     ''Re-Contratacion'' TIPO_CONTRATACION,
-                     ''Re-Contratacion'' TIPO_SELECCION,
-                     S.PCON_CARGO CARGO,
-                     ADD_MONTHS(S.PCON_FECHA_INICIO, -1) FECHA_SOL,
-                     NULL,
-                     NULL URGENCIA,
-                     DECODE(S.PCON_TIPO_CONT,''IN'',''Indefinido'',''TE'',''Temporal'') TIPO_CONTRATO,
-                     ''Confirmado''  ESTADO_APROB_SOL,
-                     NULL,
-                     NULL,
-                     ''Finalizado'' ESTADO_FIN_SOL,
-                      1 ORDEN,
-                      ''03/2020'' MES_ANHOG
-                FROM PER_CONT_SIN_PROSELC S, PER_SOLICITUD_PERSONAL G,PER_AREA_DPP dd
-               WHERE S.PCON_SOL_NRO = G.SOLPER_CLAVE(+)
-                 AND S.PCON_EMPR = G.SOLPER_EMPR(+)
-                 AND DD.AREDPP_CLAVE = S.PCON_AREA
-                 AND DD.AREDPP_EMPR = S.PCON_EMPR
-                 AND S.PCON_EMPR = 1
-                 AND TO_CHAR(ADD_MONTHS(S.PCON_FECHA_INICIO, -1), ''MM/YYYY'') = ''03/2020''
-                 AND ''03/2020'' =  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-2),''MM/YYYY'')
-                 AND G.SOLPER_CLAVE IS NULL';
+                   AND TO_CHAR(sel.seleper_fecha_estado_gral,''MM/YYYY'') = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')';
 
    P_QUERY2:='SELECT
                  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-2),''MM/YYYY''),
@@ -2110,10 +1675,7 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-1),''MON/YYYY''),
                  TO_CHAR(TO_DATE('''||P_FECHA||'''),''MON/YYYY'')
               FROM DUAL';
-    P_QUERY3 :='/*SELECT ''Re-Contratacion'',6
-                  FROM DUAL
-                 UNION ALL*/
-                 SELECT ''Anticipada'',4
+    P_QUERY3 :='SELECT ''Anticipada'',4
                   FROM DUAL
                  UNION ALL
                  SELECT ''Programada'', 5
@@ -2140,8 +1702,6 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                     SUM(C001)
                     WHEN C006 = ''Programada'' AND C016= 1 THEN
                     SUM(C001)
-                 --   WHEN C006 = ''Re-Contratacion'' AND C016 = 1 THEN
-                  --  SUM(C001)
                      WHEN C006 = ''Acumulada'' AND C016 = 1 THEN
                     SUM(C001)
                  END MES1_CONT,
@@ -2150,8 +1710,6 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                     SUM(C001)
                     WHEN C006 = ''Programada'' AND C016= 2 THEN
                     SUM(C001)
-                 --   WHEN C006 = ''Re-Contratacion'' AND C016 = 2 THEN
-                --    SUM(C001)
                     WHEN C006 = ''Acumulada'' AND C016 = 2 THEN
                     SUM(C001)
                  END MES2_CONT,
@@ -2160,8 +1718,6 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                     SUM(C001)
                     WHEN C006 = ''Programada'' AND C016= 3 THEN
                     SUM(C001)
-               --     WHEN C006 = ''Re-Contratacion'' AND C016 = 3 THEN
-                 --   SUM(C001)
                     WHEN C006 = ''Acumulada'' AND C016 = 3 THEN
                     SUM(C001)
                END MES3_CONT
@@ -2233,22 +1789,19 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
   FROM DUAL;
 
 
- IF P_FECHA = LAST_DAY(TO_DATE(P_FECHA))  THEN
+ IF P_FECHA = LAST_DAY(TO_DATE(P_FECHA)) THEN
 
-    P_AND_T := P_AND_T||' AND T.MES || ''/'' || T.ANHO = '''||V_MES3||'''';
-    P_AND_P := P_AND_P||' AND P.MES || ''/'' || P.ANHO = '''||V_MES3||'''';
-    P_AND_SOL := P_AND_SOL|| 'AND SOL.MES||''/''||SOL.ANHO = '''||V_MES3||'''';
-    P_AND_SEL := P_AND_SEL|| 'AND SEL.MES||''/''||SEL.ANHO = '''||V_MES3||'''';
+    P_AND_T := P_AND_T||' and t.semana is null AND T.MES || ''/'' || T.ANHO = '''||V_MES3||'''';
+    P_AND_P := P_AND_P||' and p.semana is null AND P.MES || ''/'' || P.ANHO = '''||V_MES3||'''';
+    P_AND_SOL := P_AND_SOL|| ' and sol.semana is null AND SOL.MES||''/''||SOL.ANHO = '''||V_MES3||'''';
+    P_AND_SEL := P_AND_SEL|| ' and sel.semana is null AND SEL.MES||''/''||SEL.ANHO = '''||V_MES3||'''';
 
  ELSE
-    P_AND_T := P_AND_T||' AND T.MES || ''/'' || T.ANHO = '''||V_SEMANA||'''';
-    P_AND_P := P_AND_P||' AND P.MES || ''/'' || P.ANHO = '''||V_SEMANA||'''';
-    P_AND_SOL := P_AND_SOL|| 'AND SOL.SEMANA||''/''||SOL.ANHO ='''||V_SEMANA||'''';
-    P_AND_SEL := P_AND_SEL|| 'AND SEL.SEMANA||''/''||SEL.ANHO ='''||V_SEMANA||'''';
- END IF;
-
-
-
+    P_AND_T := P_AND_T||' and t.mes is null AND T.semana || ''/'' || T.ANHO = '''||V_SEMANA||'''';
+    P_AND_P := P_AND_P||' and p.mes is null AND P.semana || ''/'' || P.ANHO = '''||V_SEMANA||'''';
+    P_AND_SOL := P_AND_SOL|| ' and sol.mes is null AND SOL.SEMANA||''/''||SOL.ANHO ='''||V_SEMANA||'''';
+    P_AND_SEL := P_AND_SEL|| ' and sel.mes is null AND SEL.SEMANA||''/''||SEL.ANHO ='''||V_SEMANA||'''';
+ END if;
   ----------------PRIMERA ENTREVISTA
   P_QUERY20 := 'SELECT P.PER_ENT_CODIGO,
                        TO_CHAR(T.ENTPER_REQUIS_FECHA, ''mm/yyyy''),
@@ -2271,6 +1824,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                       AND C.CARDPP_AREA = S.AREDPP_CLAVE
                       AND C.CARDPP_EMPR = S.AREDPP_EMPR
                       AND ENTPER_EMPR = 1
+                      and t.semana is null
+                      and p.semana is null
                       AND T.MES||''/''||T.ANHO = '''||V_MES1||'''
                       AND P.MES||''/''||P.ANHO = '''||V_MES1||'''
                       AND TO_CHAR(T.ENTPER_REQUIS_FECHA, ''mm/yyyy'') ='''||V_MES1||'''
@@ -2296,7 +1851,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                           AND ENTPER_EMPR = 1
                           AND C.CARDPP_AREA = S.AREDPP_CLAVE
                           AND C.CARDPP_EMPR = S.AREDPP_EMPR
-
+                          and t.semana is null
+                          and p.semana is null
                           AND T.MES||''/''||T.ANHO = '''||V_MES2||'''
                           AND P.MES||''/''||P.ANHO = '''||V_MES2||'''
                           AND TO_CHAR(T.ENTPER_REQUIS_FECHA, ''mm/yyyy'') ='''||V_MES2||'''
@@ -2324,10 +1880,7 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                       AND ENTPER_EMPR = 1
                         '||P_AND_T||'
                         '||P_AND_P||'
-                     --- AND T.mes||''/''||T.ANHO = '''||V_MES3||'''
-                    --- AND P.mes||''/''||P.ANHO = '''||V_MES3||'''
                       AND TO_CHAR(T.ENTPER_REQUIS_FECHA, ''mm/yyyy'') ='''||V_MES3||'''
-
                 UNION ALL
                 SELECT SOLPER_CLAVE,
                        TO_CHAR(SELEPER_REQUIS_FECHA, ''mm/yyyy''),
@@ -2352,14 +1905,7 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                    AND SOL.SOLPER_CLAVE = SEL.SELPER_SOLICI
                      '||P_AND_SOL||'
                      '||P_AND_SEL ||'
-
-                ---   AND SOL.mes||''/''||SOL.ANHO ='''||V_MES3||'''
-                ---   AND SEL.mes||''/''||SEL.ANHO ='''||V_MES3||'''
                    AND TO_CHAR(SELEPER_REQUIS_FECHA, ''mm/yyyy'') ='''||V_MES3||'''
-                  -- AND CASE WHEN SELEPER_REQUIS_FECHA >''01/05/2020'' AND AREDPP_DESC <> ''CDA''  THEN 0
-                   --        WHEN SELEPER_REQUIS_FECHA >''01/06/2020'' AND AREDPP_DESC = ''CDA''  THEN   0
-                   --        ELSE 1 END = 1
-
                 UNION ALL
                 SELECT SOLPER_CLAVE,
                        TO_CHAR(SELEPER_REQUIS_FECHA, ''mm/yyyy''),
@@ -2382,11 +1928,10 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                    AND SOL.SOLPER_CARGO = PC.CAR_CODIGO
                    AND SOL.SOLPER_EMPR = SEL.SELEPER_EMPR
                    AND SOL.SOLPER_CLAVE = SEL.SELPER_SOLICI
+                   and sol.semana is null 
+                   and sel.semana is null
                    AND SOL.MES||''/''||SOL.ANHO = '''||V_MES2||'''
                    AND SEL.MES||''/''||SEL.ANHO = '''||V_MES2||'''
-                --   AND CASE WHEN SELEPER_REF_FECHA >''01/05/2020'' AND AREDPP_DESC <> ''CDA''  THEN 0
-                 --      WHEN SELEPER_REF_FECHA >''01/06/2020'' AND AREDPP_DESC = ''CDA''  THEN   0
-                --       ELSE 1 END = 1
                    AND TO_CHAR(SELEPER_REQUIS_FECHA, ''mm/yyyy'') ='''||V_MES2||'''
                 UNION ALL
                 SELECT SOLPER_CLAVE,
@@ -2410,6 +1955,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                    AND SOL.SOLPER_CARGO = PC.CAR_CODIGO
                    AND SOL.SOLPER_EMPR = SEL.SELEPER_EMPR
                    AND SOL.SOLPER_CLAVE = SEL.SELPER_SOLICI
+                   and sol.semana is null
+                   and sel.semana is null
                    AND SOL.MES||''/''||SOL.ANHO = '''||V_MES1||'''
                    AND SEL.MES||''/''||SEL.ANHO = '''||V_MES1||'''
                    AND TO_CHAR(SELEPER_REQUIS_FECHA, ''mm/yyyy'') ='''||V_MES1||'''' ;
@@ -2435,6 +1982,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                   AND C.CARDPP_AREA = S.AREDPP_CLAVE
                   AND C.CARDPP_EMPR = S.AREDPP_EMPR
                   AND ENTPER_EMPR = 1
+                  and t.semana is null
+                  and p.semana is null
                   AND T.MES||''/''||T.ANHO = '''||V_MES1||'''
                   AND P.MES||''/''||P.ANHO = '''||V_MES1||'''
                   AND TO_CHAR(T.ENTPER_REF_FECHA, ''mm/yyyy'') ='''||V_MES1||'''
@@ -2460,6 +2009,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                       AND C.CARDPP_AREA = S.AREDPP_CLAVE
                       AND C.CARDPP_EMPR = S.AREDPP_EMPR
                       AND ENTPER_EMPR = 1
+                      and t.semana is null
+                      and p.semana is null
                       AND T.MES||''/''||T.ANHO = '''||V_MES2||'''
                       AND P.MES||''/''||P.ANHO = '''||V_MES2||'''
                       AND TO_CHAR(T.ENTPER_REF_FECHA, ''mm/yyyy'') ='''||V_MES2||'''
@@ -2485,8 +2036,6 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                   AND C.CARDPP_AREA = S.AREDPP_CLAVE
                   AND C.CARDPP_EMPR = S.AREDPP_EMPR
                   AND ENTPER_EMPR = 1
-                 -- AND T.mes||''/''||T.ANHO = '''||v_mes3||'''
-                 -- AND P.mes||''/''||P.ANHO = '''||v_mes3||'''
                   '||P_AND_T||'
                   '||P_AND_P||'
                   AND TO_CHAR(T.ENTPER_REF_FECHA, ''mm/yyyy'') ='''||V_MES3||'''
@@ -2515,13 +2064,7 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                AND SOL.SOLPER_CLAVE = SEL.SELPER_SOLICI
                 '||P_AND_SOL||'
                 '||P_AND_SEL ||'
-            --   AND SOL.mes||''/''||SOL.ANHO = '''||V_mes3||'''
-            --   AND SEL.mes||''/''||SEL.ANHO = '''||V_mes3||'''
                AND TO_CHAR(SELEPER_REF_FECHA, ''mm/yyyy'') ='''||V_MES3||'''
-              -- AND CASE WHEN SELEPER_REF_FECHA >''01/05/2020'' AND AREDPP_DESC <> ''CDA''  THEN 0
-              --         WHEN SELEPER_REF_FECHA >''01/06/2020'' AND AREDPP_DESC = ''CDA''  THEN   0
-               --        ELSE 1 END = 1
-
             UNION ALL
             SELECT SOLPER_CLAVE,
                    TO_CHAR(SELEPER_REF_FECHA, ''mm/yyyy''),
@@ -2544,6 +2087,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                AND SOL.SOLPER_CARGO = PC.CAR_CODIGO
                AND SOL.SOLPER_EMPR = SEL.SELEPER_EMPR
                AND SOL.SOLPER_CLAVE = SEL.SELPER_SOLICI
+               and sol.semana is null
+               and sel.semana is null
                AND SOL.MES||''/''||SOL.ANHO = '''||V_MES1||'''
                AND SEL.MES||''/''||SEL.ANHO = '''||V_MES1||'''
                AND TO_CHAR(SELEPER_REF_FECHA, ''mm/yyyy'') ='''||V_MES1||'''
@@ -2569,9 +2114,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                AND SOL.SOLPER_CARGO = PC.CAR_CODIGO
                AND SOL.SOLPER_EMPR = SEL.SELEPER_EMPR
                AND SOL.SOLPER_CLAVE = SEL.SELPER_SOLICI
-               --AND CASE WHEN SELEPER_REF_FECHA >''01/05/2020'' AND AREDPP_DESC <> ''CDA''  THEN 0
-              --         WHEN SELEPER_REF_FECHA >''01/06/2020'' AND AREDPP_DESC = ''CDA''  THEN   0
-                 --      ELSE 1 END = 1
+               and sol.semana is null
+               and sel.semana is null
                AND SOL.MES||''/''||SOL.ANHO = '''||V_MES2||'''
                AND SEL.MES||''/''||SEL.ANHO = '''||V_MES2||'''
                AND TO_CHAR(SELEPER_REF_FECHA, ''mm/yyyy'') ='''||V_MES2||''' ';
@@ -2611,8 +2155,6 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                    AND SOL.SOLPER_CLAVE = SEL.SELPER_SOLICI
                     '||P_AND_SOL||'
                     '||P_AND_SEL ||'
-                  -- AND SOL.mes||''/''||SOL.ANHO = '''||V_MES3||'''
-                --   AND SEL.mes||''/''||SEL.ANHO = '''||V_MES3||'''
                    AND TO_CHAR(SELEPER_EAR_FECHA, ''mm/yyyy'') ='''||V_MES3||'''
 
                 UNION ALL
@@ -2649,6 +2191,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                    AND SOL.SOLPER_CARGO = PC.CAR_CODIGO
                    AND SOL.SOLPER_EMPR = SEL.SELEPER_EMPR
                    AND SOL.SOLPER_CLAVE = SEL.SELPER_SOLICI
+                   and sol.semana is null
+                   and sel.semana is null
                    AND SOL.MES||''/''||SOL.ANHO = '''||V_MES1||'''
                    AND SEL.MES||''/''||SEL.ANHO = '''||V_MES1||'''
                    AND TO_CHAR(SELEPER_EAR_FECHA, ''mm/yyyy'') ='''||V_MES1||'''
@@ -2686,6 +2230,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                    AND SOL.SOLPER_CARGO = PC.CAR_CODIGO
                    AND SOL.SOLPER_EMPR = SEL.SELEPER_EMPR
                    AND SOL.SOLPER_CLAVE = SEL.SELPER_SOLICI
+                   and sol.semana is null 
+                   and sel.semana is null
                    AND SOL.MES||''/''||SOL.ANHO = '''||V_MES2||'''
                    AND SEL.MES||''/''||SEL.ANHO = '''||V_MES2||'''
                    AND TO_CHAR(SELEPER_EAR_FECHA, ''mm/yyyy'') ='''||V_MES2||''' ';
@@ -2725,8 +2271,6 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
              AND SOL.SOLPER_CLAVE = SEL.SELPER_SOLICI
               '||P_AND_SOL||'
               '||P_AND_SEL ||'
-             --AND SOL.mes||''/''||SOL.ANHO = '''||V_MES3||'''
-            -- AND SEL.mes||''/''||SEL.ANHO = '''||V_MES3||'''
              AND TO_CHAR(SELEPER_EES_FECHA, ''mm/yyyy'') ='''||V_MES3||'''
 
           UNION ALL
@@ -2763,6 +2307,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
              AND SOL.SOLPER_CARGO = PC.CAR_CODIGO
              AND SOL.SOLPER_EMPR = SEL.SELEPER_EMPR
              AND SOL.SOLPER_CLAVE = SEL.SELPER_SOLICI
+             and sol.semana is null
+             and sel.semana is null
              AND SOL.MES||''/''||SOL.ANHO ='''||V_MES2||'''
              AND SEL.MES||''/''||SEL.ANHO = '''||V_MES2||'''
              AND TO_CHAR(SELEPER_EES_FECHA, ''mm/yyyy'') ='''||V_MES2||'''
@@ -2800,6 +2346,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
              AND SOL.SOLPER_CARGO = PC.CAR_CODIGO
              AND SOL.SOLPER_EMPR = SEL.SELEPER_EMPR
              AND SOL.SOLPER_CLAVE = SEL.SELPER_SOLICI
+             and sol.semana is null
+             and sel.semana is null
              AND SOL.MES||''/''||SOL.ANHO ='''||V_MES1||'''
              AND SEL.MES||''/''||SEL.ANHO = '''||V_MES1||'''
              AND TO_CHAR(SELEPER_EES_FECHA, ''mm/yyyy'') ='''||V_MES1||'''  ';
@@ -2837,6 +2385,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                      AND NVL(SOLPER_ESTADO_FINAL,''EP'') = ''EP''
                      AND NVL(SELEPER_ESTADO_GRAL,''EP'') = ''EP''
                      AND TO_CHAR(sol.solper_fecha_sol,''MM/YYYY'') ='''||V_MES1||'''
+                     and sol.semana is null
+                     and sel.semana is null
                      AND SOL.MES||''/''||SOL.ANHO ='''||V_MES1||'''
                      AND SEL.MES||''/''||SEL.ANHO = '''||V_MES1||'''
                   UNION ALL
@@ -2872,6 +2422,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                      AND NVL(SOLPER_ESTADO_FINAL,''EP'') = ''EP''
                      AND NVL(SELEPER_ESTADO_GRAL,''EP'') = ''EP''
                      AND TO_CHAR(sol.solper_fecha_sol,''MM/YYYY'') = '''||V_MES2||'''
+                     and sol.semana is null
+                     and sel.semana is null
                      AND SOL.MES||''/''||SOL.ANHO ='''||V_MES2||'''
                      AND SEL.MES||''/''||SEL.ANHO ='''||V_MES2||'''
                    UNION ALL
@@ -2907,8 +2459,6 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                      AND NVL(SOLPER_ESTADO_FINAL,''EP'') = ''EP''
                      AND NVL(SELEPER_ESTADO_GRAL,''EP'') = ''EP''
                      AND TO_CHAR(sol.solper_fecha_sol,''MM/YYYY'') ='''||V_MES3||'''
-                   --  AND SOL.mes||''/''||SOL.ANHO ='''||V_MES3||'''
-                  --   AND SEL.mes||''/''||SEL.ANHO = '''||V_MES3||'''
                    '||P_AND_SOL||'
                    '||P_AND_SEL ||'
                      AND CASE WHEN solper_fecha_sol >''01/05/2020'' AND AREDPP_DESC <> ''CDA''  THEN 0
@@ -2947,6 +2497,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                      AND C.CARDPP_EMPR = D.AREDPP_EMPR
                      AND ENTPER_REQUIS_FECHA IS NULL
                      AND TO_CHAR(PER_ENT_FECHA,''MM/YYYY'') ='''||V_MES1||'''
+                     and A.semana is null
+                     and T.semana is null
                      AND A.MES||''/''||A.ANHO ='''||V_MES1||'''
                      AND T.MES||''/''||T.ANHO = '''||V_MES1||'''
                    UNION ALL
@@ -2980,6 +2532,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                      AND C.CARDPP_EMPR = D.AREDPP_EMPR
                      AND ENTPER_REQUIS_FECHA IS NULL
                      AND TO_CHAR(PER_ENT_FECHA,''MM/YYYY'') ='''||V_MES2||'''
+                     and A.semana is null
+                     and T.semana is null
                      AND A.MES||''/''||A.ANHO ='''||V_MES2||'''
                      AND T.MES||''/''||T.ANHO = '''||V_MES2||'''
 
@@ -3016,9 +2570,6 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                      AND TO_CHAR(PER_ENT_FECHA,''MM/YYYY'') ='''||V_MES3||'''
                      '||P_AND_T||'
                      '||P_AND_P||'
-                   --  AND A.mes||''/''||A.ANHO ='''||V_MES3||'''
-                     --AND T.mes||''/''||T.ANHO = '''||V_MES3||'''
-
                      ';
 
 
@@ -3065,6 +2616,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                      AND NVL(SOLPER_ESTADO_FINAL,''EP'') = ''EP''
                      AND NVL(SELEPER_ESTADO_GRAL,''EP'') = ''EP''
                      AND TO_CHAR(SEL.SELEPER_REQUIS_FECHA,''MM/YYYY'') ='''||V_MES1||'''
+                     and sol.semana is null
+                     and sel.semana is null
                      AND SOL.MES||''/''||SOL.ANHO ='''||V_MES1||'''
                      AND SEL.MES||''/''||SEL.ANHO = '''||V_MES1||'''
                      AND SEL.SELEPER_REF_FECHA IS NULL
@@ -3111,6 +2664,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                      AND NVL(SOLPER_ESTADO_FINAL,''EP'') = ''EP''
                      AND NVL(SELEPER_ESTADO_GRAL,''EP'') = ''EP''
                      AND TO_CHAR(SEL.SELEPER_REQUIS_FECHA,''MM/YYYY'') = '''||V_MES2||'''
+                     and sol.semana is null
+                     and sel.semana is null
                      AND SOL.MES||''/''||SOL.ANHO ='''||V_MES2||'''
                      AND SEL.MES||''/''||SEL.ANHO = '''||V_MES2||'''
                      AND SEL.SELEPER_REF_FECHA IS NULL
@@ -3157,8 +2712,6 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                      AND NVL(SOLPER_ESTADO_FINAL,''EP'') = ''EP''
                      AND NVL(SELEPER_ESTADO_GRAL,''EP'') = ''EP''
                      AND TO_CHAR(SEL.SELEPER_REQUIS_FECHA,''MM/YYYY'') = '''||V_MES3||'''
-                     --AND SOL.mes||''/''||SOL.ANHO ='''||V_MES3||'''
-                     --AND SEL.mes||''/''||SEL.ANHO ='''||V_MES3||'''
                      '||P_AND_SOL||'
                      '||P_AND_SEL ||'
                      AND SELEPER_ref_ESTADO IS NULL
@@ -3167,8 +2720,6 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                                         WHEN solper_fecha_sol >''01/06/2020'' AND AREDPP_DESC = ''CDA''  THEN   0
                                         ELSE 1 END = 1
                   UNION ALL
-
-
 
                   select P.ENTPER_ENTREVISTA,
                          ''ENTREVISTA'',
@@ -3210,8 +2761,6 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                      AND TO_CHAR(P.ENTPER_REQUIS_FECHA,''MM/YYYY'') ='''||V_MES3||'''
                        '||P_AND_T||'
                        '||P_AND_P||'
-                    -- AND A.mes||''/''||A.ANHO ='''||V_MES3||'''
-                    -- AND T.mes||''/''||T.ANHO = '''||V_MES3||'''
 
                     UNION ALL
                   select A.ENTPER_ENTREVISTA,
@@ -3252,6 +2801,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                      AND ENTPER_REF_FECHA IS NULL
                      AND ENTPER_EMPR = 1
                      AND TO_CHAR(A.ENTPER_REQUIS_FECHA,''MM/YYYY'') = '''||V_MES1||'''
+                     and a.semana is null
+                     and t.semana is null
                      AND A.MES||''/''||A.ANHO ='''||V_MES1||'''
                      AND T.MES||''/''||T.ANHO = '''||V_MES1||'''
 
@@ -3294,6 +2845,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                      AND ENTPER_REF_FECHA IS NULL
                      AND ENTPER_EMPR = 1
                      AND TO_CHAR(A.ENTPER_REQUIS_FECHA,''MM/YYYY'') ='''||V_MES2||'''
+                     and a.semana is null
+                     and t.semana is null
                      AND A.MES||''/''||A.ANHO ='''||V_MES2||'''
                      AND T.MES||''/''||T.ANHO ='''||V_MES2||'''  ';
 
@@ -3342,6 +2895,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                  AND SOL.SOLPER_EMPR = SEL.SELEPER_EMPR (+)
                  AND SOL.SOLPER_CLAVE = SEL.SELPER_SOLICI (+)
                  AND TO_CHAR(SELEPER_REF_FECHA,''MM/YYYY'') = '''||V_MES2||'''
+                 and sol.semana is null
+                 and sel.semana is null
                  AND SOL.MES||''/''||SOL.ANHO ='''||V_MES2||'''
                  AND SEL.MES||''/''||SEL.ANHO ='''||V_MES2||'''
                  AND sel.seleper_ref_accion = ''PS''
@@ -3394,6 +2949,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                  AND SOL.SOLPER_EMPR = SEL.SELEPER_EMPR (+)
                  AND SOL.SOLPER_CLAVE = SEL.SELPER_SOLICI (+)
                  AND TO_CHAR(SELEPER_REF_FECHA,''MM/YYYY'') = '''||V_MES1||'''
+                 and sol.semana is null
+                 and sel.semana is null
                  AND SOL.MES||''/''||SOL.ANHO ='''||V_MES1||'''
                  AND SEL.MES||''/''||SEL.ANHO = '''||V_MES1||'''
                  AND sel.seleper_ref_accion = ''PS''
@@ -3446,12 +3003,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                  AND SOL.SOLPER_EMPR = SEL.SELEPER_EMPR (+)
                  AND SOL.SOLPER_CLAVE = SEL.SELPER_SOLICI (+)
                  AND TO_CHAR(SELEPER_REF_FECHA,''MM/YYYY'') = '''||V_MES3||'''
-                -- AND SOL.mes||''/''||SOL.ANHO ='''||V_MES3||'''
-                -- AND SEL.mes||''/''||SEL.ANHO ='''||V_MES3||'''
                 '||P_AND_SOL||'
                  '||P_AND_SEL ||'
-                -- AND sel.seleper_ref_accion = ''PS''
-                 --AND SEL.SELEPER_EAR_FECHA IS NULL
                  and sel.seleper_ref_estado= ''C''
                  AND NVL(SOL.SOLPER_ESTADO_FINAL, ''EP'') = ''EP''
                  AND NVL(SELEPER_ESTADO_GRAL, ''EP'') <> ''D'' ';
@@ -3502,8 +3055,6 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                AND NVL(SELEPER_ESTADO_GRAL,''EP'') = ''EP''
                AND SELEPER_EAR_ACCION = ''PS''
                AND TO_CHAR(SELEPER_EAR_FECHA,''MM/YYYY'') = '''||V_MES3||'''
-             --  AND SOL.mes||''/''||SOL.ANHO ='''||V_MES3||'''
-              -- AND SEL.mes||''/''||SEL.ANHO = '''||V_MES3||'''
                '||P_AND_SOL||'
                 '||P_AND_SEL ||'
                AND SELEPER_EES_FECHA IS NULL
@@ -3554,6 +3105,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                AND NVL(SELEPER_ESTADO_GRAL,''EP'') = ''EP''
                AND SELEPER_EAR_ACCION = ''PS''
                AND TO_CHAR(SELEPER_EAR_FECHA,''MM/YYYY'') ='''||V_MES2||'''
+               and sol.semana is null
+               and sel.semana is null
                AND SOL.MES||''/''||SOL.ANHO ='''||V_MES2||'''
                AND SEL.MES||''/''||SEL.ANHO = '''||V_MES2||'''
                AND SELEPER_EES_FECHA IS NULL
@@ -3604,6 +3157,8 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                AND NVL(SELEPER_ESTADO_GRAL,''EP'') = ''EP''
                AND SELEPER_EAR_ACCION = ''PS''
                AND TO_CHAR(SELEPER_EAR_FECHA,''MM/YYYY'') = '''||V_MES1||'''
+               and sol.semana is null
+               and sel.semana is null
                AND SOL.MES||''/''||SOL.ANHO ='''||V_MES1||'''
                AND SEL.MES||''/''||SEL.ANHO = '''||V_MES1||'''
                AND SELEPER_EES_FECHA IS NULL ';
@@ -3716,12 +3271,6 @@ P_QUERY7 := '/*SELECT SOLPER_CANT Q_VACANT,
                                AND C.CARDPP_EMPR = D.AREDPP_EMPR
                                AND TRUNC(PER_ENT_FECHA) BETWEEN ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2) AND  TO_DATE('''||P_FECHA||''')';
 
-
-   insert into x
-  (campo1,  otro)
-values
-  (p_query20,  'primera_Entrevista');
-
       IF APEX_COLLECTION.COLLECTION_EXISTS(P_COLLECTION_NAME => 'PRI_ENTR') THEN
              APEX_COLLECTION.DELETE_COLLECTION(P_COLLECTION_NAME => 'PRI_ENTR');
           END IF;
@@ -3770,11 +3319,6 @@ values
           END IF;
           APEX_COLLECTION.CREATE_COLLECTION_FROM_QUERY_B(P_COLLECTION_NAME => 'EN_LIST_ESPECIAL',
                                                          P_QUERY           => P_QUERY27);
-
-
-
-
-
 
 P_QUERY2 := 'SELECT DETALLE,
        CANTIDAD,
@@ -3879,328 +3423,6 @@ P_QUERY2 := 'SELECT DETALLE,
                    AND T.AREA_EMPR = 1) B
          WHERE B.AREA_DESC = A.DETALLE(+))';
 
-
-/*
- P_QUERY2 := 'SELECT DETALLE,
-       CANTIDAD,
-       CASE WHEN MES_ANHO = TO_CHAR(ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2),''MM/YYYY'') THEN
-         CANTIDAD
-         END MES1,
-        CASE WHEN MES_ANHO = TO_CHAR(ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -1),''MM/YYYY'') THEN
-         CANTIDAD
-         END MES2,
-       CASE WHEN MES_ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'') THEN
-         CANTIDAD
-         END MES3,
-       ORDEN
-FROM(
-SELECT ''1RA. ENTREVISTA'' DETALLE, COUNT (NOMBRE_POST) CANTIDAD, MES_ANHO, 1 ORDEN
-                FROM
-                (SELECT  NOMBRE_POST,TO_CHAR(FECHA_REQUIS, ''MM/YYYY'') MES_ANHO,AREA_DESC, ESTADO
-                FROM
-                CUBO_LONDON_PROCESO_SELEC T
-                WHERE NOMBRE_POST <>'' ''
-                AND T.FECHA_REQUIS BETWEEN ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2) AND  TO_DATE('''||P_FECHA||''')
-                AND ETAPA = ''1 -REQUISITOS''
-                AND CASE WHEN FECHA_REQUIS >''01/05/2020'' AND AREA_DESC <> ''CDA''  THEN 0
-                         WHEN FECHA_REQUIS >''01/06/2020'' AND AREA_DESC = ''CDA''  THEN   0
-                         ELSE 1 END = 1
-
-                UNION ALL
-                SELECT TO_CHAR(P.PER_ENT_CODIGO), TO_CHAR(T.ENTPER_REQUIS_FECHA, ''mm/yyyy''), S.AREDPP_DESC,
-                       DECODE(T.ENTPER_REQUIS_ESTADO, ''C'', ''Cerrado'', ''A'', ''Abierto'')
-                  FROM PER_ENTREVISTA_PERSONAL T, PER_ENTREVISTA_POST P , PER_CARGO_DPP C,  PER_AREA_DPP S
-                 WHERE T.ENTPER_ENTREVISTA = P.PER_ENT_CODIGO
-                    AND T.ENTPER_EMPR = P.PER_ENT_EMPR
-                    AND P.PER_ENT_CARGO_RAL = C.CARDPP_CLAVE
-                    AND P.PER_ENT_EMPR = C.CARDPP_EMPR
-                    AND C.CARDPP_AREA = S.AREDPP_CLAVE
-                    AND C.CARDPP_EMPR = S.AREDPP_EMPR
-                    AND TRUNC(ENTPER_REQUIS_FECHA) BETWEEN
-                       ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2) AND
-                       TO_DATE('''||P_FECHA||''')
-                )
-                GROUP BY MES_ANHO
-           UNION ALL
-           SELECT ''REFERENCIAS'' DETALLE, COUNT (NOMBRE_POST) CANTIDAD, MES_ANHO,4
-                FROM
-                (SELECT  NOMBRE_POST,TO_CHAR(FECHA_REF, ''MM/YYYY'') MES_ANHO,AREA_DESC, ESTADO
-                FROM
-                CUBO_LONDON_PROCESO_SELEC T
-                WHERE NOMBRE_POST <>'' ''
-                AND t.FECHA_REF BETWEEN ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2) AND  TO_DATE('''||P_FECHA||''')
-                AND ETAPA = ''4 -REFERENCIAS''
-                AND ESTADO_APROB_SOL <> ''Rechazado''
-                AND CASE WHEN t.FECHA_REF >''01/05/2020'' AND AREA_DESC <> ''CDA''  THEN 0
-                         WHEN FECHA_REF >''01/06/2020'' AND AREA_DESC = ''CDA'' THEN  0
-                         ELSE 1 END = 1
-                UNION ALL
-                SELECT TO_CHAR(P.PER_ENT_CODIGO), TO_CHAR(T.ENTPER_REF_FECHA, ''mm/yyyy''), S.AREDPP_DESC,
-                       DECODE(t.entper_ref_estado, ''C'', ''Cerrado'', ''A'', ''Abierto'')
-                  FROM PER_ENTREVISTA_PERSONAL T, PER_ENTREVISTA_POST P , PER_CARGO_DPP C,  PER_AREA_DPP S
-                 WHERE T.ENTPER_ENTREVISTA = P.PER_ENT_CODIGO
-                    AND T.ENTPER_EMPR = P.PER_ENT_EMPR
-                    AND P.PER_ENT_CARGO_RAL = C.CARDPP_CLAVE
-                    AND P.PER_ENT_EMPR = C.CARDPP_EMPR
-                    AND C.CARDPP_AREA = S.AREDPP_CLAVE
-                    AND C.CARDPP_EMPR = S.AREDPP_EMPR
-                    AND TRUNC(T.ENTPER_REF_FECHA) BETWEEN
-                       ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2) AND
-                       TO_DATE('''||P_FECHA||''')
-                )
-                GROUP BY MES_ANHO
-           UNION ALL
-         SELECT ''ENTREVISTA AREA'' DETALLE, COUNT (NOMBRE_POST) CANTIDAD, MES_ANHO, 7
-                FROM
-                (SELECT NOMBRE_POST,TO_CHAR(FECHA_EAR, ''MM/YYYY'') MES_ANHO,AREA_DESC, ESTADO
-                FROM
-                CUBO_LONDON_PROCESO_SELEC T
-                WHERE NOMBRE_POST <>'' ''
-                AND t.FECHA_EAR BETWEEN ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2) AND  TO_DATE('''||P_FECHA||''')
-                AND ETAPA = ''5 -ENTREVISTA AREA''
-                AND ESTADO_APROB_SOL <> ''Rechazado'') GROUP BY MES_ANHO
-            UNION ALL
-              SELECT ''ENTREVISTA ESPECIAL'' DETALLE, COUNT (NOMBRE_POST) CANTIDAD, MES_ANHO, 10
-                FROM
-                (SELECT  NOMBRE_POST,TO_CHAR(FECHA_EES, ''MM/YYYY'') MES_ANHO,AREA_DESC, ESTADO
-                FROM
-                CUBO_LONDON_PROCESO_SELEC T
-                WHERE NOMBRE_POST <>'' ''
-                AND t.FECHA_EES BETWEEN ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2) AND  TO_DATE('''||P_FECHA||''')
-                AND ETAPA = ''6 -ENTREVISTA ESPECIAL''
-                AND ESTADO_APROB_SOL <> ''Rechazado'') GROUP BY MES_ANHO
-              UNION ALL
-SELECT AREA DETALLE, -----------------en lista entrevista de especial
-       COUNT(SELPER_POSTUL) CANT,
-       FECHA_EAR,
-       12 orden
-  FROM (SELECT SOL.SOLPER_CLAVE NRO_SOL,
-               CASE
-                 WHEN AREDPP_DESC IN (''GERENCIA GENERAL'', ''ADMINISTRATIVA'') THEN
-                  ''ADM''
-                 ELSE
-                  AREDPP_DESC
-                  end AREA_DESC,
-               SEL.SELPER_POSTUL,
-               TO_CHAR(SEL.SELEPER_EAR_FECHA, ''MM/YYYY'') FECHA_EAR,
-               12 orden
-          FROM PER_SOLICITUD_PERSONAL SOL,
-               PER_AREA_DPP           AR,
-               PER_SELECCION_PERSONAL SEL
-         WHERE SOL.SOLPER_EMPR = 1
-           AND SOL.SOLPER_EMPR = AR.AREDPP_EMPR
-           AND SOL.SOLPER_AREA = AR.AREDPP_CLAVE
-           AND SOL.SOLPER_EMPR = SEL.SELEPER_EMPR
-           AND SOL.SOLPER_CLAVE = SEL.SELPER_SOLICI
-           AND SEL.SELEPER_EAR_FECHA BETWEEN
-               ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2) AND
-               TO_DATE('''||P_FECHA||''')
-           AND SELEPER_EAR_ACCION = ''PS''
-           AND SEL.SELEPER_EAR_ESTADO = ''C''
-           AND SEL.SELEPER_EES_FECHA IS NULL) A,
-       (SELECT AREA
-          FROM (SELECT ''CDA'' AREA FROM DUAL
-                UNION ALL
-                SELECT ''ADM'' AREA FROM DUAL
-                UNION ALL
-                SELECT ''COMERCIAL'' AREA FROM DUAL
-                UNION ALL
-                SELECT ''INDUSTRIAL'' AREA FROM DUAL)) B
- WHERE B.AREA = AREA_DESC(+)
- GROUP BY AREA, FECHA_EAR
- union all-----------------------lista entrevista de area
-SELECT AREA DETALLE,
-       COUNT(SELPER_POSTUL) CANT,
-       FECHA_EAR,
-       9 orden
-  FROM (SELECT SOL.SOLPER_CLAVE NRO_SOL,
-               CASE
-                 WHEN AREDPP_DESC IN (''GERENCIA GENERAL'', ''ADMINISTRATIVA'') THEN
-                  ''ADM''
-                 ELSE
-                  AREDPP_DESC
-                  end AREA_DESC,
-               SEL.SELPER_POSTUL,
-               TO_CHAR(SEL.SELEPER_REF_FECHA, ''MM/YYYY'') FECHA_EAR
-          FROM PER_SOLICITUD_PERSONAL SOL,
-               PER_AREA_DPP           AR,
-               PER_SELECCION_PERSONAL SEL
-         WHERE SOL.SOLPER_EMPR = 1
-           AND SOL.SOLPER_EMPR = AR.AREDPP_EMPR
-           AND SOL.SOLPER_AREA = AR.AREDPP_CLAVE
-           AND SOL.SOLPER_EMPR = SEL.SELEPER_EMPR
-           AND SOL.SOLPER_CLAVE = SEL.SELPER_SOLICI
-           AND SEL.SELEPER_REF_FECHA BETWEEN
-               ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2) AND
-               TO_DATE('''||P_FECHA||''')
-           AND sel.seleper_ref_accion = ''PS''
-           AND SEL.SELEPER_EAR_FECHA IS NULL
-           and sel.seleper_ref_estado= ''C''
-           AND SOL.SOLPER_ESTADO_FINAL = ''EP''
-           AND NVL(SELEPER_ESTADO_GRAL, ''EP'') <> ''D'') A,
-       (SELECT AREA
-          FROM (SELECT ''CDA'' AREA FROM DUAL
-                UNION ALL
-                SELECT ''ADM'' AREA FROM DUAL
-                UNION ALL
-                SELECT ''COMERCIAL'' AREA FROM DUAL
-                UNION ALL
-                SELECT ''INDUSTRIAL'' AREA FROM DUAL)) B
- WHERE B.AREA = AREA_DESC(+)
- GROUP BY AREA, FECHA_EAR
- union all
- ------------------------------------------------REFERENCIAS EN FILA
- SELECT AREA DETALLE,
-       COUNT(SELPER_POSTUL) CANT,
-       FECHA_REF,
-       6 orden
-  FROM (SELECT SOL.SOLPER_CLAVE NRO_SOL,
-               CASE
-                 WHEN AREDPP_DESC IN (''GERENCIA GENERAL'', ''ADMINISTRATIVA'') THEN
-                  ''ADM''
-                 ELSE
-                  AREDPP_DESC
-                  end AREA_DESC,
-               SEL.SELPER_POSTUL,
-               TO_CHAR(SEL.SELEPER_PRES_FECHA, ''MM/YYYY'') FECHA_REF
-          FROM PER_SOLICITUD_PERSONAL SOL,
-               PER_AREA_DPP           AR,
-               PER_SELECCION_PERSONAL SEL
-         WHERE SOL.SOLPER_EMPR = 1
-           AND SOL.SOLPER_EMPR = AR.AREDPP_EMPR
-           AND SOL.SOLPER_AREA = AR.AREDPP_CLAVE
-           AND SOL.SOLPER_EMPR = SEL.SELEPER_EMPR
-           AND SOL.SOLPER_CLAVE = SEL.SELPER_SOLICI
-           AND SEL.SELEPER_PRES_FECHA BETWEEN
-               ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2) AND
-               TO_DATE('''||P_FECHA||''')
-           AND SEL.SELEPER_PRES_ACCION = ''PS''
-           AND SEL.SELEPER_PRES_ESTADO = ''C''
-           AND SEL.SELEPER_REF_FECHA IS NULL
-           AND CASE
-                 WHEN SELEPER_PRES_FECHA > ''01/05/2020'' AND
-                      AR.AREDPP_DESC <> ''CDA'' THEN
-                  0
-                 WHEN SELEPER_PRES_FECHA > ''01/06/2020'' AND
-                      AREDPP_DESC = ''CDA'' THEN
-                  0
-                 ELSE
-                  1
-               END = 1
-        UNION ALL
-        SELECT TO_CHAR(P.PER_ENT_CODIGO),
-               CASE
-                 WHEN AREDPP_DESC IN (''GERENCIA GENERAL'', ''ADMINISTRATIVA'') THEN
-                  ''ADM''
-                 ELSE
-                  AREDPP_DESC
-               END AREDPP_DESC,
-               PER_ENT_CODIGO,
-               TO_CHAR(T.ENTPER_REQUIS_FECHA, ''mm/yyyy'')
-          FROM PER_ENTREVISTA_PERSONAL T,
-               PER_ENTREVISTA_POST     P,
-               PER_CARGO_DPP           C,
-               PER_AREA_DPP            S
-         WHERE T.ENTPER_ENTREVISTA = P.PER_ENT_CODIGO
-           AND T.ENTPER_EMPR = P.PER_ENT_EMPR
-           AND P.PER_ENT_CARGO_RAL = C.CARDPP_CLAVE
-           AND P.PER_ENT_EMPR = C.CARDPP_EMPR
-           AND C.CARDPP_AREA = S.AREDPP_CLAVE
-           AND C.CARDPP_EMPR = S.AREDPP_EMPR
-           AND TRUNC(T.ENTPER_PRES_FECHA) BETWEEN
-               ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2) AND
-               TO_DATE('''||P_FECHA||''')
-           AND T.ENTPER_PRES_ACCION = ''PS''
-           AND T.ENTPER_PRES_ESTADO = ''C''
-           AND T.ENTPER_REF_FECHA IS NULL
-
-        ) A,
-       (SELECT AREA
-          FROM (SELECT ''CDA'' AREA FROM DUAL
-                UNION ALL
-                SELECT ''ADM'' AREA FROM DUAL
-                UNION ALL
-                SELECT ''COMERCIAL'' AREA FROM DUAL
-                UNION ALL
-                SELECT ''INDUSTRIAL'' AREA FROM DUAL)) B
- WHERE B.AREA = AREA_DESC(+)
- GROUP BY AREA, FECHA_REF
-UNION ALL
-SELECT AREA DETALLE, -----------------en fila primera entrevista
-       COUNT(SELPER_POSTUL) CANT,
-       FECHA_SOL,
-       3 orden
-  FROM (SELECT SOL.SOLPER_CLAVE NRO_SOL,
-               CASE
-                 WHEN AREDPP_DESC IN (''GERENCIA GENERAL'', ''ADMINISTRATIVA'') THEN
-                  ''ADM''
-                 ELSE
-                  AREDPP_DESC
-                  end AREA_DESC,
-               SEL.SELPER_POSTUL,
-               TO_CHAR(solper_fecha_sol, ''MM/YYYY'') FECHA_SOL
-          FROM PER_SOLICITUD_PERSONAL SOL,
-               PER_AREA_DPP           AR,
-               PER_SELECCION_PERSONAL SEL
-         WHERE SOL.SOLPER_EMPR = 1
-           AND SOL.SOLPER_EMPR = AR.AREDPP_EMPR
-           AND SOL.SOLPER_AREA = AR.AREDPP_CLAVE
-           AND SOL.SOLPER_EMPR = SEL.SELEPER_EMPR
-           AND SOL.SOLPER_CLAVE = SEL.SELPER_SOLICI
-           AND sol.solper_fecha_sol BETWEEN
-               ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2) AND
-               TO_DATE('''||P_FECHA||''')
-           AND SEL.SELEPER_REQUIS_FECHA IS NULL
-           AND SOL.SOLPER_ESTADO_FINAL = ''EP''
-           AND SEL.SELEPER_ESTADO_GRAL = ''EP''
-           AND CASE
-                 WHEN sol.solper_fecha_sol > ''01/05/2020'' AND
-                      AR.AREDPP_DESC <> ''CDA'' THEN
-                  0
-                 WHEN sol.solper_fecha_sol > ''01/06/2020'' AND
-                      AREDPP_DESC = ''CDA'' THEN
-                  0
-                 ELSE
-                  1
-               END = 1
-        UNION ALL
-        SELECT TO_CHAR(P.PER_ENT_CODIGO),
-               CASE
-                 WHEN AREDPP_DESC IN (''GERENCIA GENERAL'', ''ADMINISTRATIVA'') THEN
-                  ''ADM''
-                 ELSE
-                  AREDPP_DESC
-               END AREDPP_DESC,
-               PER_ENT_CODIGO,
-               TO_CHAR(T.ENTPER_REQUIS_FECHA, ''mm/yyyy'')
-          FROM PER_ENTREVISTA_PERSONAL T,
-               PER_ENTREVISTA_POST     P,
-               PER_CARGO_DPP           C,
-               PER_AREA_DPP            S
-         WHERE T.ENTPER_ENTREVISTA = P.PER_ENT_CODIGO
-           AND T.ENTPER_EMPR = P.PER_ENT_EMPR
-           AND P.PER_ENT_CARGO_RAL = C.CARDPP_CLAVE
-           AND P.PER_ENT_EMPR = C.CARDPP_EMPR
-           AND C.CARDPP_AREA = S.AREDPP_CLAVE
-           AND C.CARDPP_EMPR = S.AREDPP_EMPR
-           AND TRUNC(P.PER_ENT_FECHA) BETWEEN
-               ADD_MONTHS(TRUNC(TO_DATE('''||P_FECHA||'''), ''MM''), -2) AND
-               TO_DATE('''||P_FECHA||''')
-           AND T.ENTPER_REQUIS_FECHA IS NULL
-
-        ) A,
-       (SELECT AREA
-          FROM (SELECT ''CDA'' AREA FROM DUAL
-                UNION ALL
-                SELECT ''ADM'' AREA FROM DUAL
-                UNION ALL
-                SELECT ''COMERCIAL'' AREA FROM DUAL
-                UNION ALL
-                SELECT ''INDUSTRIAL'' AREA FROM DUAL)) B
- WHERE B.AREA = AREA_DESC(+)
- GROUP BY AREA, FECHA_SOL)';*/
-
-
          IF APEX_COLLECTION.COLLECTION_EXISTS(P_COLLECTION_NAME => 'ENTREVISTA_PROCESO') THEN
              APEX_COLLECTION.DELETE_COLLECTION(P_COLLECTION_NAME => 'ENTREVISTA_PROCESO');
           END IF;
@@ -4220,13 +3442,10 @@ SELECT AREA DETALLE, -----------------en fila primera entrevista
           APEX_COLLECTION.CREATE_COLLECTION_FROM_QUERY_B(P_COLLECTION_NAME => 'RSC_ENTREVISTA',
                                                          P_QUERY           => P_QUERY1);
 
-
-
-
-
-
-
   END PP_PROCESO_SELECCION_RSC;
+  
+  
+  
     PROCEDURE PP_PROCESO_CONTRATACIONES (P_EMPRESA IN NUMBER,
                                       P_FECHA IN DATE) IS
   P_QUERY VARCHAR2(21000);
@@ -4235,14 +3454,11 @@ SELECT AREA DETALLE, -----------------en fila primera entrevista
   P_QUERY7 VARCHAR2(21000);
   P_AND VARCHAR2(2000);
 
-
-
-
   BEGIN
-    IF P_FECHA = LAST_DAY(TO_DATE(P_FECHA))  THEN
+   if P_FECHA = LAST_DAY(TO_DATE(P_FECHA))  THEN
        P_AND := P_AND||'AND SEMANA IS NULL AND MES || ''/'' || ANHO =  TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  ';
    ELSE
-       P_AND := P_AND||' AND SEMANA || ''/'' || ANHO =  TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')  ';
+       P_AND := P_AND||' and mes is null AND SEMANA || ''/'' || ANHO =  TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')  ';
    END IF;
 
    P_QUERY:=  'SELECT TO_CHAR(ADD_MONTHS(('''||P_FECHA||'''), -2),''MM/YYYY'') MES_1,
@@ -4277,8 +3493,7 @@ SELECT AREA DETALLE, -----------------en fila primera entrevista
                  AND EMPL_CODIGO_PROV IS NOT NULL
                  AND TO_CHAR(EMPL_FEC_INGRESO, ''MM/YYYY'') = TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-2),''MM/YYYY'')
                  AND MES|| ''/'' || ANHO =TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-2),''MM/YYYY'')
-
-
+                 and semana is null
               UNION ALL
               SELECT TRUNC(B.EMPL_FEC_INGRESO) FECHA_INGRESO,
                      DECODE(B.EMPL_TIPO_CONT, ''I'', ''TIEMPO INDEFINIDO'', ''TEMPORAL'') TIPO_CONTRATO,
@@ -4298,6 +3513,7 @@ SELECT AREA DETALLE, -----------------en fila primera entrevista
                  AND EMPL_CODIGO_PROV IS NOT NULL
                  AND TO_CHAR(EMPL_FEC_INGRESO, ''MM/YYYY'') = TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-1),''MM/YYYY'')
                  AND MES || ''/'' || ANHO = TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-1),''MM/YYYY'')
+                 and semana is null
               UNION ALL
               SELECT TRUNC(B.EMPL_FEC_INGRESO) FECHA_INGRESO,
                      DECODE(B.EMPL_TIPO_CONT, ''I'', ''TIEMPO INDEFINIDO'', ''TEMPORAL'') TIPO_CONTRATO,
@@ -4343,6 +3559,7 @@ P_QUERY2 :='SELECT SUM(TIPO_CONTRA_INDEFINIDO), SUM(TIPO_CONTRA_TEMPORAL), SUM(C
             FROM PER_EMPLEADO_HIST
              WHERE EMPL_EMPRESA = '||P_EMPRESA||'
              AND MES || ''/'' || ANHO = TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-12),''MM/YYYY'')
+             and semana is null
              AND TO_CHAR(EMPL_FEC_INGRESO,''MM/YYYY'' ) =TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''),-12),''MM/YYYY''))';
 
 
@@ -4470,12 +3687,9 @@ P_QUERY2 :='SELECT SUM(TIPO_CONTRA_INDEFINIDO), SUM(TIPO_CONTRA_TEMPORAL), SUM(C
                      AND PCON_IND_DBCR=''C''
                      AND PCON_FIN_TMOV <> 31
                      AND PDOC_FEC >= EMPL_FEC_SALIDA
-                 --    AND EMPL_TIPO_DESV= ''DI''
-                    -- AND B.PDDET_CLAVE_CONCEPTO(+) IN (25, 23,27)
                      AND TO_CHAR(EMPL_FEC_SALIDA, ''MM/YYYY'') = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')
                      AND TO_CHAR(PDOC_FEC(+) , ''MM/YYYY'') = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')
                        '||P_AND||'
-                    --- AND mes|| ''/'' || ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''mm/YYYY'')
                      UNION ALL
                      SELECT EMPL_LEGAJO,
                          EMPL_NOMBRE||'' ''||EMPL_APE,
@@ -4572,9 +3786,7 @@ P_QUERY2 :='SELECT SUM(TIPO_CONTRA_INDEFINIDO), SUM(TIPO_CONTRA_TEMPORAL), SUM(C
                      AND PDDET_EMPR = PCON_EMPR
                      AND PCON_IND_DBCR=''C''
                      AND PCON_FIN_TMOV <> 31
-                   --  AND EMPL_TIPO_DESV= ''DI''
                      AND PDOC_EMPR = PDDET_EMPR(+)
-                     --AND B.PDDET_CLAVE_CONCEPTO(+) IN (25, 23,27)
                      AND TO_CHAR(EMPL_FEC_SALIDA , ''MM/YYYY'') =  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -2),''MM/YYYY'')
                      AND TO_CHAR(PDOC_FEC(+), ''MM/YYYY'') =  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -2),''MM/YYYY'')
                      AND MES|| ''/'' || ANHO = TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -2),''MM/YYYY'')
@@ -4625,8 +3837,6 @@ P_QUERY2 :='SELECT SUM(TIPO_CONTRA_INDEFINIDO), SUM(TIPO_CONTRA_TEMPORAL), SUM(C
                      AND PDDET_EMPR = PCON_EMPR
                      AND PCON_IND_DBCR=''C''
                      AND PCON_FIN_TMOV <> 31
-                    -- AND EMPL_TIPO_DESV= ''DI''
-                     -- AND B.PDDET_CLAVE_CONCEPTO(+) IN (25, 23,27)
                      AND TO_CHAR(EMPL_FEC_SALIDA , ''MM/YYYY'') =  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -12),''MM/YYYY'')
                      AND TO_CHAR(PDOC_FEC(+), ''MM/YYYY'') =  TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -12),''MM/YYYY'')
                      AND MES|| ''/'' || ANHO = TO_CHAR(ADD_MONTHS(TO_DATE('''||P_FECHA||'''), -12),''MM/YYYY'')
@@ -4701,15 +3911,6 @@ P_QUERY2 :='SELECT SUM(TIPO_CONTRA_INDEFINIDO), SUM(TIPO_CONTRA_TEMPORAL), SUM(C
   where otro = 'DESVINCULACINES';
  delete x
  where otro = 'VACANCIA_1';
-  insert into x
-                         (campo1,  otro)
-                       values
-                         (P_QUERY, 'VACANCIA_1');
-
-                           insert into x
-                         (campo1,  otro)
-                       values
-                         (P_QUERY7, 'DESVINCULACINES');
 
 P_QUERY1:='SELECT
                         CASE WHEN C017 = 1 THEN  SUM(C015) ELSE 0 END CANT1,
@@ -4880,10 +4081,10 @@ PROCEDURE PP_PROCESO_INDICE_ROTACION (P_EMPRESA NUMBER,
 
 
  IF  P_FECHA = LAST_DAY(TO_DATE(P_FECHA))  THEN
-    P_AND := P_AND||'  MES || ''/'' || ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  ';
+    P_AND := P_AND||' and semana is null and MES || ''/'' || ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  ';
 
  ELSE
-   P_AND := P_AND||'  SEMANA || ''/'' || ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')  ';
+   P_AND := P_AND||' and mes is null and SEMANA || ''/'' || ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')  ';
  END IF;
 
 IF P_EMPRESA = 1 THEN
@@ -5047,105 +4248,6 @@ IF P_EMPRESA = 1 THEN
                AND B.EMPL_EMPRESA(+) = 1
                AND DPTO_EMPR = 1'
                 ;
-/*
-     P_QUERY2 := 'SELECT
-                    CASE
-                      WHEN DPTO_CODIGO =1 THEN
-                         ''ADM''
-                      WHEN DPTO_CODIGO IN(3,6) THEN
-                         ''Molino 1''
-                      WHEN DPTO_CODIGO = 13 THEN
-                         ''Molino 2''
-                      WHEN DPTO_CODIGO IN(27,28) THEN
-                         ''Planta 3''
-                      WHEN DPTO_CODIGO = 21 THEN
-                         ''Fracionado''
-                      WHEN DPTO_CODIGO = 4 THEN
-                         ''Balanceados''
-                      WHEN DPTO_CODIGO = 5 THEN
-                         ''Fideria''
-                      WHEN DPTO_CODIGO IN(8,24) THEN
-                         ''Silos''
-                      WHEN DPTO_CODIGO in(33,23) THEN
-                         ''Laboratorio''
-                      WHEN DPTO_CODIGO =7 THEN
-                         ''Taller''
-                      WHEN DPTO_CODIGO IN (12,16) THEN
-                        ''Logistica''
-                       WHEN DPTO_CODIGO IN (9,10) THEN
-                        ''Comercial''
-                      WHEN DPTO_CODIGO = 11 THEN
-                        ''Adm''
-                      WHEN DPTO_CODIGO = 31 THEN
-                        ''Marketing''
-                      WHEN DPTO_CODIGO =2 THEN
-                        ''Comercial''
-                     WHEN DPTO_CODIGO = 22 THEN
-                        ''Logistica''
-                       WHEN DPTO_CODIGO = 17 THEN
-                        ''Loma Plata''
-                     WHEN DPTO_CODIGO = 29 THEN
-                        ''PJC''
-                     WHEN DPTO_CODIGO = 19 THEN
-                        ''Santa Rosa''
-                    WHEN DPTO_CODIGO = 14 THEN
-                        ''SAC''
-                    WHEN DPTO_CODIGO = 32 THEN
-                       ''Encarnacion''
-                    WHEN DPTO_CODIGO = 15 THEN
-                       ''Concepcion''
-                    END DEPARTAMENTO,
-                    CASE
-                      WHEN DPTO_CODIGO =1 THEN
-                         1
-                      WHEN DPTO_CODIGO IN(3,6) THEN
-                         3
-                      WHEN DPTO_CODIGO = 13 THEN
-                         4
-                      WHEN DPTO_CODIGO IN(27,28) THEN
-                         5
-                      WHEN DPTO_CODIGO = 21 THEN
-                         6
-                      WHEN DPTO_CODIGO = 4 THEN
-                         7
-                      WHEN DPTO_CODIGO = 5 THEN
-                         8
-                      WHEN DPTO_CODIGO IN(8,24)  THEN
-                         9
-                      WHEN DPTO_CODIGO  in(33,23) THEN
-                        10
-                      WHEN DPTO_CODIGO =7 THEN
-                         11
-                      WHEN DPTO_CODIGO IN (12,16) THEN
-                        13
-                       WHEN DPTO_CODIGO IN (9,10) THEN
-                        14
-                     WHEN DPTO_CODIGO = 11 THEN
-                        15
-                      WHEN DPTO_CODIGO = 31 THEN
-                       16
-                      WHEN DPTO_CODIGO =2 THEN
-                        18
-                     WHEN DPTO_CODIGO = 22 THEN
-                        19
-                       WHEN DPTO_CODIGO = 17 THEN
-                        20
-                     WHEN DPTO_CODIGO = 29 THEN
-                        21
-                     WHEN DPTO_CODIGO = 19 THEN
-                        24
-                    WHEN DPTO_CODIGO = 14 THEN
-                        25
-                    WHEN DPTO_CODIGO = 32 THEN
-                        23
-                    WHEN DPTO_CODIGO = 15 THEN
-                      22
-                    END COD_DEP,
-                    DPTO_CODIGO,
-                    DPTO_SUC
-                    FROM GEN_DEPARTAMENTO A
-                    WHERE A.DPTO_EMPR = 1
-                    AND DPTO_CODIGO NOT IN (18,25,20,30,26)';*/
 
   P_QUERY2:=  'SELECT DEPARTAMENTO,COD_DEP,DPTO_SUC,DESCRIPCION,COD_DEPATA2
     FROM (SELECT
@@ -5243,8 +4345,7 @@ IF P_EMPRESA = 1 THEN
                     END COD_DEP,
                     DPTO_CODIGO,
                     DPTO_SUC,
-
-
+                    
                     CASE
                      WHEN DPTO_SUC = 2 THEN
                         ''CDA''
@@ -5265,8 +4366,6 @@ IF P_EMPRESA = 1 THEN
                     WHERE A.DPTO_EMPR = 1
                     AND DPTO_CODIGO NOT IN (18,25,20,30,26))
                 GROUP BY DEPARTAMENTO,COD_DEP,DPTO_SUC,DESCRIPCION,COD_DEPATA2';
-
-
 
 
    P_QUERY3 := 'SELECT CASE
@@ -5698,7 +4797,6 @@ P_QUERY6 := 'SELECT DPTO_CODIGO||''-''||DPTO_DESC DEPARTAMENTO,
                             ''Paso el periodo de prueba''
                          END PASO_PERIODO,
                          (X.EMPSOL_FECHA_SAL_COP- empsol_fecha_inc_per) DIAS,
-                        -- (X.EMPSOL_FECHA_SAL_COP- EMPL_FEC_INGRESO)/30 DIAS,
                           trunc(MONTHS_BETWEEN(X.EMPSOL_FECHA_SAL_COP,x.empsol_fecha_inc_per)) mes,
                          TO_CHAR(empsol_fecha_inc_per,''MM/YYYY''),
                          X.EMPSOL_MOT_DESV_COP,
@@ -5707,17 +4805,6 @@ P_QUERY6 := 'SELECT DPTO_CODIGO||''-''||DPTO_DESC DEPARTAMENTO,
                                                       EMPSOL_FECHA_SAL_COP,
                                                       ''I'') ANTIGUEDAD,
 
-
-
-                     /*  CASE WHEN TO_CHAR(empsol_fecha_inc_per,''MM/YYYY'') =  '''||V_MES1||''' THEN
-                        1
-                      WHEN TO_CHAR(empsol_fecha_inc_per,''MM/YYYY'') =  '''||V_MES2||''' THEN
-                        2
-                      WHEN TO_CHAR(empsol_fecha_inc_per,''MM/YYYY'') =  '''||V_MES3||''' THEN
-                        3
-                      ELSE
-                         4
-                       END MAS_MESES*/
                         CASE WHEN X.EMPSOL_FECHA_SAL_COP- EMPL_FEC_INGRESO <= 30 THEN
                                    1
                              WHEN X.EMPSOL_FECHA_SAL_COP- EMPL_FEC_INGRESO BETWEEN  31 AND 59 THEN
@@ -6104,11 +5191,6 @@ P_QUERY1 :='SELECT 0 ORDEN,
              GROUP BY EMPL_DEPARTAMENTO, DPTO_DESC, ORDEN
              ORDER BY 1, 7';
 
-
-
-
-
-
 P_QUERY13 :='SELECT CASE
                              WHEN E.EMPL_AREA_ORGANI IN (4) THEN
                               1 ---ADMINISTACION
@@ -6299,14 +5381,9 @@ P_QUERY13 :='SELECT CASE
                        ';
 
 
-
-
  delete x
    where OTRO = 'IND_ROTACION_TRANS' ;
 
-
-
-  INSERT INTO X (CAMPO1, OTRO) VALUES (P_QUERY13, 'IND_ROTACION_TRANS');
  COMMIT;
 
    IF APEX_COLLECTION.COLLECTION_EXISTS(P_COLLECTION_NAME => 'IND_ROTACION_TRANS') THEN
@@ -7305,8 +6382,7 @@ values
 
    P_QUERY VARCHAR2(20000);
 
-   BEGIN
-  -- RAISE_APPLICATION_ERROR (-20001, 'FFF');
+   begin
    P_QUERY := 'SELECT mes, orden , lin,/* case
                     when mes >  TO_CHAR(TO_NUMBER(TO_CHAR(TO_DATE('''||P_FECHA||'''), ''IW''))) then
                       TO_CHAR(TO_dATE('''||P_FECHA||'''),''YYYY'')-1
@@ -7348,19 +6424,6 @@ FROM
                            END) SEMANA_1,
                    4 ORDEN, 1
             FROM DUAL
-          /*  UNION ALL
-            SELECT TO_CHAR(CASE
-                             WHEN (TO_NUMBER(TO_CHAR(TO_DATE('''||P_FECHA||'''), ''IW'')) - 3) = 0 THEN
-                              53
-                             WHEN (TO_NUMBER(TO_CHAR(TO_DATE('''||P_FECHA||'''), ''IW'')) - 3) = -1 THEN
-                              52
-                             WHEN (TO_NUMBER(TO_CHAR(TO_DATE('''||P_FECHA||'''), ''IW'')) - 3) = -2 THEN
-                              51
-                             ELSE
-                              (TO_CHAR(TO_DATE('''||P_FECHA||'''), ''IW'')) - 3
-                           END) SEMANA_1,
-                   4 ORDEN, 1
-            FROM DUAL */
             UNION ALL
             SELECT TO_CHAR(CASE
                              WHEN (TO_NUMBER(TO_CHAR(TO_DATE('''||P_FECHA||'''), ''IW'')) - 2) = 0 THEN
@@ -7458,10 +6521,7 @@ FROM
                        END SEMANA_1,
               5 ORDEN, 2
           FROM DUAL)';
-/*insert into x
-(X.CAMPO1, X.OTRO)
-values
-(p_query, 'FECHA');*/
+
 
                   IF APEX_COLLECTION.COLLECTION_EXISTS(P_COLLECTION_NAME => 'ORDEN') THEN
                          APEX_COLLECTION.DELETE_COLLECTION(P_COLLECTION_NAME => 'ORDEN');
@@ -9201,12 +8261,8 @@ END PP_TABLERO_COMERCIAL;
          WHERE EMPL_CODIGO_PROV <> 0
            AND EMPL_TIPO_CONT <> 'T'
            AND EMPL_FORMA_PAGO <> 0
+           and semana is null
            AND  MES||'/'||ANHO = TO_CHAR(TO_DATE(V_FECHA,'DD/MM/YYYY'),'MM/YYYY')
-          /* AND ( MES||'/'||ANHO = TO_CHAR(TO_DATE(V_FECHA,'DD/MM/YYYY'),'MM/YYYY')
-              OR SEMANA||'/'||ANHO  ='23/2020' /*CASE
-                                       WHEN TO_CHAR(V_FECHA,'MM/YYYY') = TO_CHAR(TO_DATE(P_FECHA,'DD/MM/YYYY'),'MM/YYYY') THEN
-                                         TO_CHAR(TO_DATE(P_FECHA,'DD/MM/YYYY'),'IW/YYYY')
-                                       END)*/
            AND EMPL_FEC_INGRESO <= LAST_DAY(P_FECHA)
            AND EMPL_EMPRESA = 1
            GROUP BY  CASE WHEN EMPL_DEPARTAMENTO IN (3,4,5,6,7,8,13,21,23,24,27,28,33) THEN
@@ -9245,8 +8301,6 @@ END PP_TABLERO_COMERCIAL;
 
      V_FECHA := ADD_MONTHS(V_FECHA,+1);
     END LOOP;
-
-
 
    P_QUERY4 :=
             'SELECT TO_CHAR(ROUND(PRO_PB/DOT_PB), ''999G999G999G999G999''),
@@ -9324,7 +8378,7 @@ END PP_TABLERO_COMERCIAL;
  if  P_FECHA = last_day(TO_DATE(P_FECHA))  then
     P_AND := P_AND||'and semana is null AND MES || ''/'' || ANHO = '''||V_MES3||'''';
  else
-    P_AND := P_AND||'AND SEMANA || ''/'' || ANHO = '''||V_SEMANA||'''';
+    P_AND := P_AND||'and mes is null AND SEMANA || ''/'' || ANHO = '''||V_SEMANA||'''';
  end if;
 
  IF P_EMPRESA =1 THEN
@@ -9474,6 +8528,7 @@ P_QUERY1 := 'SELECT
                          WHERE EMPL_CODIGO_PROV <> 0
                            AND EMPL_FORMA_PAGO <> 0
                            AND EMPL_EMPRESA = 1
+                           and semana is null
                            AND MES || ''/'' || ANHO = '''||V_MES_PB||'''
                          GROUP BY AREA_DESC) D,
 
@@ -9528,6 +8583,7 @@ P_QUERY1 := 'SELECT
                              AND EMPL_TIPO_CONT <> ''T''
                              AND EMPL_FORMA_PAGO <> 0
                              AND EMPL_EMPRESA = 1
+                             and mes is null
                              AND SEMANA ||''/''|| ANHO = '''||V_SEMANA_ANT||'''
                              AND DPTO_SUC NOT IN (1,2,8)
                              GROUP BY DPTO_DESC, DPTO_CODIGO) B
@@ -9600,6 +8656,7 @@ P_QUERY1 := 'SELECT
                          WHERE EMPL_CODIGO_PROV <> 0
                            AND EMPL_FORMA_PAGO <> 0
                            AND EMPL_EMPRESA =2
+                           and semana is null
                            AND MES || ''/'' || ANHO = '''||V_MES1||'''
                          GROUP BY CASE WHEN E.EMPL_AREA_ORGANI IN (4) THEN
                              1---ADMINISTACION
@@ -9654,6 +8711,7 @@ P_QUERY1 := 'SELECT
                          WHERE EMPL_CODIGO_PROV <> 0
                            AND EMPL_FORMA_PAGO <> 0
                            AND EMPL_EMPRESA = 2
+                           and semana is null
                            AND MES || ''/'' || ANHO = '''||V_MES2||'''
                          GROUP BY CASE WHEN E.EMPL_AREA_ORGANI IN (4) THEN
                              1---ADMINISTACION
@@ -9762,6 +8820,7 @@ P_QUERY1 := 'SELECT
                          WHERE EMPL_CODIGO_PROV <> 0
                            AND EMPL_FORMA_PAGO <> 0
                            AND EMPL_EMPRESA = 2
+                           and semana is null
                            AND MES || ''/'' || ANHO = '''||V_MES_PB||'''
                          GROUP BY CASE WHEN E.EMPL_AREA_ORGANI IN (4) THEN
                              1---ADMINISTACION
@@ -9776,8 +8835,6 @@ P_QUERY1 := 'SELECT
                         WHEN E.EMPL_AREA_ORGANI IN (8) THEN
                              6---REPUESTO
                         end) D,
-
-
                        PER_AREA_JSA JA
                  WHERE JA.AREA_COD = A.DEPARTAMENTO(+)
                    AND JA.AREA_COD = B.DEPARTAMENTO(+)
@@ -9806,7 +8863,7 @@ P_QUERY1 := 'SELECT
                                  AND EMPL_TIPO_CONT <> ''T''
                                  AND EMPL_FORMA_PAGO <> 0
                                  AND EMPL_EMPRESA = 2
-
+                                 and mes is null
                               AND SEMANA ||''/''|| ANHO ='''||V_SEMANA||'''
                                  GROUP BY DPTO_DESC, DPTO_CODIGO) A,
                                  (SELECT DPTO_CODIGO||'' - ''||DECODE(DPTO_CODIGO,29,''P.J.C'',DPTO_DESC) DEPARTAMENTO,
@@ -9827,12 +8884,10 @@ P_QUERY1 := 'SELECT
                              AND EMPL_TIPO_CONT <> ''T''
                              AND EMPL_FORMA_PAGO <> 0
                              AND EMPL_EMPRESA = 2
+                             and mes is null
                              AND SEMANA ||''/''|| ANHO ='''||V_SEMANA_ANT||'''
                              GROUP BY DPTO_DESC, DPTO_CODIGO) B
                         WHERE A.DEPARTAMENTO= B.DEPARTAMENTO ';
-
-
-
   END IF;
 
   delete from x
@@ -9879,9 +8934,11 @@ P_QUERY1 := 'SELECT
    V_SEMANA          VARCHAR2(60);
    V_FECHA1          DATE;
    V_FECHA2          DATE;
-
+   
+   l_and varchar2(2000);
+   
  BEGIN
-
+  
   SELECT  TO_CHAR(ADD_MONTHS(TO_DATE(P_FECHA),-2),'MM/YYYY'),
          TO_CHAR(ADD_MONTHS(TO_DATE(P_FECHA),-1),'MM/YYYY'),
          TO_CHAR(TO_DATE(P_FECHA),'MM/YYYY'),
@@ -10527,21 +9584,12 @@ P_QUERY1 := 'SELECT
 
 
 
-
     IF APEX_COLLECTION.COLLECTION_EXISTS(P_COLLECTION_NAME => 'VAC_DEPARTAMENTO2') THEN
        APEX_COLLECTION.DELETE_COLLECTION(P_COLLECTION_NAME => 'VAC_DEPARTAMENTO2');
     END IF;
+    
        APEX_COLLECTION.CREATE_COLLECTION_FROM_QUERY_B(P_COLLECTION_NAME => 'VAC_DEPARTAMENTO2',
                                                       P_QUERY           => P_QUERY12);
-
-
-
-
-  /*
- insert into x
-   (campo1,  otro)
- values
-   (P_QUERY13, 'IND_ROTACION');*/
 
  END   PP_VAC_SEL_CONT;
 
@@ -11813,9 +10861,9 @@ V_SQL        VARCHAR2(21000);
  
   IF P_FECHA = LAST_DAY(TO_DATE(P_FECHA))  THEN
     
-       P_AND := P_AND||' AND MES || ''/'' || ANHO =  TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  ';                 
+       P_AND := P_AND||' and semana is null AND MES || ''/'' || ANHO =  TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')  ';                 
    ELSE
-       P_AND := P_AND||' AND SEMANA || ''/'' || ANHO =  TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')  ';
+       P_AND := P_AND||' and mes is null AND SEMANA || ''/'' || ANHO =  TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')  ';
    END IF;
    
    V_SQL := 'SELECT EMPL_LEGAJO,
@@ -11922,6 +10970,7 @@ V_SQL        VARCHAR2(21000);
                AND EMPL_EMPRESA = DPTO_EMPR
                AND EMPL_CODIGO_PROV is not null
                AND EMPL_TIPO_CONT = ''I''
+               and semana is null
                AND MES || ''/'' || ANHO =   '''||V_MES2||'''
                AND EMPL_FORMA_PAGO is not null
                AND CASE
@@ -11963,6 +11012,7 @@ V_SQL        VARCHAR2(21000);
                AND EMPL_EMPRESA = DPTO_EMPR
                AND EMPL_CODIGO_PROV is not null
                AND EMPL_TIPO_CONT = ''I''
+               and semana is null
                AND MES || ''/'' || ANHO = '''||V_MES1||'''
                AND EMPL_FORMA_PAGO is not null
                AND CASE
@@ -11974,11 +11024,6 @@ V_SQL        VARCHAR2(21000);
                      ELSE
                       0
                    END = 1';
-                   
-    /*insert into x
-    (campo1,  otro)
-  values
-    (v_sql, 'rotacion_nuevo1');    */
              
           
     IF APEX_COLLECTION.COLLECTION_EXISTS(P_COLLECTION_NAME => 'ROT_NUEVO') THEN
@@ -12182,5 +11227,12 @@ P_QUERY13 :='SELECT      EMPL_CARGO,
 
 END PP_ROTACION_CARGO;
 
+
+procedure add_hist_query(in_nombre varchar2, in_query clob) as
+begin
+   delete from x where otro = in_nombre;
+   insert into x (campo1, otro) values (in_query, in_nombre);
+end add_hist_query;
+  
 end PERL051;
 /

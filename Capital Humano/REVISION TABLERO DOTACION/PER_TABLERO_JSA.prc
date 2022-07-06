@@ -1,8 +1,8 @@
 create or replace procedure PER_TABLERO_JSA(in_fecha date := null) is
  l_fecha date := nvl(in_fecha, sysdate);
  
- co_hilagro   constant number := 1; 
- co_transagro constant number := 1;
+ co_hilagro   constant number := 1; --> GEN_EMPRESA
+ co_transagro constant number := 2; --> GEN_EMPRESA
 begin
  -- cuando es semanal inserta solo SEMANA dejando en NULL MES
  -- cuando es mensual inserta MES dejando en NULL semana  
@@ -151,9 +151,7 @@ select solper_clave, solper_empr, solper_fecha_sol, solper_operador_sol, solper_
              TO_CHAR(TRUNC(l_fecha), 'YYYY')
        from per_entrevista_personal
       WHERE entper_empr IN (co_hilagro, co_transagro);
-
-
-
+      
        insert into per_entrevista_post_hist
          (per_ent_codigo, per_ent_postulante, per_ent_empr, per_ent_cargo_ral, per_ent_fecha,
           mes,
@@ -168,8 +166,9 @@ select solper_clave, solper_empr, solper_fecha_sol, solper_operador_sol, solper_
 
   END IF ; --> FIN MENSUAL
 
-
-  -- INSERTA LO DE LA SEMANA
+--============================================================================================================================
+-- INSERTA LO DE LA SEMANA
+--============================================================================================================================
   IF TO_CHAR(l_fecha, 'DAY', 'NLS_DATE_LANGUAGE=SPANISH') LIKE 'D%'
   THEN
 

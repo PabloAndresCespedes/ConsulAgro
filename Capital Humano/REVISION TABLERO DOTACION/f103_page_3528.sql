@@ -28,7 +28,7 @@ prompt APPLICATION 103 - RECURSOS HUMANOS
 -- Application Export:
 --   Application:     103
 --   Name:            RECURSOS HUMANOS
---   Date and Time:   11:13 Tuesday July 5, 2022
+--   Date and Time:   08:25 Wednesday July 6, 2022
 --   Exported By:     PABLOC
 --   Flashback:       0
 --   Export Type:     Page Export
@@ -80,7 +80,7 @@ wwv_flow_api.create_page(
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'PABLOC'
-,p_last_upd_yyyymmddhh24miss=>'20220705094910'
+,p_last_upd_yyyymmddhh24miss=>'20220706082307'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(10982579091552464459)
@@ -1821,9 +1821,8 @@ wwv_flow_api.create_page_plug(
 ,p_plug_new_grid_column=>false
 ,p_plug_display_point=>'BODY'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
-,p_plug_display_condition_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
-,p_plug_display_when_condition=>'P_EMPRESA'
-,p_plug_display_when_cond2=>'1'
+,p_plug_display_condition_type=>'PLSQL_EXPRESSION'
+,p_plug_display_when_condition=>':P_EMPRESA=1 AND 1=2'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'
 );
@@ -9529,15 +9528,13 @@ wwv_flow_api.create_jet_chart(
 ,p_height=>'500'
 ,p_animation_on_display=>'none'
 ,p_animation_on_data_change=>'none'
-,p_orientation=>'vertical'
+,p_orientation=>'horizontal'
 ,p_data_cursor=>'auto'
 ,p_data_cursor_behavior=>'auto'
 ,p_hide_and_show_behavior=>'none'
 ,p_hover_behavior=>'none'
 ,p_stack=>'on'
-,p_stack_label=>'off'
 ,p_connect_nulls=>'Y'
-,p_value_position=>'auto'
 ,p_sorting=>'label-asc'
 ,p_fill_multi_series_gaps=>true
 ,p_zoom_and_scroll=>'off'
@@ -9545,23 +9542,11 @@ wwv_flow_api.create_jet_chart(
 ,p_show_series_name=>true
 ,p_show_group_name=>true
 ,p_show_value=>true
-,p_show_label=>true
-,p_show_row=>true
-,p_show_start=>true
-,p_show_end=>true
-,p_show_progress=>true
-,p_show_baseline=>true
 ,p_legend_rendered=>'on'
 ,p_legend_position=>'auto'
 ,p_legend_font_family=>'Arial Black'
 ,p_legend_font_style=>'normal'
 ,p_legend_font_size=>'12'
-,p_overview_rendered=>'off'
-,p_horizontal_grid=>'auto'
-,p_vertical_grid=>'auto'
-,p_gauge_orientation=>'circular'
-,p_gauge_plot_area=>'on'
-,p_show_gauge_value=>true
 );
 wwv_flow_api.create_jet_chart_series(
  p_id=>wwv_flow_api.id(11015084481287075543)
@@ -9581,17 +9566,16 @@ wwv_flow_api.create_jet_chart_series(
 ,p_items_label_column_name=>'AREA'
 ,p_color=>'#34AADC'
 ,p_line_style=>'solid'
+,p_line_width=>10
 ,p_line_type=>'auto'
 ,p_marker_rendered=>'auto'
 ,p_marker_shape=>'auto'
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'auto'
-,p_items_label_display_as=>'PERCENT'
-,p_items_label_font_family=>'Arial Black'
+,p_items_label_font_family=>'Arial'
 ,p_items_label_font_style=>'normal'
 ,p_items_label_font_size=>'10'
-,p_threshold_display=>'onIndicator'
 );
 wwv_flow_api.create_jet_chart_series(
  p_id=>wwv_flow_api.id(11015083918020075538)
@@ -9617,11 +9601,10 @@ wwv_flow_api.create_jet_chart_series(
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'auto'
-,p_items_label_display_as=>'PERCENT'
-,p_items_label_font_family=>'Arial Black'
+,p_items_label_font_family=>'Arial'
 ,p_items_label_font_style=>'normal'
 ,p_items_label_font_size=>'10'
-,p_threshold_display=>'onIndicator'
+,p_items_label_font_color=>'#FFFFFF'
 );
 wwv_flow_api.create_jet_chart_series(
  p_id=>wwv_flow_api.id(11015083806458075537)
@@ -9647,11 +9630,9 @@ wwv_flow_api.create_jet_chart_series(
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'auto'
-,p_items_label_display_as=>'PERCENT'
-,p_items_label_font_family=>'Arial Black'
+,p_items_label_font_family=>'Arial'
 ,p_items_label_font_style=>'normal'
 ,p_items_label_font_size=>'10'
-,p_threshold_display=>'onIndicator'
 );
 wwv_flow_api.create_jet_chart_series(
  p_id=>wwv_flow_api.id(11015083712735075536)
@@ -9677,11 +9658,9 @@ wwv_flow_api.create_jet_chart_series(
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'auto'
-,p_items_label_display_as=>'PERCENT'
-,p_items_label_font_family=>'Arial Black'
+,p_items_label_font_family=>'Arial'
 ,p_items_label_font_style=>'normal'
 ,p_items_label_font_size=>'10'
-,p_threshold_display=>'onIndicator'
 );
 wwv_flow_api.create_jet_chart_series(
  p_id=>wwv_flow_api.id(11015083610305075535)
@@ -9707,15 +9686,11 @@ wwv_flow_api.create_jet_chart_series(
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'auto'
-,p_items_label_display_as=>'PERCENT'
-,p_items_label_font_family=>'Arial Black'
+,p_items_label_font_family=>'Arial'
 ,p_items_label_font_style=>'normal'
 ,p_items_label_font_size=>'10'
-,p_threshold_display=>'onIndicator'
+,p_items_label_font_color=>'#FFFFFF'
 );
-end;
-/
-begin
 wwv_flow_api.create_jet_chart_series(
  p_id=>wwv_flow_api.id(11090754714411216829)
 ,p_chart_id=>wwv_flow_api.id(11015084547932075544)
@@ -9740,17 +9715,18 @@ wwv_flow_api.create_jet_chart_series(
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'auto'
-,p_items_label_display_as=>'PERCENT'
-,p_items_label_font_family=>'Arial Black'
+,p_items_label_font_family=>'Arial'
 ,p_items_label_font_style=>'normal'
 ,p_items_label_font_size=>'10'
-,p_threshold_display=>'onIndicator'
 );
+end;
+/
+begin
 wwv_flow_api.create_jet_chart_series(
  p_id=>wwv_flow_api.id(11015084365770075542)
 ,p_chart_id=>wwv_flow_api.id(11015084547932075544)
 ,p_seq=>70
-,p_name=>'mes'
+,p_name=>unistr('Divi\00F3n Mes')
 ,p_data_source_type=>'SQL'
 ,p_data_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 ' SELECT 24 cant, ''1- ''||TO_CHAR(ADD_MONTHS((:P3528_FECHA_HASTA), -2),''MM/YYYY'') MES_1',
@@ -9765,7 +9741,7 @@ wwv_flow_api.create_jet_chart_series(
 ,p_series_type=>'bar'
 ,p_items_value_column_name=>'CANT'
 ,p_items_label_column_name=>'MES_1'
-,p_color=>'#87B0CF'
+,p_color=>'#736F73'
 ,p_line_style=>'dotted'
 ,p_line_width=>0
 ,p_line_type=>'straight'
@@ -9773,8 +9749,6 @@ wwv_flow_api.create_jet_chart_series(
 ,p_marker_shape=>'auto'
 ,p_assigned_to_y2=>'on'
 ,p_items_label_rendered=>false
-,p_items_label_display_as=>'PERCENT'
-,p_threshold_display=>'onIndicator'
 );
 wwv_flow_api.create_jet_chart_axis(
  p_id=>wwv_flow_api.id(11015084025886075539)
@@ -10696,9 +10670,6 @@ wwv_flow_api.create_jet_chart_series(
 ,p_items_label_font_size=>'10'
 ,p_threshold_display=>'onIndicator'
 );
-end;
-/
-begin
 wwv_flow_api.create_jet_chart_axis(
  p_id=>wwv_flow_api.id(11096132435359143870)
 ,p_chart_id=>wwv_flow_api.id(11096132226706143868)
@@ -10749,6 +10720,9 @@ wwv_flow_api.create_jet_chart_axis(
 ,p_zoom_order_quarters=>false
 ,p_zoom_order_years=>false
 );
+end;
+/
+begin
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(11103476944962559462)
 ,p_plug_name=>'GRAFICO7_SOLICITUD1'
@@ -12866,7 +12840,7 @@ wwv_flow_api.create_page_plug(
 ' FROM APEX_collections',
 'WHERE collection_name = ''CONTRATACIONES''',
 'UNION ALL',
-' SELECT 5 ORDEN,''CONTRATACIONES FUERA DE POLITICA'' DESCIPCION,SUM(C010) MES1, SUM(C011) MES2, SUM(C012) MES3',
+' SELECT 5 ORDEN,''CONTRATACIONES DIRECTAS'' DESCIPCION,SUM(C010) MES1, SUM(C011) MES2, SUM(C012) MES3',
 ' FROM APEX_collections',
 'WHERE collection_name = ''CONTRATACIONES''',
 'UNION ALL',
@@ -12962,6 +12936,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_type=>'STRING'
 ,p_column_alignment=>'CENTER'
 ,p_static_id=>'EDITARR'
+,p_display_condition_type=>'NEVER'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(11096402183096067787)
@@ -13010,6 +12985,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_type=>'STRING'
 ,p_column_alignment=>'CENTER'
 ,p_static_id=>'EDITARR'
+,p_display_condition_type=>'NEVER'
 );
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(11096441077301083990)
@@ -18562,13 +18538,15 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P3528_VAC_DEP'
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_api.id(11041772222937731357)
-,p_item_default=>'TABLERO DE VACANCIA POR DEPARTAMENTO'
+,p_use_cache_before_default=>'NO'
+,p_item_default=>'TABLERO DE VACANCIA POR AREA'
 ,p_prompt=>'Nuevo'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
 ,p_grid_column=>4
 ,p_grid_label_column_span=>0
 ,p_field_template=>wwv_flow_api.id(11101510892263346303)
 ,p_item_template_options=>'#DEFAULT#'
+,p_is_persistent=>'N'
 ,p_attribute_01=>'Y'
 ,p_attribute_02=>'VALUE'
 ,p_attribute_04=>'Y'
@@ -19202,7 +19180,7 @@ wwv_flow_api.create_page_item(
 ,p_item_plug_id=>wwv_flow_api.id(11104120791781171927)
 ,p_item_default=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'TABLERO DE VACANCIA',
-'  POR DEPARTAMENTO'))
+'  POR AREA'))
 ,p_prompt=>'Nuevo'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
 ,p_grid_column=>4
