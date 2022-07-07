@@ -6,7 +6,7 @@ CREATE OR REPLACE TYPE t_holding IS TABLE OF t_holding_dependencies;
 /
 create or replace package FINI053 is
 
-  -- Author  : PROGRAMACION7
+  -- Author  : @PabloACespedes
   -- Created : 22/06/2022 10:07:31
   -- Purpose : Cancelacion de documentos
   
@@ -27,9 +27,7 @@ create or replace package FINI053 is
       - NOTAS DEBITOS RECIBIDAS
       - NOTA DE CREDITO RECIBIDAS
       - ADELANTOS RECIBIDAS
-  */
   
-  /*
     Author  : @PabloACespedes \(^-^)/
     Created : 22/06/2022 10:24:35
     retorna tipos movimientos de cancelacion de recibo, se basa
@@ -102,6 +100,10 @@ create or replace package FINI053 is
     in_user         varchar2
   );
   
+  -- 01/07/2022 14:36:53 @PabloACespedes \(^-^)/
+  -- trunca todas las colecciones
+  procedure truncate_all_collections;
+  
   -- 22/06/2022 11:08:25 @PabloACespedes \(^-^)/
   -- retorna si el tipo mov. es EMISION o RECEPCION (E or R)
   function get_tipo_mov_er(
@@ -144,6 +146,7 @@ create or replace package FINI053 is
 end FINI053;
 /
 create or replace package body FINI053 is
+  -- CONSTANTES
   co_col_nc_emision constant varchar2(10 char) := 'NC_EMISION';
   co_col_fc_emision constant varchar2(10 char) := 'FC_EMISION';
   co_col_nc_rec     constant varchar2(11 char) := 'NC_RECIBIDO';
@@ -155,7 +158,7 @@ create or replace package body FINI053 is
   co_recibido constant varchar2(1 char) := 'R';
     
 
-  
+  -- PROCEDURES
   procedure get_tipo_mov_cancel(
     in_empresa                  in  number,
     out_recibo_nc_emitido       out number,
@@ -650,7 +653,10 @@ create or replace package body FINI053 is
            l_doc_tipo_mov    apex_application_global.vc_arr2;
            l_fecha_operacion apex_application_global.vc_arr2;
            l_moneda          apex_application_global.vc_arr2;
+           
+           l_sql varchar2(4000);
         begin
+          /*
           select fd.doc_nro_doc,
                    fd.doc_fec_doc,
                    fd.doc_suc,
@@ -697,9 +703,9 @@ create or replace package body FINI053 is
             and
             (
                 (
-                 fd.doc_tipo_mov in (l_nc_emitida, l_nc_emi_ajuste)
-                 and 
                  in_tipo_mov = l_recibo_nc_emitido
+                 and                
+                 fd.doc_tipo_mov in (l_nc_emitida, l_nc_emi_ajuste)
                 )
                 or
                 (
@@ -708,7 +714,70 @@ create or replace package body FINI053 is
                  fd.doc_tipo_mov = l_adelanto_cli
                 )
             );
+            */
+            l_sql := '
+            select fd.doc_nro_doc,
+                   fd.doc_fec_doc,
+                   fd.doc_suc,
+                   fc.cuo_fec_vto,
+                   fc.cuo_imp_mon,
+                   fc.cuo_saldo_mon,
+                   fc.cuo_saldo_loc,
+                   fc.cuo_clave_doc,
+                   fd.doc_mon,
+                   gm.mon_dec_imp,
+                   gm.mon_dec_tasa,
+                   gm.mon_simbolo,
+                   gm.mon_tasa_vta,
+                   fd.doc_clave_scli,
+                   fd.doc_tipo_mov,
+                   '''||to_char(in_fecha_op, 'dd/mm/yyyy')||''',
+                   '||in_mnd||'
+                   from fin_documento fd
+                   inner join fin_cuota fc on (fc.cuo_clave_doc = fd.doc_clave and fc.cuo_empr = fd.doc_empr)
+                   inner join table(fini053.get_client_holding(in_holding => '||in_holding||', in_empresa => '||in_empresa||')) cl on (cl.id = fd.doc_cli)
+                   inner join gen_moneda gm on (gm.mon_codigo = fd.doc_mon and gm.mon_empr = fd.doc_empr)
+                   where cl.id is not null
+                   and fd.doc_mon = '||in_mnd||'
+                   and fd.doc_empr = '||in_empresa||'
+                   and (trunc(fd.doc_fec_doc) between to_date('''||to_char(in_desde, 'dd/mm/yyyy')||''', ''dd/mm/yyyy'') and to_date('''||to_char(in_fecha_op, 'dd/mm/yyyy')||''', ''dd/mm/yyyy''))
+                   and fc.cuo_saldo_mon > 0
+                   '|| case 
+                        when in_tipo_mov = l_recibo_nc_emitido then
+                           'and fd.doc_tipo_mov in ('||nvl(l_nc_emitida, -1)||', '||nvl(l_nc_emi_ajuste, -1)||')' 
+                        when in_tipo_mov  = l_recibo_adel_cli_emitido then 
+                           'and fd.doc_tipo_mov = '||l_adelanto_cli
+                        else 
+                            ''
+                        end ;
+             
+            <<add_reg_query>>
+            declare
+              id_name constant varchar2(23 char) := 'CANCEL_DOCUMENT_HOLDING';
+            begin
+              delete from x where x.otro = id_name;                         
+              insert into x(campo1, otro) values(l_sql, id_name);
+            end add_reg_query;
             
+            execute immediate l_sql
+            bulk collect into l_doc_nro,
+                               l_fecha_doc,
+                               l_doc_suc,
+                               l_cuo_fec_vto,
+                               l_cuo_imp_mon,
+                               l_cuo_saldo_mon,
+                               l_cuo_saldo_loc,
+                               l_cuo_clave_doc,
+                               l_doc_mon,
+                               l_mon_dec_imp,
+                               l_mon_dec_tasa,
+                               l_mon_simbolo,
+                               l_mon_tasa_vta,
+                               l_doc_clave_scli,
+                               l_doc_tipo_mov,
+                               l_fecha_operacion,
+                               l_moneda;
+                       
             if l_doc_nro.count > 0 then
               apex_collection.add_members(
                 p_collection_name => co_col_nc_emision,
@@ -895,6 +964,8 @@ create or replace package body FINI053 is
   procedure confirm(
     in_user varchar2
   ) as
+    co_mnd_gs constant number := 1; -- MONEDA GS
+   
     l_ind_er             varchar2(1 char);
 
     l_nc_doc_select     number;
@@ -951,7 +1022,6 @@ create or replace package body FINI053 is
 
     l_tipo_mov_filter number;
     l_since_date_filter date;
-    l_error_comodin   varchar2(4000);
     
     l_tmv_cancela     number;
     l_tmv_cancela_two number;
@@ -959,6 +1029,11 @@ create or replace package body FINI053 is
     e_tmv_no_configurado exception;
     e_importe_mayor      exception;
     e_indicador          exception;
+    
+    l_monto_mon_comp number;
+    l_monto_loc_comp number;
+    
+    l_calculate_mon boolean := false; --> comodin para saber si se_recalcula los montos de la coleccion
   begin
     <<get_data_col_filters>>
     begin
@@ -1175,22 +1250,6 @@ create or replace package body FINI053 is
             raise e_tmv_no_configurado;
         end case t_cancell;
         
-        l_fin_doc_father :=
-        add_fin_documento(in_empresa     => l_emp_insert,
-                          in_user        => in_user,
-                          in_fecha       => l_fecha_op_insert,
-                          in_suc         => l_suc_insert,
-                          in_tipo_mov    => l_tmv_cancela,
-                          in_moneda      => l_mnd_insert,
-                          in_cliente     => case when l_ind_er = co_emision  then l_cli_or_prov_insert else null end,
-                          in_proveedor   => case when l_ind_er = co_recibido then l_cli_or_prov_insert else null end,
-                          in_nro_doc     => l_nc_nro_doc,
-                          in_importe_mon => l_nc_importe_mon,
-                          in_importe_loc => l_nc_importe_loc,
-                          in_clave_padre => null,
-                          in_clave_scli  => l_nc_clave_scli
-                          );
-
         <<fc_doc>>
         begin
           select 
@@ -1250,16 +1309,62 @@ create or replace package body FINI053 is
             raise e_tmv_no_configurado;
         end case t_cancell_two;
         
-        if l_mnd_insert = 1 then -- GS
-          if l_nc_importe_loc > l_fc_importe_loc then
-            raise e_importe_mayor;
-          end if;
-        else -- otras monedas
-          if l_nc_importe_mon > l_fc_importe_mon then
-            raise e_importe_mayor;
+        if l_nc_tipo_mov not in( l_tmv_adel_cliente_emit, l_tmv_adel_rec ) then
+          if l_mnd_insert = co_mnd_gs then
+            if l_nc_importe_loc > l_fc_importe_loc then
+              raise e_importe_mayor;
+            end if;
+          else -- otras monedas
+            if l_nc_importe_mon > l_fc_importe_mon then
+              raise e_importe_mayor;
+            end if;
           end if;
         end if;
         
+        -- 05/07/2022 11:16:30 @PabloACespedes \(^-^)/
+        -- en el caso que sean adelantos los montos deben ser calculados
+        -- Si el ADELANTO es mayor que la factura a cancelar, utilizar el 
+        -- monto de la FACTURA y luego disminuir el monto del Adelanto, dejandolo con saldo
+        if l_nc_tipo_mov in ( l_tmv_adel_cliente_emit, l_tmv_adel_rec ) then
+          if l_mnd_insert = co_mnd_gs then
+            if l_nc_importe_loc > l_fc_importe_loc then
+              l_monto_loc_comp := l_fc_importe_loc;
+              l_monto_mon_comp := l_fc_importe_mon;
+              l_calculate_mon  := true;
+            else
+              l_monto_loc_comp := l_nc_importe_loc;
+              l_monto_mon_comp := l_nc_importe_mon;
+              l_calculate_mon  := false;
+            end if;
+          else -- otras monedas
+            if l_nc_importe_mon > l_fc_importe_mon then
+              l_monto_loc_comp := l_fc_importe_loc;
+              l_monto_mon_comp := l_fc_importe_mon;
+              l_calculate_mon  := true;
+            else
+              l_monto_loc_comp := l_nc_importe_loc;
+              l_monto_mon_comp := l_nc_importe_mon;
+              l_calculate_mon  := false;
+            end if;
+          end if;
+        end if;
+        
+        l_fin_doc_father :=
+        add_fin_documento(in_empresa     => l_emp_insert,
+                          in_user        => in_user,
+                          in_fecha       => l_fecha_op_insert,
+                          in_suc         => l_suc_insert,
+                          in_tipo_mov    => l_tmv_cancela,
+                          in_moneda      => l_mnd_insert,
+                          in_cliente     => case when l_ind_er = co_emision  then l_cli_or_prov_insert else null end,
+                          in_proveedor   => case when l_ind_er = co_recibido then l_cli_or_prov_insert else null end,
+                          in_nro_doc     => l_nc_nro_doc,
+                          in_importe_mon => l_monto_mon_comp,
+                          in_importe_loc => l_monto_loc_comp,
+                          in_clave_padre => null,
+                          in_clave_scli  => l_nc_clave_scli
+                          );
+
         l_fin_doc_child :=
         add_fin_documento(in_empresa     => l_emp_insert,
                           in_user        => in_user,
@@ -1270,8 +1375,8 @@ create or replace package body FINI053 is
                           in_cliente     => case when l_ind_er = co_emision  then l_cli_or_prov_insert else null end,
                           in_proveedor   => case when l_ind_er = co_recibido then l_cli_or_prov_insert else null end,
                           in_nro_doc     => l_fc_nro_doc,
-                          in_importe_mon => l_nc_importe_mon, --> monto de la NC || ADELANTO
-                          in_importe_loc => l_nc_importe_loc, --> monto de la NC || ADELANTO
+                          in_importe_mon => l_monto_mon_comp, --> monto de la NC || ADELANTO
+                          in_importe_loc => l_monto_loc_comp, --> monto de la NC || ADELANTO
                           in_clave_padre => l_fin_doc_father,
                           in_clave_scli  => l_fc_clave_scli
                           );
@@ -1281,8 +1386,8 @@ create or replace package body FINI053 is
                  in_clave_recibo => l_fin_doc_father,
                  in_vencimiento  => l_nc_venc,
                  in_fecha_op     => l_fecha_op_insert,
-                 in_importe_mon  => l_nc_importe_mon,
-                 in_importe_loc  => l_nc_importe_loc,
+                 in_importe_mon  => l_monto_mon_comp,
+                 in_importe_loc  => l_monto_loc_comp,
                  in_empresa      => l_emp_insert,
                  in_user         => in_user
          );
@@ -1293,38 +1398,89 @@ create or replace package body FINI053 is
                  in_clave_recibo => l_fin_doc_child,
                  in_vencimiento  => l_fc_venc,
                  in_fecha_op     => l_fecha_op_insert,
-                 in_importe_mon  => l_nc_importe_mon, --> monto de la NC || ADELANTO
-                 in_importe_loc  => l_nc_importe_loc, --> monto de la NC || ADELANTO
+                 in_importe_mon  => l_monto_mon_comp, --> monto de la NC || ADELANTO
+                 in_importe_loc  => l_monto_loc_comp, --> monto de la NC || ADELANTO
                  in_empresa      => l_emp_insert,
                  in_user         => in_user
          );
-         
-        -- una vez que se cancela el segundo documento, vuelve a consultar todo
-        -- y se hace un refresh desde APEX para las listas
-        if l_fin_doc_child is not null then         
-          generate_query(
-           in_fecha_op  => l_fecha_op_insert,
-           in_desde     => l_since_date_filter,
-           in_cliente   => case when l_ind_er = co_emision  then l_cli_or_prov_insert else null end, --> cliente
-           in_proveedor => case when l_ind_er = co_recibido then l_cli_or_prov_insert else null end, --> proveedor
-           in_tipo_mov  => l_tipo_mov_filter,
-           in_mnd       => l_mnd_insert,
-           in_empresa   => l_emp_insert,
-           in_suc       => l_suc_insert,
-           in_user      => in_user,
-           in_ind_er    => l_ind_er,
-           out_error    => l_error_comodin
-          );
           
-          -- items ocultos en APEX
+        -- una vez que se cancela el segundo documento, elimina o actualiza montos de las secuencias
+        if l_fin_doc_child is not null then
           <<clear_data_selected>>
           case
             when l_ind_er = co_emision then
-               ap.sv(p_item => 'P158_NC_SEQ');
-               ap.sv(p_item => 'P158_FC_SEQ');
-            when l_ind_er = co_recibido then            
-               ap.sv(p_item => 'P158_NCR_SEQ');
-               ap.sv(p_item => 'P158_FCR_SEQ');  
+              if not l_calculate_mon then
+                <<del_members_emision>>
+                begin
+                  APEX_COLLECTION.DELETE_MEMBER(
+                    p_collection_name => co_col_nc_emision,
+                    p_seq             => l_nc_doc_select
+                  );
+                end del_members_emision;
+              else
+                <<upd_mont_member>>
+                begin
+                  -- actualiza las dos columnas de montos
+                  APEX_COLLECTION.UPDATE_MEMBER_ATTRIBUTE (
+                    p_collection_name => co_col_nc_emision,
+                    p_seq             => l_nc_doc_select,
+                    p_attr_number     => 6, --> c006
+                    p_attr_value      => ( l_nc_importe_mon - l_fc_importe_mon ) -- saldo monedas extranjeras
+                  );
+                  
+                  APEX_COLLECTION.UPDATE_MEMBER_ATTRIBUTE (
+                    p_collection_name => co_col_nc_emision,
+                    p_seq             => l_nc_doc_select,
+                    p_attr_number     => 7, --> c007
+                    p_attr_value      => ( l_nc_importe_loc - l_fc_importe_loc )  -- saldo moneda local
+                  );
+                end upd_mont_member;
+              end if;
+              
+              APEX_COLLECTION.DELETE_MEMBER(
+                p_collection_name => co_col_fc_emision,
+                p_seq             => l_fc_cre_doc_select
+              );
+              
+              ap.sv(p_item => 'P158_NC_SEQ');
+              ap.sv(p_item => 'P158_FC_SEQ');
+                
+            when l_ind_er = co_recibido then
+              if not l_calculate_mon then
+                <<del_members_recibido>>
+                begin
+                  APEX_COLLECTION.DELETE_MEMBER(
+                    p_collection_name => co_col_nc_rec,
+                    p_seq             => l_fc_cre_doc_select 
+                  );
+                end del_members_recibido;
+              else
+                <<upd_mont_member>>
+                begin
+                  -- actualiza las dos columnas de montos
+                  APEX_COLLECTION.UPDATE_MEMBER_ATTRIBUTE (
+                    p_collection_name => co_col_nc_rec,
+                    p_seq             => l_fc_cre_doc_select,
+                    p_attr_number     => 6, --> c006
+                    p_attr_value      => ( l_nc_importe_mon - l_fc_importe_mon ) -- saldo monedas extranjeras
+                  );
+                  
+                  APEX_COLLECTION.UPDATE_MEMBER_ATTRIBUTE (
+                    p_collection_name => co_col_nc_rec,
+                    p_seq             => l_fc_cre_doc_select,
+                    p_attr_number     => 7, --> c007
+                    p_attr_value      => ( l_nc_importe_loc - l_fc_importe_loc )  -- saldo moneda local
+                  );
+                end upd_mont_member;
+              end if;
+              
+              APEX_COLLECTION.DELETE_MEMBER(
+                p_collection_name => co_col_fc_rec,
+                p_seq             => l_fc_cre_doc_select 
+              );    
+                
+              ap.sv(p_item => 'P158_NCR_SEQ');
+              ap.sv(p_item => 'P158_FCR_SEQ');  
             else
               raise e_indicador;        
           end case clear_data_selected;
@@ -1376,7 +1532,31 @@ create or replace package body FINI053 is
                        in_empresa
                        );
   end add_pago;
+    
+  procedure truncate_all_collections as
+  begin 
+    if apex_collection.collection_exists (p_collection_name => co_col_nc_emision) then
+       apex_collection.truncate_collection ( p_collection_name => co_col_nc_emision );
+    end if;
+
+    if apex_collection.collection_exists (p_collection_name => co_col_fc_emision) then
+       apex_collection.truncate_collection ( p_collection_name => co_col_fc_emision );
+    end if;
+
+    if apex_collection.collection_exists (p_collection_name => co_col_nc_rec) then
+       apex_collection.truncate_collection ( p_collection_name => co_col_nc_rec );
+    end if;
+
+    if apex_collection.collection_exists (p_collection_name => co_col_fc_rec) then
+       apex_collection.truncate_collection ( p_collection_name => co_col_fc_rec );
+    end if;
+
+    if apex_collection.collection_exists (p_collection_name => co_col_filtros) then
+       apex_collection.truncate_collection ( p_collection_name => co_col_filtros );
+    end if;
+  end truncate_all_collections;
   
+  -- FUNCTIONS:
   function operador_hab_mes_finanzas(
     in_user varchar2,
     in_emp  number
@@ -1505,7 +1685,7 @@ create or replace package body FINI053 is
                               in_importe_loc,
                               0,
                               0,
-                              2, --> doc operador generico, ya esta en depecado
+                              2, --> doc operador generico, ya esta deprecado
                               in_user,
                               current_date,
                               'FIN',

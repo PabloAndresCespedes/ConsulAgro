@@ -28,7 +28,7 @@ prompt APPLICATION 100 - FINANZAS
 -- Application Export:
 --   Application:     100
 --   Name:            FINANZAS
---   Date and Time:   14:46 Thursday June 30, 2022
+--   Date and Time:   15:13 Thursday July 7, 2022
 --   Exported By:     PABLOC
 --   Flashback:       0
 --   Export Type:     Page Export
@@ -58,13 +58,27 @@ wwv_flow_api.create_page(
 ,p_step_title=>unistr('FINI053- Cancelaci\00F3n de documentos')
 ,p_warn_on_unsaved_changes=>'N'
 ,p_autocomplete_on_off=>'OFF'
-,p_javascript_code=>'var lSpinner$;'
+,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'var lSpinner$;',
+'',
+'var iClear = [''P158_NC_DOC_SELECT'',',
+'''P158_FC_DOC_SELECT'',',
+'''P158_NC_MONTO_SELECT'',',
+'''P158_FC_MONTO_SELECT'',',
+'''P158_NCR_DOC_SELECT'',',
+'''P158_NCR_MONTO_SELECT'',',
+'''P158_FCR_DOC_SELECT'',',
+'''P158_FCR_MONTO_SELECT'',',
+'''P158_NCR_SEQ'',',
+'''P158_FCR_SEQ'',',
+'''P158_NC_SEQ'',',
+'''P158_FC_SEQ''];'))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '.selectorItem{transform: scale(1.5);}',
 '.cursor{cursor:pointer;}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'PABLOC'
-,p_last_upd_yyyymmddhh24miss=>'20220630144414'
+,p_last_upd_yyyymmddhh24miss=>'20220707141323'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(680406194289347453)
@@ -105,6 +119,7 @@ wwv_flow_api.create_page_plug(
 '    c.c011 mon_dec_tasa,',
 '    c.c012 mon_simbolo,',
 '    c.c013 mon_tasa_vta,',
+'    c.c017 tipo_mov,',
 unistr('    -- solo edita el tag HTML agregando un atributo de CHECKED, para que indique al usuario que est\00E1 seleccionado'),
 '    CASE WHEN c.seq_id = :P158_NCR_SEQ THEN ''checked'' ELSE NULL END ATTR_CHECED,',
 '    '''' seleccionar',
@@ -317,6 +332,14 @@ wwv_flow_api.create_worksheet_column(
 ,p_display_text_as=>'WITHOUT_MODIFICATION'
 ,p_column_alignment=>'CENTER'
 );
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(686029033883089402)
+,p_db_column_name=>'TIPO_MOV'
+,p_display_order=>170
+,p_column_identifier=>'AF'
+,p_column_label=>'Tipo Mov'
+,p_column_type=>'STRING'
+);
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(681449012195252101)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -324,7 +347,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'6814491'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'CUO_CLAVE_DOC:DOC_NRO_DOC:DOC_FEC_DOC:CUO_FEC_VTO:DOC_SUC:MON_SIMBOLO:CUO_IMP_MON:CUO_SALDO_LOC:CUO_SALDO_MON::SELECCIONAR:ATTR_CHECED:SEQ'
+,p_report_columns=>'CUO_CLAVE_DOC:DOC_NRO_DOC:DOC_FEC_DOC:CUO_FEC_VTO:DOC_SUC:MON_SIMBOLO:CUO_IMP_MON:CUO_SALDO_LOC:CUO_SALDO_MON::SELECCIONAR:ATTR_CHECED:SEQ:TIPO_MOV'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(680406946128347456)
@@ -351,6 +374,7 @@ wwv_flow_api.create_page_plug(
 '    c.c012 mon_simbolo,',
 '    c.c013 mon_tasa_vta,',
 '    c.c014 doc_clave_scli,',
+'    c.c017 tipo_mov,',
 '    CASE WHEN c.seq_id = :P158_NC_SEQ THEN ''checked'' ELSE NULL END ATTR_CHECED,',
 '    '''' seleccionar',
 'from apex_collections c',
@@ -559,6 +583,14 @@ wwv_flow_api.create_worksheet_column(
 ,p_display_text_as=>'WITHOUT_MODIFICATION'
 ,p_column_alignment=>'CENTER'
 );
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(686029277724089404)
+,p_db_column_name=>'TIPO_MOV'
+,p_display_order=>210
+,p_column_identifier=>'AJ'
+,p_column_label=>'Tipo Mov'
+,p_column_type=>'STRING'
+);
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(681466224286381720)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -566,7 +598,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'6814663'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'CUO_CLAVE_DOC:DOC_NRO_DOC:DOC_FEC_DOC:CUO_FEC_VTO:DOC_SUC:MON_SIMBOLO:CUO_IMP_MON:CUO_SALDO_LOC:CUO_SALDO_MON:SELECCIONAR::ATTR_CHECED:SEQ'
+,p_report_columns=>'TIPO_MOV:CUO_CLAVE_DOC:DOC_NRO_DOC:DOC_FEC_DOC:CUO_FEC_VTO:DOC_SUC:MON_SIMBOLO:CUO_IMP_MON:CUO_SALDO_LOC:CUO_SALDO_MON:SELECCIONAR:'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(681437364305168942)
@@ -595,6 +627,7 @@ wwv_flow_api.create_page_plug(
 '    c.c011 mon_dec_tasa,',
 '    c.c012 mon_simbolo,',
 '    c.c013 mon_tasa_vta,',
+'    c.c017 tipo_mov,',
 unistr('    -- solo edita el tag HTML agregando un atributo de CHECKED, para que indique al usuario que est\00E1 seleccionado'),
 '    CASE WHEN c.seq_id = :P158_FCR_SEQ THEN ''checked'' ELSE NULL END ATTR_CHECED,',
 '    '''' seleccionar',
@@ -806,6 +839,14 @@ wwv_flow_api.create_worksheet_column(
 ,p_display_text_as=>'WITHOUT_MODIFICATION'
 ,p_column_alignment=>'CENTER'
 );
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(686029101990089403)
+,p_db_column_name=>'TIPO_MOV'
+,p_display_order=>170
+,p_column_identifier=>'AF'
+,p_column_label=>'Tipo Mov'
+,p_column_type=>'STRING'
+);
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(681505004045747717)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -813,7 +854,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'6815051'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'CUO_CLAVE_DOC:DOC_NRO_DOC:DOC_FEC_DOC:CUO_FEC_VTO:DOC_SUC:MON_SIMBOLO:CUO_IMP_MON:CUO_SALDO_LOC:CUO_SALDO_MON::SELECCIONAR:ATTR_CHECED:SEQ'
+,p_report_columns=>'CUO_CLAVE_DOC:DOC_NRO_DOC:DOC_FEC_DOC:CUO_FEC_VTO:DOC_SUC:MON_SIMBOLO:CUO_IMP_MON:CUO_SALDO_LOC:CUO_SALDO_MON::SELECCIONAR:ATTR_CHECED:SEQ:TIPO_MOV'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(681475604596657213)
@@ -843,6 +884,7 @@ wwv_flow_api.create_page_plug(
 '    c.c012 mon_simbolo,',
 '    c.c013 mon_tasa_vta,',
 '    c.c014 doc_clave_scli,',
+'    c.c017 tipo_mov,',
 unistr('    -- solo edita el tag HTML agregando un atributo de CHECKED, para que indique al usuario que est\00E1 seleccionado'),
 '    CASE WHEN c.seq_id = :P158_FC_SEQ THEN ''checked'' ELSE NULL END ATTR_CHECED,',
 '    '''' seleccionar',
@@ -1053,6 +1095,17 @@ wwv_flow_api.create_worksheet_column(
 ,p_display_text_as=>'WITHOUT_MODIFICATION'
 ,p_column_alignment=>'CENTER'
 );
+end;
+/
+begin
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(686029333278089405)
+,p_db_column_name=>'TIPO_MOV'
+,p_display_order=>180
+,p_column_identifier=>'AH'
+,p_column_label=>'Tipo Mov'
+,p_column_type=>'STRING'
+);
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(681505698690747731)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -1060,7 +1113,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'6815057'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'CUO_CLAVE_DOC:DOC_NRO_DOC:DOC_FEC_DOC:CUO_FEC_VTO:DOC_SUC:MON_SIMBOLO:CUO_IMP_MON:CUO_SALDO_LOC:CUO_SALDO_MON:SELECCIONAR::ATTR_CHECED:SEQ'
+,p_report_columns=>'TIPO_MOV:CUO_CLAVE_DOC:DOC_NRO_DOC:DOC_FEC_DOC:CUO_FEC_VTO:DOC_SUC:MON_SIMBOLO:CUO_IMP_MON:CUO_SALDO_LOC:CUO_SALDO_MON:SELECCIONAR:'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(681478285173657239)
@@ -1074,9 +1127,6 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'
 );
-end;
-/
-begin
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(681640961889043910)
 ,p_plug_name=>'{errorMsg}'
@@ -1127,7 +1177,7 @@ wwv_flow_api.create_page_button(
 ,p_button_template_options=>'#DEFAULT#:t-Button--warning'
 ,p_button_template_id=>wwv_flow_api.id(119514454130420685)
 ,p_button_image_alt=>'Limpiar Campos Seleccionados'
-,p_button_position=>'RIGHT_OF_IR_SEARCH_BAR'
+,p_button_position=>'REGION_TEMPLATE_EDIT'
 ,p_warn_on_unsaved_changes=>null
 );
 wwv_flow_api.create_page_button(
@@ -1139,7 +1189,7 @@ wwv_flow_api.create_page_button(
 ,p_button_template_options=>'#DEFAULT#:t-Button--warning'
 ,p_button_template_id=>wwv_flow_api.id(119514454130420685)
 ,p_button_image_alt=>'Limpiar Campos Seleccionados'
-,p_button_position=>'RIGHT_OF_IR_SEARCH_BAR'
+,p_button_position=>'REGION_TEMPLATE_EDIT'
 ,p_warn_on_unsaved_changes=>null
 );
 wwv_flow_api.create_page_button(
@@ -1151,7 +1201,7 @@ wwv_flow_api.create_page_button(
 ,p_button_template_options=>'#DEFAULT#:t-Button--warning'
 ,p_button_template_id=>wwv_flow_api.id(119514454130420685)
 ,p_button_image_alt=>'Limpiar Campos Seleccionados'
-,p_button_position=>'RIGHT_OF_IR_SEARCH_BAR'
+,p_button_position=>'REGION_TEMPLATE_EDIT'
 ,p_warn_on_unsaved_changes=>null
 );
 wwv_flow_api.create_page_button(
@@ -1163,7 +1213,7 @@ wwv_flow_api.create_page_button(
 ,p_button_template_options=>'#DEFAULT#:t-Button--warning'
 ,p_button_template_id=>wwv_flow_api.id(119514454130420685)
 ,p_button_image_alt=>'Limpiar Campos Seleccionados'
-,p_button_position=>'RIGHT_OF_IR_SEARCH_BAR'
+,p_button_position=>'REGION_TEMPLATE_EDIT'
 ,p_warn_on_unsaved_changes=>null
 );
 wwv_flow_api.create_page_item(
@@ -1598,7 +1648,10 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>10
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>'lSpinner$ = apex.util.showSpinner( $( "body" ) )'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'lSpinner$ = apex.util.showSpinner( $( "body" ) );',
+'',
+'$x_Value(iClear, '''');'))
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(681641170195043912)
@@ -1628,16 +1681,6 @@ wwv_flow_api.create_page_da_action(
 ,p_attribute_03=>'P158_ERROR_TEXT'
 ,p_attribute_04=>'N'
 ,p_wait_for_result=>'Y'
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(681731787672287215)
-,p_event_id=>wwv_flow_api.id(681644963658043950)
-,p_event_result=>'TRUE'
-,p_action_sequence=>30
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_CLEAR'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P158_NC_DOC_SELECT,P158_FC_DOC_SELECT,P158_NC_MONTO_SELECT,P158_FC_MONTO_SELECT,P158_NCR_DOC_SELECT,P158_NCR_MONTO_SELECT,P158_FCR_DOC_SELECT,P158_FCR_MONTO_SELECT'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(679345240730094241)
@@ -1828,7 +1871,7 @@ wwv_flow_api.create_page_da_action(
 ,p_attribute_01=>'DANGER'
 ,p_attribute_02=>'NOTIFICATION'
 ,p_attribute_03=>'.t-Body-main'
-,p_attribute_04=>'5000'
+,p_attribute_04=>'0'
 ,p_attribute_05=>'TOP'
 ,p_attribute_06=>'JSSTRING'
 ,p_attribute_08=>'slideUp'
@@ -2019,7 +2062,7 @@ wwv_flow_api.create_page_da_action(
 '    :P158_ERROR_CONFIRM := null;',
 'exception',
 '    when others then',
-'        :P158_ERROR_CONFIRM := replace(sqlerrm, ''ORA-20000:'', '''');',
+'        :P158_ERROR_CONFIRM := replace(sqlerrm, ''ORA-20000:'', ''--'');',
 'end;'))
 ,p_attribute_03=>'P158_ERROR_CONFIRM'
 ,p_attribute_04=>'N'
@@ -2058,8 +2101,13 @@ wwv_flow_api.create_page_da_action(
 '        apex.region(''FACT_REC'').refresh();',
 '        apex.region(''NCR_REC'').refresh();',
 '    }',
-'}'))
+'}',
+'',
+'$x_Value(iClear, '''');'))
 );
+end;
+/
+begin
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(682111520392099707)
 ,p_event_id=>wwv_flow_api.id(682111216873099704)
@@ -2079,7 +2127,7 @@ wwv_flow_api.create_page_da_action(
 ,p_attribute_01=>'DANGER'
 ,p_attribute_02=>'NOTIFICATION'
 ,p_attribute_03=>'.t-Body-main'
-,p_attribute_04=>'5000'
+,p_attribute_04=>'0'
 ,p_attribute_05=>'TOP'
 ,p_attribute_06=>'JSSTRING'
 ,p_attribute_08=>'slideUp'
@@ -2088,9 +2136,6 @@ wwv_flow_api.create_page_da_action(
 'return msg;'))
 ,p_attribute_10=>'TOPRIGHT'
 );
-end;
-/
-begin
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(682114286109099734)
 ,p_name=>'reset NCR'
@@ -2231,7 +2276,7 @@ wwv_flow_api.create_page_process(
 ,p_process_point=>'AFTER_HEADER'
 ,p_process_type=>'NATIVE_PLSQL'
 ,p_process_name=>'clear data collections'
-,p_process_sql_clob=>'APEX_COLLECTION.DELETE_ALL_COLLECTIONS_SESSION;'
+,p_process_sql_clob=>'fini053.truncate_all_collections;'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>'CONFIRM'
 ,p_process_when_type=>'REQUEST_NOT_EQUAL_CONDITION'
