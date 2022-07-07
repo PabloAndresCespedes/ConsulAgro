@@ -1398,7 +1398,7 @@ create or replace package body FINI053 is
                  in_user         => in_user
          );
           
-        -- una vez que se cancela el segundo documento, elimina las secuencias
+        -- una vez que se cancela el segundo documento, elimina o actualiza montos de las secuencias
         if l_fin_doc_child is not null then
           <<clear_data_selected>>
           case
@@ -1410,14 +1410,32 @@ create or replace package body FINI053 is
                     p_collection_name => co_col_nc_emision,
                     p_seq             => l_nc_doc_select
                   );
-                    
-                  APEX_COLLECTION.DELETE_MEMBER(
-                    p_collection_name => co_col_fc_emision,
-                    p_seq             => l_fc_cre_doc_select
-                  );
                 end del_members_emision;
+              else
+                <<upd_mont_member>>
+                begin
+                  -- actualiza las dos columnas de montos
+                  APEX_COLLECTION.UPDATE_MEMBER_ATTRIBUTE (
+                    p_collection_name => co_col_nc_emision,
+                    p_seq             => l_nc_doc_select,
+                    p_attr_number     => 6, --> c006
+                    p_attr_value      => ( l_nc_importe_mon - l_fc_importe_mon ) -- saldo monedas extranjeras
+                  );
+                  
+                  APEX_COLLECTION.UPDATE_MEMBER_ATTRIBUTE (
+                    p_collection_name => co_col_nc_emision,
+                    p_seq             => l_nc_doc_select,
+                    p_attr_number     => 7, --> c007
+                    p_attr_value      => ( l_nc_importe_loc - l_fc_importe_loc )  -- saldo moneda local
+                  );
+                end upd_mont_member;
               end if;
-               
+              
+              APEX_COLLECTION.DELETE_MEMBER(
+                p_collection_name => co_col_fc_emision,
+                p_seq             => l_fc_cre_doc_select
+              );
+              
               ap.sv(p_item => 'P158_NC_SEQ');
               ap.sv(p_item => 'P158_FC_SEQ');
                 
@@ -1427,16 +1445,34 @@ create or replace package body FINI053 is
                 begin
                   APEX_COLLECTION.DELETE_MEMBER(
                     p_collection_name => co_col_nc_rec,
-                    p_seq             => l_nc_doc_select 
-                  );
-                    
-                  APEX_COLLECTION.DELETE_MEMBER(
-                    p_collection_name => co_col_fc_rec,
                     p_seq             => l_fc_cre_doc_select 
                   );
-                end del_members_recibido;  
+                end del_members_recibido;
+              else
+                <<upd_mont_member>>
+                begin
+                  -- actualiza las dos columnas de montos
+                  APEX_COLLECTION.UPDATE_MEMBER_ATTRIBUTE (
+                    p_collection_name => co_col_nc_rec,
+                    p_seq             => l_fc_cre_doc_select,
+                    p_attr_number     => 6, --> c006
+                    p_attr_value      => ( l_nc_importe_mon - l_fc_importe_mon ) -- saldo monedas extranjeras
+                  );
+                  
+                  APEX_COLLECTION.UPDATE_MEMBER_ATTRIBUTE (
+                    p_collection_name => co_col_nc_rec,
+                    p_seq             => l_fc_cre_doc_select,
+                    p_attr_number     => 7, --> c007
+                    p_attr_value      => ( l_nc_importe_loc - l_fc_importe_loc )  -- saldo moneda local
+                  );
+                end upd_mont_member;
               end if;
-                    
+              
+              APEX_COLLECTION.DELETE_MEMBER(
+                p_collection_name => co_col_fc_rec,
+                p_seq             => l_fc_cre_doc_select 
+              );    
+                
               ap.sv(p_item => 'P158_NCR_SEQ');
               ap.sv(p_item => 'P158_FCR_SEQ');  
             else
