@@ -6719,14 +6719,6 @@ IF TO_CHAR(SYSDATE,'DY','NLS_DATE_LANGUAGE=ENGLISH') = 'MON' AND TO_CHAR(SYSDATE
    V_PRIMER_DIA                    DATE;
    V_SEMANA                        VARCHAR2(60);
  BEGIN
-  -- RAISE_APPLICATION_ERROR(-20001, 'SIIII');
- /*    SELECT LAST_DAY(T.CONF_TABLEAU_DESDE), TO_CHAR(CONF_TABLEAU_DESDE,'MM/YYYY'),CONF_TABLEAU_DESDE
-       INTO X_CONF_TABLEAU_HASTA, X_MES_CONF_TABLEU ,X_CONF_TABLEAU_DESDE
-      FROM GEN_CONFIGURACION T
-      WHERE T.CONF_EMPR = P_EMPRESA;
-*/ ---ahora para el pb toma el mes actual menos 12
-
-
   -------------------------CANTIDAD DE DIAS HABILES DEL MES CORRIENTE
   V_FECHA_LABORAL := TBL_ULT_DIA_LAB_SUCURSAL(I_FECHA => P_FECHA);
   V_DIAS_TRABAJADOS := TBL_DIAS_LABURADOS_SUCURSAL(IN_DATE => P_FECHA,IND_REST_DIA  =>0);
@@ -6754,24 +6746,6 @@ IF TO_CHAR(SYSDATE,'DY','NLS_DATE_LANGUAGE=ENGLISH') = 'MON' AND TO_CHAR(SYSDATE
         X_CONF_TABLEAU_DESDE, X_MES_CONF_TABLEU
   FROM DUAL;
 
-
- /* P_QUERY7:= 'SELECT null FECHA,
-                     null DOCU_NRO_DOC,
-                     null DETA_ART,
-                     null ART_DESC,
-                     sum(CANTIDAD_KG) CANTIDAD_KG,
-                     sum(VENTA_GS)  VENTA_GS,
-                     DECODE(SUC_DESC,''ASUNCION'',''CDA'',''CASA CENTRAL'', ''CENTRAL'',SUC_DESC),
-                     ART_LINEA,
-                     LINEA,
-                     MES || ''/''|| ANHO
-                FROM TBL_VENTA f
-        WHERE ART_LINEA NOT IN (27,20)
-        AND  FECHA BETWEEN '''|| V_PRIMER_DIA||''' AND  '''||P_FECHA||'''
-        GROUP BY DECODE(SUC_DESC,''ASUNCION'',''CDA'',''CASA CENTRAL'', ''CENTRAL'',SUC_DESC),
-                 ART_LINEA,
-                 LINEA,
-                 MES || ''/''|| ANHO ';*/
     P_QUERY7:= 'SELECT null FECHA,
                      null DOCU_NRO_DOC,
                      null DETA_ART,
@@ -6790,7 +6764,7 @@ IF TO_CHAR(SYSDATE,'DY','NLS_DATE_LANGUAGE=ENGLISH') = 'MON' AND TO_CHAR(SYSDATE
                  ART_LINEA,
                  LINEA,
                  MES || ''/''|| ANHO,
-                  ANHO|| ''/''||MES';
+                 ANHO|| ''/''||MES';
 
 
 
@@ -6800,161 +6774,13 @@ IF TO_CHAR(SYSDATE,'DY','NLS_DATE_LANGUAGE=ENGLISH') = 'MON' AND TO_CHAR(SYSDATE
         END IF;
          APEX_COLLECTION.CREATE_COLLECTION_FROM_QUERY_B(P_COLLECTION_NAME => 'DETALLE_VENTA',
                                                         P_QUERY           => P_QUERY7);
-/*
-INSERT INTO PERL051_EST_TEMP
-  (CAMPO1,
-   CAMPO2,
-   CAMPO3,
-   CAMPO4,
-   CAMPO5,
-   CAMPO6,
-   CAMPO7,
-   CAMPO8,
-   CAMPO9,
-   CAMPO10,
-   TIPO_INFOR,
-   P_EMPRESA,
-   P_SESSION)
-SELECT FECHA,
-      DOCU_NRO_DOC,
-       DETA_ART,
-       ART_DESC,
-       CANTIDAD_KG    CANTIDAD_KG,
-       VENTA_GS      VENTA_GS,
-       DECODE(SUC_DESC,'ASUNCION','CDA','CASA CENTRAL', 'CENTRAL',SUC_DESC),
-       ART_LINEA,
-       LINEA,
-       MES || '/'|| ANHO,
-       'ESTRUCTURA',
-       1,
-       123
-  FROM TBL_VENTA f
-  WHERE ART_LINEA NOT IN (27,20)
-  AND  FECHA BETWEEN V_PRIMER_DIA AND P_FECHA;
-*/
-
-
-/*
-          APEX_COLLECTION.CREATE_OR_TRUNCATE_COLLECTION (
-                      p_collection_name => 'DETALLE_VENTA');
-
-
-   FOR  X IN (SELECT FECHA,
-                     DOCU_NRO_DOC,
-                     DETA_ART,
-                     ART_DESC,
-                     CANTIDAD_KG    CANTIDAD_KG,
-                     VENTA_GS      VENTA_GS,
-                     DECODE(SUC_DESC,'ASUNCION','CDA','CASA CENTRAL', 'CENTRAL',SUC_DESC) SUC,
-                     ART_LINEA,
-                     LINEA,
-                     MES||'/'||ANHO ANHO
-                FROM TBL_VENTA f
-        WHERE ART_LINEA NOT IN (27,20)
-        AND  FECHA BETWEEN  V_PRIMER_DIA AND  P_FECHA) LOOP
-
-
-            APEX_COLLECTION.ADD_MEMBER(P_COLLECTION_NAME => 'DETALLE_VENTA',
-                                       P_C001            => X.FECHA,
-                                       P_C002            => X.DOCU_NRO_DOC,
-                                       P_C003            => X.DETA_ART,
-                                       P_C004            => X.CANTIDAD_KG,
-                                       P_C005            => X.VENTA_GS,
-                                       P_C006            => X.SUC,
-                                       P_C007            => X.ART_LINEA,
-                                       P_C008            => X.LINEA,
-                                       P_C009            => X.ANHO
-                                       );
-
-
-   END LOOP;
-                  */
-
-
-
-
-/*
- --------------------------DOTACION POR MES
- SELECT  SUM(MES1_VALOR) OVER(PARTITION BY MES1) MES1_TOTAL,
-         SUM(MES2_VALOR) OVER(PARTITION BY MES2) MES2_TOTAL,
-         SUM(MES3_VALOR) OVER(PARTITION BY MES3) MES3_TOTAL,
-         SUM(PB) OVER(PARTITION BY MES_PB) PB_TOTAL
-   INTO    V_DOT_MES1,V_DOT_MES2,V_DOT_MES3,V_DOT_PB
-        FROM (SELECT  SUM(CASE WHEN EMPL_SITUACION = 'A' AND EMPL_FEC_INGRESO <= LAST_DAY(ADD_MONTHS(P_FECHA, -2)) THEN
-                                        1
-                               ELSE
-                                        0
-                               END) + SUM(CASE
-                                               WHEN EMPL_SITUACION = 'I' AND EMPL_FEC_INGRESO <= LAST_DAY(ADD_MONTHS(P_FECHA, -2))
-                                                  AND EMPL_FEC_SALIDA > LAST_DAY(ADD_MONTHS(P_FECHA, -2)) THEN
-                                                   1
-                                                  ELSE
-                                                   0
-                                                END) MES1_VALOR,
-                                 ----VALOR MES 2
-                          SUM(CASE
-                                       WHEN EMPL_SITUACION = 'A' AND
-                                            EMPL_FEC_INGRESO <=
-                                            LAST_DAY(ADD_MONTHS(P_FECHA, -1)) THEN
-                                        1
-                                       ELSE
-                                        0
-                                     END) + SUM(CASE
-                                                  WHEN EMPL_SITUACION = 'I' AND
-                                                       EMPL_FEC_INGRESO <=
-                                                       LAST_DAY(ADD_MONTHS(P_FECHA, -1)) AND
-                                                       EMPL_FEC_SALIDA > LAST_DAY(ADD_MONTHS(P_FECHA, -1)) THEN
-                                                   1
-                                                  ELSE
-                                                   0
-                                                END) MES2_VALOR,
-                                 SUM(CASE
-                                       WHEN EMPL_SITUACION = 'A' AND
-                                            EMPL_FEC_INGRESO <= P_FECHA THEN
-                                        1
-                                       ELSE
-                                        0
-                                     END) + SUM(CASE
-                                                  WHEN EMPL_SITUACION = 'I' AND
-                                                       EMPL_FEC_INGRESO <= P_FECHA AND
-                                                       EMPL_FEC_SALIDA > P_FECHA THEN
-                                                   1
-                                                  ELSE
-                                                   0
-                                                END) MES3_VALOR,
-                                                TO_CHAR(ADD_MONTHS(P_FECHA, -2), 'MM/YYYY') MES1,
-                                                TO_CHAR(ADD_MONTHS(P_FECHA, -1), 'MM/YYYY') MES2,
-                                                TO_CHAR(P_FECHA, 'MM/YYYY') MES3,
-                                                TO_CHAR(X_CONF_TABLEAU_DESDE, 'MM/YYYY') MES_PB,
-                                   SUM(CASE
-                                       WHEN EMPL_SITUACION = 'A' AND
-                                            EMPL_FEC_INGRESO <= X_CONF_TABLEAU_HASTA THEN
-                                        1
-                                       ELSE
-                                        0
-                                     END) + SUM(CASE
-                                                  WHEN EMPL_SITUACION = 'I' AND
-                                                       EMPL_FEC_INGRESO <= X_CONF_TABLEAU_HASTA AND
-                                                       EMPL_FEC_SALIDA > X_CONF_TABLEAU_HASTA THEN
-                                                   1
-                                                  ELSE
-                                                   0
-                                                END) PB
-
-                    FROM PER_EMPLEADO E
-                   WHERE  EMPL_CODIGO_PROV <> 0
-                     AND EMPL_TIPO_CONT <> 'T'
-                     AND EMPL_FORMA_PAGO <> 0
-                     AND EMPL_EMPRESA = P_EMPRESA);
-*/
-
  if  P_FECHA = last_day(TO_DATE(P_FECHA))  then
-SELECT MES1_VALOR,MES2_VALOR,MES3_VALOR, MESPB_VALOR---594 PB
-INTO  V_DOT_MES1,V_DOT_MES2,V_DOT_MES3,V_DOT_PB
-FROM(
-SELECT    SUM(CASE
-                                     WHEN EMPL_SITUACION = 'A' AND
-                                          EMPL_FEC_INGRESO <= LAST_DAY(ADD_MONTHS(P_FECHA, -2))THEN
+    SELECT MES1_VALOR,MES2_VALOR,MES3_VALOR, MESPB_VALOR---594 PB
+    INTO  V_DOT_MES1,V_DOT_MES2,V_DOT_MES3,V_DOT_PB
+    FROM(
+    SELECT    SUM(CASE
+                                         WHEN EMPL_SITUACION = 'A' AND
+                                              EMPL_FEC_INGRESO <= LAST_DAY(ADD_MONTHS(P_FECHA, -2))THEN
                                       1
                                      WHEN EMPL_SITUACION = 'I' AND
                                           EMPL_FEC_INGRESO <= LAST_DAY(ADD_MONTHS(P_FECHA, -2)) AND
@@ -6968,6 +6794,7 @@ SELECT    SUM(CASE
                            AND EMPL_TIPO_CONT <> 'T'
                            AND EMPL_FORMA_PAGO <> 0
                            AND EMPL_EMPRESA = 1
+                           and SEMANA is null
                            AND MES || '/' || ANHO = V_MES1) A,
                        (SELECT SUM(CASE
                                      WHEN EMPL_SITUACION = 'A' AND
@@ -6985,6 +6812,7 @@ SELECT    SUM(CASE
                            AND EMPL_TIPO_CONT <> 'T'
                            AND EMPL_FORMA_PAGO <> 0
                            AND EMPL_EMPRESA = 1
+                           and semana is null
                            AND MES || '/' || ANHO = V_MES2) B,
                        (SELECT SUM(CASE
                                      WHEN EMPL_SITUACION = 'A' AND
@@ -7002,7 +6830,7 @@ SELECT    SUM(CASE
                            AND EMPL_TIPO_CONT <> 'T'
                            AND EMPL_FORMA_PAGO <> 0
                            AND EMPL_EMPRESA = 1
-                         ---  AND SEMANA || '/' || ANHO =V_SEMANA
+                           and semana is null
                           AND MES || '/' || ANHO = V_MES3
                            ) C,
                         (SELECT SUM(CASE
@@ -7021,17 +6849,18 @@ SELECT    SUM(CASE
                            AND EMPL_TIPO_CONT <> 'T'
                            AND EMPL_FORMA_PAGO <> 0
                            AND EMPL_EMPRESA = 1
+                           and semana is null
                            AND MES || '/' || ANHO = X_MES_CONF_TABLEU)D  ;
 
-    ELSE
+    else -- SEMANAL 
 
       SELECT MES1_VALOR,MES2_VALOR,MES3_VALOR, MESPB_VALOR---594 PB
-INTO  V_DOT_MES1,V_DOT_MES2,V_DOT_MES3,V_DOT_PB
-FROM(
-SELECT    SUM(CASE
-                                     WHEN EMPL_SITUACION = 'A' AND
-                                          EMPL_FEC_INGRESO <= LAST_DAY(ADD_MONTHS(P_FECHA, -2))THEN
-                                      1
+      INTO  V_DOT_MES1,V_DOT_MES2,V_DOT_MES3,V_DOT_PB
+      FROM(
+      SELECT    SUM(CASE
+                              WHEN EMPL_SITUACION = 'A' AND
+                                    EMPL_FEC_INGRESO <= LAST_DAY(ADD_MONTHS(P_FECHA, -2))THEN
+                                                     1
                                      WHEN EMPL_SITUACION = 'I' AND
                                           EMPL_FEC_INGRESO <= LAST_DAY(ADD_MONTHS(P_FECHA, -2)) AND
                                           EMPL_FEC_SALIDA > LAST_DAY(ADD_MONTHS(P_FECHA, -2)) THEN
@@ -7044,6 +6873,7 @@ SELECT    SUM(CASE
                            AND EMPL_TIPO_CONT <> 'T'
                            AND EMPL_FORMA_PAGO <> 0
                            AND EMPL_EMPRESA = 1
+                           and semana is null
                            AND MES || '/' || ANHO = V_MES1) A,
                        (SELECT SUM(CASE
                                      WHEN EMPL_SITUACION = 'A' AND
@@ -7061,6 +6891,7 @@ SELECT    SUM(CASE
                            AND EMPL_TIPO_CONT <> 'T'
                            AND EMPL_FORMA_PAGO <> 0
                            AND EMPL_EMPRESA = 1
+                           and semana is null
                            AND MES || '/' || ANHO = V_MES2) B,
                        (SELECT SUM(CASE
                                      WHEN EMPL_SITUACION = 'A' AND
@@ -7079,7 +6910,7 @@ SELECT    SUM(CASE
                            AND EMPL_FORMA_PAGO <> 0
                            AND EMPL_EMPRESA = 1
                           AND SEMANA || '/' || ANHO =V_SEMANA
-                         -- AND MES || '/' || ANHO = V_MES3
+                           AND MES is null
                            ) C,
                         (SELECT SUM(CASE
                                      WHEN EMPL_SITUACION = 'A' AND
@@ -7097,6 +6928,7 @@ SELECT    SUM(CASE
                            AND EMPL_TIPO_CONT <> 'T'
                            AND EMPL_FORMA_PAGO <> 0
                            AND EMPL_EMPRESA = 1
+                           and e.semana is null
                            AND MES || '/' || ANHO = X_MES_CONF_TABLEU)D  ;
 
        END IF;
@@ -7108,10 +6940,6 @@ SELECT    SUM(CASE
 
 
 ------------------------------------------------------------------------------------------
- --  RAISE_APPLICATION_ERROR (-20001, V_DOT_PB);
-
-
-
 P_QUERY1 :='SELECT ROUND(MAX(CANTIDAD_KG_M1)/'||V_DOT_MES1||') KG_MES1,
                    ROUND(MAX(CANTIDAD_KG_M2)/'||V_DOT_MES2||') KG_MES2,
                    ROUND(((MAX(CANTIDAD_KG_M33)/'||V_DIAS_TRABAJADOS||')*'||V_DIAS_HABILES||')/'||V_DOT_MES3||') KG_MES3,
@@ -7181,95 +7009,14 @@ P_QUERY1 :='SELECT ROUND(MAX(CANTIDAD_KG_M1)/'||V_DOT_MES1||') KG_MES1,
       END IF;
          APEX_COLLECTION.CREATE_COLLECTION_FROM_QUERY_B(P_COLLECTION_NAME => 'FECHA_ESTRUCTURA',
                                                          P_QUERY           => P_QUERY3);
-insert into x
-  (campo1, otro)
-values
-  (P_QUERY1,  'ESTRUCTURA_DETALLE');
+
+add_hist_query(in_nombre => 'FECHA_ESTRUCTURA', in_query => P_QUERY3 );
 
 -------------------el objetivo ahora va a depender del tablero comercial
-
-
-/*P_QUERY4 :='SELECT
-               SUM(CANTIDAD_KG) CANTIDAD,
-               SUM(VENTA_GS) VENTA,
-               MES||''/''||ANHO
-             FROM TBL_VENTA
-            WHERE ART_LINEA NOT IN (27,20)
-             GROUP BY ANHO, MES';
-
-        IF APEX_COLLECTION.COLLECTION_EXISTS(P_COLLECTION_NAME => 'MAYOR_INGRESO') THEN
-         APEX_COLLECTION.DELETE_COLLECTION(P_COLLECTION_NAME => 'MAYOR_INGRESO');
-      END IF;
-         APEX_COLLECTION.CREATE_COLLECTION_FROM_QUERY_B(P_COLLECTION_NAME => 'MAYOR_INGRESO',
-                                                         P_QUERY           => P_QUERY4);
-*/
-
-
-
-/*
-----------------------------------------dotacion por mes a?o depende del la conf del tableau
-IF APEX_COLLECTION.COLLECTION_EXISTS(P_COLLECTION_NAME => 'DOTACION_MESES') THEN
-      APEX_COLLECTION.DELETE_COLLECTION(P_COLLECTION_NAME => 'DOTACION_MESES');
-END IF;
-      APEX_COLLECTION.CREATE_COLLECTION (P_COLLECTION_NAME => 'DOTACION_MESES');
-
-   V_FECHA := X_CONF_TABLEAU_DESDE;
-
-    WHILE TO_DATE(LAST_DAY(V_FECHA)) <= ADD_MONTHS(to_DATE(LAST_DAY(P_FECHA)),+1)  LOOP
-
-          SELECT TO_CHAR(TO_DATE(V_FECHA), 'mm/yyyy') MES_ANHO,
-                        SUM(CASE
-                               WHEN EMPL_SITUACION = 'A' AND
-                                    EMPL_FEC_INGRESO <= LAST_DAY(V_FECHA) THEN
-                                1
-                               ELSE
-                                0
-                             END) + SUM(CASE
-                                          WHEN EMPL_SITUACION = 'I' AND
-                                               EMPL_FEC_INGRESO <= LAST_DAY(V_FECHA) AND
-                                               EMPL_FEC_SALIDA > LAST_DAY(V_FECHA) THEN
-                                           1
-                                          ELSE
-                                           0
-                                        END) MES_VALOR
-               INTO P_MES_DOT_M ,P_MES_DOT
-                    FROM PER_EMPLEADO
-                   WHERE EMPL_CODIGO_PROV <> 0
-                     AND EMPL_TIPO_CONT <> 'T'
-                     AND EMPL_FORMA_PAGO <> 0
-                     AND EMPL_EMPRESA= P_EMPRESA;
-
-      IF  V_FECHA >= ADD_MONTHS(to_DATE(LAST_DAY(P_FECHA)),-13 )THEN
-         CONT := CONT+ 1;
-      END IF;
-     APEX_COLLECTION.ADD_MEMBER (
-      p_collection_name => 'DOTACION_MESES',
-                 p_C001 => P_MES_DOT,
-                 P_C002 => P_MES_DOT_M);
-
-     V_FECHA := ADD_MONTHS(V_FECHA,+1);
-    END LOOP;
-*/
-
-/*
- SELECT  MAX(TOTAL) , MAX(TOTAL2)
+  SELECT SUM(A.IMPORTE_VENTA)/V_DOT_MES3 MES, SUM (CANTIDAD)/V_DOT_MES3
   INTO P_OBJETIVO_GS, P_OBJETIVO_KG
-  FROM (SELECT ROUND(TOTAL_GS/nvl(TOTAL_CANT,1)) TOTAL, ROUND(TOTAL_KG/nvl(TOTAL_CANT,1)) TOTAL2
-          FROM (SELECT C002 MES_ANHO, TO_NUMBER(C001) TOTAL_CANT
-                  FROM APEX_collections
-                  WHERE collection_name = 'DOTACION_MESES') A,
-                 (SELECT TO_NUMBER(C002) TOTAL_GS, C003 MES_ANHO, TO_NUMBER(C001) TOTAL_KG
-                  FROM APEX_collections
-                  WHERE collection_name = 'MAYOR_INGRESO') B
-           WHERE A.MES_ANHO = B.MES_ANHO );
-
-*/
-
-
-      SELECT SUM(A.IMPORTE_VENTA)/V_DOT_MES3 MES, SUM (CANTIDAD)/V_DOT_MES3
-        INTO P_OBJETIVO_GS, P_OBJETIVO_KG
-        FROM FAC_LONDON_PRES_RES_GRAL_V_F2 A
-       WHERE A.MES||'/'||A.ANHO = EXTRACT(month FROM TO_DATE(P_FECHA))||TO_CHAR(TO_DATE(P_FECHA),'/YYYY');---'3/2021';
+  FROM FAC_LONDON_PRES_RES_GRAL_V_F2 A
+  WHERE A.MES||'/'||A.ANHO = EXTRACT(month FROM TO_DATE(P_FECHA))||TO_CHAR(TO_DATE(P_FECHA),'/YYYY');---'3/2021';
 
 
  END PP_ESTRUCTURA_DETALLE;
@@ -7761,9 +7508,9 @@ PROCEDURE PP_TABLERO_COMERCIAL  (P_EMPRESA  IN NUMBER,
 BEGIN
 
  if  P_FECHA = last_day(TO_DATE(P_FECHA))  then
-    P_AND := P_AND||' AND MES || ''/'' || ANHO =  TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'') ';
+    P_AND := P_AND||' and semana is null AND MES || ''/'' || ANHO =  TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'') ';
  else
-   P_AND := P_AND||' AND SEMANA || ''/'' || ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'') ';
+   P_AND := P_AND||' and mes is null AND SEMANA || ''/'' || ANHO = TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'') ';
  end if;
 
 V_FECHA_LABORAL := TBL_ULT_DIA_LAB_SUCURSAL(I_FECHA => P_FECHA);
@@ -7811,9 +7558,6 @@ P_QUERY2 :='SELECT A.DOTACION, B.CANTIDAD_KG, B.VENTA_GS,SUC_DESC, VTA_OBJETIVO,
                                      AND EMPL_FORMA_PAGO <> 0
                                      AND EMPL_EMPRESA = 1
                                    '||P_AND||'
-                                 --    AND MES || ''/'' || ANHO = ''09/2021''
-                                    AND SEMANA||''/''||ANHO  =TO_CHAR(TO_DATE('''||P_FECHA||'''),''mm/YYYY'')
-                                   --  AND EMPL_INCLUYE_TVC = ''S''
                                  GROUP BY CASE
                                          WHEN EMPL_SUCURSAL IN (2) AND DPTO.DPTO_CODIGO <> 31 THEN
                                           ''CDA''
@@ -7839,13 +7583,7 @@ P_QUERY2 :='SELECT A.DOTACION, B.CANTIDAD_KG, B.VENTA_GS,SUC_DESC, VTA_OBJETIVO,
                                     FROM APEX_collections
                                     WHERE collection_name = ''DETALLE_VENTA''
                                     AND  C010 = TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')
-                                     GROUP BY C007)B,/*
-                                       (SELECT
-                                         SUM(CAMPO5)    CANTIDAD_KG,
-                                         SUM(CAMPO6)    VENTA_GS,
-                                         CAMPO7 SUC_DESC
-                                    FROM PERL051_EST_TEMP
-                                     GROUP BY campo7)B,*/
+                                     GROUP BY C007)B,
 
                                      (SELECT CASE WHEN a.sucursal = ''ASUNCION'' THEN
                                                 ''CDA''
@@ -7863,189 +7601,12 @@ P_QUERY2 :='SELECT A.DOTACION, B.CANTIDAD_KG, B.VENTA_GS,SUC_DESC, VTA_OBJETIVO,
                                    AND B.SUC_DESC = C.SUCURSAL';
 
 
-                   IF APEX_COLLECTION.COLLECTION_EXISTS(P_COLLECTION_NAME => 'VENTA_DEPART') THEN
-                   APEX_COLLECTION.DELETE_COLLECTION(P_COLLECTION_NAME => 'VENTA_DEPART');
-                END IF;
-                   APEX_COLLECTION.CREATE_COLLECTION_FROM_QUERY_B(P_COLLECTION_NAME => 'VENTA_DEPART',
-                                                                   P_QUERY           => P_QUERY2);
-
-
-
-
-      /*
-   P_QUERY3 := 'SELECT CASE
-                                         WHEN EMPL_SUCURSAL IN (2) AND DPTO.DPTO_CODIGO <> 31 THEN
-                                          ''CDA''
-                                         WHEN DPTO.DPTO_CODIGO IN (2,14,22) THEN
-                                          ''CENTRAL''
-                                         WHEN DPTO.DPTO_CODIGO IN (19) THEN
-                                          ''STA ROSA''
-                                         WHEN DPTO.DPTO_CODIGO IN (29) THEN
-                                          ''PEDRO JUAN CABALLERO''
-                                         WHEN DPTO.DPTO_CODIGO IN (17) THEN
-                                          ''LOMA PLATA''
-                                         WHEN DPTO.DPTO_CODIGO IN (15) THEN
-                                          ''CONCEPCION''
-                                        WHEN DPTO.DPTO_CODIGO IN (32) THEN
-                                          ''ENCARNACION''
-                                        END DEPARTAMENTO,
-                                       SUM(CASE
-                                             WHEN EMPL_SITUACION = ''A'' AND
-                                                  EMPL_FEC_INGRESO <=  '''||P_FECHA||''' THEN
-                                              1
-                                             ELSE
-                                              0
-                                           END) + SUM(CASE
-                                                        WHEN EMPL_SITUACION = ''I'' AND
-                                                             EMPL_FEC_INGRESO <=  '''||P_FECHA||''' AND
-                                                             EMPL_FEC_SALIDA >  '''||P_FECHA||''' THEN
-                                                         1
-                                                        ELSE
-                                                         0
-                                                      END) DOTACION,
-                                            TO_CHAR(TO_DATE('''||P_FECHA||'''),''MM/YYYY'')
-                                   FROM PER_EMPLEADO_HIST E, GEN_DEPARTAMENTO DPTO
-                                   WHERE E.EMPL_DEPARTAMENTO = DPTO.DPTO_CODIGO
-                                     AND E.EMPL_EMPRESA = DPTO.DPTO_EMPR
-                                     AND EMPL_CODIGO_PROV <> 0
-                                     AND EMPL_TIPO_CONT = ''I''
-                                     AND EMPL_FORMA_PAGO <> 0
-                                     AND EMPL_EMPRESA = 1
-                                     AND SEMANA||''/''||ANHO  =TO_CHAR(TO_DATE('''||P_FECHA||'''),''IW/YYYY'')
-
-                                 GROUP BY CASE
-                                         WHEN EMPL_SUCURSAL IN (2) AND DPTO.DPTO_CODIGO <> 31 THEN
-                                          ''CDA''
-                                         WHEN DPTO.DPTO_CODIGO IN (2,14,22) THEN
-                                          ''CENTRAL''
-                                         WHEN DPTO.DPTO_CODIGO IN (19) THEN
-                                          ''STA ROSA''
-                                         WHEN DPTO.DPTO_CODIGO IN (29) THEN
-                                          ''PEDRO JUAN CABALLERO''
-                                         WHEN DPTO.DPTO_CODIGO IN (17) THEN
-                                          ''LOMA PLATA''
-                                         WHEN DPTO.DPTO_CODIGO IN (15) THEN
-                                          ''CONCEPCION''
-                                        WHEN DPTO.DPTO_CODIGO IN (32) THEN
-                                          ''ENCARNACION''
-                                       END
-     UNION ALL
-     SELECT CASE
-                                         WHEN EMPL_SUCURSAL IN (2) AND DPTO.DPTO_CODIGO <> 31 THEN
-                                          ''CDA''
-                                         WHEN DPTO.DPTO_CODIGO IN (2,14,22) THEN
-                                          ''CENTRAL''
-                                         WHEN DPTO.DPTO_CODIGO IN (19) THEN
-                                          ''STA ROSA''
-                                         WHEN DPTO.DPTO_CODIGO IN (29) THEN
-                                          ''PEDRO JUAN CABALLERO''
-                                         WHEN DPTO.DPTO_CODIGO IN (17) THEN
-                                          ''LOMA PLATA''
-                                         WHEN DPTO.DPTO_CODIGO IN (15) THEN
-                                          ''CONCEPCION''
-                                        WHEN DPTO.DPTO_CODIGO IN (32) THEN
-                                          ''ENCARNACION''
-                                        END DEPARTAMENTO,
-                                       SUM(CASE
-                                             WHEN EMPL_SITUACION = ''A'' AND
-                                                  EMPL_FEC_INGRESO <= LAST_DAY(ADD_MONTHS('''||P_FECHA||''', -1)) THEN
-                                              1
-                                             ELSE
-                                              0
-                                           END) + SUM(CASE
-                                                        WHEN EMPL_SITUACION = ''I'' AND
-                                                             EMPL_FEC_INGRESO <=  LAST_DAY(ADD_MONTHS('''||P_FECHA||''', -1)) AND
-                                                             EMPL_FEC_SALIDA >  LAST_DAY(ADD_MONTHS('''||P_FECHA||''', -1)) THEN
-                                                         1
-                                                        ELSE
-                                                         0
-                                                      END) DOTACION,
-                                          TO_CHAR(ADD_MONTHS('''||P_FECHA||''', -1),''MM/YYYY'')    GG
-                                   FROM PER_EMPLEADO_HIST E, GEN_DEPARTAMENTO DPTO
-                                   WHERE E.EMPL_DEPARTAMENTO = DPTO.DPTO_CODIGO
-                                     AND E.EMPL_EMPRESA = DPTO.DPTO_EMPR
-                                     AND EMPL_CODIGO_PROV <> 0
-                                     AND EMPL_TIPO_CONT = ''I''
-                                     AND EMPL_FORMA_PAGO <> 0
-                                     AND EMPL_EMPRESA = 1
-                                     AND MES||''/''||ANHO   = TO_CHAR(ADD_MONTHS('''||P_FECHA||''', -1),''MM/YYYY'')
-                                     GROUP BY CASE
-                                         WHEN EMPL_SUCURSAL IN (2) AND DPTO.DPTO_CODIGO <> 31 THEN
-                                          ''CDA''
-                                         WHEN DPTO.DPTO_CODIGO IN (2,14,22) THEN
-                                          ''CENTRAL''
-                                         WHEN DPTO.DPTO_CODIGO IN (19) THEN
-                                          ''STA ROSA''
-                                         WHEN DPTO.DPTO_CODIGO IN (29) THEN
-                                          ''PEDRO JUAN CABALLERO''
-                                         WHEN DPTO.DPTO_CODIGO IN (17) THEN
-                                          ''LOMA PLATA''
-                                         WHEN DPTO.DPTO_CODIGO IN (15) THEN
-                                          ''CONCEPCION''
-                                        WHEN DPTO.DPTO_CODIGO IN (32) THEN
-                                          ''ENCARNACION''
-                                       END
-          UNION ALL
-          SELECT CASE
-                                         WHEN EMPL_SUCURSAL IN (2) AND DPTO.DPTO_CODIGO <> 31 THEN
-                                          ''CDA''
-                                         WHEN DPTO.DPTO_CODIGO IN (2,14,22) THEN
-                                          ''CENTRAL''
-                                         WHEN DPTO.DPTO_CODIGO IN (19) THEN
-                                          ''STA ROSA''
-                                         WHEN DPTO.DPTO_CODIGO IN (29) THEN
-                                          ''PEDRO JUAN CABALLERO''
-                                         WHEN DPTO.DPTO_CODIGO IN (17) THEN
-                                          ''LOMA PLATA''
-                                         WHEN DPTO.DPTO_CODIGO IN (15) THEN
-                                          ''CONCEPCION''
-                                        WHEN DPTO.DPTO_CODIGO IN (32) THEN
-                                          ''ENCARNACION''
-                                        END DEPARTAMENTO,
-                                       SUM(CASE
-                                             WHEN EMPL_SITUACION = ''A'' AND
-                                                  EMPL_FEC_INGRESO <=  LAST_DAY(ADD_MONTHS('''||P_FECHA||''', -2)) THEN
-                                              1
-                                             ELSE
-                                              0
-                                           END) + SUM(CASE
-                                                        WHEN EMPL_SITUACION = ''I'' AND
-                                                             EMPL_FEC_INGRESO <= LAST_DAY(ADD_MONTHS('''||P_FECHA||''', -2)) AND
-                                                             EMPL_FEC_SALIDA >  LAST_DAY(ADD_MONTHS('''||P_FECHA||''', -2)) THEN
-                                                         1
-                                                        ELSE
-                                                         0
-                                                      END) DOTACION,
-                                       TO_CHAR(ADD_MONTHS('''||P_FECHA||''', -2),''MM/YYYY'')
-                                   FROM PER_EMPLEADO_HIST E, GEN_DEPARTAMENTO DPTO
-                                   WHERE E.EMPL_DEPARTAMENTO = DPTO.DPTO_CODIGO
-                                     AND E.EMPL_EMPRESA = DPTO.DPTO_EMPR
-                                     AND EMPL_CODIGO_PROV <> 0
-                                     AND EMPL_TIPO_CONT = ''I''
-                                     AND EMPL_FORMA_PAGO <> 0
-                                     AND EMPL_EMPRESA = 1
-                                     AND MES||''/''||ANHO  =TO_CHAR(ADD_MONTHS('''||P_FECHA||''', -2),''MM/YYYY'')
-
-                                 GROUP BY CASE
-                                         WHEN EMPL_SUCURSAL IN (2) AND DPTO.DPTO_CODIGO <> 31 THEN
-                                          ''CDA''
-                                         WHEN DPTO.DPTO_CODIGO IN (2,14,22) THEN
-                                          ''CENTRAL''
-                                         WHEN DPTO.DPTO_CODIGO IN (19) THEN
-                                          ''STA ROSA''
-                                         WHEN DPTO.DPTO_CODIGO IN (29) THEN
-                                          ''PEDRO JUAN CABALLERO''
-                                         WHEN DPTO.DPTO_CODIGO IN (17) THEN
-                                          ''LOMA PLATA''
-                                         WHEN DPTO.DPTO_CODIGO IN (15) THEN
-                                          ''CONCEPCION''
-                                        WHEN DPTO.DPTO_CODIGO IN (32) THEN
-                                          ''ENCARNACION''
-                                       END';
-   */
-
-
-
+  IF APEX_COLLECTION.COLLECTION_EXISTS(P_COLLECTION_NAME => 'VENTA_DEPART') THEN
+     APEX_COLLECTION.DELETE_COLLECTION(P_COLLECTION_NAME => 'VENTA_DEPART');
+  END IF;
+  
+  APEX_COLLECTION.CREATE_COLLECTION_FROM_QUERY_B(P_COLLECTION_NAME => 'VENTA_DEPART',
+                                                 P_QUERY           => P_QUERY2);
 
 
 END PP_TABLERO_COMERCIAL;
@@ -8528,8 +8089,8 @@ P_QUERY1 := 'SELECT
                          WHERE EMPL_CODIGO_PROV <> 0
                            AND EMPL_FORMA_PAGO <> 0
                            AND EMPL_EMPRESA = 1
-                           and semana is null
                            AND MES || ''/'' || ANHO = '''||V_MES_PB||'''
+                           and semana is null
                          GROUP BY AREA_DESC) D,
 
                        PER_AREA_JSA JA
@@ -8583,8 +8144,8 @@ P_QUERY1 := 'SELECT
                              AND EMPL_TIPO_CONT <> ''T''
                              AND EMPL_FORMA_PAGO <> 0
                              AND EMPL_EMPRESA = 1
-                             and mes is null
                              AND SEMANA ||''/''|| ANHO = '''||V_SEMANA_ANT||'''
+                             and mes is null
                              AND DPTO_SUC NOT IN (1,2,8)
                              GROUP BY DPTO_DESC, DPTO_CODIGO) B
                         WHERE A.DEPARTAMENTO= B.DEPARTAMENTO ';
@@ -8889,15 +8450,6 @@ P_QUERY1 := 'SELECT
                              GROUP BY DPTO_DESC, DPTO_CODIGO) B
                         WHERE A.DEPARTAMENTO= B.DEPARTAMENTO ';
   END IF;
-
-  delete from x
-  where otro = 'DOT_CANTIDAD111';
-    insert into x
-      (campo1, otro)
-    values
-      (P_QUERY1, 'DOT_CANTIDAD111');
-
-
 
    IF APEX_COLLECTION.COLLECTION_EXISTS(P_COLLECTION_NAME => 'DOT_CANTIDAD') THEN
        APEX_COLLECTION.DELETE_COLLECTION(P_COLLECTION_NAME => 'DOT_CANTIDAD');
