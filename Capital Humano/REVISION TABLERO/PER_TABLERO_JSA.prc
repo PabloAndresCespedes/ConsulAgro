@@ -4,8 +4,15 @@ create or replace procedure PER_TABLERO_JSA(in_fecha date := null) is
  co_hilagro   constant number := 1; --> GEN_EMPRESA
  co_transagro constant number := 2; --> GEN_EMPRESA
 begin
- -- cuando es semanal inserta solo SEMANA dejando en NULL MES
- -- cuando es mensual inserta MES dejando en NULL semana  
+  /*
+    Author  : @PabloACespedes \(^-^)/
+    Modified : 08/07/2022 8:20:51
+    Se_ajusta el script para que los registros semanales no registren el mes,
+    y para los mensuales no registre la semana, eso tendra en cuenta a la hora
+    de generar registros estadisticon en el paquete PERL051.
+    Cuando es semanal inserta solo SEMANA dejando en NULL MES
+    cuando es mensual inserta MES dejando en NULL semana  
+  */
 
 ------------------PRIMERAMENTE ESTARIA GUARDANDO TODO LO QUE ES MENSUAL
   IF TRUNC(l_fecha) = LAST_DAY (TRUNC(l_fecha)) THEN
