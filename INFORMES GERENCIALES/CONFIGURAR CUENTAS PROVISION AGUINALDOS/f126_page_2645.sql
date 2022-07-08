@@ -28,7 +28,7 @@ prompt APPLICATION 126 - INFORMES GERENCIALES Y CONTABILIDAD UNIFICADOS
 -- Application Export:
 --   Application:     126
 --   Name:            INFORMES GERENCIALES Y CONTABILIDAD UNIFICADOS
---   Date and Time:   11:13 Friday July 8, 2022
+--   Date and Time:   13:10 Friday July 8, 2022
 --   Exported By:     PABLOC
 --   Flashback:       0
 --   Export Type:     Page Export
@@ -55,10 +55,11 @@ wwv_flow_api.create_page(
 ,p_user_interface_id=>wwv_flow_api.id(107533786434814543)
 ,p_name=>'SIGM016- CONFIGURAR CUENTAS PROVISION AGUINALDOS'
 ,p_step_title=>'SIGM016- CONFIGURAR CUENTAS PROVISION AGUINALDOS'
+,p_warn_on_unsaved_changes=>'N'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'PABLOC'
-,p_last_upd_yyyymmddhh24miss=>'20220708111310'
+,p_last_upd_yyyymmddhh24miss=>'20220708130913'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(138652011969952675)
@@ -98,9 +99,7 @@ wwv_flow_api.create_page_plug(
 '   AND CN.PROVA_CUENTA_PROV = C2.CTAC_CLAVE',
 '   AND CN.PROVA_EMPR        = C2.CTAC_EMPR',
 '   AND CN.PROVA_CCOSTO      = :P2645_CENTRO_COSTO',
-'   AND CN.PROVA_EMPR        = :P_EMPRESA',
-'',
-''))
+'   AND CN.PROVA_EMPR        = :P_EMPRESA'))
 ,p_plug_source_type=>'NATIVE_IG'
 ,p_ajax_items_to_submit=>'P2645_CENTRO_COSTO,P_EMPRESA'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
@@ -429,6 +428,7 @@ wwv_flow_api.create_page_item(
 ,p_attribute_02=>'FIRST_ROWSET_FILTER'
 ,p_attribute_03=>'N'
 ,p_attribute_04=>'Y'
+,p_attribute_05=>'N'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(138653581207952691)
@@ -464,12 +464,10 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements=>'P2645_CCOSTE_DESC'
 ,p_attribute_01=>'SQL_STATEMENT'
 ,p_attribute_03=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'SELECT CCO_DESC ',
-'     ',
-'  FROM CNT_CCOSTO',
-' WHERE CCO_EMPR = :P_EMPRESA',
-' and CCO_CODIGO  =  :P2645_CENTRO_COSTO',
-' ORDER BY 1'))
+'SELECT CCO_DESC',
+'FROM CNT_CCOSTO',
+'WHERE CCO_EMPR = :P_EMPRESA',
+'and CCO_CODIGO = :P2645_CENTRO_COSTO'))
 ,p_attribute_07=>'P2645_CENTRO_COSTO'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
@@ -486,25 +484,6 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_region_id=>wwv_flow_api.id(138652572320952681)
 );
 wwv_flow_api.create_page_da_event(
- p_id=>wwv_flow_api.id(686029674515089408)
-,p_name=>'submit'
-,p_event_sequence=>40
-,p_triggering_element_type=>'ITEM'
-,p_triggering_element=>'P2645_SUBMIT'
-,p_bind_type=>'bind'
-,p_bind_event_type=>'change'
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(686029705479089409)
-,p_event_id=>wwv_flow_api.id(686029674515089408)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_SUBMIT_PAGE'
-,p_attribute_01=>'REFRESH_PAGE'
-,p_attribute_02=>'Y'
-);
-wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(686030030930089412)
 ,p_name=>'submit page'
 ,p_event_sequence=>50
@@ -512,6 +491,9 @@ wwv_flow_api.create_page_da_event(
 ,p_triggering_region_id=>wwv_flow_api.id(138652572320952681)
 ,p_bind_type=>'bind'
 ,p_bind_event_type=>'NATIVE_IG|REGION TYPE|interactivegridsave'
+,p_da_event_comment=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'**@PabloACespedes 08.07.2022 11:39am**',
+unistr('- Hace submit porque no actualizan los registros, en base a los items en sesi\00F3n')))
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(686030155158089413)
@@ -523,82 +505,21 @@ wwv_flow_api.create_page_da_action(
 ,p_attribute_02=>'Y'
 );
 wwv_flow_api.create_page_process(
- p_id=>wwv_flow_api.id(686029473251089406)
-,p_process_sequence=>10
+ p_id=>wwv_flow_api.id(686030204014089414)
+,p_process_sequence=>20
 ,p_process_point=>'AFTER_SUBMIT'
 ,p_region_id=>wwv_flow_api.id(138652572320952681)
 ,p_process_type=>'NATIVE_PLSQL'
-,p_process_name=>'save registers'
+,p_process_name=>'process data'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'declare',
-'l_action varchar2(255) := :APEX$ROW_STATUS; -- C U D: create update delete',
-'l_centro_costo number := :P2645_CENTRO_COSTO;',
-'l_nro_cuenta_prov number := :NRO_PROV;',
-'l_nro_cuenta      number := :NRO_CUENTA;',
-'l_clave_cuenta    number;',
-'l_clave_cuenta_prov number;',
-'l_empr              number := :P_EMPRESA;',
-'l_item_grilla       number;',
-'l_item_save         number := :PROVA_ITEM;',
-'begin',
-' SELECT C.CTAC_CLAVE',
-' into l_clave_cuenta',
-' from CNT_CUENTA C',
-' WHERE CTAC_EMPR = l_empr',
-' AND   CTAC_NRO = l_nro_cuenta;',
-' ',
-' SELECT  T.CTAC_CLAVE',
-' INTO l_clave_cuenta_prov ',
-' FROM CNT_CUENTA T',
-' WHERE T.CTAC_NRO = l_nro_cuenta_prov',
-' AND T.CTAC_EMPR  =  l_empr;',
-'     ',
-'  if l_action = ''C'' then',
-'     ',
-'     begin',
-'         SELECT nvl(MAX(cn.PROVA_ITEM), 0) + 1 ',
-'         INTO   l_item_grilla',
-'         FROM CNT_CONF_PROV_AGUINALDO CN',
-'         WHERE  CN.PROVA_CCOSTO = l_centro_costo',
-'         AND CN.PROVA_EMPR = l_empr;',
-'     exception',
-'         when OTHERS then',
-'             l_item_grilla := 1;',
-'     end;',
-'     ',
-'    INSERT INTO CNT_CONF_PROV_AGUINALDO',
-'        (PROVA_CCOSTO,',
-'         PROVA_CUENTA_PROV,',
-'         PROVA_ITEM,',
-'         PROVA_CUENTA,',
-'         PROVA_EMPR)',
-'      VALUES',
-'        (l_centro_costo,',
-'         l_clave_cuenta_prov,',
-'         l_item_grilla,',
-'         l_clave_cuenta,',
-'         l_empr',
-'        );',
-'  end if;',
-'  ',
-'  if l_action = ''U'' then',
-'    UPDATE CNT_CONF_PROV_AGUINALDO',
-'    SET PROVA_CUENTA_PROV = l_clave_cuenta_prov,',
-'        PROVA_CUENTA      = l_clave_cuenta',
-'    WHERE PROVA_CCOSTO = l_centro_costo',
-'    AND PROVA_ITEM     = l_item_save',
-'    AND PROVA_EMPR     = l_empr;',
-'    ',
-'  end if;',
-'  ',
-'  if l_action = ''D'' then',
-'     DELETE CNT_CONF_PROV_AGUINALDO',
-'     WHERE PROVA_CUENTA = l_clave_cuenta',
-'     AND   PROVA_CCOSTO = l_centro_costo',
-'     AND   PROVA_ITEM   = l_item_save',
-'     AND   PROVA_EMPR   = l_empr;',
-'  end if;',
-'end;'))
+'sigm016.crud_prov(',
+'  in_empresa      => to_number(:P_EMPRESA),',
+'  in_action       => :APEX$ROW_STATUS, -- C U D: create update delete',
+'  in_centro_costo => :P2645_CENTRO_COSTO,',
+'  in_nro_prov     => :NRO_PROV,',
+'  in_nro_cuenta   => :NRO_CUENTA,',
+'  in_item         => :PROVA_ITEM',
+');'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
 end;
