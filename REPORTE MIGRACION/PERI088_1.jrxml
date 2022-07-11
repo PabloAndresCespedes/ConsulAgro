@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.19.1.final using JasperReports Library version 6.19.1-867c00bf88cd4d784d404379d6c05e1b419e8a4c  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PERI088" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="523" leftMargin="36" rightMargin="36" topMargin="42" bottomMargin="28" uuid="3fe5d50e-21ca-4eaf-b283-7b38dc65a6c3">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="1105"/>
+	<parameter name="P_CIUDAD_EMPR" class="java.lang.String"/>
+	<parameter name="P_DEPART_EMPR" class="java.lang.String"/>
+	<parameter name="P_REPUB_EMPR" class="java.lang.String"/>
+	<parameter name="P_FECHA_CONT_LETRAS_1" class="java.lang.String"/>
+	<parameter name="P_GEN_GEN_NOMBRE" class="java.lang.String"/>
+	<parameter name="P_NOMBRE_EMPRESA" class="java.lang.String"/>
+	<parameter name="P_GEN_GEN_DOMIC" class="java.lang.String"/>
+	<parameter name="P_SR_NOMBRE_POSTUL" class="java.lang.String"/>
+	<parameter name="P_EDAD_POSTUL" class="java.lang.String"/>
+	<parameter name="P_GENERO_POSTUL" class="java.lang.String"/>
+	<parameter name="P_ESTADO_CIVIL_POSTUL" class="java.lang.String"/>
+	<parameter name="P_PROFESION_POSTUL" class="java.lang.String"/>
+	<parameter name="P_NACINALIDAD_POSTUL" class="java.lang.String"/>
+	<parameter name="P_DIR_POSTUL" class="java.lang.String"/>
+	<parameter name="P_AREA_CARGO" class="java.lang.String"/>
+	<parameter name="P_CARGO_DESC" class="java.lang.String"/>
+	<parameter name="P_FORMA_PAGO" class="java.lang.String"/>
+	<parameter name="P_REMUN_CONVENIDA" class="java.lang.String"/>
+	<parameter name="P_PLAZO_CONTRATO_1" class="java.lang.String"/>
+	<parameter name="P_DURACION_DIVISION" class="java.lang.String"/>
+	<parameter name="P_CLAUSULA_ESPECIAL" class="java.lang.String"/>
+	<parameter name="P_NOMBRE_EMPLEADO" class="java.lang.String"/>
+	<parameter name="P_NOMBRE_EMPLEADOR" class="java.lang.String"/>
+	<parameter name="P_CI_EMPLEADO" class="java.lang.String"/>
+	<parameter name="P_CI_EMPLEADOR" class="java.lang.String"/>
+	<parameter name="P_FECHA_CONT_LETRAS_2" class="java.lang.String"/>
+	<parameter name="P_PLAZO_CONTRATO_2" class="java.lang.String"/>
+	<parameter name="P_PLAZO_CONTRATO_3" class="java.lang.String"/>
+	<parameter name="P_CLAVE_POST" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SUCURSAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CONT_EMPL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_HS_ENTRADA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_HS_SALIDA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_HS_ENT_SAB" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_HS_SAL_SAB" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_TIPO_DESC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_HORARIO" class="java.lang.String"/>
+	<parameter name="P_CLAVE_SOL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_TIPO_CONTRATO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT CASE
+         WHEN PP.DOCPOS_EMPR = 1 THEN
+          PP.DOCPOS_NOMBRE || ' ' || PP.DOCPOS_APELLIDO
+         ELSE
+          INITCAP(PP.DOCPOS_NOMBRE || ' ' || PP.DOCPOS_APELLIDO)
+       END NOMBRE_POSTULANTE,
+       DECODE(PP.DOCPOS_SEXO, 'M', 'Masculino', 'F', 'Femenino') SEXO,
+       CASE
+         WHEN PP.DOCPOS_SEXO = 'M' THEN
+          'el sr. '
+         ELSE
+          'la sra. '
+       END TRATAMIENTO_POSTULANTE,
+       CASE
+         WHEN PP.DOCPOS_SEXO = 'M' THEN
+          CASE
+            WHEN PP.DOCPOS_ESTADO_CIV = 'C' THEN
+             'Casado'
+            ELSE
+             'Soltero'
+          END
+         ELSE
+          CASE
+            WHEN PP.DOCPOS_ESTADO_CIV = 'C' THEN
+             'Casada'
+            ELSE
+             'Soltera'
+          END
+       END ESTADO_CIVIL,
+       CASE
+         WHEN PP.DOCPOS_EMPR = 1 THEN
+          GP.PROF_DESC
+         ELSE
+          INITCAP(GP.PROF_DESC)
+       END PROFESION,
+       GPA.PAIS_NACIONALIDAD,
+       CASE
+         WHEN PP.DOCPOS_EMPR = 1 THEN
+          PP.DOCPOS_DOMICILIO
+         ELSE
+          INITCAP(FZ.ZONA_DESC)
+       END DOMICILIO,
+       CASE
+         WHEN PP.DOCPOS_EMPR = 1 THEN
+          PP.DOCPOS_DOMICILIO
+         ELSE
+          INITCAP(FZ.ZONA_DESC)
+       END ZONA_DESC,
+       PP.DOCPOS_CEDULA_IDEN,
+       DECODE($P{P_TIPO_CONTRATO}, 'IN', null, O.CONSEL_PLAZO) CONSEL_PLAZO,
+       O.CONSEL_HORARIO
+  FROM PER_POSTULANTE_CARGO PP, GEN_PROFESION GP, GEN_PAIS GPA, FAC_ZONA FZ, PER_CONTRATO_PROC_SEL O
+ WHERE PP.DOCPOS_EMPR =$P{P_EMPRESA}
+   AND PP.DOCPOS_CLAVE =$P{P_CLAVE_POST}
+   AND PP.DOCPOS_EMPR = GPA.PAIS_EMPR(+)
+   AND PP.DOCPOS_NACI = GPA.PAIS_CODIGO(+)
+   AND PP.DOCPOS_EMPR = GP.PROF_EMPR(+)
+   AND PP.DOCPOS_PROF = GP.PROF_CODIGO(+)
+   AND PP.DOCPOS_EMPR = FZ.ZONA_EMPR(+)
+   AND PP.DOCPOS_ZONA = FZ.ZONA_CODIGO(+)
+   AND O.CONSEL_POSTUL = $P{P_CLAVE_POST}
+   AND O.CONSEL_EMPR = PP.DOCPOS_EMPR
+   AND O.CONSEL_SOLI = $P{P_CLAVE_SOL}
+   union
+ SELECT C.EMPL_NOMBRE||' '||C.EMPL_APE NOMBRE,
+        decode(c.empl_sexo,'M', 'Masculino', 'F', 'Femenino')sexo,
+        CASE
+         WHEN empl_sexo = 'M' THEN
+          'el sr. '
+         ELSE
+          'la sra. '
+       END TRATAMIENTO_POSTULANTE,
+     CASE
+         WHEN empl_sexo = 'M' THEN
+          CASE
+            WHEN c.empl_est_civil = 'C' THEN
+             'Casado'
+            ELSE
+             'Soltero'
+          END
+         ELSE
+          CASE
+            WHEN c.empl_est_civil = 'C' THEN
+             'Casada'
+            ELSE
+             'Soltera'
+          END
+       END ESTADO_CIVIL,
+       CASE
+         WHEN a.pcon_empr = 1 THEN
+           P.PROF_DESC
+         ELSE
+          INITCAP(P.PROF_DESC)
+       END PROFESION,
+       S.PAIS_NACIONALIDAD,
+
+       CASE
+         WHEN pcon_empr = 1 THEN
+         A.PCON_DIRECCION
+         ELSE
+          INITCAP(A.PCON_DIRECCION)
+       END DOMICILIO,
+
+       CASE
+         WHEN pcon_empr = 1 THEN
+         A.PCON_DIRECCION
+         ELSE
+          INITCAP(A.PCON_DIRECCION)
+       END ZONA_DESC,
+       A.PCON_CI,
+       DECODE($P{P_TIPO_CONTRATO}, 'IN', null, A.PCON_PLAZO),
+       A.PCON_HORARIO
+    FROM PER_CONT_SIN_PROSELC A, PER_EMPLEADO C, GEN_PROFESION P, GEN_PAIS S
+     WHERE A.PCON_LEGAJO = C.EMPL_LEGAJO
+     AND A.PCON_EMPR = C.EMPL_EMPRESA
+     AND C.EMPL_NACIONALIDAD = S.PAIS_CODIGO(+)
+     AND C.EMPL_EMPRESA = S.PAIS_EMPR(+)
+     AND C.EMPL_PROF = P.PROF_CODIGO(+)
+     AND C.EMPL_EMPRESA = P.PROF_EMPR(+)
+     AND A.PCON_EMPR = $P{P_EMPRESA}
+     AND A.PCON_CODIGO =$P{P_CONT_EMPL}]]>
+	</queryString>
+	<field name="NOMBRE_POSTULANTE" class="java.lang.String"/>
+	<field name="SEXO" class="java.lang.String"/>
+	<field name="TRATAMIENTO_POSTULANTE" class="java.lang.String"/>
+	<field name="ESTADO_CIVIL" class="java.lang.String"/>
+	<field name="PROFESION" class="java.lang.String"/>
+	<field name="PAIS_NACIONALIDAD" class="java.lang.String"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="ZONA_DESC" class="java.lang.String"/>
+	<field name="DOCPOS_CEDULA_IDEN" class="java.math.BigDecimal"/>
+	<field name="CONSEL_PLAZO" class="java.lang.String"/>
+	<field name="CONSEL_HORARIO" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<detail>
+		<band height="119">
+			<staticText>
+				<reportElement x="1" y="66" width="520" height="20" forecolor="#000000" uuid="ce5a3c3e-02d8-4ae9-aa0a-74bdf812f5e6"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="12" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[CONTRATO INDIVIDUAL DE TRABAJO]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="0" y="102" width="523" height="16" uuid="944961d0-6b7b-47dc-87b8-7dbbdc831e3c"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["En " + $P{P_CIUDAD_EMPR} + ", Departamento de " + $P{P_DEPART_EMPR} + ", República del " +  $P{P_REPUB_EMPR}  + ", a los " + $P{P_FECHA_CONT_LETRAS_1} + " del año " + $P{P_FECHA_CONT_LETRAS_2} +  ", por una parte, El Sr " +$P{P_GEN_GEN_NOMBRE}+ " con numero de cédula  " + $P{P_CI_EMPLEADOR} + "  en su carácter de Gerente General de la Firma " + $P{P_NOMBRE_EMPRESA} + " con domicilio en " + $P{P_GEN_GEN_DOMIC} + ";  denominado en adelante “EL EMPLEADOR” y/o “LA EMPRESA” y por la otra " +$F{TRATAMIENTO_POSTULANTE}+$F{NOMBRE_POSTULANTE}+ " con numero de cédula " + $P{P_CI_EMPLEADO} + ", de " + $P{P_EDAD_POSTUL} + " años de  edad, de sexo " + $F{SEXO} + ", de estado civil " + $F{ESTADO_CIVIL}+ " , de profesión u oficio " + $F{PROFESION} + ", de nacionalidad " + $F{PAIS_NACIONALIDAD} + ", domiciliado en " + $F{DOMICILIO}+ ", denominado en adelante  “EL TRABAJADOR” y/o “EL EMPLEADO”, convienen en celebrar el presente contrato individual de trabajo bajo las siguientes cláusulas:----\n"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="38">
+			<staticText>
+				<reportElement x="0" y="-1" width="523" height="16" uuid="3a14b89a-9d09-479b-82c9-9656ef961930"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[1.-  MODALIDADES]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="0" y="19" width="523" height="16" uuid="5101dc55-807a-4982-aa40-5f5b884eea66"/>
+				<textElement textAlignment="Justified" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["1.1.- Clase de Trabajo: Contratado como empleado, en las funciones que se le asignen. Actualmente es designado al área " + $P{P_AREA_CARGO} + ", en la función de " +$P{P_CARGO_DESC}+ " - " +$P{P_SUCURSAL} + ". \n1.2.- Queda convenido entre las partes, que LA EMPRESA,  por razones de mejor servicio, podrá asignar a EL EMPLEADO, otras funciones complementarias y/o diferentes a las mencionadas en  el presente contrato y su Anexo, en cuyo caso entrará a regir el Anexo respectivo, donde se describirán dichas funciones, respetando siempre el fiel cumplimiento a las Cláusulas Especiales del presente  Contrato, que salvo referencia expresa en  algún Anexo que las dejen sin efecto, seguirán  plenamente vigentes a todos los efectos legales. \n1.3.- Lugar de la Prestación: En el domicilio legal de la Empresa, o en las oficinas o sucursales que tenga habilitado o habilite en el futuro, en otras, ciudades circunvecinas o donde le asigne EL EMPLEADOR. Si el traslado es a ciudades a más de cincuenta kilómetros, se requerirá el acuerdo de EL TRABAJADOR.\n1.4.- Para el caso de que el trabajador sea nombrado, trasladado o asignado a otra función, se le comunicará por escrito las mismas, donde se describirán dichas nuevas funciones, debiendo, por ende, dar estricto cumplimiento a las disposiciones contenidas en dicha nota, que regirán específicamente para el cargo asignado. No obstante, se deberán respetar las cláusulas especiales del presente contrato que seguirán vigentes y con continuidad, salvo que expresamente por nota se deje sin efecto una o más cláusulas del presente contrato.\n"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="36">
+			<staticText>
+				<reportElement x="0" y="-2" width="523" height="17" uuid="0fb3cb69-75b0-40a6-84c9-df3da58a6f2c"/>
+				<textElement textAlignment="Left">
+					<font fontName="Arial" size="12" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[2.- FORMA DEL CONTRATO]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="0" y="19" width="523" height="16" uuid="73e1f71a-aa8d-4a79-a6c2-18efdf8110f0"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FORMA_PAGO}+"\n"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="38">
+			<staticText>
+				<reportElement x="0" y="0" width="523" height="16" uuid="ce26a7bc-74d0-4419-aaf2-e191b46dfb5b"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[3-  REMUNERACION CONVENIDA]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="0" y="18" width="523" height="16" uuid="f2be1709-561e-4feb-ae9c-68a362d90dc2"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_REMUN_CONVENIDA}+"\n"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="37">
+			<staticText>
+				<reportElement x="0" y="1" width="523" height="16" uuid="a90d9ec0-6f1d-4bb2-aa78-0951e48b575f"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[4.- PLAZO DEL CONTRATO]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="1" y="20" width="522" height="16" uuid="803b7fa4-05ce-4e80-beed-d23e604ce1bd"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{CONSEL_PLAZO} !=  null) ?
+$F{CONSEL_PLAZO} :
+$P{P_PLAZO_CONTRATO_1} + "\n" + $P{P_PLAZO_CONTRATO_2} + "\n" +$P{P_PLAZO_CONTRATO_3}+"\n"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="32" splitType="Prevent">
+			<textField textAdjust="StretchHeight">
+				<reportElement x="0" y="16" width="523" height="16" isPrintWhenDetailOverflows="true" uuid="aab048e4-2497-4828-959d-bd356cafabfb"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font fontName="Arial" size="12" pdfEncoding="Cp1252"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CONSEL_HORARIO}+"\n"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="523" height="16" uuid="d4079663-4fb5-4db4-9211-ac5e68709f04"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[5.- DURACION Y DIVISION DE LA JORNADA]]></text>
+			</staticText>
+		</band>
+		<band height="33" splitType="Prevent">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement x="0" y="15" width="523" height="18" uuid="2c1191fe-58ed-4086-a2f0-141b4e6050c8"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Mensual:   Último día hábil del mes \n" +
+"Época: Del 1 al 5 de cada mes.\n" +
+"Lugar: Local de la Empresa.\n" +
+"Forma de pago: Las partes acuerdan que como medida de seguridad el salario y/o liquidaciones podrán ser abonados en cheques, tarjetas de débito, depósitos, acreditaciones, que permitan la percepción del trabajador con mayor garantía. No obstante, la forma de pago, el trabajador /a tiene la obligación de firmar mensualmente el recibo de salario.\n"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="523" height="16" uuid="d2919dec-9d84-4367-92af-2996b3809ec2"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[6.- PERIODO DE PAGO]]></text>
+			</staticText>
+		</band>
+		<band height="452" splitType="Prevent">
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="15" width="523" height="430" isPrintInFirstWholeBand="true" uuid="66410904-3b3e-40bc-91fd-af7c6c5a1ae8"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font fontName="Arial" size="12" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[7.1.- EL TRABAJADOR se compromete comunicar a LA EMPRESA, por escrito o por telegrama colacionado, el cambio o traslado de su domicilio. Mientras éste no se registre, serán válidas todas las comunicaciones dirigidas al último domicilio denunciado, con todos los efectos legales.
+7.2.- Deberá guardar la mayor reserva sobre costos, precios, nómina de clientes, etc. La violación de esta norma es particularmente grave y podrá ser causal de terminación con justa causa (Art. 81 inc. “h” del Código de Trabajo).
+7.3.- Se pacta exclusividad de prestación (Art.  22 del Código de Trabajo).
+7.4.- EL TRABAJADOR se compromete a cumplir todas las normas y pautas que LA EMPRESA vaya dictando para la realización de los trabajos.
+7.5.- EL TRABAJADOR se compromete a ser cortés con los compañeros, no discutir, no incitar a la violencia y mucho menos protagonizar riñas.
+7.6.- Queda terminantemente prohibido trasladar de un lugar a otro o fuera del local de trabajo, los útiles, equipos, etc., propiedad de LA EMPRESA, de no mediar orden fehaciente del superior, la violación de esta norma es particularmente grave y podrá ser causal de despido con justa causa.
+7.7.- EL EMPLEADO se compromete a cumplir las normas disciplinarias, los horarios de trabajo conforme a su naturaleza especial y acudir con vestimenta pulcra al trabajo. En caso de que la Empresa disponga el uso de uniformes, el mismo será obligatorio.
+7.8.- Queda convenido entre las partes, que LA EMPRESA puede rotar a EL EMPLEADO de acuerdo a la mejor operatividad de LA EMPRESA.
+7.9.- Las partes acuerdan, que, por imagen empresarial y seguridad, los Empleados antes de la salida del lugar de trabajo, podrán ser requeridos a la exhibición de bultos, bolsones, carteras, etc., debiendo acceder a tal requerimiento.
+7.10.- EL TRABAJADOR se obliga a cumplir las órdenes e instrucciones que se le impartan sobre el modo de ejecución de los trabajos.
+7.11.- “EL TRABAJADOR” deberá regir su conducta conforme al Art. 65 y concordantes del Código del Trabajo, la inobservancia de las mismas será pasible de sanciones.
+7.12.- En caso de que al TRABAJADOR se le asigne el uso de cualquier aparato de comunicación, tales como: aparatos de teléfono celular, radio u otros, de propiedad de la EMPRESA, el mismo deberá estar destinado única y exclusivamente como herramienta de trabajo, quedando prohibido cualquier uso distinto.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="523" height="16" uuid="62157c4e-0b38-4f79-8c0c-5495c76b43ef"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[7.-  CLAUSULAS ESPECIALES]]></text>
+			</staticText>
+		</band>
+		<band height="205">
+			<textField textAdjust="StretchHeight" pattern="">
+				<reportElement x="0" y="184" width="523" height="20" isPrintWhenDetailOverflows="true" uuid="bac7e920-826c-43c0-baa0-38fdbeb8e492"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
+					<font fontName="Arial" size="12" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["8.1.- Las cuestiones controversiales que puedan emerger con motivo del cumplimiento del presente contrato y que puedan ser resultas de común acuerdo entre las partes, serán sometidas a la jurisdicción y competencia de los Juzgados y Tribunales de la cuidad de Asunción, Capital de la Republica del Paraguay, declarándose prorrogada cualquier otra jurisdicción que pudiera corresponder. \n\n"+
+"Al fiel cumplimiento del presente contrato se obligan las partes, y en prueba de conformidad, suscriben dos ejemplares de un mismo tenor y a un solo efecto, en el lugar y fecha supra mencionados . \n"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="-1" y="168" width="523" height="16" uuid="7adc819f-37a5-46d5-877a-287d12cc2373"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[8.- JURISDICCION Y COMPETENCIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="0" width="520" height="158" uuid="7a056707-c1d3-4c78-9257-7bf9ab4be4da"/>
+				<textElement textAlignment="Justified">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[7.13.- Se encuentra terminantemente prohibido la portación y uso de armas de fuego en su lugar de trabajo por parte del TRABAJADOR. El incumplimiento de esta norma, es particularmente grave, y hace exclusivamente responsable al TRABAJADOR de las consecuencias civiles y penales de su conducta.
+7.14.- EL TRABAJADOR deberá recibir y firmar el contrato de trabajo, instructivo, circulares, comunicados, notificaciones y documentos que la EMPRESA le presente, relacionadas a sus funciones o por disposiciones legales, así como presentar las documentaciones personales y constancias que hacen a su profesión u oficio, las veces que el EMPLEADOS así lo requiriese.
+7.15.- EL TRABAJADOR se compromete a rendir cuentas en todas las ocasiones que se le requiera.]]></text>
+			</staticText>
+		</band>
+		<band height="106">
+			<staticText>
+				<reportElement x="39" y="84" width="178" height="16" uuid="c761df24-7841-4e14-b388-339196054967"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[EMPLEADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="292" y="84" width="203" height="16" uuid="9743fddd-b116-4054-b00b-88c44dfbadfd"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[EMPLEADOR]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="39" y="69" width="178" height="16" uuid="7ebaa07d-034a-4e3b-a1b2-e9728c73b18d"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["C.I. N°   " + $P{P_CI_EMPLEADO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="292" y="69" width="203" height="16" uuid="28e7f7e6-e7d1-4fe1-9c3f-254f74664c34"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["C.I. N°   " + $P{P_CI_EMPLEADOR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="53" width="255" height="16" uuid="087c558d-9281-4748-89d1-eda79cd268b7"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_POSTULANTE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="266" y="53" width="255" height="16" uuid="cbaa372b-3a77-492d-b5a5-3e02818b8b86"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_NOMBRE_EMPLEADOR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="3" y="36" width="253" height="16" uuid="9cabe6db-e833-4009-a934-80b7c2048705"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[...........................................................................]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="266" y="35" width="255" height="16" uuid="a8d93419-cbfe-431c-ba4d-23a8e2540443"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[................................................................................]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+</jasperReport>

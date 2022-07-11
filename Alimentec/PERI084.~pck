@@ -35,13 +35,7 @@ CREATE OR REPLACE PACKAGE PERI084 AS
                                     V_ENCARGADO IN VARCHAR  default null);
 
 
- -- 11/07/2022 14:46:04 @PabloACespedes \(^-^)/
- -- obtiene el cargo del operador, en funcion al usuario logueado
- function get_cargo_operador(
-   in_empresa in number  
- )return number;
-  
- END PERI084;
+  END PERI084;
 /
 CREATE OR REPLACE PACKAGE BODY PERI084 AS
 
@@ -190,16 +184,14 @@ CREATE OR REPLACE PACKAGE BODY PERI084 AS
   
   END IF; 
   BEGIN
-     /* SELECT T.EMPL_CARGO
+      SELECT T.EMPL_CARGO
         INTO V_CARGO_OPERADOR
         FROM PER_EMPLEADO T
         WHERE EMPL_EMPRESA = V_EMPRESA
         AND EMPL_SITUACION = 'A'
         AND T.EMPL_COD_OPERADOR = ( SELECT OPER_CODIGO
                                       FROM GEN_OPERADOR
-                                     WHERE OPER_LOGIN =gen_devuelve_user);*/
-        
-       V_CARGO_OPERADOR := get_cargo_operador(in_empresa => v_empresa);
+                                     WHERE OPER_LOGIN =gen_devuelve_user);
                                      
        IF V_CARGO_OPERADOR =  110 AND v_empresa =2 THEN
          RAISE_APPLICATION_ERROR (-20001, 'Solo el gerente puede aprobar la solicitud');
@@ -214,9 +206,20 @@ CREATE OR REPLACE PACKAGE BODY PERI084 AS
       ELSE
         NULL;
       END IF;
-      
-  end;
-  
+  --V_CARGO_OPERADOR :=500;
+  --  RAISE_APPLICATION_ERROR (-20001, 'AVISE AL ADMINISTRADOR');
+  END;
+
+   /* IF V_EMPRESA = 1 AND V_AREA_SOL = 4 THEN
+      V_OPER_APROBACION := 94;
+
+         SELECT T.CARDPP_DESC
+         INTO V_CARGO_DESCRIPCION
+          FROM   PER_CARGO_DPP T
+          WHERE T.CARDPP_CLAVE = 94
+            AND T.CARDPP_EMPR = 1;
+    END IF;*/
+    
  IF V_CARGO_OPERADOR  = 151 AND V_EMPRESA = 1 THEN
    IF V_ESTADO = 'P' THEN
                   V_ESTADO_GRAL := 'EE';
@@ -242,7 +245,10 @@ CREATE OR REPLACE PACKAGE BODY PERI084 AS
    IF V_EMPRESA = 1 AND V_CARGO_OPERADOR NOT IN (1, 22,79,138,150, 151,152,260) AND  V_TIPO_CONTRATO = 'IN' THEN
      RAISE_APPLICATION_ERROR (-20001, 'La aprobacion debe pasar por Gerencia');
    END IF;
-       
+   
+   
+   
+    
   IF V_EMPRESA = 1 THEN
     IF V_TIPO_DOTACION = 'IN' AND V_CARGO_OPERADOR = 151 AND V_TIPO_CONTRATO = 'IN' THEN
 
@@ -267,27 +273,28 @@ CREATE OR REPLACE PACKAGE BODY PERI084 AS
 
         RAISE_APPLICATION_ERROR (-20001, 'La aprobacion debe pasar por Gerencia General');
 
-   ELSIF V_TIPO_DOTACION = 'IN'  AND V_CARGO_OPERADOR = V_OPER_APROBACION AND V_TIPO_CONTRATO = 'TE' THEN
+     ELSIF V_TIPO_DOTACION = 'IN'  AND V_CARGO_OPERADOR = V_OPER_APROBACION AND V_TIPO_CONTRATO = 'TE' THEN
        
      
-            IF V_ESTADO = 'P' THEN
-                V_ESTADO_GRAL := 'EE';
-              ELSIF V_ESTADO = 'R' THEN
-                V_ESTADO_GRAL := 'R';
-              ELSIF V_ESTADO = 'C' THEN
-                V_ESTADO_GRAL := 'P';
-              END IF;
+              IF V_ESTADO = 'P' THEN
+                  V_ESTADO_GRAL := 'EE';
+                ELSIF V_ESTADO = 'R' THEN
+                  V_ESTADO_GRAL := 'R';
+                ELSIF V_ESTADO = 'C' THEN
+                  V_ESTADO_GRAL := 'P';
+                END IF;
 
-              UPDATE PER_SOLICITUD_PERSONAL PS
-                 SET PS.SOLPER_ESTADO_APROB   = V_ESTADO,
-                     PS.SOLPER_OPERADOR_APROB = V_OPERADOR,
-                     PS.SOLPER_FECHA_APROB    = V_FECHA,
-                     PS.SOLPER_OBSER_APROB    = V_OBSER,
-                     PS.SOLPER_NIVEL_URGENCIA = V_NIVEL_URGE,
-                     PS.SOLPER_ESTADO_FINAL   = V_ESTADO_GRAL
-               WHERE PS.SOLPER_CLAVE = V_NRO_SOL
+                UPDATE PER_SOLICITUD_PERSONAL PS
+                   SET PS.SOLPER_ESTADO_APROB   = V_ESTADO,
+                       PS.SOLPER_OPERADOR_APROB = V_OPERADOR,
+                       PS.SOLPER_FECHA_APROB    = V_FECHA,
+                       PS.SOLPER_OBSER_APROB    = V_OBSER,
+                       PS.SOLPER_NIVEL_URGENCIA = V_NIVEL_URGE,
+                       PS.SOLPER_ESTADO_FINAL   = V_ESTADO_GRAL
+                 WHERE PS.SOLPER_CLAVE = V_NRO_SOL
                    AND PS.SOLPER_EMPR = V_EMPRESA;
 
+    --ELSIF GEN_DEVUELVE_USER = 'CRISTIAN' THEN --Excepcion 
      ELSIF V_TIPO_DOTACION <> 'IN' AND V_CARGO_OPERADOR = V_OPER_APROBACION THEN --Excepcion
 
 
@@ -316,7 +323,26 @@ CREATE OR REPLACE PACKAGE BODY PERI084 AS
           RAISE_APPLICATION_ERROR (-20001, 'La aprobacion debe pasar por: '||V_CARGO_DESCRIPCION);
      END IF;
 
-  else --> otras empresas que no son HILAGRO (1)
+
+                --Pedido de Nancy, cuando las solicitudes sean anticipadas, tienen que copiar el usuario y poner en estado A en la entrevista de area. 28/05/2019
+              --- ESTA PARTE COMENTO, YA QUE UNA SOLICITUD ANTICIPADA PUEDE SER TAMBIEN AUMENTO DE PLANTEL
+              --- Y SI O SI DEBE PASAR POR EL GERENTE GENERAL LA APROBACION O POR LOS GERENTES DE AREA
+               /* SELECT PE.SOLPER_TIPO_SELEC, PE.SOLPER_OPERADOR_SOL
+                  INTO V_TIP_SELECCION, V_OPERADOR_SOL
+                  FROM PER_SOLICITUD_PERSONAL PE
+                 WHERE PE.SOLPER_CLAVE = V_NRO_SOL
+                   AND PE.SOLPER_EMPR = V_EMPRESA;
+
+                IF V_TIP_SELECCION = 'A' THEN
+                  UPDATE PER_SELECCION_PERSONAL PP
+                     SET PP.SELEPER_EAR_OPER   = V_OPERADOR_SOL,
+                         PP.SELEPER_EAR_ESTADO = 'A',
+                         PP.SELEPER_EES_ESTADO = 'A'
+                   WHERE SELPER_SOLICI = V_NRO_SOL
+                     AND SELEPER_EMPR = V_EMPRESA;
+                END IF;*/
+
+       ELSE
         
         IF GEN_DEVUELVE_USER in ('BILLIEH','RROMERO','FRANCIS' )THEN
           NULL;
@@ -377,7 +403,6 @@ CREATE OR REPLACE PACKAGE BODY PERI084 AS
 
 FECHA DATE;
 v_estado1 VARCHAR2(1);
-l_puede_aprobar number; 
   BEGIN
    
        SELECT nvl(PS.SOLPER_ESTADO_APROB,'P')
@@ -385,27 +410,16 @@ l_puede_aprobar number;
       FROM PER_SOLICITUD_PERSONAL PS
      WHERE PS.SOLPER_CLAVE = V_NRO_SOL
        AND PS.SOLPER_EMPR = V_EMPRESA;
-      
+       
        
        IF v_estado1 <> 'C' THEN
         RAISE_APPLICATION_ERROR (-20001,'La Solicitud no ha sido confirmada' );
      END IF;
      
-     <<validate_level_operator>>
-     begin
-      select distinct 1 into l_puede_aprobar
-      from per_cargo_dpp p
-      where p.cardpp_empr      = V_EMPRESA
-      and   p.cardpp_clave     = get_cargo_operador(in_empresa => v_empresa)
-      and   p.cardpp_niv_organi= 1 -- nivel top del organigrama, aqui se_puede jugar, agregar un rango para la proxima
-      ;
-     exception
-       when others then
-         l_puede_aprobar := 0;
-     end validate_level_operator;
      
-    if l_puede_aprobar <> 1 and V_ENCARGADO IS not null and gen_devuelve_user not in ('RROMERO', 'CROMAN','ESTEBANF','MANUELC','LIZAG')THEN
+    IF  V_ENCARGADO IS not null and gen_devuelve_user not in ('RROMERO', 'CROMAN','ESTEBANF','MANUELC','LIZAG')THEN
       RAISE_APPLICATION_ERROR (-20001, 'No esta habilitado para asignar encargado');
+    
     END IF;
      
    IF V_ESTADO IN ('F','A') AND V_FEC_CIERRE IS NULL  THEN
@@ -444,22 +458,6 @@ l_puede_aprobar number;
 
   END PP_GUARDAR_ESTADO_FINAL;
 
- function get_cargo_operador(
-   in_empresa in number  
- )return number is
- l_r number;
- begin
-    SELECT T.EMPL_CARGO
-    INTO l_r
-    FROM PER_EMPLEADO T
-    WHERE EMPL_EMPRESA = in_empresa
-    AND EMPL_SITUACION = 'A'
-    AND T.EMPL_COD_OPERADOR = ( SELECT OPER_CODIGO
-                                  FROM GEN_OPERADOR
-                                 WHERE OPER_LOGIN = gen_devuelve_user);
- 
-   return l_r;
- end get_cargo_operador;
- 
+
 END PERI084;
 /
