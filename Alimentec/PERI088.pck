@@ -485,7 +485,8 @@ CREATE OR REPLACE PACKAGE BODY PERI088 AS
         V_DIR_POSTUL := v_dir2;
       ELSE
         V_DIR_POSTUL := v_dir1;
-      END if;
+      END IF;
+      -- raise_application_error (-20001, V_DIR_POSTUL);
 
       IF V_GENERO_POSTUL = 'Masculino' THEN
         IF V_TIPO_DOC = 3 THEN
@@ -961,13 +962,9 @@ CREATE OR REPLACE PACKAGE BODY PERI088 AS
     else
       -- 11/07/2022 13:52:01 @PabloACespedes \(^-^)/
       -- se_utiliza el de base para las otras empresas
-      if nvl(V_ACTUALIZACION, 'N') = 'A' then
-        V_NOMBRE_REPORTE := 'PERI088_1';
-      else
-        V_NOMBRE_REPORTE := 'PERI088_1';
-      end if;
+      V_NOMBRE_REPORTE := 'PERI088_2';
     END IF;
-  --  if v_empresa = 20 then  RAISE_APPLICATION_ERROR (-20001,V_NOMBRE_REPORTE||'***'); end if;
+    --if v_empresa = 20 then  RAISE_APPLICATION_ERROR (-20001,V_NOMBRE_REPORTE||'***'); end if;
     INSERT INTO GEN_PARAMETROS_REPORT
       (PARAMETROS, USUARIO, NOMBRE_REPORTE, FORMATO_SALIDA)
     VALUES
