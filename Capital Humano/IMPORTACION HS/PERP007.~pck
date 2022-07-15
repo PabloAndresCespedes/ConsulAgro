@@ -855,9 +855,6 @@ begin
      Raise_application_error(-20000, 'Empresa no encontrada');
    end if;
    
-   -- para pruebas se_utiliza un espejo de tabla
-   delete from per_marcacion_diaria_tmp;
-   
    select line_number nro_linea,
           to_number(nvl(p.col001, co_num_comodin)) legajo, 
           to_date(nvl(p.col002, co_date_comodin), co_mask_date) fecha_hora,
@@ -877,46 +874,48 @@ begin
             ) p
    where f.name = in_filename;
  
- <<f_records>>
- for i in 1 .. l_hs_x_legajo.count loop
-   if l_hs_x_legajo(i).legajo = to_number(co_num_comodin) then
-     Raise_application_error(-20000, 'Linea Nro: '||l_hs_x_legajo(i).nro_linea||' del Archivo. Registro sin n'||chr(250)||'mero de legajo');
-   end if;
-   
-   if l_hs_x_legajo(i).fecha = to_date(co_date_comodin, co_mask_date) then
-     Raise_application_error(-20000, 'Linea Nro: '||l_hs_x_legajo(i).nro_linea||' del Archivo. Registro sin fecha y hora de marcaci'||chr(243)||'n');
-   end if;
-   
-   if l_hs_x_legajo(i).tipo = co_indefinido then
-     Raise_application_error(-20000, 'Linea Nro: '||l_hs_x_legajo(i).nro_linea||' del Archivo. Registro sin tipo de marcaci'||chr(243)||'n. Entrada / Salida (0 o 1)');
-   end if;
+   <<f_records>>
+   for i in 1 .. l_hs_x_legajo.count loop
+     if l_hs_x_legajo(i).legajo = to_number(co_num_comodin) then
+       Raise_application_error(-20000, 'Linea Nro: '||l_hs_x_legajo(i).nro_linea||' del Archivo. Registro sin n'||chr(250)||'mero de legajo');
+     end if;
+     
+     if l_hs_x_legajo(i).fecha = to_date(co_date_comodin, co_mask_date) then
+       Raise_application_error(-20000, 'Linea Nro: '||l_hs_x_legajo(i).nro_linea||' del Archivo. Registro sin fecha y hora de marcaci'||chr(243)||'n');
+     end if;
+     
+     if l_hs_x_legajo(i).tipo = co_indefinido then
+       Raise_application_error(-20000, 'Linea Nro: '||l_hs_x_legajo(i).nro_linea||' del Archivo. Registro sin tipo de marcaci'||chr(243)||'n. Entrada / Salida (0 o 1)');
+     end if;
 
-   insert into per_marcacion_diaria_tmp
-          (marc_fecha,
-           marc_empleado,
-           marc_evento,
-           marc_hora,
-           marc_login,
-           marc_fecha_grab,
-           marc_form,
-           marc_origen,
-           marc_estado,
-           marc_empr
-           )
-        values
-          (l_hs_x_legajo(i).fecha,
-           l_hs_x_legajo(i).legajo,
-           l_hs_x_legajo(i).tipo,
-           l_hs_x_legajo(i).fecha,
-           in_user,
-           co_current,
-           'PERP007',
-           'R',
-           'N',
-           in_empresa
-           );
-   
- end loop f_records;
+     insert into per_marcacion_diaria
+            (marc_fecha,
+             marc_empleado,
+             marc_evento,
+             marc_hora,
+             marc_login,
+             marc_fecha_grab,
+             marc_form,
+             marc_origen,
+             marc_estado,
+             marc_empr,
+             marc_file_name
+             )
+          values
+            (l_hs_x_legajo(i).fecha,
+             l_hs_x_legajo(i).legajo,
+             l_hs_x_legajo(i).tipo,
+             l_hs_x_legajo(i).fecha,
+             in_user,
+             co_current,
+             'PERP007',
+             'R',
+             'N',
+             in_empresa,
+             in_filename
+             );
+     
+   end loop f_records;
  
 end import_hours;
                            
