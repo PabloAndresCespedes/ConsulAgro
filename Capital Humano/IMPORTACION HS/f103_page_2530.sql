@@ -28,7 +28,7 @@ prompt APPLICATION 103 - RECURSOS HUMANOS
 -- Application Export:
 --   Application:     103
 --   Name:            RECURSOS HUMANOS
---   Date and Time:   17:10 Thursday July 14, 2022
+--   Date and Time:   08:02 Friday July 15, 2022
 --   Exported By:     PABLOC
 --   Flashback:       0
 --   Export Type:     Page Export
@@ -56,9 +56,19 @@ wwv_flow_api.create_page(
 ,p_name=>'PERP007 - IMPORTACION DE MARCACION DIARIA'
 ,p_step_title=>' IMPORTACION DE MARCACION DIARIA'
 ,p_autocomplete_on_off=>'OFF'
+,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'let regHistory = ''regHistory'';',
+'let regDetail = ''regDetail'';',
+'',
+'function viewHistory({fileName}){',
+'    $s(''P2530_FILE_NAME'', fileName);',
+'    apex.region( regDetail ).refresh();',
+'    apex.theme.closeRegion( regHistory );',
+'}'))
+,p_css_file_urls=>'.cursor{cursor: pointer;}'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'PABLOC'
-,p_last_upd_yyyymmddhh24miss=>'20220714170910'
+,p_last_upd_yyyymmddhh24miss=>'20220715075557'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(580001545952770057)
@@ -284,6 +294,7 @@ wwv_flow_api.create_page_plug(
 wwv_flow_api.create_report_region(
  p_id=>wwv_flow_api.id(7833212742079539521)
 ,p_name=>'Datos Importados'
+,p_region_name=>'regDetail'
 ,p_parent_plug_id=>wwv_flow_api.id(7833212516317539519)
 ,p_template=>wwv_flow_api.id(540580141447119876)
 ,p_display_sequence=>10
@@ -301,8 +312,10 @@ wwv_flow_api.create_report_region(
 '       marc_fecha_grab cargado,',
 '       marc_origen',
 'from per_marcacion_diaria m',
-'where marc_empr = :p_empresa'))
+'where marc_empr = :p_empresa',
+'and   marc_file_name = :P2530_FILE_NAME'))
 ,p_ajax_enabled=>'Y'
+,p_ajax_items_to_submit=>'P2530_FILE_NAME'
 ,p_query_row_template=>wwv_flow_api.id(540590157911119886)
 ,p_query_num_rows=>15
 ,p_query_options=>'DERIVED_REPORT_COLUMNS'
@@ -396,6 +409,87 @@ wwv_flow_api.create_report_columns(
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
+wwv_flow_api.create_report_region(
+ p_id=>wwv_flow_api.id(8379649244637338308)
+,p_name=>unistr('Hist\00F3rico de Archivos')
+,p_region_name=>'regHistory'
+,p_template=>wwv_flow_api.id(540578655600119875)
+,p_display_sequence=>40
+,p_include_in_reg_disp_sel_yn=>'Y'
+,p_region_template_options=>'#DEFAULT#:js-dialog-autoheight:js-dialog-size600x400'
+,p_component_template_options=>'#DEFAULT#:t-Report--stretch:t-Report--altRowsDefault:t-Report--rowHighlight'
+,p_display_point=>'BODY'
+,p_source_type=>'NATIVE_SQL_REPORT'
+,p_query_type=>'SQL'
+,p_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'select d.marc_fecha_grab fecha,',
+'       d.marc_file_name  archivo,',
+'       count(1)          registros',
+'from per_marcacion_diaria d',
+'where nvl(:P2530_LAZY, ''N'') = ''Y'' ',
+'and d.marc_empr=:p_empresa',
+'group by d.marc_file_name,',
+'         d.marc_fecha_grab'))
+,p_ajax_enabled=>'Y'
+,p_ajax_items_to_submit=>'P2530_LAZY'
+,p_query_row_template=>wwv_flow_api.id(540590157911119886)
+,p_query_num_rows=>10
+,p_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_query_num_rows_type=>'NEXT_PREVIOUS_LINKS'
+,p_pagination_display_position=>'BOTTOM_RIGHT'
+,p_csv_output=>'N'
+,p_prn_output=>'N'
+,p_sort_null=>'L'
+,p_plug_query_strip_html=>'N'
+);
+wwv_flow_api.create_report_columns(
+ p_id=>wwv_flow_api.id(8379649535278338311)
+,p_query_column_id=>1
+,p_column_alias=>'FECHA'
+,p_column_display_sequence=>1
+,p_column_heading=>'Fecha'
+,p_use_as_row_header=>'N'
+,p_column_format=>'dd/mm/yyyy hh24:mi'
+,p_disable_sort_column=>'N'
+,p_derived_column=>'N'
+,p_include_in_export=>'Y'
+);
+wwv_flow_api.create_report_columns(
+ p_id=>wwv_flow_api.id(8379649356791338309)
+,p_query_column_id=>2
+,p_column_alias=>'ARCHIVO'
+,p_column_display_sequence=>2
+,p_column_heading=>'Archivo'
+,p_use_as_row_header=>'N'
+,p_disable_sort_column=>'N'
+,p_derived_column=>'N'
+,p_include_in_export=>'Y'
+);
+wwv_flow_api.create_report_columns(
+ p_id=>wwv_flow_api.id(8379649497519338310)
+,p_query_column_id=>3
+,p_column_alias=>'REGISTROS'
+,p_column_display_sequence=>3
+,p_column_heading=>'Registros'
+,p_use_as_row_header=>'N'
+,p_column_alignment=>'RIGHT'
+,p_disable_sort_column=>'N'
+,p_derived_column=>'N'
+,p_include_in_export=>'Y'
+);
+wwv_flow_api.create_report_columns(
+ p_id=>wwv_flow_api.id(8379649674195338312)
+,p_query_column_id=>4
+,p_column_alias=>'DERIVED$01'
+,p_column_display_sequence=>4
+,p_column_heading=>'&nbsp;'
+,p_use_as_row_header=>'N'
+,p_column_link=>'#'
+,p_column_linktext=>'<span class="fa fa-search cursor u-success-text" aria-hidden="true"></span>'
+,p_column_link_attr=>'title="Ver Registros" onclick="viewHistory({fileName: ''#ARCHIVO#''})"'
+,p_derived_column=>'Y'
+,p_include_in_export=>'Y'
+);
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(7833214972153539543)
 ,p_button_sequence=>20
@@ -443,6 +537,18 @@ wwv_flow_api.create_page_button(
 ,p_button_is_hot=>'Y'
 ,p_button_image_alt=>'Importar'
 ,p_button_position=>'REGION_TEMPLATE_CREATE'
+);
+wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(8379649188541338307)
+,p_button_sequence=>10
+,p_button_plug_id=>wwv_flow_api.id(7833212742079539521)
+,p_button_name=>'VIEW_HISTORY'
+,p_button_action=>'DEFINED_BY_DA'
+,p_button_template_options=>'#DEFAULT#:t-Button--warning'
+,p_button_template_id=>wwv_flow_api.id(540602880264119902)
+,p_button_image_alt=>unistr('Ver Hist\00F3rico de Archivos')
+,p_button_position=>'REGION_TEMPLATE_EDIT'
+,p_warn_on_unsaved_changes=>null
 );
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(581267890140257698)
@@ -547,6 +653,37 @@ wwv_flow_api.create_page_item(
 ,p_attribute_09=>'SESSION'
 ,p_attribute_10=>'N'
 ,p_attribute_11=>'cvs'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(8379648998420338305)
+,p_name=>'P2530_FILE_NAME'
+,p_item_sequence=>30
+,p_item_plug_id=>wwv_flow_api.id(7833212516317539519)
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(8379650097552338316)
+,p_name=>'P2530_LAZY'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_api.id(8379649244637338308)
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'N'
+);
+wwv_flow_api.create_page_computation(
+ p_id=>wwv_flow_api.id(8379650172708338317)
+,p_computation_sequence=>10
+,p_computation_item=>'P2530_LAZY'
+,p_computation_point=>'AFTER_HEADER'
+,p_computation_type=>'STATIC_ASSIGNMENT'
+,p_computation=>'N'
+);
+wwv_flow_api.create_page_computation(
+ p_id=>wwv_flow_api.id(8379649034529338306)
+,p_computation_sequence=>10
+,p_computation_item=>'P2530_FILE_NAME'
+,p_computation_type=>'ITEM_VALUE'
+,p_computation=>'P2530_ARCHIVO'
 );
 wwv_flow_api.create_page_validation(
  p_id=>wwv_flow_api.id(7833215467814539548)
@@ -658,6 +795,27 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_REFRESH'
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_api.id(580895466950668223)
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(8379649717929338313)
+,p_name=>'view history'
+,p_event_sequence=>100
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_api.id(8379649188541338307)
+,p_bind_type=>'bind'
+,p_bind_event_type=>'click'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(8379649874871338314)
+,p_event_id=>wwv_flow_api.id(8379649717929338313)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'apex.theme.openRegion( regHistory );',
+'apex.item(''P2530_LAZY'').setValue(''Y'');',
+'apex.region( regHistory ).refresh();'))
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(581269085075257710)
