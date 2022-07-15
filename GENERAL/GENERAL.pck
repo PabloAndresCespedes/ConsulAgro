@@ -194,22 +194,41 @@ CREATE OR REPLACE PACKAGE GENERAL IS
     retorna si es un usuario de una empresa externa
     para poder operar de igual modo
   */
+  
+  -- @param in_user: si es nulo busca el de sesion de APEX que invoca la funcion
   -- booleano
   function is_external_operator(
     in_user varchar2 := null
   )return boolean;
   
+  
+  -- @param in_user: si es nulo busca el de sesion de APEX que invoca la funcion
   -- numerico
   function is_external_operator(
     in_user varchar2 := null
   )return number;
 
+  -- 15/07/2022 13:07:09 @PabloACespedes \(^-^)/
   -- obtine el identificador del operador externo
+  -- @param in_user: si es nulo busca el de sesion de APEX que invoca la funcion
   function get_external_operator_id(
     in_user varchar2 := null
   )return number;
   
-  -- obtiene los cargos del operador, segun la empresa
+  /*
+    Obtiene los cargos del operador, segun la empresa: (OJO CON EL TIPO DE DATO DE RETORNO)
+    se_puede tratar de la siguiente manera:
+   *********************************************************************************************************************
+   *                                                                                                                   *
+   * select * from table(general.get_position_operator(in_empresa => :YOUR_BUSSINESS, in_operator => :OPERATOR_ID)) x  *
+   *                                                                                                                   *
+   *********************************************************************************************************************
+    Esto retorna la lista de cargos que tiene ese operador externo en esa empresa,
+    caso que no tenga, retorna nulo
+    
+    @param in_empresa: obligatorio
+    @param in_operator: si es nulo busca el de sesion de APEX que invoca la funcion
+  */
   function get_position_operator(
     in_empresa  number,
     in_operator number := null
@@ -2351,7 +2370,7 @@ CREATE OR REPLACE PACKAGE BODY GENERAL IS
   begin
     select distinct 1 into l_c
     from gen_operador_externo e
-    where e.the_user = nvl(in_user, sys_context('APEX$SESSION','APP_USER'));
+    where e.the_user = coalesce(in_user, sys_context('APEX$SESSION','APP_USER'));
     
     return 1;
   exception
@@ -2368,7 +2387,7 @@ CREATE OR REPLACE PACKAGE BODY GENERAL IS
     select e.id
     into l_r
     from gen_operador_externo e
-    where e.the_user = nvl(in_user, sys_context('APEX$SESSION','APP_USER'));
+    where e.the_user = coalesce(in_user, sys_context('APEX$SESSION','APP_USER'));
     
     return l_r;
   exception
@@ -2386,8 +2405,8 @@ CREATE OR REPLACE PACKAGE BODY GENERAL IS
     select c.cargo_id
     bulk collect into l_cargos
     from gen_operador_ext_cargos c
-    where c.id = nvl(in_operator, get_external_operator_id)
-    and   c.empr_id = in_empresa;
+    where c.oper_ext_id = coalesce(in_operator, get_external_operator_id)
+    and   c.empr_id     = in_empresa;
     
     return l_cargos;
   exception
