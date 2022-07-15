@@ -201,13 +201,6 @@ CREATE OR REPLACE PACKAGE GENERAL IS
     in_user varchar2 := null
   )return boolean;
   
-  
-  -- @param in_user: si es nulo busca el de sesion de APEX que invoca la funcion
-  -- numerico
-  function is_external_operator(
-    in_user varchar2 := null
-  )return number;
-
   -- 15/07/2022 13:07:09 @PabloACespedes \(^-^)/
   -- obtine el identificador del operador externo
   -- @param in_user: si es nulo busca el de sesion de APEX que invoca la funcion
@@ -216,23 +209,14 @@ CREATE OR REPLACE PACKAGE GENERAL IS
   )return number;
   
   /*
-    Obtiene los cargos del operador, segun la empresa: (OJO CON EL TIPO DE DATO DE RETORNO)
-    se_puede tratar de la siguiente manera:
-   *********************************************************************************************************************
-   *                                                                                                                   *
-   * select * from table(general.get_position_operator(in_empresa => :YOUR_BUSSINESS, in_operator => :OPERATOR_ID)) x  *
-   *                                                                                                                   *
-   *********************************************************************************************************************
-    Esto retorna la lista de cargos que tiene ese operador externo en esa empresa,
-    caso que no tenga, retorna nulo
-    
+    Obtiene el cargo del operador, segun la empresa:
     @param in_empresa: obligatorio
     @param in_operator: si es nulo busca el de sesion de APEX que invoca la funcion
   */
   function get_position_operator(
     in_empresa  number,
     in_operator number := null
-  )return apex_t_varchar2;
+  )return number;
   
 END GENERAL;
 /
@@ -2363,21 +2347,6 @@ CREATE OR REPLACE PACKAGE BODY GENERAL IS
       return false;
   end is_external_operator; 
   
-  function is_external_operator(
-    in_user varchar2 := null
-  )return number is
-  l_c number;
-  begin
-    select distinct 1 into l_c
-    from gen_operador_externo e
-    where e.the_user = coalesce(in_user, sys_context('APEX$SESSION','APP_USER'));
-    
-    return 1;
-  exception
-    when others then
-      return 0;
-  end is_external_operator; 
-  
   function get_external_operator_id(
     in_user varchar2 := null
   )return number
@@ -2399,16 +2368,18 @@ CREATE OR REPLACE PACKAGE BODY GENERAL IS
   function get_position_operator(
     in_empresa  number,
     in_operator number
-  )return apex_t_varchar2 is
-  l_cargos apex_t_varchar2;
+  )return number is
+  l_cargo number;
   begin
+    -- solo puede haber un cargo por empresa y operador, es igual que el de la ficha
+    -- viene de PER_CARGO
     select c.cargo_id
-    bulk collect into l_cargos
+    into l_cargo
     from gen_operador_ext_cargos c
     where c.oper_ext_id = coalesce(in_operator, get_external_operator_id)
     and   c.empr_id     = in_empresa;
-    
-    return l_cargos;
+ 
+    return l_cargo;
   exception
     when no_Data_found then
       return null;
