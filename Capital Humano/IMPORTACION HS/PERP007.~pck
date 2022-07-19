@@ -848,7 +848,7 @@ procedure import_hours(
  
  co_num_comodin  constant varchar2(3 char)  := '-99';
  co_date_comodin constant varchar2(16 char) := '01/01/1990 00:00';
- co_mask_date    constant varchar2(18 char) := 'dd/mm/yyyy hh24:mi';
+ co_mask_date    constant varchar2(30 char) := 'dd/mm/yyyy hh24:mi';
  co_indefinido   constant varchar2(1 char)  := 'I';
 begin
    if in_empresa is null then

@@ -887,7 +887,7 @@ begin
      if l_hs_x_legajo(i).tipo = co_indefinido then
        Raise_application_error(-20000, 'Linea Nro: '||l_hs_x_legajo(i).nro_linea||' del Archivo. Registro sin tipo de marcaci'||chr(243)||'n. Entrada / Salida (0 o 1)');
      end if;
-
+     begin
      insert into per_marcacion_diaria
             (marc_fecha,
              marc_empleado,
@@ -902,7 +902,7 @@ begin
              marc_file_name
              )
           values
-            (l_hs_x_legajo(i).fecha,
+            (trunc(l_hs_x_legajo(i).fecha),
              l_hs_x_legajo(i).legajo,
              l_hs_x_legajo(i).tipo,
              l_hs_x_legajo(i).fecha,
@@ -914,9 +914,12 @@ begin
              in_empresa,
              in_filename
              );
-     
+      exception
+        when DUP_VAL_ON_INDEX then -- registros duplicados no inserta
+          null; 
+      end;
    end loop f_records;
- 
+
 end import_hours;
                            
 END PERP007;

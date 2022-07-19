@@ -985,7 +985,10 @@ create or replace package body FINI053 is
 
     l_tmv_fc_cr_rec number;
     l_tmv_cancel_fc_cr_rec number;
-
+    
+    l_tmv_fc_cr_rec_ajus number;
+    l_tmv_cancel_fc_cr_rec_aj number;
+    
     l_tmv_nota_deb_rec number;
     l_tmv_cancel_nota_deb_rec number;
 
@@ -1020,7 +1023,9 @@ create or replace package body FINI053 is
     l_tmv_cancela     number;
     l_tmv_cancela_two number;
 
-    e_tmv_no_configurado exception;
+    e_tmv_no_configurado_one exception;
+    e_tmv_no_configurado_two exception;
+    
     e_importe_mayor      exception;
     e_indicador          exception;
 
@@ -1093,7 +1098,11 @@ create or replace package body FINI053 is
             -- FC REC
             fx.conf_fact_cr_rec         tmv_fc_cr_rec,
             fx.conf_recibo_can_fac_rec  tmv_cancel_fc_cr_rec,
-
+            
+            -- FC REC AJUSTE
+            fx.conf_fact_cr_rec_ajuste   tmv_fc_cr_rec_ajus,
+            fx.conf_recibo_pago_rec      tmv_cancel_fc_cr_rec_aj,
+            
             -- NOT.DEB. REC
             fx.conf_nota_db_rec         tmv_nota_deb_rec,
             fx.conf_recibo_pago_rec     tmv_cancel_nota_deb_rec
@@ -1121,7 +1130,10 @@ create or replace package body FINI053 is
 
             l_tmv_fc_cr_rec,
             l_tmv_cancel_fc_cr_rec,
-
+            
+            l_tmv_fc_cr_rec_ajus,
+            l_tmv_cancel_fc_cr_rec_aj,
+            
             l_tmv_nota_deb_rec,
             l_tmv_cancel_nota_deb_rec
 
@@ -1225,7 +1237,7 @@ create or replace package body FINI053 is
 
         if l_nc_tipo_mov not in( l_tmv_nc_cr_emit , l_tmv_adel_cliente_emit, l_tmv_nc_cr_rec, l_tmv_adel_rec)
         then
-          raise e_tmv_no_configurado;
+          raise e_tmv_no_configurado_one;
         end if;
 
         <<t_cancell>>
@@ -1241,7 +1253,7 @@ create or replace package body FINI053 is
           when l_nc_tipo_mov = l_tmv_adel_rec then
             l_tmv_cancela := l_tmv_cancel_adel_rec;
           else
-            raise e_tmv_no_configurado;
+            raise e_tmv_no_configurado_one;
         end case t_cancell;
 
         <<fc_doc>>
@@ -1282,9 +1294,9 @@ create or replace package body FINI053 is
           and   to_number(c.seq_id) = l_fc_cre_doc_select;
         end fc_doc;
 
-        if l_fc_tipo_mov not in( l_tmv_fc_cr_emit , l_tmv_ndb_emit, l_tmv_fc_cr_rec, l_tmv_nota_deb_rec )
+        if l_fc_tipo_mov not in( l_tmv_fc_cr_emit , l_tmv_ndb_emit, l_tmv_fc_cr_rec, l_tmv_nota_deb_rec, l_tmv_fc_cr_rec_ajus )
         then
-            raise e_tmv_no_configurado;
+            raise e_tmv_no_configurado_two;
         end if;
 
         <<t_cancell_two>>
@@ -1299,8 +1311,10 @@ create or replace package body FINI053 is
             l_tmv_cancela_two := l_tmv_cancel_fc_cr_rec;
           when l_fc_tipo_mov = l_tmv_nota_deb_rec then
             l_tmv_cancela_two := l_tmv_cancel_nota_deb_rec;
+          when l_fc_tipo_mov = l_tmv_fc_cr_rec_ajus then
+            l_tmv_cancela_two := l_tmv_cancel_fc_cr_rec_aj;
           else
-            raise e_tmv_no_configurado;
+            raise e_tmv_no_configurado_two;
         end case t_cancell_two;
 
         if l_nc_tipo_mov not in( l_tmv_adel_cliente_emit, l_tmv_adel_rec ) then
@@ -1491,8 +1505,10 @@ create or replace package body FINI053 is
         Raise_application_error(-20000, 'Opci'||chr(243)||'n no v'||chr(225)||'lida. Tipo de Movimiento no es ni Emisi'||chr(243)||'n y Recibido');
     end case c_options;
   exception
-    when e_tmv_no_configurado then
-      raise_application_Error(-20000, 'No se puede cancelar el documento, no se encuentra configurado');
+    when e_tmv_no_configurado_one then
+      raise_application_Error(-20000, '1. No se puede cancelar el documento, no se encuentra configurado. Doc. Tipo Mov. '||l_tmv_cancela);
+    when e_tmv_no_configurado_two then
+      raise_application_Error(-20000, '2. No se puede cancelar el documento, no se encuentra configurado. Doc. Tipo Mov. '||l_tmv_cancela_two);
     when e_importe_mayor then
       Raise_application_error(-20000, 'Importe de la NC/Adelanto no puede ser mayor al de la factura/Not. Deb.');
     when e_indicador then
@@ -1534,7 +1550,7 @@ create or replace package body FINI053 is
                          in_empresa
                          );
     else
-      Raise_application_error(-20000, 'Importe debe ser mayor a 0');
+      Raise_application_error(-20000, 'Pck. FINI053. (ADD_PAGO) Importe debe ser mayor a 0');
     end if;
   end add_pago;
 
