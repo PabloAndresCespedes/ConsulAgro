@@ -250,11 +250,7 @@ CREATE OR REPLACE PACKAGE BODY PERC002 AS
     V_DIAS_TRABAJADOS     NUMBER;
     V_EXISTE              NUMBER;
 
-  BEGIN
-
-
-
-
+  begin
     IF V_EMPL_LEG IS NOT NULL THEN
 
       SELECT EMPL_FORMA_PAGO,
@@ -301,7 +297,7 @@ CREATE OR REPLACE PACKAGE BODY PERC002 AS
                                      NVL(ROUND(ROUND(SUM(IMPORTE)/ COUNT (DISTINCT(TO_CHAR(A.FECHA,'mm/yyyy')))) / 30),8)
                               END IMPORTE_DIARIO
                     INTO V_IMP_X_DIA
-                    FROM PERI052_V_T         A,
+                    FROM PERI052_V_T       A,
                          PER_CONFIGURACION B,
                          PER_PERIODO       C,
                          PER_CONCEPTO      D,
@@ -336,29 +332,30 @@ CREATE OR REPLACE PACKAGE BODY PERC002 AS
                          PER_CONCEPTO      D,
                          PER_EMPLEADO      E
                    WHERE A.EMPL_LEGAJO = V_EMPL_LEG
-                     AND A.FECHA BETWEEN TO_CHAR(ADD_MONTHS(TRUNC(V_FECHA_DESV,'mm'), -6), 'DD/MM/YYYY') AND
-                                         TO_CHAR(ADD_MONTHS(LAST_DAY(V_FECHA_DESV), -1), 'DD/MM/YYYY')
-                     AND CONF_EMPR = V_EMPRESA
-                     AND B.CONF_PERI_ACT = PERI_CODIGO
-                     AND B.CONF_EMPR = PERI_EMPR
-                     AND A.COD_CONCEPTO = D.PCON_CLAVE
-                     AND B.CONF_EMPR = PCON_EMPR
-                     AND D.PCON_IND_IPS = 'S'
-                     and A.EMPL_EMPRESA = B.conf_empr -- @PabloACespedes 19/07/2022 17.03hs
-                     AND A.EMPL_LEGAJO = E.EMPL_LEGAJO
-                     AND CONF_EMPR = E.EMPL_EMPRESA
-                     AND  A.FECHA >= CASE WHEN  E.EMPL_FEC_INGRESO <= '03/'|| TO_CHAR(E.EMPL_FEC_INGRESO,'MM/YYYY') THEN
+                   -- documentos de los ultimos 6 meses antes de la fecha de desvinculacion
+                     AND (A.FECHA BETWEEN TO_CHAR(ADD_MONTHS(TRUNC(V_FECHA_DESV,'mm'), -6), 'DD/MM/YYYY') 
+                                  AND
+                                  TO_CHAR(ADD_MONTHS(LAST_DAY(V_FECHA_DESV), -1), 'DD/MM/YYYY')
+                         )
+                     AND B.CONF_EMPR     = V_EMPRESA
+                     AND B.CONF_EMPR     = C.PERI_EMPR
+                     AND B.CONF_EMPR     = d.pcon_empr
+                     and B.conf_empr     = A.EMPL_EMPRESA -- @PabloACespedes 19/07/2022 17.03hs
+                     AND B.CONF_PERI_ACT = C.PERI_CODIGO
+                     AND A.COD_CONCEPTO  = D.PCON_CLAVE
+                     AND D.PCON_IND_IPS  = 'S' -- afecta IPS
+                     AND A.EMPL_LEGAJO   = E.EMPL_LEGAJO
+                     -- Fecha de documentos (A.FECHA) mayores o iguales a la fecha de ingreso del empleado
+                     -- en el caso que sea mayor al 3er dia se_usa 1 mes mas adelantado de la fecha de ingreso
+                     -- OJO con los anios bisiestos y demas yerba
+                     AND A.FECHA >= CASE WHEN  E.EMPL_FEC_INGRESO <= '03/'|| TO_CHAR(E.EMPL_FEC_INGRESO,'MM/YYYY') THEN
                                                  EMPL_FEC_INGRESO
                                               ELSE
-                                                 ADD_MONTHS (EMPL_FEC_INGRESO,1)
+                                                 ADD_MONTHS (E.EMPL_FEC_INGRESO,1)
                                               END;
 
+    
       END IF;
-
-     /* V_ANTIGUE := PK_PERM001.F_CALC_ANTIGUEDAD(V_FEC_INGRESO,
-                                                V_FEC_SALIDA,
-                                                V_SITUACION);
-                                                */
 
       V_ANTIGUE := PERC002.FP_TRAER_ANTIGUEDAD(P_EMPRESA => v_EMPRESA,
                                                  P_LEGAJO => V_EMPL_LEG,
@@ -439,7 +436,7 @@ CREATE OR REPLACE PACKAGE BODY PERC002 AS
       V_DIAS_PEND := NVL(V_DIAS_PEND, 0);
       V_DIAS_CONC := NVL(V_DIAS_CONC, 0);
 
-    END IF;
+    END IF; --> Fin V_EMPL_LEG IS NOT NULL
 
     IF TO_DATE(TO_CHAR(V_FEC_INGRESO, 'DD/MM') || '/' ||
                TO_CHAR(SYSDATE, 'YYYY'),
@@ -467,7 +464,6 @@ CREATE OR REPLACE PACKAGE BODY PERC002 AS
              TO_DATE(ADD_MONTHS(C.PERI_FEC_INI, -5), 'DD/MM/YYYY') AND
              C.PERI_FEC_FIN
          AND CONF_EMPR = V_EMPRESA
-        -- AND B.CONF_PERI_SGTE - 1 = PERI_CODIGO
         AND B.CONF_PERI_ACT = PERI_CODIGO
          AND B.CONF_EMPR = PERI_EMPR
          AND A.COD_CONCEPTO = D.PCON_CLAVE
@@ -481,18 +477,8 @@ CREATE OR REPLACE PACKAGE BODY PERC002 AS
 
         V_IMP_DIARIO_PROM := 0;
 
-    END;
-
-   -- V_IMP_X_DIA := V_IMP_DIARIO_PROM;
-    --  END IF;
-
-  /*EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-
-      RAISE_APPLICATION_ERROR(-20001, 'No se encuentra el Empleado');
-    WHEN OTHERS THEN
-      RAISE_APPLICATION_ERROR(-20000, 'Error en FP_TRAER_EMPLEADO');*/
-
+    end;
+    
   END PP_TRAER_EMPLEADO_REG;
 
   FUNCTION FP_RETORNA_CANT_DIA_HABIL(I_FECHA_INI IN DATE,
@@ -667,7 +653,8 @@ CREATE OR REPLACE PACKAGE BODY PERC002 AS
            AND B.CONF_EMPR = PCON_EMPR
            AND D.PCON_IND_IPS = 'S'
            AND A.EMPL_LEGAJO = E.EMPL_LEGAJO
-           AND CONF_EMPR = E.EMPL_EMPRESA;
+        --   AND CONF_EMPR = E.EMPL_EMPRESA
+           ;
 
       EXCEPTION
         WHEN NO_DATA_FOUND THEN
@@ -1552,7 +1539,7 @@ END IF;
     V_ANTIGUEDAD VARCHAR2(200);
   BEGIN
     BEGIN
- IF P_EMPRESA = 1 THEN
+ IF P_EMPRESA != 2 then -- @PabloACespedes 19/07/2022 17.08hs
  
  if P_LEGAJO =104206 then
    V_ANTIGUEDAD :='1';
@@ -1698,11 +1685,11 @@ END IF;
                              WHEN TRUNC(MONTHS_BETWEEN(P_FECHA_DESVINCULACION,
                                                        EMPL_FEC_INGRESO) / 12) > 1 THEN
                               TRUNC(MONTHS_BETWEEN(P_FECHA_DESVINCULACION,
-                                                   EMPL_FEC_INGRESO) / 12) || ' A?os, '
+                                                   EMPL_FEC_INGRESO) / 12) || ' A'||chr(241)||'os, '
                              WHEN TRUNC(MONTHS_BETWEEN(P_FECHA_DESVINCULACION,
                                                        EMPL_FEC_INGRESO) / 12) = 1 THEN
                               TRUNC(MONTHS_BETWEEN(P_FECHA_DESVINCULACION,
-                                                   EMPL_FEC_INGRESO) / 12) || ' A?o, '
+                                                   EMPL_FEC_INGRESO) / 12) || ' A'||chr(241)||'o, '
                            END || CASE
                              WHEN TRUNC(MONTHS_BETWEEN(P_FECHA_DESVINCULACION,
                                                        TO_DATE(TO_CHAR(EMPL_FEC_INGRESO,

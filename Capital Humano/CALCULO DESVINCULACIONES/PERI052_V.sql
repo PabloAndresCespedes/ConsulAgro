@@ -40,20 +40,16 @@ SELECT PER."FECHA",
                per_documento_det,
                per_concepto,
                per_empleado e
-         WHERE PER_DOCUMENTO_DET.PDDET_CLAVE_CONCEPTO =
-               PER_CONCEPTO.PCON_CLAVE
+         WHERE PER_DOCUMENTO_DET.PDDET_CLAVE_CONCEPTO = PER_CONCEPTO.PCON_CLAVE
            AND PER_DOCUMENTO_DET.PDDET_EMPR = PER_CONCEPTO.PCON_EMPR
 
-           AND PER_DOCUMENTO.PDOC_EMPR != 2 -- @PabloACespedes 19/07/2022 17.00hs
+           AND PER_DOCUMENTO.PDOC_EMPR  = e.empl_empresa -- @PabloACespedes todos los del Holding 
+           and PER_DOCUMENTO.PDOC_EMPR != 2              -- @PabloACespedes que no sean Transagro
            AND PER_DOCUMENTO.PDOC_CLAVE = PER_DOCUMENTO_DET.PDDET_CLAVE_DOC
-           AND PER_DOCUMENTO.PDOC_EMPR = PER_DOCUMENTO_DET.PDDET_EMPR
 
            AND PER_DOCUMENTO.PDOC_EMPLEADO = E.EMPL_LEGAJO
            AND PER_DOCUMENTO.PDOC_EMPR = E.EMPL_EMPRESA
-          -- and empl_situacion='A'
-          --  AND EMPL_BCO_PAGO=3
            AND EMPL_FORMA_PAGO IN (1,2,5,3)
-          -- AND PCON_CANCELADO_POR_CONC IS NULL
            ) PER,
        fin_documento f,
        FIN_CUENTA_BANCARIA G

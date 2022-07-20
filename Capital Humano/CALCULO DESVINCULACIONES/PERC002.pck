@@ -250,11 +250,7 @@ CREATE OR REPLACE PACKAGE BODY PERC002 AS
     V_DIAS_TRABAJADOS     NUMBER;
     V_EXISTE              NUMBER;
 
-  BEGIN
-
-
-
-
+  begin
     IF V_EMPL_LEG IS NOT NULL THEN
 
       SELECT EMPL_FORMA_PAGO,
@@ -301,7 +297,7 @@ CREATE OR REPLACE PACKAGE BODY PERC002 AS
                                      NVL(ROUND(ROUND(SUM(IMPORTE)/ COUNT (DISTINCT(TO_CHAR(A.FECHA,'mm/yyyy')))) / 30),8)
                               END IMPORTE_DIARIO
                     INTO V_IMP_X_DIA
-                    FROM PERI052_V_T         A,
+                    FROM PERI052_V_T       A,
                          PER_CONFIGURACION B,
                          PER_PERIODO       C,
                          PER_CONCEPTO      D,
@@ -336,29 +332,30 @@ CREATE OR REPLACE PACKAGE BODY PERC002 AS
                          PER_CONCEPTO      D,
                          PER_EMPLEADO      E
                    WHERE A.EMPL_LEGAJO = V_EMPL_LEG
-                     AND A.FECHA BETWEEN TO_CHAR(ADD_MONTHS(TRUNC(V_FECHA_DESV,'mm'), -6), 'DD/MM/YYYY') AND
-                                         TO_CHAR(ADD_MONTHS(LAST_DAY(V_FECHA_DESV), -1), 'DD/MM/YYYY')
-                     AND CONF_EMPR = V_EMPRESA
-                     AND B.CONF_PERI_ACT = PERI_CODIGO
-                     AND B.CONF_EMPR = PERI_EMPR
-                     AND A.COD_CONCEPTO = D.PCON_CLAVE
-                     AND B.CONF_EMPR = PCON_EMPR
-                     AND D.PCON_IND_IPS = 'S'
-                     and A.EMPL_EMPRESA = B.conf_empr -- @PabloACespedes 19/07/2022 17.03hs
-                     AND A.EMPL_LEGAJO = E.EMPL_LEGAJO
-                     AND CONF_EMPR = E.EMPL_EMPRESA
-                     AND  A.FECHA >= CASE WHEN  E.EMPL_FEC_INGRESO <= '03/'|| TO_CHAR(E.EMPL_FEC_INGRESO,'MM/YYYY') THEN
+                   -- documentos de los ultimos 6 meses antes de la fecha de desvinculacion
+                     AND (A.FECHA BETWEEN TO_CHAR(ADD_MONTHS(TRUNC(V_FECHA_DESV,'mm'), -6), 'DD/MM/YYYY') 
+                                  AND
+                                  TO_CHAR(ADD_MONTHS(LAST_DAY(V_FECHA_DESV), -1), 'DD/MM/YYYY')
+                         )
+                     AND B.CONF_EMPR     = V_EMPRESA
+                     AND B.CONF_EMPR     = C.PERI_EMPR
+                     AND B.CONF_EMPR     = d.pcon_empr
+                     and B.conf_empr     = A.EMPL_EMPRESA -- @PabloACespedes 19/07/2022 17.03hs
+                     AND B.CONF_PERI_ACT = C.PERI_CODIGO
+                     AND A.COD_CONCEPTO  = D.PCON_CLAVE
+                     AND D.PCON_IND_IPS  = 'S' -- afecta IPS
+                     AND A.EMPL_LEGAJO   = E.EMPL_LEGAJO
+                     -- Fecha de documentos (A.FECHA) mayores o iguales a la fecha de ingreso del empleado
+                     -- en el caso que sea mayor al 3er dia se_usa 1 mes mas adelantado de la fecha de ingreso
+                     -- OJO con los anios bisiestos y demas yerba
+                     AND A.FECHA >= CASE WHEN  E.EMPL_FEC_INGRESO <= '03/'|| TO_CHAR(E.EMPL_FEC_INGRESO,'MM/YYYY') THEN
                                                  EMPL_FEC_INGRESO
                                               ELSE
-                                                 ADD_MONTHS (EMPL_FEC_INGRESO,1)
+                                                 ADD_MONTHS (E.EMPL_FEC_INGRESO,1)
                                               END;
 
+    
       END IF;
-
-     /* V_ANTIGUE := PK_PERM001.F_CALC_ANTIGUEDAD(V_FEC_INGRESO,
-                                                V_FEC_SALIDA,
-                                                V_SITUACION);
-                                                */
 
       V_ANTIGUE := PERC002.FP_TRAER_ANTIGUEDAD(P_EMPRESA => v_EMPRESA,
                                                  P_LEGAJO => V_EMPL_LEG,
@@ -439,7 +436,7 @@ CREATE OR REPLACE PACKAGE BODY PERC002 AS
       V_DIAS_PEND := NVL(V_DIAS_PEND, 0);
       V_DIAS_CONC := NVL(V_DIAS_CONC, 0);
 
-    END IF;
+    END IF; --> Fin V_EMPL_LEG IS NOT NULL
 
     IF TO_DATE(TO_CHAR(V_FEC_INGRESO, 'DD/MM') || '/' ||
                TO_CHAR(SYSDATE, 'YYYY'),
@@ -471,7 +468,6 @@ CREATE OR REPLACE PACKAGE BODY PERC002 AS
          AND B.CONF_EMPR = PERI_EMPR
          AND A.COD_CONCEPTO = D.PCON_CLAVE
          AND B.CONF_EMPR = PCON_EMPR
-         and A.EMPL_EMPRESA=B.conf_empr -- @PabloACespedes 19/07/2022 17.09hs
          AND D.PCON_IND_IPS = 'S'
          AND A.EMPL_LEGAJO = E.EMPL_LEGAJO
          AND CONF_EMPR = E.EMPL_EMPRESA;
@@ -481,18 +477,8 @@ CREATE OR REPLACE PACKAGE BODY PERC002 AS
 
         V_IMP_DIARIO_PROM := 0;
 
-    END;
-
-   -- V_IMP_X_DIA := V_IMP_DIARIO_PROM;
-    --  END IF;
-
-  /*EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-
-      RAISE_APPLICATION_ERROR(-20001, 'No se encuentra el Empleado');
-    WHEN OTHERS THEN
-      RAISE_APPLICATION_ERROR(-20000, 'Error en FP_TRAER_EMPLEADO');*/
-
+    end;
+    
   END PP_TRAER_EMPLEADO_REG;
 
   FUNCTION FP_RETORNA_CANT_DIA_HABIL(I_FECHA_INI IN DATE,
@@ -667,7 +653,8 @@ CREATE OR REPLACE PACKAGE BODY PERC002 AS
            AND B.CONF_EMPR = PCON_EMPR
            AND D.PCON_IND_IPS = 'S'
            AND A.EMPL_LEGAJO = E.EMPL_LEGAJO
-           AND CONF_EMPR = E.EMPL_EMPRESA;
+        --   AND CONF_EMPR = E.EMPL_EMPRESA
+           ;
 
       EXCEPTION
         WHEN NO_DATA_FOUND THEN
@@ -2014,10 +2001,6 @@ P_CLAVE := P_CLAVE;
                    WHERE A.EMPL_LEGAJO  = P_LEGAJO
                      AND A.EMPL_EMPRESA = P_EMPRESA;
 
-   /* V_ANTIGUEDAD := PK_PERM001.F_CALC_ANTIGUEDAD(V_FEC_INGRESO,
-                                                 P_FECHA,
-                                                 'A');*/
-
 
      V_ANTIGUEDAD := PERC002.FP_TRAER_ANTIGUEDAD(P_EMPRESA => P_EMPRESA,
                                                  P_LEGAJO => P_LEGAJO,
@@ -2036,18 +2019,15 @@ P_CLAVE := P_CLAVE;
 
        BEGIN
 
-          PERC002.PP_CALCULAR_CANTIDAD_TRA(P_EMPRESA => P_EMPRESA,
-                                           P_LEGAJO => P_LEGAJO,
-                                           P_FECHA => P_FECHA,
-                                           P_ANHOS => ANT_CANT_ANHOS,
-                                           P_MES => ANT_CANT_MESES,
-                                           P_DIAS => ANT_CANT_DIAS);
+          PERC002.PP_CALCULAR_CANTIDAD_TRA(P_EMPRESA => P_EMPRESA,    -- in
+                                           P_LEGAJO => P_LEGAJO,      -- in
+                                           P_FECHA => P_FECHA,        -- in
+                                           P_ANHOS => ANT_CANT_ANHOS, -- out
+                                           P_MES => ANT_CANT_MESES,   -- out
+                                           P_DIAS => ANT_CANT_DIAS    -- out
+                                           );
         END;
 
-/*
-    V_ANTIGUEDAD := FP_TRAER_ANTIGUEDAD(P_EMPRESA,
-                                        P_LEGAJO,
-                                        P_FECHA);*/
  IF X_EDITAR IS NULL THEN
                 INSERT INTO PER_REGISTRO_DESVINC_EMPL
                   (RDE_CLAVE,
@@ -2121,13 +2101,6 @@ P_CLAVE := P_CLAVE;
 
     END IF;
 
-            --RAISE_APPLICATION_ERROR (-20001, p_Empresa||' '||P_LEGAJO||' '||P_FECHA||' '||P_TIPO_DESVINCULACION||' '||P_IND_OMISION_PREAVISO||' '||P_IND_PAGA_OMIS_PREAVISO);
-
-
-
-
-
-
  IF  V_EMPL_TIPO_SALARIO NOT IN (2) AND P_EMPRESA = 1 THEN
       BEGIN
 
@@ -2142,23 +2115,26 @@ P_CLAVE := P_CLAVE;
                    PER_PERIODO       C,
                    PER_CONCEPTO      D,
                    PER_EMPLEADO      E
-             WHERE A.EMPL_LEGAJO = P_LEGAJO
-               AND A.FECHA BETWEEN
+             where (A.FECHA BETWEEN
                    TO_CHAR(ADD_MONTHS(TRUNC(P_FECHA,'mm'), -6), 'DD/MM/YYYY') AND
                    TO_CHAR(ADD_MONTHS(LAST_DAY(P_FECHA), -1), 'DD/MM/YYYY')
-               AND CONF_EMPR =P_EMPRESA
-               AND B.CONF_PERI_ACT  = PERI_CODIGO
-               AND B.CONF_EMPR = PERI_EMPR
-               AND A.COD_CONCEPTO = D.PCON_CLAVE
-               AND B.CONF_EMPR = PCON_EMPR
+                   )
+               and A.EMPL_LEGAJO   = P_LEGAJO
+               AND B.CONF_EMPR     = P_EMPRESA
+               AND B.CONF_PERI_ACT = PERI_CODIGO
+               AND B.CONF_EMPR     = PERI_EMPR
+               AND A.COD_CONCEPTO  = D.PCON_CLAVE
+               AND B.CONF_EMPR     = PCON_EMPR
+               AND A.EMPL_LEGAJO   = E.EMPL_LEGAJO
+               AND B.CONF_EMPR     = E.EMPL_EMPRESA
+               
                AND D.PCON_IND_IPS = 'S'
-               AND  A.FECHA >= CASE WHEN  E.EMPL_FEC_INGRESO <= '03/'|| TO_CHAR(E.EMPL_FEC_INGRESO,'MM/YYYY') THEN
+               and A.FECHA >= CASE WHEN  E.EMPL_FEC_INGRESO <= '03/'|| TO_CHAR(E.EMPL_FEC_INGRESO,'MM/YYYY') THEN
                                           EMPL_FEC_INGRESO
                                      ELSE
                                          ADD_MONTHS (EMPL_FEC_INGRESO,1)
                                         END
-               AND A.EMPL_LEGAJO = E.EMPL_LEGAJO
-               AND CONF_EMPR = E.EMPL_EMPRESA;
+               ;
 
       EXCEPTION
         WHEN NO_DATA_FOUND THEN
@@ -5137,7 +5113,7 @@ BEGIN
 
 
 
-IF P_EMPRESA = 1 THEN
+IF P_EMPRESA != 2 then -- @PabloACespedes 20/07/2022 13.13 todo el Holding menos Transagro
   
 
 
