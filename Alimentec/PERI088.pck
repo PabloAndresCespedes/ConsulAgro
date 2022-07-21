@@ -135,8 +135,12 @@ CREATE OR REPLACE PACKAGE PERI088 AS
                                 P_CONT      IN PER_CONTRATO_MTESS%ROWTYPE);
 END PERI088;
 /
-CREATE OR REPLACE PACKAGE BODY PERI088 AS
-
+CREATE OR REPLACE PACKAGE BODY PERI088 as
+  -- 21/07/2022 9:56:06 @PabloACespedes \(^-^)/
+  -- constantes de las empresas
+  co_hilagro   constant number := 1;
+  co_transagro constant number := 2;
+  
   PROCEDURE PP_TRAER_DATOS_CONTRATO(V_EMPRESA          IN NUMBER,
                                     V_NRO_SOL          IN NUMBER,
                                     V_CLAVE_POST       IN NUMBER,
@@ -1925,14 +1929,15 @@ CREATE OR REPLACE PACKAGE BODY PERI088 AS
     V_AMPER      VARCHAR2(2) := '&';
     V_PARAMETROS VARCHAR2(30000);
     V_USER       VARCHAR2(20);
+    l_report_name varchar2(50 char);
   BEGIN
-    IF P_EMPRESA = 2 THEN
+    IF P_EMPRESA = co_transagro THEN
       --DATOS DEL REPRESENTANTE
       BEGIN
         SELECT L.EMPL_NOMBRE || ' ' || L.EMPL_APE DESC_NOMBRE, EMPL_FEC_NAC
           INTO V_CONT_REP_NOMBRE, V_CON_FEC_NAC
           FROM PER_EMPLEADO L
-         WHERE L.EMPL_EMPRESA = 2
+         WHERE L.EMPL_EMPRESA = co_transagro
            AND L.EMPL_LEGAJO = 45;
       EXCEPTION
         WHEN NO_DATA_FOUND THEN
@@ -1946,24 +1951,40 @@ CREATE OR REPLACE PACKAGE BODY PERI088 AS
                                        V_CON_FEC_NAC) / 12);
       END;
 
-      ELSE
-        --DATOS DEL REPRESENTANTE
-      BEGIN
-        SELECT L.EMPL_NOMBRE || ' ' || L.EMPL_APE DESC_NOMBRE, EMPL_FEC_NAC
-          INTO V_CONT_REP_NOMBRE, V_CON_FEC_NAC
-          FROM PER_EMPLEADO L
-         WHERE L.EMPL_EMPRESA = 1
-           AND L.EMPL_LEGAJO = 237;
-      EXCEPTION
-        WHEN NO_DATA_FOUND THEN
-          NULL;
-      END;
-      --CALCULAR EDAD DEL REPRESENTANTE
-      BEGIN
-        /* Calcula los a?os de diferencia */
-        v_anos := FLOOR(MONTHS_BETWEEN(TO_CHAR(SYSDATE, 'DD/MM/YYYY'),
-                                       V_CON_FEC_NAC) / 12);
-      END;
+      else --> diferentes a Tagro:
+      
+         --DATOS DEL REPRESENTANTE
+         -- 21/07/2022 9:33:16 @PabloACespedes \(^-^)/
+         -- se_ajusta para el holding que no sea hilagro y transagro
+        if P_EMPRESA = co_hilagro then -- hILAGRO
+          BEGIN
+            SELECT L.EMPL_NOMBRE || ' ' || L.EMPL_APE DESC_NOMBRE, EMPL_FEC_NAC
+              INTO V_CONT_REP_NOMBRE, V_CON_FEC_NAC
+              FROM PER_EMPLEADO L
+             WHERE L.EMPL_EMPRESA = co_hilagro
+               AND L.EMPL_LEGAJO = 237; --> este es CHRISTIAN	GOSSEN HIEBERT
+          EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+              NULL;
+          END;
+        else -- > TODO EL HOLDING
+          <<get_data_representante>>
+          begin
+            select p.conf_cont_geren_gen, p.conf_fecha_nac_rep
+            into v_cont_rep_nombre, v_con_fec_nac
+            from per_configuracion p
+            where p.conf_empr= p_empresa;
+          exception
+            when no_data_found then
+              null;
+          end get_data_representante;
+        end if; --> Fin Busqueda representante
+        
+        --CALCULAR EDAD DEL REPRESENTANTE
+        begin
+          v_anos := FLOOR(MONTHS_BETWEEN(TO_CHAR(SYSDATE, 'DD/MM/YYYY'),
+                                         V_CON_FEC_NAC) / 12);
+        END;
      END IF;
 
       --DATOS DEL DIA ACTUAL
@@ -2067,10 +2088,19 @@ CREATE OR REPLACE PACKAGE BODY PERI088 AS
       COMMIT;
 
       DELETE FROM GEN_PARAMETROS_REPORT WHERE USUARIO = V_USER;
+      
+      -- 21/07/2022 9:52:27 @PabloACespedes \(^-^)/
+      -- obtiene el nombre de reporte, distinto para Hilagro TransAgro, se_ajusto para el Holding too
+      if p_empresa in (co_hilagro, co_transagro) then
+         l_report_name := 'ELBC';
+      else
+         l_report_name := 'ELBC_HOLDING'; 
+      end if;
+      
       INSERT INTO GEN_PARAMETROS_REPORT
         (PARAMETROS, USUARIO, NOMBRE_REPORTE, FORMATO_SALIDA)
       VALUES
-        (V_PARAMETROS, V_USER, 'ELBC', 'pdf');
+        (V_PARAMETROS, V_USER, l_report_name  , 'pdf');
       COMMIT;
 
   END PP_LLAMAR_CONTRATO_MJT;
